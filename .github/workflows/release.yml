@@ -23,7 +23,7 @@ jobs:
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: 22.14.0
           # Writes an .npmrc that reads NODE_AUTH_TOKEN. npm tries trusted publishing (OIDC) first and uses the token only
