@@ -4,11 +4,29 @@ updates:
     directory: /dotnet
     schedule:
       interval: weekly
+    ignore:
+      # The library's minimum supported versions (.NET 8 and .NET Standard 2.0). Raising them forces every consumer up,
+      # so they move only by a deliberate change; patch releases still come through.
+      - dependency-name: System.Text.Json
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: Microsoft.Extensions.Http
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: Microsoft.Bcl.AsyncInterfaces
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+    groups:
+      test-tools:
+        patterns: ["xunit*", "Microsoft.NET.Test.Sdk", "coverlet*"]
   - package-ecosystem: npm
     directory: /typescript
     schedule:
       interval: weekly
+    groups:
+      dev-tools:
+        dependency-type: development
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
