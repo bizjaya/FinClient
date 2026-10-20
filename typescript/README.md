@@ -1,13 +1,13 @@
-# finclient
+# @bizjaya/finclient
 
 The official TypeScript SDK for FinCopy's public `/v1` API. It supports Node.js 18 and later, with ESM and CommonJS builds.
 
 ```sh
-npm install finclient
+npm install @bizjaya/finclient
 ```
 
 ```ts
-import { FinClient } from "finclient";
+import { FinClient } from "@bizjaya/finclient";
 
 const fin = new FinClient({ apiKey: process.env.FINCOPY_API_KEY! });
 const accounts = await fin.copy.accounts.list();

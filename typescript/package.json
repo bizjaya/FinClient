@@ -1,13 +1,13 @@
 {
-  "name": "finclient",
-  "version": "0.1.0",
+  "name": "@bizjaya/finclient",
+  "version": "0.1.1",
   "description": "Official TypeScript SDK for the FinCopy public API",
   "license": "MIT",
   "author": "BizJaya TechLab S/B",
   "homepage": "https://fincopy.io/docs",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bizjaya/FinClient.git",
+    "url": "git+https://github.com/bizjaya/FinClient.git",
     "directory": "typescript"
   },
   "type": "module",
@@ -48,6 +48,7 @@
     "vitest": "3.2.7"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

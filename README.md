@@ -6,7 +6,7 @@ their settings, trading, the change feed and signed webhooks.
 | Language | Package | Install | Guide |
 |---|---|---|---|
 | .NET (8+, .NET Standard 2.0) | [`FinClient`](https://www.nuget.org/packages/FinClient) | `dotnet add package FinClient` | [dotnet/README.md](dotnet/README.md) |
-| TypeScript / Node.js 18+ | [`finclient`](https://www.npmjs.com/package/finclient) | `npm install finclient` | [typescript/README.md](typescript/README.md) |
+| TypeScript / Node.js 18+ | [`@bizjaya/finclient`](https://www.npmjs.com/package/@bizjaya/finclient) | `npm install @bizjaya/finclient` | [typescript/README.md](typescript/README.md) |
 
 API reference: [fincopy.io/docs](https://fincopy.io/docs). Create an API key in the FinCopy member area under **API**.
 
@@ -23,7 +23,7 @@ var accounts = await fin.Copy.Accounts.ListAsync();
 ## TypeScript
 
 ```ts
-import { FinClient } from "finclient";
+import { FinClient } from "@bizjaya/finclient";
 
 const fin = new FinClient({ apiKey: process.env.FINCOPY_API_KEY! });
 const accounts = await fin.copy.accounts.list();

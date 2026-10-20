@@ -8,7 +8,7 @@
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>FinClient</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Authors>BizJaya TechLab S/B</Authors>
     <Company>BizJaya TechLab S/B</Company>
     <Copyright>Copyright (c) 2026 BizJaya TechLab S/B</Copyright>
