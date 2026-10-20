@@ -1,0 +1,22 @@
+# .NET
+**/bin/
+**/obj/
+**/TestResults/
+*.user
+*.suo
+.vs/
+
+# Node
+**/node_modules/
+**/dist/
+**/coverage/
+artifacts/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.local.json
+
+# Copied from the root LICENSE when the npm package is packed
+typescript/LICENSE

@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [dev, main]
+  pull_request:
+    branches: [dev, main]
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dotnet:
+    name: .NET build and tests
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Generated types match spec/
+        shell: pwsh
+        run: ./scripts/generate-dotnet.ps1
+      - run: git diff --exit-code -- dotnet/src/FinClient/Generated/FinCopyDtos.g.cs
+      - run: dotnet build dotnet/FinClient.slnx --configuration Release
+      - run: dotnet test dotnet/FinClient.slnx --configuration Release
+
+  typescript:
+    name: TypeScript / Node ${{ matrix.node }}
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [18, 20, 22]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: typescript/package-lock.json
+      - run: npm ci
+        working-directory: typescript
+      - run: npm run generate:types
+        working-directory: typescript
+      - run: git diff --exit-code -- typescript/src/generated/schema.d.ts
+      - run: npm run typecheck
+        working-directory: typescript
+      - run: npm test
+        working-directory: typescript
+      - run: npm run build
+        working-directory: typescript
+      - run: npm ls --omit=dev
+        working-directory: typescript
+
+  # Daily (and on demand): has FinCopy's live API description moved away from spec/? A difference means the SDK needs
+  # regenerating and a release. GitHub pauses scheduled workflows after 60 days without repository activity.
+  spec-drift:
+    name: Public API spec drift
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: >-
+          curl --fail --silent --show-error --retry 3 --retry-all-errors --max-time 30
+          https://api.fincopy.io/openapi/v1.json --output "$RUNNER_TEMP/fincopy-v1.json"
+      - run: node scripts/check-spec-drift.mjs spec/fincopy-v1.json "$RUNNER_TEMP/fincopy-v1.json"

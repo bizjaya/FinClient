@@ -1,0 +1,53 @@
+{
+  "name": "finclient",
+  "version": "0.1.0",
+  "description": "Official TypeScript SDK for the FinCopy public API",
+  "license": "MIT",
+  "author": "BizJaya TechLab S/B",
+  "homepage": "https://fincopy.io/docs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bizjaya/FinClient.git",
+    "directory": "typescript"
+  },
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "default": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "generate:types": "openapi-typescript ../spec/fincopy-v1.json --output src/generated/schema.d.ts",
+    "prepack": "node -e \"require('fs').copyFileSync('../LICENSE', 'LICENSE')\"",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean --target node18",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "22.20.5",
+    "openapi-typescript": "7.10.1",
+    "tsup": "8.5.1",
+    "typescript": "5.9.3",
+    "vite": "6.4.4",
+    "vitest": "3.2.7"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

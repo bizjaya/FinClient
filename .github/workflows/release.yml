@@ -1,0 +1,105 @@
+name: Release
+
+# A tag vX.Y.Z on main publishes FinClient to nuget.org and finclient to npmjs.com through trusted publishing: GitHub's
+# OIDC token is exchanged for a short-lived credential, so no long-lived registry key is stored here. Everything is built
+# and tested before anything is published, and the two registries are published back to back.
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.14.0
+          # Writes an .npmrc that reads NODE_AUTH_TOKEN. npm tries trusted publishing (OIDC) first and uses the token only
+          # when no trusted publisher is set up yet (the very first release).
+          registry-url: https://registry.npmjs.org
+
+      - name: Resolve version from tag
+        id: version
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z]+(\.[0-9A-Za-z]+)*)?$ ]]; then
+            echo "The tag must be vMAJOR.MINOR.PATCH, optionally with a pre-release suffix such as v1.2.0-beta.1." >&2
+            exit 1
+          fi
+          echo "value=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Tag must be on main
+        shell: bash
+        run: |
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "Release tags must point at a commit on main." >&2
+            exit 1
+          fi
+
+      - name: Release notes from the changelog
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          heading="## $VERSION"
+          line=$(awk -v h="$heading" 'index($0, h) == 1 && (length($0) == length(h) || substr($0, length(h) + 1, 1) == " ") { print; exit }' CHANGELOG.md)
+          if [[ -z "$line" ]]; then echo "CHANGELOG.md has no '$heading' section." >&2; exit 1; fi
+          if [[ "$line" == *Unreleased* ]]; then echo "Date the '$heading' section in CHANGELOG.md before tagging." >&2; exit 1; fi
+          awk -v h="$line" '$0 == h { found = 1; next } found && /^## / { exit } found { print }' CHANGELOG.md > "$RUNNER_TEMP/release-notes.md"
+          test -s "$RUNNER_TEMP/release-notes.md"
+
+      - name: Build, test and pack the .NET package
+        run: |
+          dotnet restore dotnet/FinClient.slnx
+          dotnet test dotnet/FinClient.slnx --configuration Release --no-restore
+          dotnet pack dotnet/src/FinClient/FinClient.csproj --configuration Release --no-restore --output "$RUNNER_TEMP/nuget" /p:Version=${{ steps.version.outputs.value }}
+
+      - name: Install the npm CLI that supports trusted publishing
+        run: npm install --global npm@11.5.1
+
+      - name: Build, test and pack the TypeScript package
+        working-directory: typescript
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          npm version "${{ steps.version.outputs.value }}" --no-git-tag-version --allow-same-version
+          npm run build
+          npm pack --dry-run
+
+      # Publishing starts only here, after both packages built and passed their tests.
+      - name: Login to NuGet trusted publishing
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Publish to nuget.org
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push "$RUNNER_TEMP"/nuget/*.nupkg --api-key "$NUGET_API_KEY" --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Publish to npmjs.com
+        working-directory: typescript
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@e598afbe1493e6b1bafb1f389cabb956eab91231 # v3.0.3
+        with:
+          name: v${{ steps.version.outputs.value }}
+          body_path: ${{ runner.temp }}/release-notes.md
