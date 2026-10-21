@@ -1,6 +1,14 @@
 # Changelog
 
-## 0.2.0 (unreleased)
+## Unreleased
+
+### Changed
+
+- TypeScript: Node.js 20 or newer is required; Node.js 18 has had no security fixes since April 2025. The package is
+  built for Node.js 20. The .NET package's support (.NET Standard 2.0 and .NET 8) is unchanged.
+- TypeScript test and build tools updated: vite 8, vitest 5, tsup 9, openapi-typescript 7.13 and @types/node 26.
+
+## 0.2.0 (2026-10-21)
 
 ### BREAKING
 

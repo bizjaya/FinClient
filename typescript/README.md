@@ -43,7 +43,7 @@ const account = await fin.copy.accounts.get(52014125);
 ```
 
 The API accepts browser requests only from FinCopy's own sites. Session trade writes pass the member's trade-PIN gate on
-the server. The main entry uses no Node.js built-ins, so it runs in browsers, Node.js 18+, Deno and Bun.
+the server. The main entry uses no Node.js built-ins, so it runs in browsers, Node.js 20+, Deno and Bun.
 
 ## Results, errors and the stream
 
