@@ -16,6 +16,9 @@ interface FinEnvelope<T> {
 /** The paging block of a list reply, as the API sends it (camel-case, like the rest of the envelope). */
 export type FinPageInfo = components["schemas"]["ResPage"];
 
+/** One server-sent event from the FinCopy member stream. */
+export interface FinStreamEvent { event: string; data: string }
+
 /** A paged response from a FinCopy list endpoint. DTO members retain their wire casing. */
 export interface FinPage<T> {
   items: readonly T[];
@@ -34,6 +37,7 @@ const writeMethods = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 export class FinHttpTransport {
   private readonly apiKey: string;
   private readonly baseUrl: string;
+  private readonly credentials: "omit" | "same-origin" | "include";
   private readonly timeoutMs: number;
   private readonly maxRetries: number;
   private readonly fetcher: typeof fetch;
@@ -41,9 +45,9 @@ export class FinHttpTransport {
   private readonly random: () => number;
 
   constructor(options: FinClientOptions) {
-    if (!options.apiKey?.trim()) throw new TypeError("apiKey is required.");
-    this.apiKey = options.apiKey;
-    this.baseUrl = (options.baseUrl ?? "https://api.fincopy.io").replace(/\/+$/, "");
+    this.apiKey = options.apiKey?.trim() ?? "";
+    if (!this.apiKey && !options.fetch) throw new TypeError("apiKey is required unless a custom fetch authenticates the member session.");
+    this.baseUrl = (options.baseUrl ?? "https://api.fincopy.pro").replace(/\/+$/, "");
     const base = new URL(this.baseUrl);
     if (!/^https?:$/.test(base.protocol) || base.search || base.hash) {
       throw new TypeError("baseUrl must be an absolute HTTP or HTTPS URL without a query or fragment.");
@@ -53,6 +57,7 @@ export class FinHttpTransport {
     if (!Number.isFinite(this.timeoutMs) || this.timeoutMs <= 0) throw new RangeError("timeoutMs must be positive.");
     if (!Number.isInteger(this.maxRetries) || this.maxRetries < 0) throw new RangeError("maxRetries cannot be negative.");
     this.fetcher = options.fetch ?? globalThis.fetch.bind(globalThis);
+    this.credentials = options.credentials ?? (this.apiKey ? "same-origin" : "include");
     this.delay = options.retryDelay ?? ((milliseconds, signal) => new Promise<void>((resolve, reject) => {
       if (signal?.aborted) { reject(signal.reason); return; }
       const onAbort = () => { clearTimeout(timer); reject(signal?.reason); };
@@ -90,7 +95,8 @@ export class FinHttpTransport {
       let response: Response;
       let raw: string;
       try {
-        const headers = new Headers({ "X-Api-Key": this.apiKey, Accept: "application/json" });
+        const headers = new Headers({ Accept: "application/json" });
+        if (this.apiKey) headers.set("X-Api-Key", this.apiKey);
         if (bodyText !== undefined) headers.set("Content-Type", "application/json");
         if (idempotencyKey !== undefined) headers.set("Idempotency-Key", idempotencyKey);
         response = await this.fetcher(url, {
@@ -98,6 +104,7 @@ export class FinHttpTransport {
           headers,
           body: bodyText,
           signal: controller.signal,
+          credentials: this.credentials,
         });
         raw = await response.text();
       } catch (error) {
@@ -154,6 +161,67 @@ export class FinHttpTransport {
       errors: envelope.errors ?? [],
       chksum: envelope.chksum ?? null,
     };
+  }
+
+  async *requestEvents(path: string, requestOptions: FinRequestOptions = {}): AsyncGenerator<FinStreamEvent, void, undefined> {
+    const url = new URL(path.replace(/^\//, ""), `${this.baseUrl}/`);
+    const headers = new Headers({ Accept: "text/event-stream" });
+    if (this.apiKey) headers.set("X-Api-Key", this.apiKey);
+    const response = await this.fetcher(url, {
+      method: "GET", headers, signal: requestOptions.signal, credentials: this.credentials,
+    });
+    if (!response.ok) {
+      const raw = await response.text();
+      let envelope: FinEnvelope<unknown> | null = null;
+      try { envelope = raw ? JSON.parse(raw) as FinEnvelope<unknown> : null; } catch { /* report as a typed API error */ }
+      const fallback = `The FinCopy API request failed with HTTP ${response.status}.`;
+      throw new FinApiError(response.status, envelope?.message || fallback, envelope?.code ?? null,
+        errorsOf(envelope?.errors), { errorCode: response.status === 429 ? "rate_limited" : null,
+          retryAfterMs: retryAfterMsOf(response.headers.get("Retry-After")) });
+    }
+    if (!response.body) throw new FinApiError(response.status, "The FinCopy API returned an empty event stream.", null, [], { errorCode: "empty_response" });
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let eventName = "message";
+    let data: string[] = [];
+    const parseLine = (line: string): FinStreamEvent | null => {
+      if (!line) {
+        const item = data.length ? { event: eventName, data: data.join("\n") } : null;
+        eventName = "message";
+        data = [];
+        return item;
+      }
+      if (line.startsWith(":")) return null;
+      const separator = line.indexOf(":");
+      const field = separator < 0 ? line : line.slice(0, separator);
+      const value = separator < 0 ? "" : line.slice(separator + 1).replace(/^ /, "");
+      if (field === "event") eventName = value;
+      else if (field === "data") data.push(value);
+      return null;
+    };
+    try {
+      while (true) {
+        if (requestOptions.signal?.aborted) throw requestOptions.signal.reason;
+        const next = await reader.read();
+        buffer += decoder.decode(next.value, { stream: !next.done });
+        const lines = buffer.split(/\r?\n/);
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          const item = parseLine(line);
+          if (item) yield item;
+        }
+        if (next.done) {
+          if (buffer) { const item = parseLine(buffer); if (item) yield item; }
+          const final = parseLine("");
+          if (final) yield final;
+          return;
+        }
+      }
+    } finally {
+      await reader.cancel().catch(() => undefined);
+      reader.releaseLock();
+    }
   }
 
   private backoff(retry: number): number {

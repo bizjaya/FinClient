@@ -6,7 +6,7 @@ public sealed class FinClientOptions
     /// <summary>Creates options for the default FinCopy API address.</summary>
     public FinClientOptions() { }
 
-    /// <summary>Creates options with the required FinCopy API key.</summary>
+    /// <summary>Creates options with a FinCopy API key.</summary>
     /// <param name="apiKey">The key sent in the X-Api-Key request header.</param>
     public FinClientOptions(string apiKey) => ApiKey = apiKey;
 
@@ -14,7 +14,7 @@ public sealed class FinClientOptions
     public string ApiKey { get; set; } = string.Empty;
 
     /// <summary>Absolute API root. Defaults to the public FinCopy API.</summary>
-    public string BaseUrl { get; set; } = "https://api.fincopy.io";
+    public string BaseUrl { get; set; } = "https://api.fincopy.pro";
 
     /// <summary>
     /// Per-attempt request timeout. Defaults to 30 seconds. When you pass your own <see cref="HttpClient"/>, its
@@ -33,9 +33,9 @@ public sealed class FinClientOptions
         MaxRetries = MaxRetries
     };
 
-    internal Uri ValidatedBaseUri()
+    internal Uri ValidatedBaseUri(bool requireApiKey = true)
     {
-        if (string.IsNullOrWhiteSpace(ApiKey)) throw new ArgumentException("An API key is required.", nameof(ApiKey));
+        if (requireApiKey && string.IsNullOrWhiteSpace(ApiKey)) throw new ArgumentException("An API key is required unless the caller supplies an authenticated HttpClient.", nameof(ApiKey));
         if (!Uri.TryCreate(BaseUrl?.TrimEnd('/') + "/", UriKind.Absolute, out var uri)
             || uri.Scheme is not ("https" or "http") || !string.IsNullOrEmpty(uri.Query) || !string.IsNullOrEmpty(uri.Fragment))
             throw new ArgumentException("BaseUrl must be an absolute HTTP or HTTPS URL without a query or fragment.", nameof(BaseUrl));

@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/v1/accounts": {
+    "/v1/fxs/accounts": {
         parameters: {
             query?: never;
             header?: never;
@@ -13,22 +13,6 @@ export interface paths {
         };
         /** List the accounts this key can reach, each with its terminal, broker server and latest state. */
         get: operations["AccountList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/accounts/make": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
         put?: never;
         /**
          * Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.
@@ -42,7 +26,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}": {
+    "/v1/fxs/accounts/demo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create a demo account. */
+        post: operations["DemoMake"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/demo-availability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Places available for a demo terminal on the selected platform. */
+        get: operations["DemoAvailability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}": {
         parameters: {
             query?: never;
             header?: never;
@@ -53,13 +71,18 @@ export interface paths {
         get: operations["AccountView"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Remove the account and its hosted terminal. Only the account's owner can. The Idempotency-Key header is
+         *                 required: a retry while the removal runs returns the same operation; after it finishes the account answers 404.
+         *                 Needs the Trade permission. Returns the operation id.
+         */
+        delete: operations["AccountRemove"];
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/external-ref": {
+    "/v1/fxs/accounts/{acno}/external-ref": {
         parameters: {
             query?: never;
             header?: never;
@@ -69,7 +92,7 @@ export interface paths {
         get?: never;
         /**
          * Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the
-         *                 account's first sync. It comes back on the account and on every change-feed row. Needs the Trade permission.
+         *                 account is added. It comes back on the account and on every change-feed row. Needs the Trade permission.
          */
         put: operations["AccountExternalRef"];
         post?: never;
@@ -79,7 +102,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/fxs": {
+    "/v1/fxs/accounts/{acno}/settings": {
         parameters: {
             query?: never;
             header?: never;
@@ -88,7 +111,7 @@ export interface paths {
         };
         /**
          * The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the
-         *                 account's first sync.
+         *                 account is added; until its first sync, live account data is empty.
          */
         get: operations["AccountFxs"];
         put?: never;
@@ -103,7 +126,7 @@ export interface paths {
         patch: operations["AccountSettings"];
         trace?: never;
     };
-    "/v1/accounts/{accountId}/pairs": {
+    "/v1/fxs/accounts/{acno}/pairs": {
         parameters: {
             query?: never;
             header?: never;
@@ -120,7 +143,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/pairs/{prno}": {
+    "/v1/fxs/accounts/{acno}/pairs/{prno}": {
         parameters: {
             query?: never;
             header?: never;
@@ -141,7 +164,7 @@ export interface paths {
         patch: operations["AccountPairSettings"];
         trace?: never;
     };
-    "/v1/accounts/{accountId}/orders/history": {
+    "/v1/fxs/accounts/{acno}/history": {
         parameters: {
             query?: never;
             header?: never;
@@ -158,7 +181,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/orders/history/{oid}": {
+    "/v1/fxs/accounts/{acno}/history/{oid}": {
         parameters: {
             query?: never;
             header?: never;
@@ -175,7 +198,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/orders": {
+    "/v1/fxs/accounts/{acno}/orders": {
         parameters: {
             query?: never;
             header?: never;
@@ -185,18 +208,14 @@ export interface paths {
         /** Live orders: queued, sent to the terminal, open positions and pending orders. */
         get: operations["AccountOrders"];
         put?: never;
-        /**
-         * Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. A close is allowed while an admin has
-         *                 disabled the account's owner; an open or add is not. The Idempotency-Key header is required. Needs the Trade permission.
-         */
-        post: operations["AccountTradeMake"];
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/dca-queue": {
+    "/v1/fxs/accounts/{acno}/dca": {
         parameters: {
             query?: never;
             header?: never;
@@ -213,7 +232,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/dca/{oid}/answer": {
+    "/v1/fxs/accounts/{acno}/dca/{oid}": {
         parameters: {
             query?: never;
             header?: never;
@@ -233,7 +252,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/orders/{oid}": {
+    "/v1/fxs/accounts/{acno}/orders/{oid}": {
         parameters: {
             query?: never;
             header?: never;
@@ -250,7 +269,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/symbols": {
+    "/v1/fxs/accounts/{acno}/symbols": {
         parameters: {
             query?: never;
             header?: never;
@@ -271,7 +290,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/quotes/{symbol}": {
+    "/v1/fxs/accounts/{acno}/quotes/{symbol}": {
         parameters: {
             query?: never;
             header?: never;
@@ -288,7 +307,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/performance": {
+    "/v1/fxs/accounts/{acno}/performance": {
         parameters: {
             query?: never;
             header?: never;
@@ -305,7 +324,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/activity": {
+    "/v1/fxs/accounts/{acno}/performance/window": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The selected account's recent performance window. */
+        get: operations["AccountPerformanceWindow"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/performance/bars": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The selected account's performance bars. */
+        get: operations["AccountPerformanceBars"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/activity": {
         parameters: {
             query?: never;
             header?: never;
@@ -322,7 +375,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/changes": {
+    "/v1/fxs/accounts/{acno}/password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Change the broker password and queue the terminal operation. */
+        post: operations["AccountPassword"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Recent terminal operations for this account. */
+        get: operations["AccountOperations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/changes": {
         parameters: {
             query?: never;
             header?: never;
@@ -346,7 +433,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/webhook": {
+    "/v1/webhook": {
         parameters: {
             query?: never;
             header?: never;
@@ -371,7 +458,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/webhook/ping": {
+    "/v1/webhook/ping": {
         parameters: {
             query?: never;
             header?: never;
@@ -388,7 +475,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/orders/preinfo": {
+    "/v1/fxs/accounts/{acno}/trade/preinfo": {
         parameters: {
             query?: never;
             header?: never;
@@ -405,7 +492,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/orders/hedge": {
+    "/v1/fxs/accounts/{acno}/trade": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. A close is allowed while an admin has
+         *                 disabled the account's owner; an open or add is not. The Idempotency-Key header is required. Needs the Trade permission.
+         */
+        post: operations["AccountTradeMake"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/trade/hedge": {
         parameters: {
             query?: never;
             header?: never;
@@ -422,7 +529,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/trades/modify": {
+    "/v1/fxs/accounts/{acno}/trade/modify": {
         parameters: {
             query?: never;
             header?: never;
@@ -439,7 +546,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/trades/cancel-waiting": {
+    "/v1/fxs/accounts/{acno}/trade/cancel": {
         parameters: {
             query?: never;
             header?: never;
@@ -456,7 +563,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/start": {
+    "/v1/fxs/accounts/{acno}/start": {
         parameters: {
             query?: never;
             header?: never;
@@ -476,7 +583,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/stop": {
+    "/v1/fxs/accounts/{acno}/stop": {
         parameters: {
             query?: never;
             header?: never;
@@ -496,7 +603,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/restart": {
+    "/v1/fxs/accounts/{acno}/restart": {
         parameters: {
             query?: never;
             header?: never;
@@ -516,21 +623,170 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/accounts/{accountId}/remove": {
+    "/v1/fxs/pairs": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /** Lists the pairs across accounts the caller can reach. */
+        get: operations["Pairs"];
         put?: never;
-        /**
-         * Remove the account and its hosted terminal. Only the account's owner can. The Idempotency-Key header is
-         *                 required: a retry while the removal runs returns the same operation; after it finishes the account answers 404.
-         *                 Needs the Trade permission. Returns the operation id.
-         */
-        post: operations["AccountRemove"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lists open orders across accounts the caller can reach. */
+        get: operations["Orders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lists settled orders across accounts the caller can reach. */
+        get: operations["History"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/activity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lists activity across accounts the caller can reach. */
+        get: operations["Activity"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/strategies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lists strategies available to the signed-in member. */
+        get: operations["Strategies"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/strategies/{isno}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reads one strategy by its strategy number. */
+        get: operations["Strategy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/signals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reads the signals shown for the member's enabled symbols. */
+        get: operations["Signals"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/alerts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lists warning and error activity for the member. */
+        get: operations["Alerts"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Opens a server-sent event stream for changes visible to the member. */
+        get: operations["Stream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/brokers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Searches broker servers available when adding a hosted account. */
+        get: operations["Brokers"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -554,13 +810,12 @@ export interface components {
         BrokerServerEnvironment: "Demo" | "Live" | "Unknown";
         /** @enum {string} */
         BrokerServerStatus: "Submitted" | "Verified" | "Retired";
-        /** @description The key's webhook: the HTTPS address (port 443 only) FinCopy POSTs to when the key's accounts change. */
-        CmdApiWebhookSet: {
-            Url?: string | null;
+        BsonElement: {
+            Name?: string | null;
+            Value?: string | null;
         };
-        CmdFxsAcctPatch: {
-            /** Format: int64 */
-            ACNO?: number;
+        /** @description Public API settings patch. Account identity comes from the ACNO route. */
+        CmdApiFxsAcctPatch: {
             Enabled?: boolean | null;
             /** Format: int32 */
             ISNO?: number | null;
@@ -572,27 +827,8 @@ export interface components {
             SymbolDefaults?: components["schemas"]["DtoFxsStgSymStg"];
             CascadeSymbolDefaults?: boolean;
         };
-        CmdFxsCancelWaiting: {
-            /** Format: int64 */
-            Oid?: number;
-            RequestId?: string | null;
-            TrPin?: string | null;
-        };
-        CmdFxsDcaAnswer: {
-            Accept?: boolean;
-            TrPin?: string | null;
-        };
-        CmdFxsHedgeLeg: {
-            ACT?: components["schemas"]["FxsOrderAction"];
-            /** Format: double */
-            LOT?: number;
-            /** Format: double */
-            SLP?: number | null;
-            SYMSTG?: components["schemas"]["DtoEASymStg"];
-        };
-        CmdFxsHedgeMake: {
-            /** Format: int64 */
-            ACNO?: number;
+        /** @description Public paired hedge request. Account identity comes from the ACNO route. */
+        CmdApiFxsHedgeMake: {
             SYM?: string | null;
             BUY?: components["schemas"]["CmdFxsHedgeLeg"];
             SELL?: components["schemas"]["CmdFxsHedgeLeg"];
@@ -605,24 +841,8 @@ export interface components {
                 [key: string]: string[];
             } | null;
         };
-        CmdFxsModify: {
-            /** Format: int64 */
-            Ticket?: number;
-            /** Format: double */
-            Price?: number;
-            /** Format: double */
-            StopLossPrice?: number;
-            /** Format: double */
-            TakeProfitPrice?: number;
-            /** Format: date-time */
-            Expiry?: string | null;
-            RequestId?: string | null;
-            ClearExpiry?: boolean;
-            TrPin?: string | null;
-        };
-        CmdFxsOrdrMake: {
-            /** Format: int64 */
-            ACNO?: number;
+        /** @description Public trade request. Account identity comes from the ACNO route. */
+        CmdApiFxsOrdrMake: {
             SYM?: string | null;
             ACT?: components["schemas"]["FxsOrderAction"];
             OTY?: components["schemas"]["FxsOrderType"];
@@ -653,9 +873,8 @@ export interface components {
                 [key: string]: string[];
             } | null;
         };
-        CmdFxsPairPatch: {
-            /** Format: int64 */
-            PRNO?: number;
+        /** @description Public API pair patch. Pair identity comes from the PRNO route. */
+        CmdApiFxsPairPatch: {
             Enabled?: boolean | null;
             EnDcaGateBuy?: boolean | null;
             EnDcaGateSell?: boolean | null;
@@ -663,12 +882,48 @@ export interface components {
             TrPin?: string | null;
             ExternalRef?: string | null;
         };
-        CmdFxsPreInfo: {
-            /** Format: int64 */
-            ACNO?: number;
+        /** @description Public trade preflight request. Account identity comes from the ACNO route. */
+        CmdApiFxsPreInfo: {
             /** Format: int64 */
             PRNO?: number | null;
             SYM?: string | null;
+        };
+        /** @description The key's webhook: the HTTPS address (port 443 only) FinCopy POSTs to when the key's accounts change. */
+        CmdApiWebhookSet: {
+            Url?: string | null;
+        };
+        CmdFxsCancelWaiting: {
+            /** Format: int64 */
+            Oid?: number;
+            RequestId?: string | null;
+            TrPin?: string | null;
+        };
+        CmdFxsDcaAnswer: {
+            Accept?: boolean;
+            TrPin?: string | null;
+        };
+        CmdFxsHedgeLeg: {
+            ACT?: components["schemas"]["FxsOrderAction"];
+            /** Format: double */
+            LOT?: number;
+            /** Format: double */
+            SLP?: number | null;
+            SYMSTG?: components["schemas"]["DtoEASymStg"];
+        };
+        CmdFxsModify: {
+            /** Format: int64 */
+            Ticket?: number;
+            /** Format: double */
+            Price?: number;
+            /** Format: double */
+            StopLossPrice?: number;
+            /** Format: double */
+            TakeProfitPrice?: number;
+            /** Format: date-time */
+            Expiry?: string | null;
+            RequestId?: string | null;
+            ClearExpiry?: boolean;
+            TrPin?: string | null;
         };
         /** @description Add or remove symbols from the account's enabled list. */
         CmdFxsSymbolsEdit: {
@@ -687,10 +942,24 @@ export interface components {
             /** @description The API's Idempotency-Key, set by the /v1 make route only. */
             RequestId?: string | null;
         };
+        CmdMemberDemoMake: {
+            Platform?: string | null;
+            BrokerServerId?: string | null;
+            Login?: string | null;
+            BrokerPassword?: string | null;
+        };
         /** @description The managing system's own id for a hosted account; empty clears it. */
         CmdTermAccountExternalRef: {
             ExternalRef?: string | null;
         };
+        CmdTermAccountPassword: {
+            BrokerPassword?: string | null;
+            BrokerServerId?: string | null;
+        };
+        /** @enum {string} */
+        DeployKind: "Provision" | "Upgrade" | "Rollback" | "Remove" | "Start" | "Stop" | "Restart";
+        /** @enum {string} */
+        DeployStatus: "Running" | "Done" | "Failed" | "RolledBack";
         /** @enum {string} */
         DesiredTermState: "Running" | "Stopped" | "Removed";
         /**
@@ -741,6 +1010,40 @@ export interface components {
             message?: string | null;
             errors?: string[] | null;
             chksum?: string | null;
+        };
+        DtoApiTermOperation: {
+            OperationId?: string | null;
+            /** Format: int64 */
+            ACNO?: number;
+            Login?: string | null;
+            Kind?: components["schemas"]["DeployKind"];
+            Status?: components["schemas"]["DeployStatus"];
+            FromVersion?: string | null;
+            ToVersion?: string | null;
+            ProgressStatus?: string | null;
+            Reason?: string | null;
+            Result?: string | null;
+            /** Format: date-time */
+            StartedAt?: string;
+            /** Format: date-time */
+            WorkerStartedAt?: string | null;
+            /** Format: date-time */
+            EndedAt?: string | null;
+            /** Format: date-time */
+            RetryAt?: string | null;
+            /** Format: int32 */
+            RetryCount?: number;
+            /** Format: int64 */
+            ElapsedMs?: number;
+        };
+        DtoApiTermOperationResPaged: {
+            data?: components["schemas"]["DtoApiTermOperation"][] | null;
+            paging?: components["schemas"]["ResPage"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
         };
         /** @description The key's webhook. `Secret` is shown once, when the webhook is set: FinCopy signs every POST with it. */
         DtoApiWebhook: {
@@ -811,6 +1114,45 @@ export interface components {
             NoSymbolMatchPattern?: string | null;
             /** Format: date-time */
             NoSymbolMatchAt?: string | null;
+        };
+        DtoBrokerServerSearch: {
+            ServerId?: string | null;
+            ServerName?: string | null;
+            Platform?: string | null;
+            Environment?: components["schemas"]["BrokerServerEnvironment"];
+            Status?: components["schemas"]["BrokerServerStatus"];
+            BrokerName?: string | null;
+        };
+        DtoBrokerServerSearchIReadOnlyListResPonse: {
+            data?: components["schemas"]["DtoBrokerServerSearch"][] | null;
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        /**
+         * @description T652 E — demo places that can start now (a prepared terminal and a free slot), and whether this member already
+         *                 runs one (one at a time).
+         */
+        DtoDemoAvailability: {
+            /** Format: int32 */
+            FreePlaces?: number;
+            /** Format: int32 */
+            Quota?: number;
+            /** Format: int32 */
+            DurationHours?: number;
+            MemberHasActive?: boolean;
+        };
+        DtoDemoAvailabilityResPonse: {
+            data?: components["schemas"]["DtoDemoAvailability"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
         };
         /** @description Wire twin of the account settings. This type deliberately has no BSON attributes. */
         DtoEAAccStg: {
@@ -1627,8 +1969,101 @@ export interface components {
             /** Format: double */
             ACCTMGN?: number | null;
         };
+        DtoFxsPerfAccountBars: {
+            /** Format: int64 */
+            ACNO?: number;
+            AccountName?: string | null;
+            Currency?: string | null;
+            Bars?: components["schemas"]["DtoFxsPerfBar"][] | null;
+        };
+        DtoFxsPerfBar: {
+            /** Format: date-time */
+            Date?: string;
+            /** Format: double */
+            Realised?: number;
+            /** Format: double */
+            Flow?: number;
+            /** Format: double */
+            Equity?: number;
+            /** Format: double */
+            Balance?: number;
+            /** Format: double */
+            ReturnPct?: number;
+            HasData?: boolean;
+        };
+        DtoFxsPerfBars: {
+            /** Format: date-time */
+            FromDt?: string;
+            /** Format: date-time */
+            ToDt?: string;
+            Accounts?: components["schemas"]["DtoFxsPerfAccountBars"][] | null;
+            Currencies?: components["schemas"]["DtoFxsPerfCurrencyBars"][] | null;
+        };
+        DtoFxsPerfBarsResPonse: {
+            data?: components["schemas"]["DtoFxsPerfBars"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoFxsPerfContribution: {
+            /** Format: int64 */
+            ACNO?: number;
+            AccountName?: string | null;
+            Currency?: string | null;
+            Virtual?: boolean;
+            /** Format: double */
+            Realised30?: number;
+            /** Format: double */
+            SharePct?: number;
+        };
+        DtoFxsPerfCurrencyBars: {
+            Currency?: string | null;
+            Virtual?: boolean;
+            Bars?: components["schemas"]["DtoFxsPerfBar"][] | null;
+        };
+        DtoFxsPerfCurrencyWindow: {
+            Currency?: string | null;
+            Virtual?: boolean;
+            /** Format: double */
+            Equity?: number | null;
+            /** Format: double */
+            TodayEquityChange?: number | null;
+            /** Format: double */
+            TodayEquityChangePct?: number | null;
+            /** Format: double */
+            RealisedToday?: number;
+            /** Format: double */
+            RealisedTodayPct?: number | null;
+            /** Format: double */
+            Growth7Pct?: number | null;
+            /** Format: double */
+            Growth30Pct?: number | null;
+            /** Format: double */
+            Realised30?: number;
+            HasHistory?: boolean;
+        };
         DtoFxsPerfIReadOnlyListResPonse: {
             data?: components["schemas"]["DtoFxsPerf"][] | null;
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoFxsPerfWindow: {
+            /** Format: date-time */
+            AsOf?: string;
+            /** Format: int32 */
+            AccountCount?: number;
+            Currencies?: components["schemas"]["DtoFxsPerfCurrencyWindow"][] | null;
+            Contributions?: components["schemas"]["DtoFxsPerfContribution"][] | null;
+        };
+        DtoFxsPerfWindowResPonse: {
+            data?: components["schemas"]["DtoFxsPerfWindow"];
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
@@ -1872,6 +2307,64 @@ export interface components {
             /** Format: int64 */
             QTM?: number | null;
         };
+        DtoFxsStg: {
+            /** Format: int32 */
+            ISNO?: number;
+            /** Format: int64 */
+            USNO?: number;
+            OwnerEmail?: string | null;
+            SeedKey?: string | null;
+            StratName?: string | null;
+            RiskLev?: components["schemas"]["FxsRiskLev"];
+            SigMode?: components["schemas"]["TMode"];
+            En?: boolean;
+            EnAvg?: boolean;
+            Virtual?: boolean;
+            ACCSTG?: components["schemas"]["DtoFxsStgAccStg"];
+            SYMSTG?: components["schemas"]["DtoFxsStgSymStg"];
+            /** Format: int32 */
+            DCACooloffMins?: number;
+            EnDcaGate?: boolean;
+            StgLog?: string[] | null;
+        };
+        DtoFxsStgAccStg: {
+            EntMode?: components["schemas"]["TMode"];
+            TRDSRC?: components["schemas"]["TRDSRC"];
+            AvgMode?: components["schemas"]["TMode"];
+            INDEP?: boolean | null;
+            /** Format: int32 */
+            POCNT?: number | null;
+            /** Format: int32 */
+            DCAIVMINS?: number | null;
+            /** Format: int32 */
+            POCLSMINS?: number | null;
+            /** Format: double */
+            MAXDDFRC?: number | null;
+            /** Format: int32 */
+            MAXDLYSECS?: number | null;
+            /** Format: int32 */
+            SYNCSECS?: number | null;
+            CONF?: boolean | null;
+            DCAGATE?: boolean | null;
+        };
+        DtoFxsStgIReadOnlyListResPonse: {
+            data?: components["schemas"]["DtoFxsStg"][] | null;
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoFxsStgResPonse: {
+            data?: components["schemas"]["DtoFxsStg"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
         /** @description Wire twin of the account symbol template. This type deliberately has no BSON attributes. */
         DtoFxsStgSymStg: {
             BFXMO?: components["schemas"]["FXMODE"];
@@ -2003,14 +2496,14 @@ export interface components {
             Fleet?: components["schemas"]["DtoFleetAccount"];
             State?: components["schemas"]["DtoFxsAccountState"];
         };
-        DtoMemberAccountIReadOnlyListResPonse: {
+        DtoMemberAccountResPaged: {
             data?: components["schemas"]["DtoMemberAccount"][] | null;
+            paging?: components["schemas"]["ResPage"];
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
             message?: string | null;
             errors?: string[] | null;
-            chksum?: string | null;
         };
         DtoMemberAccountResPonse: {
             data?: components["schemas"]["DtoMemberAccount"];
@@ -2037,14 +2530,14 @@ export interface components {
             /** Format: date-time */
             At?: string;
         };
-        DtoMemberActivityIReadOnlyListResPonse: {
+        DtoMemberActivityResPaged: {
             data?: components["schemas"]["DtoMemberActivity"][] | null;
+            paging?: components["schemas"]["ResPage"];
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
             message?: string | null;
             errors?: string[] | null;
-            chksum?: string | null;
         };
         DtoMemberMailSrch: {
             /** Format: int64 */
@@ -2064,7 +2557,43 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        /**
+         * @description FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's
+         *                 (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names.
+         */
+        DtoShelfSignal: {
+            Symbol?: string | null;
+            Signal?: string | null;
+            Trend?: string | null;
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's TA score, -10 … 10.
+             */
+            Score?: number | null;
+            /**
+             * Format: date-time
+             * @description When FinGraph last wrote this reading.
+             */
+            At?: string | null;
+        };
+        /** @description The Signals card: the readings, strongest first, and the member's symbols with no fresh reading. */
+        DtoShelfSignals: {
+            Rows?: components["schemas"]["DtoShelfSignal"][] | null;
+            NoReading?: string[] | null;
+        };
+        DtoShelfSignalsResPonse: {
+            data?: components["schemas"]["DtoShelfSignals"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
         DtoTermAccount: {
+            /** Format: int64 */
+            ACNO?: number;
             Id?: string | null;
             NodeId?: string | null;
             /** Format: int64 */
@@ -2194,6 +2723,8 @@ export interface components {
         /** @enum {string} */
         FxsPlatform: "NONE" | "MT4" | "MT5";
         /** @enum {string} */
+        FxsRiskLev: "LOW" | "MID" | "HIGH";
+        /** @enum {string} */
         FxsSide: "NONE" | "BUY" | "SELL";
         /** @enum {string} */
         FxsSignalStatus: "NONE" | "ALERT" | "ACCEPT" | "REJECT";
@@ -2210,6 +2741,18 @@ export interface components {
         };
         /** @enum {string} */
         ObservedTermState: "Unknown" | "Starting" | "Running" | "Stopped" | "Faulted" | "Removed";
+        /** @enum {string} */
+        OpCond: "and" | "or" | "all" | "in";
+        ProblemDetails: {
+            Type?: string | null;
+            Title?: string | null;
+            /** Format: int32 */
+            Status?: number | null;
+            Detail?: string | null;
+            Instance?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
         ResPage: {
             /** Format: int32 */
             pageNo?: number;
@@ -2239,7 +2782,21 @@ export type $defs = Record<string, never>;
 export interface operations {
     AccountList: {
         parameters: {
-            query?: never;
+            query?: {
+                Cond?: components["schemas"]["OpCond"];
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+                QSlice?: number;
+                Srch?: components["schemas"]["BsonElement"][];
+                Sort?: components["schemas"]["BsonElement"][];
+                PageOff?: number;
+                ResCount?: number;
+                externalRef?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2252,7 +2809,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DtoMemberAccountIReadOnlyListResPonse"];
+                    "application/json": components["schemas"]["DtoMemberAccountResPaged"];
                 };
             };
             /** @description Bad Request */
@@ -2376,12 +2933,151 @@ export interface operations {
             };
         };
     };
+    DemoMake: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdMemberDemoMake"];
+                "application/json": components["schemas"]["CmdMemberDemoMake"];
+                "text/json": components["schemas"]["CmdMemberDemoMake"];
+                "application/*+json": components["schemas"]["CmdMemberDemoMake"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFleetAccountResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    DemoAvailability: {
+        parameters: {
+            query?: {
+                platform?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoDemoAvailabilityResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
     AccountView: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -2443,12 +3139,81 @@ export interface operations {
             };
         };
     };
+    AccountRemove: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoOperationQueuedResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
     AccountExternalRef: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -2522,7 +3287,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -2589,16 +3354,16 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
         requestBody?: {
             content: {
-                "application/json-patch+json": components["schemas"]["CmdFxsAcctPatch"];
-                "application/json": components["schemas"]["CmdFxsAcctPatch"];
-                "text/json": components["schemas"]["CmdFxsAcctPatch"];
-                "application/*+json": components["schemas"]["CmdFxsAcctPatch"];
+                "application/json-patch+json": components["schemas"]["CmdApiFxsAcctPatch"];
+                "application/json": components["schemas"]["CmdApiFxsAcctPatch"];
+                "text/json": components["schemas"]["CmdApiFxsAcctPatch"];
+                "application/*+json": components["schemas"]["CmdApiFxsAcctPatch"];
             };
         };
         responses: {
@@ -2680,7 +3445,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -2747,7 +3512,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
                 prno: number;
             };
             cookie?: never;
@@ -2815,17 +3580,17 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
                 prno: number;
             };
             cookie?: never;
         };
         requestBody?: {
             content: {
-                "application/json-patch+json": components["schemas"]["CmdFxsPairPatch"];
-                "application/json": components["schemas"]["CmdFxsPairPatch"];
-                "text/json": components["schemas"]["CmdFxsPairPatch"];
-                "application/*+json": components["schemas"]["CmdFxsPairPatch"];
+                "application/json-patch+json": components["schemas"]["CmdApiFxsPairPatch"];
+                "application/json": components["schemas"]["CmdApiFxsPairPatch"];
+                "text/json": components["schemas"]["CmdApiFxsPairPatch"];
+                "application/*+json": components["schemas"]["CmdApiFxsPairPatch"];
             };
         };
         responses: {
@@ -2907,7 +3672,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -2974,7 +3739,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
                 oid: number;
             };
             cookie?: never;
@@ -3059,7 +3824,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -3121,88 +3886,12 @@ export interface operations {
             };
         };
     };
-    AccountTradeMake: {
-        parameters: {
-            query?: never;
-            header?: {
-                "Idempotency-Key"?: string;
-            };
-            path: {
-                accountId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json-patch+json": components["schemas"]["CmdFxsOrdrMake"];
-                "application/json": components["schemas"]["CmdFxsOrdrMake"];
-                "text/json": components["schemas"]["CmdFxsOrdrMake"];
-                "application/*+json": components["schemas"]["CmdFxsOrdrMake"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoFxsAccountStateResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
     AccountDcaQueue: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -3269,7 +3958,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
                 oid: number;
             };
             cookie?: never;
@@ -3344,7 +4033,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
                 oid: number;
             };
             cookie?: never;
@@ -3412,7 +4101,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -3479,7 +4168,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -3553,7 +4242,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
                 symbol: string;
             };
             cookie?: never;
@@ -3624,7 +4313,7 @@ export interface operations {
             };
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -3686,12 +4375,12 @@ export interface operations {
             };
         };
     };
-    AccountActivity: {
+    AccountPerformanceWindow: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -3703,7 +4392,312 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DtoMemberActivityIReadOnlyListResPonse"];
+                    "application/json": components["schemas"]["DtoFxsPerfWindowResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AccountPerformanceBars: {
+        parameters: {
+            query?: {
+                fromDt?: string;
+                toDt?: string;
+            };
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsPerfBarsResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AccountActivity: {
+        parameters: {
+            query?: {
+                Cond?: components["schemas"]["OpCond"];
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+                QSlice?: number;
+                Srch?: components["schemas"]["BsonElement"][];
+                Sort?: components["schemas"]["BsonElement"][];
+                PageOff?: number;
+                ResCount?: number;
+                search?: string;
+            };
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoMemberActivityResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AccountPassword: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdTermAccountPassword"];
+                "application/json": components["schemas"]["CmdTermAccountPassword"];
+                "text/json": components["schemas"]["CmdTermAccountPassword"];
+                "application/*+json": components["schemas"]["CmdTermAccountPassword"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoOperationQueuedResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AccountOperations: {
+        parameters: {
+            query?: {
+                Cond?: components["schemas"]["OpCond"];
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+                QSlice?: number;
+                Srch?: components["schemas"]["BsonElement"][];
+                Sort?: components["schemas"]["BsonElement"][];
+                PageOff?: number;
+                ResCount?: number;
+            };
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoApiTermOperationResPaged"];
                 };
             };
             /** @description Bad Request */
@@ -4093,16 +5087,16 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
         requestBody?: {
             content: {
-                "application/json-patch+json": components["schemas"]["CmdFxsPreInfo"];
-                "application/json": components["schemas"]["CmdFxsPreInfo"];
-                "text/json": components["schemas"]["CmdFxsPreInfo"];
-                "application/*+json": components["schemas"]["CmdFxsPreInfo"];
+                "application/json-patch+json": components["schemas"]["CmdApiFxsPreInfo"];
+                "application/json": components["schemas"]["CmdApiFxsPreInfo"];
+                "text/json": components["schemas"]["CmdApiFxsPreInfo"];
+                "application/*+json": components["schemas"]["CmdApiFxsPreInfo"];
             };
         };
         responses: {
@@ -4162,6 +5156,82 @@ export interface operations {
             };
         };
     };
+    AccountTradeMake: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdApiFxsOrdrMake"];
+                "application/json": components["schemas"]["CmdApiFxsOrdrMake"];
+                "text/json": components["schemas"]["CmdApiFxsOrdrMake"];
+                "application/*+json": components["schemas"]["CmdApiFxsOrdrMake"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsAccountStateResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
     AccountTradeHedgeMake: {
         parameters: {
             query?: never;
@@ -4169,16 +5239,16 @@ export interface operations {
                 "Idempotency-Key"?: string;
             };
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
         requestBody?: {
             content: {
-                "application/json-patch+json": components["schemas"]["CmdFxsHedgeMake"];
-                "application/json": components["schemas"]["CmdFxsHedgeMake"];
-                "text/json": components["schemas"]["CmdFxsHedgeMake"];
-                "application/*+json": components["schemas"]["CmdFxsHedgeMake"];
+                "application/json-patch+json": components["schemas"]["CmdApiFxsHedgeMake"];
+                "application/json": components["schemas"]["CmdApiFxsHedgeMake"];
+                "text/json": components["schemas"]["CmdApiFxsHedgeMake"];
+                "application/*+json": components["schemas"]["CmdApiFxsHedgeMake"];
             };
         };
         responses: {
@@ -4245,7 +5315,7 @@ export interface operations {
                 "Idempotency-Key"?: string;
             };
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -4319,7 +5389,7 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -4395,7 +5465,7 @@ export interface operations {
                 "Idempotency-Key"?: string;
             };
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -4464,7 +5534,7 @@ export interface operations {
                 "Idempotency-Key"?: string;
             };
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -4533,7 +5603,7 @@ export interface operations {
                 "Idempotency-Key"?: string;
             };
             path: {
-                accountId: string;
+                acno: number;
             };
             cookie?: never;
         };
@@ -4595,14 +5665,405 @@ export interface operations {
             };
         };
     };
-    AccountRemove: {
+    Pairs: {
+        parameters: {
+            query?: {
+                Cond?: components["schemas"]["OpCond"];
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+                QSlice?: number;
+                Srch?: components["schemas"]["BsonElement"][];
+                Sort?: components["schemas"]["BsonElement"][];
+                PageOff?: number;
+                ResCount?: number;
+                acno?: number;
+                demo?: boolean;
+                platform?: components["schemas"]["FxsPlatform"];
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsPairResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    Orders: {
+        parameters: {
+            query?: {
+                Cond?: components["schemas"]["OpCond"];
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+                QSlice?: number;
+                Srch?: components["schemas"]["BsonElement"][];
+                Sort?: components["schemas"]["BsonElement"][];
+                PageOff?: number;
+                ResCount?: number;
+                acno?: number;
+                prno?: number;
+                demo?: boolean;
+                platform?: components["schemas"]["FxsPlatform"];
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsOrdrResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    History: {
+        parameters: {
+            query?: {
+                Cond?: components["schemas"]["OpCond"];
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+                QSlice?: number;
+                Srch?: components["schemas"]["BsonElement"][];
+                Sort?: components["schemas"]["BsonElement"][];
+                PageOff?: number;
+                ResCount?: number;
+                acno?: number;
+                prno?: number;
+                demo?: boolean;
+                platform?: components["schemas"]["FxsPlatform"];
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsOrdhResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    Activity: {
+        parameters: {
+            query?: {
+                Cond?: components["schemas"]["OpCond"];
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+                QSlice?: number;
+                Srch?: components["schemas"]["BsonElement"][];
+                Sort?: components["schemas"]["BsonElement"][];
+                PageOff?: number;
+                ResCount?: number;
+                acno?: number;
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoMemberActivityResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    Strategies: {
         parameters: {
             query?: never;
-            header?: {
-                "Idempotency-Key"?: string;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsStgIReadOnlyListResPonse"];
+                };
             };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    Strategy: {
+        parameters: {
+            query?: never;
+            header?: never;
             path: {
-                accountId: string;
+                isno: number;
             };
             cookie?: never;
         };
@@ -4614,7 +6075,287 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DtoOperationQueuedResPonse"];
+                    "application/json": components["schemas"]["DtoFxsStgResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    Signals: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoShelfSignalsResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    Alerts: {
+        parameters: {
+            query?: {
+                Cond?: components["schemas"]["OpCond"];
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+                QSlice?: number;
+                Srch?: components["schemas"]["BsonElement"][];
+                Sort?: components["schemas"]["BsonElement"][];
+                PageOff?: number;
+                ResCount?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoMemberActivityResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    Stream: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["ObjectResPonse"];
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["ObjectResPonse"];
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["ObjectResPonse"];
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["ObjectResPonse"];
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["ProblemDetails"];
+                    "application/json": components["schemas"]["ProblemDetails"];
+                };
+            };
+        };
+    };
+    Brokers: {
+        parameters: {
+            query?: {
+                query?: string;
+                platform?: string;
+                demosOnly?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoBrokerServerSearchIReadOnlyListResPonse"];
                 };
             };
             /** @description Bad Request */

@@ -1,6 +1,7 @@
 # @bizjaya/finclient
 
-The official TypeScript SDK for FinCopy's public `/v1` API. It supports Node.js 18 and later, with ESM and CommonJS builds.
+The official TypeScript SDK for FinCopy's public API, `https://api.fincopy.pro`. Version 0.2.0 uses numeric ACNO account
+paths under `/v1/fxs`.
 
 ```sh
 npm install @bizjaya/finclient
@@ -11,33 +12,35 @@ import { FinClient } from "@bizjaya/finclient";
 
 const fin = new FinClient({ apiKey: process.env.FINCOPY_API_KEY! });
 const accounts = await fin.copy.accounts.list();
-for (const account of accounts) console.log(account.Fleet?.Account?.Id, account.Fleet?.Account?.Login);
+for (const account of accounts.items) console.log(account.Fleet?.Account?.ACNO, account.Fleet?.Account?.Login);
 
-// Read what changed since the saved cursor, one page at a time; save the cursor after each page.
-let cursor: string | undefined = loadSavedCursor();
-for await (const page of fin.copy.changes.readPages(cursor)) {
-  for (const change of page.Changes ?? []) console.log(change.Entity, change.AccountId, change.OID, change.Status);
-  if (page.Cursor) saveCursor(page.Cursor);
-}
+// ACNO is in the route; the JSON body contains only trade fields.
+// await fin.copy.orders.make(52014125, { SYM: "EURUSD", LOT: 0.01 });
 ```
 
-`loadSavedCursor` and `saveCursor` stand for your own storage. The first call without a cursor starts at "now".
+The client defaults to `https://api.fincopy.pro`. Account-scoped methods take the numeric ACNO, and paged list methods
+return `{ items, paging, ... }`. DTO fields keep the API's PascalCase names. The `copy.accounts`, `copy.orders`, and
+`copy.fx` resources cover account settings and lifecycle, pairs, symbols, quotes, orders, history, trade actions, DCA,
+performance, activity, terminal operations, cross-account lists, strategies, signals, alerts, brokers and the live event
+stream. `copy.changes` and `copy.webhooks` expose the change feed and webhook setup.
 
-A failed call throws `FinApiError` with `statusCode`, FinCopy's `code`, `errors`, and, when the SDK set it, `errorCode`
-(`timeout`, `network`, `rate_limited`, `invalid_response` or `empty_response`) and `retryAfterMs`. Calls are retried on
-rate limits, gateway errors and network failures, honouring the API's `Retry-After`.
+For a signed-in member session, omit `apiKey` and pass a `fetch` implementation that sends the session cookie. The session
+mode defaults to `credentials: "include"`:
 
-The client is server-side only. Do not put an API key in browser JavaScript, a mobile application, a public repository, or a
-client-side environment variable. FinCopy's envelope is handled by the client; DTO fields keep the API's PascalCase wire names.
-Writes automatically carry an `Idempotency-Key`, which can be supplied explicitly in the request options when a caller needs
-to retry the same operation later. Orders complete asynchronously; use the change feed or webhook to learn their result.
+```ts
+const fin = new FinClient({ fetch: sessionFetch, credentials: "include" });
+const account = await fin.copy.accounts.get(52014125);
+```
 
-The API key grants the permissions assigned to that key. Store it as a server secret and give it only the permissions the
-application needs.
+API-key mode is for trusted server-side code. Do not put an API key in browser JavaScript, a mobile app, a public repository,
+or a client-side environment variable. Session trade writes pass the member's trade-PIN gate on the server.
 
-See [FinCopy API docs](https://fincopy.io/docs) and the [FinClient source](https://github.com/bizjaya/FinClient). The
-[QuickStart](./examples/QuickStart.ts) example lists accounts and reads the change feed; its order call is commented out
-because it places a trade.
+Trade calls report that an operation was queued; follow the stream, change feed or webhook for its terminal result. Errors
+are raised as `FinApiError` with HTTP status, API code, validation errors, and any `Retry-After` value. Retries reuse the
+same `Idempotency-Key`.
+
+See the [FinCopy API docs](https://fincopy.io/docs), the [QuickStart](./examples/QuickStart.ts), and the
+[FinClient source](https://github.com/bizjaya/FinClient).
 
 ## Build from source
 

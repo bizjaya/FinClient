@@ -30,7 +30,8 @@ public sealed class FinClient : IDisposable
     }
 
     /// <summary>
-    /// Creates a client around a caller-owned <see cref="HttpClient"/>, which it never disposes. That client's own
+    /// Creates a client around a caller-owned <see cref="HttpClient"/>, which it never disposes. Set <see cref="FinClientOptions.ApiKey"/>
+    /// for API-key access, or configure this client to send the signed-in member session cookie. That client's own
     /// <see cref="HttpClient.Timeout"/> applies as well as <see cref="FinClientOptions.Timeout"/>.
     /// </summary>
     public FinClient(FinClientOptions options, HttpClient httpClient)
@@ -38,7 +39,7 @@ public sealed class FinClient : IDisposable
         if (options is null) throw new ArgumentNullException(nameof(options));
         _http = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         _ownsHttp = false;
-        Transport = new FinHttpTransport(_http, options);
+        Transport = new FinHttpTransport(_http, options, allowSession: true);
         Copy = new FinCopyResource(Transport);
     }
 

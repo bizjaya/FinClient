@@ -55,9 +55,9 @@ public sealed class FinPageQuery
     /// <summary>Search across the endpoint's searchable fields.</summary>
     public string? Search { get; set; }
     /// <summary>Sort clauses in the FinCopy page-query format.</summary>
-    public IReadOnlyList<string>? SortBy { get; set; }
+    public IReadOnlyList<IReadOnlyList<string>>? SortBy { get; set; }
     /// <summary>Field/operator/value clauses in the FinCopy page-query format.</summary>
-    public IReadOnlyList<string>? SrchBy { get; set; }
+    public IReadOnlyList<IReadOnlyList<string>>? SrchBy { get; set; }
     /// <summary>Optional response fields requested by the endpoint.</summary>
     public IReadOnlyList<string>? Include { get; set; }
 
@@ -75,7 +75,7 @@ public sealed class FinPageQuery
         Add("search", Search);
         AddMany("SortBy", SortBy);
         AddMany("SrchBy", SrchBy);
-        AddMany("Include", Include);
+        if (Include is not null) foreach (var include in Include) Add("Include", include);
         return pairs.Count == 0 ? "" : "?" + string.Join("&", pairs);
 
         void Add(string key, string? value)
@@ -83,10 +83,12 @@ public sealed class FinPageQuery
             if (value is not null) pairs.Add(Uri.EscapeDataString(key) + "=" + Uri.EscapeDataString(value));
         }
 
-        void AddMany(string key, IReadOnlyList<string>? values)
+        void AddMany(string key, IReadOnlyList<IReadOnlyList<string>>? values)
         {
             if (values is null) return;
-            foreach (var value in values) Add(key, value);
+            for (var i = 0; i < values.Count; i++)
+            for (var j = 0; j < values[i].Count; j++)
+                Add($"{key}[{i}][{j}]", values[i][j]);
         }
     }
 }

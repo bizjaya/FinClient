@@ -14,20 +14,22 @@ describe("FinClient", () => {
     const fetch = vi.fn<typeof globalThis.fetch>(async (_input, init) => {
       const headers = new Headers(init?.headers);
       expect(headers.get("X-Api-Key")).toBe("example-key");
-      return json([{ Fleet: { Account: { Login: "52014125" } }, State: { ACNO: 52014125, Snapshot: { Balance: 100.5 } } }]);
+      return json([{ Fleet: { Account: { ACNO: 52014125, Login: "52014125" } }, State: { ACNO: 52014125, Snapshot: { Balance: 100.5 } } }]);
     });
     const client = new FinClient({ apiKey: "example-key", fetch });
     const accounts = await client.copy.accounts.list();
 
-    expect(accounts[0]?.Fleet?.Account?.Login).toBe("52014125");
-    expect(accounts[0]?.State?.ACNO).toBe(52014125);
-    expect(accounts[0]?.State?.Snapshot?.Balance).toBe(100.5);
+    expect(accounts.items[0]?.Fleet?.Account?.Login).toBe("52014125");
+    expect(accounts.items[0]?.State?.ACNO).toBe(52014125);
+    expect(accounts.items[0]?.State?.Snapshot?.Balance).toBe(100.5);
   });
 
   it("keeps the same Idempotency-Key and PascalCase body across a retry", async () => {
     const requests: RequestInit[] = [];
+    const urls: string[] = [];
     const delays: number[] = [];
-    const fetch = vi.fn<typeof globalThis.fetch>(async (_input, init) => {
+    const fetch = vi.fn<typeof globalThis.fetch>(async (input, init) => {
+      urls.push(String(input));
       requests.push(init ?? {});
       return requests.length === 1
         ? new Response("{}", { status: 503, headers: { "Retry-After": "2" } })
@@ -35,12 +37,13 @@ describe("FinClient", () => {
     });
     const client = new FinClient({ apiKey: "example-key", fetch, retryDelay: async ms => { delays.push(ms); }, random: () => 0.5 });
 
-    await client.copy.orders.make("account/a", { ACNO: 7, SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.05 }, { idempotencyKey: "stable-write" });
+    await client.copy.orders.make(52014125, { SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.05 }, { idempotencyKey: "stable-write" });
 
     expect(requests).toHaveLength(2);
     expect(new Headers(requests[0]?.headers).get("Idempotency-Key")).toBe("stable-write");
     expect(new Headers(requests[1]?.headers).get("Idempotency-Key")).toBe("stable-write");
-    expect(JSON.parse(String(requests[1]?.body))).toEqual({ ACNO: 7, SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.05 });
+    expect(new URL(urls[1]!).pathname).toBe("/v1/fxs/accounts/52014125/trade");
+    expect(JSON.parse(String(requests[1]?.body))).toEqual({ SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.05 });
     expect(delays).toEqual([2000]);
   });
 
@@ -52,7 +55,7 @@ describe("FinClient", () => {
     });
     const client = new FinClient({ apiKey: "example-key", fetch });
 
-    await client.copy.accounts.start("account-1");
+    await client.copy.accounts.start(52014125);
     expect(idempotencyKey).toMatch(/^[0-9a-f-]{36}$/i);
   });
 
@@ -92,11 +95,21 @@ describe("FinClient", () => {
     });
     const client = new FinClient({ apiKey: "example-key", fetch });
 
-    const page = await client.copy.accounts.listPairs("acct", { PageNo: 2, PageSize: 1, Search: "EUR USD" });
+    const page = await client.copy.accounts.pairs(52014125, { PageNo: 2, PageSize: 1, Search: "EUR USD" });
     expect(new URL(requested).searchParams.get("PageNo")).toBe("2");
     expect(new URL(requested).searchParams.get("search")).toBe("EUR USD");
     expect(page.items[0]?.PRNO).toBe(9);
     expect(page.paging?.resCount).toBe(4);
+  });
+
+  it("uses the member session with a caller-supplied fetch", async () => {
+    let requestInit: RequestInit | undefined;
+    const fetch = vi.fn<typeof globalThis.fetch>(async (_input, init) => { requestInit = init; return json({ State: { ACNO: 52014125 } }); });
+    const client = new FinClient({ fetch });
+    await client.copy.accounts.get(52014125);
+
+    expect(new Headers(requestInit?.headers).has("X-Api-Key")).toBe(false);
+    expect(requestInit?.credentials).toBe("include");
   });
 
   it("follows change-feed cursors until More is false", async () => {

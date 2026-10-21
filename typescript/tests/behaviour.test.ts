@@ -64,7 +64,7 @@ describe("retries and errors", () => {
       init?.signal?.addEventListener("abort", () => reject(init.signal?.reason));
       controller.abort(new Error("stopped by caller"));
     }));
-    await expect(client(fetch).copy.accounts.list({ signal: controller.signal })).rejects.toThrow("stopped by caller");
+    await expect(client(fetch).copy.accounts.list({}, undefined, { signal: controller.signal })).rejects.toThrow("stopped by caller");
   });
 
   it("maps a gateway HTML page to FinApiError", async () => {
@@ -82,21 +82,21 @@ describe("requests", () => {
   it("leaves unset fields out of the body", async () => {
     let body = "";
     const fetch = vi.fn<typeof globalThis.fetch>(async (_input, init) => { body = String(init?.body); return json(true); });
-    await client(fetch).copy.orders.make("a", { ACNO: 7, SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: null } as never);
-    expect(JSON.parse(body)).toEqual({ ACNO: 7, SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY" });
+    await client(fetch).copy.orders.make(52014125, { SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: null } as never);
+    expect(JSON.parse(body)).toEqual({ SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY" });
   });
 
   it("refuses an idempotency key the server would refuse", async () => {
     const fetch = vi.fn<typeof globalThis.fetch>(async () => json(true));
-    await expect(client(fetch).copy.accounts.start("a", { idempotencyKey: "x".repeat(121) })).rejects.toBeInstanceOf(TypeError);
-    await expect(client(fetch).copy.accounts.start("a", { idempotencyKey: "bad\nkey" })).rejects.toBeInstanceOf(TypeError);
+    await expect(client(fetch).copy.accounts.start(52014125, { idempotencyKey: "x".repeat(121) })).rejects.toBeInstanceOf(TypeError);
+    await expect(client(fetch).copy.accounts.start(52014125, { idempotencyKey: "bad\nkey" })).rejects.toBeInstanceOf(TypeError);
     expect(fetch).not.toHaveBeenCalled();
   });
 
   it("passes an enum value it does not know through unchanged", async () => {
     const fetch = vi.fn<typeof globalThis.fetch>(async () => json([{ State: { ACNO: 1, Status: "SOMETHING_NEW" } }]));
     const accounts = await client(fetch).copy.accounts.list();
-    expect((accounts[0]?.State as Record<string, unknown>)["Status"]).toBe("SOMETHING_NEW");
+    expect((accounts.items[0]?.State as Record<string, unknown>)["Status"]).toBe("SOMETHING_NEW");
   });
 });
 
