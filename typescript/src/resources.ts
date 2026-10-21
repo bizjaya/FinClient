@@ -1,15 +1,15 @@
 import { readAllChanges, readChangePages, type FinChangeFeedPage } from "./change-feed.js";
 import type { FinRequestOptions } from "./options.js";
-import { FinHttpTransport, type FinPage, type FinPageInfo, type FinStreamEvent } from "./http-transport.js";
+import { FinHttpTransport, type FinPage, type FinPageInfo } from "./http-transport.js";
+import type { FinStreamEvent } from "./sse.js";
 import type { FinCopyDto, FinCopySchemas, FinResponseData } from "./types.js";
 
 type D<K extends keyof FinCopySchemas> = FinResponseData<K>;
 type CopyDto<K extends keyof FinCopySchemas> = FinCopyDto<K>;
 
-/** Common paging, sorting and search inputs. */
+/** Paging and search inputs for FinCopy lists. */
 export interface FinPageQuery {
-  PageNo?: number; PageSize?: number; PageOff?: number; IsAsc?: boolean;
-  SortCol?: string; SortDir?: string; SrchCol?: string; SrchVal?: string; Search?: string;
+  PageNo?: number; PageSize?: number; Search?: string;
   SortBy?: readonly (readonly string[])[]; SrchBy?: readonly (readonly string[])[]; Include?: readonly string[];
 }
 
@@ -20,9 +20,12 @@ export interface FinFxsListQuery {
 
 export interface FinPerformanceQuery extends FinRequestOptions { fromDt?: string | Date; toDt?: string | Date }
 
+/** The cross-account performance reading: every reachable account, or one with `acno`; `demo` picks demo or real. */
+export interface FinFxsPerformanceQuery extends FinPerformanceQuery { acno?: number; demo?: boolean }
+
 function pageQuery(query: FinPageQuery = {}): string {
   const params = new URLSearchParams();
-  for (const key of ["PageNo", "PageSize", "PageOff", "IsAsc", "SortCol", "SortDir", "SrchCol", "SrchVal"] as const) {
+  for (const key of ["PageNo", "PageSize"] as const) {
     const value = query[key];
     if (value !== undefined) params.append(key, String(value));
   }
@@ -155,6 +158,14 @@ export class AccountsResource {
   activity(acno: number, page: FinPageQuery = {}, search?: string, options: FinRequestOptions = {}): Promise<FinPage<CopyDto<"DtoMemberActivity">>> {
     return this.http.requestPage("GET", queryPath(`${accountPath(acno)}/activity`, page, { search }), options);
   }
+  /** Previews applying a strategy (the account owner's or a FinCopy preset): what each symbol would change. Nothing changes. */
+  previewStrategy(acno: number, command: CopyDto<"CmdApiFxsStgApply">, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgCascadePreviewResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/strategy/preview`, command, options);
+  }
+  /** Applies a strategy to the account and its symbols; a side holding orders keeps what it must keep. */
+  applyStrategy(acno: number, command: CopyDto<"CmdApiFxsStgApply">, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgCascadeApplyResultResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/strategy/apply`, command, options);
+  }
   /** Lists recent terminal operations. */
   operations(acno: number, page: FinPageQuery = {}, options: FinRequestOptions = {}): Promise<FinPage<CopyDto<"DtoApiTermOperation">>> {
     return this.http.requestPage("GET", queryPath(`${accountPath(acno)}/operations`, page), options);
@@ -226,13 +237,42 @@ export class FxResource {
   activity(query: FinFxsListQuery = {}, options: FinRequestOptions = {}): Promise<FinPage<CopyDto<"DtoMemberActivity">>> {
     return this.http.requestPage("GET", listPath("v1/fxs/activity", query), options);
   }
-  /** Lists member strategies. */
-  strategies(options: FinRequestOptions = {}): Promise<D<"DtoFxsStgIReadOnlyListResPonse">> {
-    return this.http.request("GET", "v1/fxs/strategies", undefined, options);
+  /** HYBRID DCA proposals waiting for an answer across reachable accounts, newest first. */
+  dca(acno?: number, options: FinRequestOptions = {}): Promise<D<"DtoFxsOrdrIReadOnlyListResPonse">> {
+    return this.http.request("GET", queryPath("v1/fxs/dca", undefined, { acno }), undefined, options);
+  }
+  /** The newest terminal operations across reachable accounts. */
+  operations(page: FinPageQuery = {}, acno?: number, options: FinRequestOptions = {}): Promise<FinPage<CopyDto<"DtoApiTermOperation">>> {
+    return this.http.requestPage("GET", queryPath("v1/fxs/operations", page, { acno }), options);
+  }
+  /** The last 30 days by currency book across reachable accounts. */
+  performanceWindow(query: FinFxsPerformanceQuery = {}): Promise<D<"DtoFxsPerfWindowResPonse">> {
+    return this.http.request("GET", queryPath("v1/fxs/performance/window", undefined, { acno: query.acno, demo: query.demo }), undefined, query);
+  }
+  /** Daily performance bars across reachable accounts for an optional UTC date range. */
+  performanceBars(query: FinFxsPerformanceQuery = {}): Promise<D<"DtoFxsPerfBarsResPonse">> {
+    return this.http.request("GET", queryPath("v1/fxs/performance/bars", undefined,
+      { acno: query.acno, demo: query.demo, ...dateFilters(query) }), undefined, query);
+  }
+  /** Lists the strategies you can apply: your own and FinCopy's presets; with `acno`, that account owner's. */
+  strategies(acno?: number, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgIReadOnlyListResPonse">> {
+    return this.http.request("GET", queryPath("v1/fxs/strategies", undefined, { acno }), undefined, options);
   }
   /** Reads one strategy. */
   strategy(isno: number, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgResPonse">> {
-    return this.http.request("GET", `v1/fxs/strategies/${numericId(isno, "isno")}`, undefined, options);
+    return this.http.request("GET", strategyPath(isno), undefined, options);
+  }
+  /** Creates one of your own strategies. */
+  makeStrategy(command: CopyDto<"CmdFxsStgMake">, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgResPonse">> {
+    return this.http.request("POST", "v1/fxs/strategies", command, options);
+  }
+  /** Changes one of your own strategies; fields left unset keep their values. */
+  patchStrategy(isno: number, command: CopyDto<"CmdFxsStgPatch">, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgResPonse">> {
+    return this.http.request("PATCH", strategyPath(isno), command, options);
+  }
+  /** Deletes one of your own strategies. */
+  deleteStrategy(isno: number, options: FinRequestOptions = {}): Promise<D<"BooleanResPonse">> {
+    return this.http.request("DELETE", strategyPath(isno), undefined, options);
   }
   /** Reads the signals shown for enabled symbols. */
   signals(options: FinRequestOptions = {}): Promise<D<"DtoShelfSignalsResPonse">> {
@@ -242,7 +282,10 @@ export class FxResource {
   alerts(page: FinPageQuery = {}, options: FinRequestOptions = {}): Promise<FinPage<CopyDto<"DtoMemberActivity">>> {
     return this.http.requestPage("GET", queryPath("v1/fxs/alerts", page), options);
   }
-  /** Opens the live server-sent event stream. */
+  /**
+   * Opens the live event stream for reachable accounts. It does not reconnect: it ends when the server closes it (about
+   * every 30 minutes) or the connection breaks, so open it again in a loop, waiting a few seconds between attempts.
+   */
   stream(options: FinRequestOptions = {}): AsyncGenerator<FinStreamEvent, void, undefined> {
     return this.http.requestEvents("v1/fxs/stream", options);
   }
@@ -296,6 +339,8 @@ export class WebhooksResource {
 }
 
 export type { FinPageInfo, FinStreamEvent };
+
+function strategyPath(isno: number): string { return `v1/fxs/strategies/${numericId(isno, "isno")}`; }
 
 function listPath(path: string, query: FinFxsListQuery): string {
   return queryPath(path, query.page, { acno: query.acno, prno: query.prno, demo: query.demo, platform: query.platform, search: query.search });

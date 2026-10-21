@@ -20,13 +20,6 @@
         "operationId": "AccountList",
         "parameters": [
           {
-            "name": "Cond",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/OpCond"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -48,6 +41,20 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -84,50 +91,6 @@
               "items": {
                 "type": "string"
               }
-            }
-          },
-          {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ResCount",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           },
           {
@@ -952,14 +915,6 @@
             }
           },
           {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -992,49 +947,6 @@
           },
           {
             "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "IsAsc",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "SortCol",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SortDir",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SrchCol",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SrchVal",
             "in": "query",
             "schema": {
               "type": "string"
@@ -1367,14 +1279,6 @@
             }
           },
           {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -1407,49 +1311,6 @@
           },
           {
             "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "IsAsc",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "SortCol",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SortDir",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SrchCol",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SrchVal",
             "in": "query",
             "schema": {
               "type": "string"
@@ -1670,14 +1531,6 @@
             }
           },
           {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -1710,49 +1563,6 @@
           },
           {
             "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "IsAsc",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "SortCol",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SortDir",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SrchCol",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SrchVal",
             "in": "query",
             "schema": {
               "type": "string"
@@ -2716,13 +2526,6 @@
             }
           },
           {
-            "name": "Cond",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/OpCond"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -2744,6 +2547,20 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -2780,50 +2597,6 @@
               "items": {
                 "type": "string"
               }
-            }
-          },
-          {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ResCount",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           },
           {
@@ -3020,13 +2793,6 @@
             }
           },
           {
-            "name": "Cond",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/OpCond"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -3048,6 +2814,20 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -3084,50 +2864,6 @@
               "items": {
                 "type": "string"
               }
-            }
-          },
-          {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ResCount",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           }
         ],
@@ -3289,7 +3025,7 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "This key's webhook, if one is set (the secret is never shown again).",
+        "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\r\n            so a member session cannot call it.",
         "operationId": "WebhookView",
         "responses": {
           "400": {
@@ -3358,7 +3094,7 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\r\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\r\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\r\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\r\n            the webhook again makes a new secret and restarts it from now. Needs the Trade permission.",
+        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\r\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\r\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\r\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\r\n            the webhook again makes a new secret and restarts it from now. API key only, with the Trade permission.",
         "operationId": "WebhookSet",
         "requestBody": {
           "content": {
@@ -3451,7 +3187,7 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "Remove this key's webhook. Needs the Trade permission.",
+        "summary": "Remove this key's webhook. API key only, with the Trade permission.",
         "operationId": "WebhookVoid",
         "responses": {
           "400": {
@@ -3522,7 +3258,7 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "Send a signed test POST (event \"ping\") to this key's webhook. Needs the Trade permission.",
+        "summary": "Send a signed test POST (event \"ping\") to this key's webhook. API key only, with the Trade permission.",
         "operationId": "WebhookPing",
         "responses": {
           "400": {
@@ -3593,7 +3329,7 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings.",
+        "summary": "The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings. For a signed-in\r\n            member session it also says whether the account owner's trade PIN must be entered (a key never needs one).",
         "operationId": "AccountTradePreInfo",
         "parameters": [
           {
@@ -4134,6 +3870,216 @@
         }
       }
     },
+    "/v1/fxs/accounts/{acno}/strategy/preview": {
+      "post": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\r\n            one of the account owner's or a FinCopy preset (list them with the strategies route and this ACNO).\r\n            Needs the Trade permission on the account.",
+        "operationId": "AccountStrategyPreview",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsStgApply"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsStgApply"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsStgApply"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsStgApply"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgCascadePreviewResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/strategy/apply": {
+      "post": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "Apply a strategy (the account owner's or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\r\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. Needs the Trade\r\n            permission on the account.",
+        "operationId": "AccountStrategyApply",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsStgApply"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsStgApply"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsStgApply"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsStgApply"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgCascadeApplyResultResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/fxs/accounts/{acno}/start": {
       "post": {
         "tags": [
@@ -4407,13 +4353,6 @@
         "operationId": "Pairs",
         "parameters": [
           {
-            "name": "Cond",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/OpCond"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -4435,6 +4374,20 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -4471,50 +4424,6 @@
               "items": {
                 "type": "string"
               }
-            }
-          },
-          {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ResCount",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           },
           {
@@ -4620,13 +4529,6 @@
         "operationId": "Orders",
         "parameters": [
           {
-            "name": "Cond",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/OpCond"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -4648,6 +4550,20 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -4684,50 +4600,6 @@
               "items": {
                 "type": "string"
               }
-            }
-          },
-          {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ResCount",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           },
           {
@@ -4841,13 +4713,6 @@
         "operationId": "History",
         "parameters": [
           {
-            "name": "Cond",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/OpCond"
-            }
-          },
-          {
             "name": "PageNo",
             "in": "query",
             "schema": {
@@ -4869,6 +4734,20 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -4905,50 +4784,6 @@
               "items": {
                 "type": "string"
               }
-            }
-          },
-          {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ResCount",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           },
           {
@@ -5058,16 +4893,9 @@
         "tags": [
           "Api_Fxs"
         ],
-        "summary": "Lists activity across accounts the caller can reach.",
+        "summary": "Lists activity across accounts the caller can reach, newest first.",
         "operationId": "Activity",
         "parameters": [
-          {
-            "name": "Cond",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/OpCond"
-            }
-          },
           {
             "name": "PageNo",
             "in": "query",
@@ -5090,6 +4918,20 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -5126,50 +4968,6 @@
               "items": {
                 "type": "string"
               }
-            }
-          },
-          {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ResCount",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           },
           {
@@ -5252,13 +5050,451 @@
         }
       }
     },
+    "/v1/fxs/dca": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "HYBRID DCA proposals waiting for an answer, across accounts the caller can reach, newest first. For a signed-in\r\n            member session each row says whether the account owner's trade PIN must be entered to answer it.",
+        "operationId": "Dca",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/operations": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "The newest terminal operations (start, stop, restart, set-up, removal) across accounts the caller can reach,\r\n            newest first.",
+        "operationId": "Operations",
+        "parameters": [
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/performance/window": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "The last 30 days by currency book (real and demo apart) across accounts the caller can reach: equity, today's\r\n            change, realised profit, 7- and 30-day growth, and each account's share. `acno` narrows it to one account;\r\n            `demo` to demo (true) or real (false) accounts.",
+        "operationId": "PerformanceWindow",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "demo",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/performance/bars": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Daily performance bars across accounts the caller can reach, per account and per currency book, between two\r\n            dates (UTC). `acno` narrows it to one account; `demo` to demo (true) or real (false) accounts.",
+        "operationId": "PerformanceBars",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "demo",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "fromDt",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDt",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/fxs/strategies": {
       "get": {
         "tags": [
           "Api_Fxs"
         ],
-        "summary": "Lists strategies available to the signed-in member.",
+        "summary": "Lists the strategies the caller can apply: its own and FinCopy's presets. With `acno`, the strategies of\r\n            that account's owner (the caller needs the Trade permission on that account).",
         "operationId": "Strategies",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -5316,6 +5552,99 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DtoFxsStgIReadOnlyListResPonse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Creates one of the caller's own strategies. Needs the Trade permission.",
+        "operationId": "StrategyMake",
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsStgMake"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsStgMake"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsStgMake"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsStgMake"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
                 }
               }
             }
@@ -5403,6 +5732,190 @@
             }
           }
         }
+      },
+      "patch": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Changes one of the caller's own strategies; omitted fields keep their values. FinCopy's presets cannot be\r\n            changed. Needs the Trade permission.",
+        "operationId": "StrategyPatch",
+        "parameters": [
+          {
+            "name": "isno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsStgPatch"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsStgPatch"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsStgPatch"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsStgPatch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Deletes one of the caller's own strategies. FinCopy's presets cannot be deleted. Needs the Trade permission.",
+        "operationId": "StrategyVoid",
+        "parameters": [
+          {
+            "name": "isno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResPonse"
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/v1/fxs/signals": {
@@ -5410,7 +5923,7 @@
         "tags": [
           "Api_Fxs"
         ],
-        "summary": "Reads the signals shown for the member's enabled symbols.",
+        "summary": "Reads the signals shown for the enabled symbols across accounts the caller can reach.",
         "operationId": "Signals",
         "responses": {
           "400": {
@@ -5481,16 +5994,9 @@
         "tags": [
           "Api_Fxs"
         ],
-        "summary": "Lists warning and error activity for the member.",
+        "summary": "Lists warning and error activity across accounts the caller can reach.",
         "operationId": "Alerts",
         "parameters": [
-          {
-            "name": "Cond",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/OpCond"
-            }
-          },
           {
             "name": "PageNo",
             "in": "query",
@@ -5513,6 +6019,20 @@
             "schema": {
               "type": "integer",
               "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -5549,50 +6069,6 @@
               "items": {
                 "type": "string"
               }
-            }
-          },
-          {
-            "name": "QSlice",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "Srch",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "Sort",
-            "in": "query",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/BsonElement"
-              }
-            }
-          },
-          {
-            "name": "PageOff",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
-          {
-            "name": "ResCount",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
             }
           }
         ],
@@ -5665,7 +6141,7 @@
         "tags": [
           "Api_Fxs"
         ],
-        "summary": "Opens a server-sent event stream for changes visible to the member.",
+        "summary": "A server-sent event stream of changes on the accounts the caller can reach. Each caller holds up to eight\r\n            streams; a ninth closes the oldest.",
         "operationId": "Stream",
         "responses": {
           "400": {
@@ -5733,12 +6209,12 @@
             "content": {
               "text/event-stream": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ObjectResPonse"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
+                  "$ref": "#/components/schemas/ObjectResPonse"
                 }
               }
             }
@@ -5894,20 +6370,6 @@
           "Retired"
         ],
         "type": "string"
-      },
-      "BsonElement": {
-        "type": "object",
-        "properties": {
-          "Name": {
-            "type": "string",
-            "nullable": true
-          },
-          "Value": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       },
       "CmdApiFxsAcctPatch": {
         "type": "object",
@@ -6132,6 +6594,17 @@
         "additionalProperties": false,
         "description": "Public trade preflight request. Account identity comes from the ACNO route."
       },
+      "CmdApiFxsStgApply": {
+        "type": "object",
+        "properties": {
+          "ISNO": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Apply one of the member's strategies to the account in the route (preview or apply)."
+      },
       "CmdApiWebhookSet": {
         "type": "object",
         "properties": {
@@ -6229,6 +6702,87 @@
           "TrPin": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CmdFxsStgMake": {
+        "type": "object",
+        "properties": {
+          "StratName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RiskLev": {
+            "$ref": "#/components/schemas/FxsRiskLev"
+          },
+          "En": {
+            "type": "boolean"
+          },
+          "EnAvg": {
+            "type": "boolean"
+          },
+          "Virtual": {
+            "type": "boolean"
+          },
+          "SigMode": {
+            "$ref": "#/components/schemas/TMode"
+          },
+          "DCACooloffMins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EnDcaGate": {
+            "type": "boolean"
+          },
+          "ACCSTG": {
+            "$ref": "#/components/schemas/DtoFxsStgAccStg"
+          },
+          "SYMSTG": {
+            "$ref": "#/components/schemas/DtoFxsStgSymStg"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CmdFxsStgPatch": {
+        "type": "object",
+        "properties": {
+          "StratName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RiskLev": {
+            "$ref": "#/components/schemas/FxsRiskLev"
+          },
+          "En": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "EnAvg": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "Virtual": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "SigMode": {
+            "$ref": "#/components/schemas/TMode"
+          },
+          "DCACooloffMins": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "EnDcaGate": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "ACCSTG": {
+            "$ref": "#/components/schemas/DtoFxsStgAccStg"
+          },
+          "SYMSTG": {
+            "$ref": "#/components/schemas/DtoFxsStgSymStg"
           }
         },
         "additionalProperties": false
@@ -6921,7 +7475,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "T652 E — demo places that can start now (a prepared terminal and a free slot), and whether this member already\r\n            runs one (one at a time)."
+        "description": "Demo places that can start now (a prepared terminal and a free slot), and whether this member already\r\n            runs one (one at a time)."
       },
       "DtoDemoAvailabilityResPonse": {
         "type": "object",
@@ -10349,6 +10903,181 @@
         },
         "additionalProperties": false
       },
+      "DtoFxsStgCascadeApplyResult": {
+        "type": "object",
+        "properties": {
+          "ISNO": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "AccountFieldsWritten": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PairRowsChanged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PairFieldsWritten": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "BuySidesHeld": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "SellSidesHeld": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsStgCascadeApplyResultResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoFxsStgCascadeApplyResult"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsStgCascadePair": {
+        "type": "object",
+        "properties": {
+          "SYM": {
+            "type": "string",
+            "nullable": true
+          },
+          "BuyHeld": {
+            "type": "boolean"
+          },
+          "SellHeld": {
+            "type": "boolean"
+          },
+          "FieldsToWrite": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "FieldsHeld": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsStgCascadePreview": {
+        "type": "object",
+        "properties": {
+          "ISNO": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "AttachesStrategy": {
+            "type": "boolean"
+          },
+          "AccountFieldsToWrite": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Pairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsStgCascadePair"
+            },
+            "nullable": true
+          },
+          "PairCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "BuyHeldCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "SellHeldCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PairCountChanged": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsStgCascadePreviewResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoFxsStgCascadePreview"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DtoFxsStgIReadOnlyListResPonse": {
         "type": "object",
         "properties": {
@@ -11568,42 +12297,6 @@
           "Removed"
         ],
         "type": "string"
-      },
-      "OpCond": {
-        "enum": [
-          "and",
-          "or",
-          "all",
-          "in"
-        ],
-        "type": "string"
-      },
-      "ProblemDetails": {
-        "type": "object",
-        "properties": {
-          "Type": {
-            "type": "string",
-            "nullable": true
-          },
-          "Title": {
-            "type": "string",
-            "nullable": true
-          },
-          "Status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "Detail": {
-            "type": "string",
-            "nullable": true
-          },
-          "Instance": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": { }
       },
       "ResPage": {
         "type": "object",

@@ -1,7 +1,8 @@
 # FinClient for .NET
 
 FinClient is the .NET SDK for the [FinCopy public API](https://fincopy.io/docs), with a default base URL of
-`https://api.fincopy.pro`. Version 0.2.0 uses numeric ACNO paths under `/v1/fxs`.
+`https://api.fincopy.pro`. Version 0.2.0 uses numeric ACNO paths under `/v1/fxs` and changes the 0.1 API; see the
+changelog before upgrading. It targets .NET Standard 2.0 and .NET 8.
 
 ```sh
 dotnet add package FinClient
@@ -17,15 +18,19 @@ foreach (var account in accounts.Items)
     Console.WriteLine($"{account.Fleet?.Account?.ACNO} · {account.Fleet?.Account?.Login}");
 
 // The account number is in the path, not in the trade body.
-// await fin.Copy.Orders.MakeAsync(52014125, new CmdApiFxsOrdrMake { SYM = "EURUSD", LOT = 0.01 });
+// await fin.Copy.Orders.MakeAsync(52014125, new CmdApiFxsOrdrMake
+// {
+//     SYM = "EURUSD", ACT = FxsOrderAction.NEW, OTY = FxsOrderType.OP_BUY, LOT = 0.01,
+// });
 ```
 
 ## Member session
 
-Pass a caller-owned `HttpClient` configured to send the member session cookie. You may omit the API key in this mode:
+Pass a caller-owned `HttpClient` configured to send the signed-in member's `fincopy_member` session cookie, and omit the
+API key. Set `BaseUrl` when the API is not at the default address:
 
 ```csharp
-using var fin = new FinClient(new FinClientOptions(), authenticatedHttpClient);
+using var fin = new FinClient(new FinClientOptions { BaseUrl = apiRoot }, authenticatedHttpClient);
 var account = await fin.Copy.Accounts.GetAsync(52014125);
 ```
 
@@ -35,15 +40,22 @@ gate by the API. API keys remain for trusted server-side clients; never ship the
 ## Resources
 
 - `Copy.Accounts`: paged accounts, creation, settings, pairs, symbols and quotes, orders, history, DCA, performance,
-  activity and terminal operations.
-- `Copy.Orders`: trade preflight, trade, hedge, modify, cancel and DCA response.
-- `Copy.Fx`: cross-account lists, strategies and cascade preview/apply, signals, alerts, brokers and the live stream.
+  activity, strategy preview and apply, and terminal operations (start, stop, restart, remove).
+- `Copy.Orders`: trade preflight, trade, hedge, modify, cancel and DCA answers.
+- `Copy.Fx`: lists across every account you can reach (pairs, orders, history, activity, DCA, terminal operations,
+  performance window and bars), strategies (list, read, create, change, delete), signals, alerts, brokers and the event
+  stream.
 - `Copy.Changes` and `Copy.Webhooks`: change feed and webhook configuration/test delivery.
 
 Paged methods return `FinPage<T>` with `Items` and paging metadata. Generated DTO properties retain PascalCase names.
 Trade writes return when queued for the terminal; observe completion through the stream, change feed or webhook.
 
-API calls throw `FinApiException` with HTTP status, API code, message, validation errors and `RetryAfter` when present. The
+API calls throw `FinApiException` with HTTP status, API code, message, validation errors and `RetryAfter` when present, and
+an `ErrorCode` of `timeout`, `network`, `rate_limited`, `invalid_response` or `empty_response` when the SDK set one. The
 client retries rate limits and transient network/gateway errors while reusing each write's `Idempotency-Key`.
+
+`Copy.Fx.ReadStreamAsync` does not reconnect. It ends when the server closes it (about every 30 minutes); a broken
+connection throws `FinApiException` with `ErrorCode` "network". Open it again in a loop, waiting a few seconds between
+attempts. Cancelling the token ends it on every target framework.
 
 See the [QuickStart](./examples/QuickStart), [API docs](https://fincopy.io/docs), and [repository](https://github.com/bizjaya/FinClient).

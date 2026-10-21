@@ -1,5 +1,5 @@
-import { randomUUID } from "node:crypto";
 import { FinApiError } from "./api-error.js";
+import { FinSseParser, type FinStreamEvent } from "./sse.js";
 import type { FinClientOptions, FinRequestOptions } from "./options.js";
 import type { components } from "./generated/schema.js";
 
@@ -15,9 +15,6 @@ interface FinEnvelope<T> {
 
 /** The paging block of a list reply, as the API sends it (camel-case, like the rest of the envelope). */
 export type FinPageInfo = components["schemas"]["ResPage"];
-
-/** One server-sent event from the FinCopy member stream. */
-export interface FinStreamEvent { event: string; data: string }
 
 /** A paged response from a FinCopy list endpoint. DTO members retain their wire casing. */
 export interface FinPage<T> {
@@ -163,13 +160,20 @@ export class FinHttpTransport {
     };
   }
 
+  /** Reads the event stream until the server closes it or the caller aborts. It does not reconnect. */
   async *requestEvents(path: string, requestOptions: FinRequestOptions = {}): AsyncGenerator<FinStreamEvent, void, undefined> {
     const url = new URL(path.replace(/^\//, ""), `${this.baseUrl}/`);
     const headers = new Headers({ Accept: "text/event-stream" });
     if (this.apiKey) headers.set("X-Api-Key", this.apiKey);
-    const response = await this.fetcher(url, {
-      method: "GET", headers, signal: requestOptions.signal, credentials: this.credentials,
-    });
+    let response: Response;
+    try {
+      response = await this.fetcher(url, {
+        method: "GET", headers, signal: requestOptions.signal, credentials: this.credentials,
+      });
+    } catch (error) {
+      if (requestOptions.signal?.aborted) throw error;
+      throw new FinApiError(0, "The FinCopy event stream could not be opened.", null, [], { errorCode: "network", cause: error });
+    }
     if (!response.ok) {
       const raw = await response.text();
       let envelope: FinEnvelope<unknown> | null = null;
@@ -182,38 +186,29 @@ export class FinHttpTransport {
     if (!response.body) throw new FinApiError(response.status, "The FinCopy API returned an empty event stream.", null, [], { errorCode: "empty_response" });
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
+    const parser = new FinSseParser();
     let buffer = "";
-    let eventName = "message";
-    let data: string[] = [];
-    const parseLine = (line: string): FinStreamEvent | null => {
-      if (!line) {
-        const item = data.length ? { event: eventName, data: data.join("\n") } : null;
-        eventName = "message";
-        data = [];
-        return item;
-      }
-      if (line.startsWith(":")) return null;
-      const separator = line.indexOf(":");
-      const field = separator < 0 ? line : line.slice(0, separator);
-      const value = separator < 0 ? "" : line.slice(separator + 1).replace(/^ /, "");
-      if (field === "event") eventName = value;
-      else if (field === "data") data.push(value);
-      return null;
-    };
     try {
       while (true) {
         if (requestOptions.signal?.aborted) throw requestOptions.signal.reason;
-        const next = await reader.read();
+        let next: Awaited<ReturnType<typeof reader.read>>;
+        try {
+          next = await reader.read();
+        } catch (error) {
+          // The caller's own cancellation is not wrapped; a dropped connection is a network error.
+          if (requestOptions.signal?.aborted) throw error;
+          throw new FinApiError(0, "The FinCopy event stream was interrupted.", null, [], { errorCode: "network", cause: error });
+        }
         buffer += decoder.decode(next.value, { stream: !next.done });
         const lines = buffer.split(/\r?\n/);
         buffer = lines.pop() ?? "";
         for (const line of lines) {
-          const item = parseLine(line);
+          const item = parser.add(line);
           if (item) yield item;
         }
         if (next.done) {
-          if (buffer) { const item = parseLine(buffer); if (item) yield item; }
-          const final = parseLine("");
+          if (buffer) { const item = parser.add(buffer); if (item) yield item; }
+          const final = parser.complete();
           if (final) yield final;
           return;
         }
@@ -261,9 +256,30 @@ function errorsOf(errors: unknown): string[] {
 /** A caller's key is checked here (1–120 visible characters) so a bad one fails clearly instead of as a header error. */
 function idempotencyKeyOf(supplied: string | undefined): string {
   const key = supplied?.trim();
-  if (!key) return randomUUID();
+  if (!key) return newIdempotencyKey();
   if (key.length > 120 || /[\u0000-\u001f\u007f]/.test(key)) {
     throw new TypeError("idempotencyKey must be 1-120 characters without control characters.");
   }
   return key;
+}
+
+interface WebCryptoLike {
+  randomUUID?: () => string;
+  getRandomValues?: (array: Uint8Array) => Uint8Array;
+}
+
+/**
+ * A fresh key for one write. Browsers, Deno, Bun and Node 19+ have Web Crypto as a global; Node 18 does not without a
+ * flag, so the key then comes from Math.random (it only has to be unique, not secret).
+ */
+function newIdempotencyKey(): string {
+  const webCrypto = (globalThis as { crypto?: WebCryptoLike }).crypto;
+  if (typeof webCrypto?.randomUUID === "function") return webCrypto.randomUUID();
+  const bytes = new Uint8Array(16);
+  if (typeof webCrypto?.getRandomValues === "function") webCrypto.getRandomValues(bytes);
+  else for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+  bytes[6] = (bytes[6]! & 0x0f) | 0x40;
+  bytes[8] = (bytes[8]! & 0x3f) | 0x80;
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }

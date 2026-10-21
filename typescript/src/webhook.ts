@@ -1,6 +1,9 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
-/** Verifies the HMAC-SHA256 signature on a FinCopy webhook request. */
+/**
+ * Verifies the HMAC-SHA256 signature on a FinCopy webhook request. Server-side (Node.js) only, so it is its own entry,
+ * `@bizjaya/finclient/webhook`, and the main entry stays free of Node built-ins for browsers.
+ */
 export class FinWebhook {
   private static readonly allowedSkewSeconds = 300;
 
