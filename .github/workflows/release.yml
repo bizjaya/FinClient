@@ -57,7 +57,7 @@ jobs:
           heading="## $VERSION"
           line=$(awk -v h="$heading" 'index($0, h) == 1 && (length($0) == length(h) || substr($0, length(h) + 1, 1) == " ") { print; exit }' CHANGELOG.md)
           if [[ -z "$line" ]]; then echo "CHANGELOG.md has no '$heading' section." >&2; exit 1; fi
-          if [[ "$line" == *Unreleased* ]]; then echo "Date the '$heading' section in CHANGELOG.md before tagging." >&2; exit 1; fi
+          if [[ "${line,,}" == *unreleased* ]]; then echo "Date the '$heading' section in CHANGELOG.md before tagging." >&2; exit 1; fi
           awk -v h="$line" '$0 == h { found = 1; next } found && /^## / { exit } found { print }' CHANGELOG.md > "$RUNNER_TEMP/release-notes.md"
           test -s "$RUNNER_TEMP/release-notes.md"
 
