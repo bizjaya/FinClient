@@ -20,6 +20,11 @@ updates:
     directory: /typescript
     schedule:
       interval: weekly
+    ignore:
+      # openapi-typescript, which generates the SDK's types, accepts TypeScript 5 only; a TypeScript major cannot install
+      # beside it. Lift this when openapi-typescript supports the next major.
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
     groups:
       dev-tools:
         dependency-type: development
