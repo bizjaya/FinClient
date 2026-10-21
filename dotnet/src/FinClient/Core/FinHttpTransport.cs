@@ -69,53 +69,70 @@ internal sealed class FinHttpTransport
             envelope.Message, ErrorStrings(envelope.Errors), envelope.Chksum);
     }
 
+    /// <summary>
+    /// Reads the server-sent event stream until the server closes it or the caller cancels. It does not reconnect: a closed
+    /// or broken stream ends the enumeration (broken: a <see cref="FinApiException"/> with <c>ErrorCode</c> "network").
+    /// </summary>
     public async IAsyncEnumerable<FinStreamEvent> ReadServerSentEventsAsync(string path,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
-        var requestUri = new Uri(_baseUri, path.TrimStart('/'));
-        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
-        if (!string.IsNullOrWhiteSpace(_options.ApiKey))
-            request.Headers.TryAddWithoutValidation("X-Api-Key", _options.ApiKey);
-        using var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+        using var response = await OpenStreamAsync(path, cancellationToken).ConfigureAwait(false);
         if (!response.IsSuccessStatusCode)
             throw ToException((int)response.StatusCode, await response.Content.ReadAsStringAsync().ConfigureAwait(false),
                 RetryAfterOf(response.Headers.RetryAfter));
         using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         using var reader = new StreamReader(stream);
-        string? eventName = null;
-        var data = new StringBuilder();
+        // netstandard2.0's ReadLineAsync takes no token: closing the stream is what ends a read that is waiting.
+        using var abort = cancellationToken.Register(() => stream.Dispose());
+        var parser = new FinSseParser();
         while (true)
         {
-#if NET8_0_OR_GREATER
-            var line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false);
-#else
-            cancellationToken.ThrowIfCancellationRequested();
-            var line = await reader.ReadLineAsync().ConfigureAwait(false);
-#endif
+            var line = await ReadEventLineAsync(reader, cancellationToken).ConfigureAwait(false);
             if (line is null)
             {
-                if (data.Length > 0) yield return new FinStreamEvent(eventName ?? "message", data.ToString());
+                if (parser.Complete() is { } last) yield return last;
                 yield break;
             }
-            if (line.Length == 0)
-            {
-                if (eventName is not null || data.Length > 0)
-                    yield return new FinStreamEvent(eventName ?? "message", data.ToString());
-                eventName = null;
-                data.Clear();
-                continue;
-            }
-            if (line[0] == ':') continue;
-            var separator = line.IndexOf(':');
-            var field = separator < 0 ? line : line.Substring(0, separator);
-            var value = separator < 0 ? "" : line.Substring(separator + 1).TrimStart(' ');
-            if (field == "event") eventName = value;
-            else if (field == "data")
-            {
-                if (data.Length > 0) data.Append('\n');
-                data.Append(value);
-            }
+            if (parser.Add(line) is { } item) yield return item;
+        }
+    }
+
+    private async Task<HttpResponseMessage> OpenStreamAsync(string path, CancellationToken cancellationToken)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, path.TrimStart('/')));
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
+        if (!string.IsNullOrWhiteSpace(_options.ApiKey))
+            request.Headers.TryAddWithoutValidation("X-Api-Key", _options.ApiKey);
+        try
+        {
+            return await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
+        catch (Exception ex) when (ex is HttpRequestException or IOException)
+        {
+            throw new FinApiException(0, "The FinCopy event stream could not be opened.", innerException: ex, errorCode: "network");
+        }
+    }
+
+    private static async Task<string?> ReadEventLineAsync(StreamReader reader, CancellationToken cancellationToken)
+    {
+        try
+        {
+#if NET8_0_OR_GREATER
+            return await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false);
+#else
+            cancellationToken.ThrowIfCancellationRequested();
+            return await reader.ReadLineAsync().ConfigureAwait(false);
+#endif
+        }
+        catch (Exception ex) when (cancellationToken.IsCancellationRequested
+            && ex is IOException or ObjectDisposedException or HttpRequestException)
+        {
+            throw new OperationCanceledException("The FinCopy event stream was cancelled.", ex, cancellationToken);
+        }
+        catch (Exception ex) when (ex is IOException or HttpRequestException)
+        {
+            throw new FinApiException(0, "The FinCopy event stream was interrupted.", innerException: ex, errorCode: "network");
         }
     }
 

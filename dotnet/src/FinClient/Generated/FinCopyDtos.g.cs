@@ -82,18 +82,6 @@ namespace Fin.Copy
 
     }
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BsonElement
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Value")]
-        public string? Value { get; set; } = default!;
-
-    }
-
     /// <summary>
     /// Public API settings patch. Account identity comes from the ACNO route.
     /// </summary>
@@ -275,6 +263,18 @@ namespace Fin.Copy
     }
 
     /// <summary>
+    /// Apply one of the member's strategies to the account in the route (preview or apply).
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdApiFxsStgApply
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
+        public int? ISNO { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// The key's webhook: the HTTPS address (port 443 only) FinCopy POSTs to when the key's accounts change.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -359,6 +359,82 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
         public string? TrPin { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdFxsStgMake
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("StratName")]
+        public string? StratName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RiskLev")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FxsRiskLev>))]
+        public FxsRiskLev? RiskLev { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("En")]
+        public bool? En { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnAvg")]
+        public bool? EnAvg { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Virtual")]
+        public bool? Virtual { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigMode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
+        public TMode? SigMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DCACooloffMins")]
+        public int? DCACooloffMins { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnDcaGate")]
+        public bool? EnDcaGate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACCSTG")]
+        public DtoFxsStgAccStg? ACCSTG { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
+        public DtoFxsStgSymStg? SYMSTG { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdFxsStgPatch
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("StratName")]
+        public string? StratName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RiskLev")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FxsRiskLev>))]
+        public FxsRiskLev? RiskLev { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("En")]
+        public bool? En { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnAvg")]
+        public bool? EnAvg { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Virtual")]
+        public bool? Virtual { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigMode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
+        public TMode? SigMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DCACooloffMins")]
+        public int? DCACooloffMins { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnDcaGate")]
+        public bool? EnDcaGate { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACCSTG")]
+        public DtoFxsStgAccStg? ACCSTG { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
+        public DtoFxsStgSymStg? SYMSTG { get; set; } = default!;
 
     }
 
@@ -925,7 +1001,7 @@ namespace Fin.Copy
     }
 
     /// <summary>
-    /// T652 E — demo places that can start now (a prepared terminal and a free slot), and whether this member already
+    /// Demo places that can start now (a prepared terminal and a free slot), and whether this member already
     /// <br/>            runs one (one at a time).
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -3407,6 +3483,135 @@ namespace Fin.Copy
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsStgCascadeApplyResult
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
+        public int? ISNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AccountFieldsWritten")]
+        public int? AccountFieldsWritten { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PairRowsChanged")]
+        public int? PairRowsChanged { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PairFieldsWritten")]
+        public int? PairFieldsWritten { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuySidesHeld")]
+        public int? BuySidesHeld { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellSidesHeld")]
+        public int? SellSidesHeld { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsStgCascadeApplyResultResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoFxsStgCascadeApplyResult? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsStgCascadePair
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuyHeld")]
+        public bool? BuyHeld { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellHeld")]
+        public bool? SellHeld { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("FieldsToWrite")]
+        public System.Collections.Generic.ICollection<string>? FieldsToWrite { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("FieldsHeld")]
+        public System.Collections.Generic.ICollection<string>? FieldsHeld { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsStgCascadePreview
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
+        public int? ISNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AttachesStrategy")]
+        public bool? AttachesStrategy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AccountFieldsToWrite")]
+        public System.Collections.Generic.ICollection<string>? AccountFieldsToWrite { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<DtoFxsStgCascadePair>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PairCount")]
+        public int? PairCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuyHeldCount")]
+        public int? BuyHeldCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellHeldCount")]
+        public int? SellHeldCount { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PairCountChanged")]
+        public int? PairCountChanged { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsStgCascadePreviewResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoFxsStgCascadePreview? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoFxsStgIReadOnlyListResPonse
     {
 
@@ -4493,54 +4698,6 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"Removed")]
         Removed = 5,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OpCond
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"and")]
-        And = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"or")]
-        Or = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"all")]
-        All = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"in")]
-        In = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ProblemDetails
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Type")]
-        public string? Type { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Status")]
-        public int? Status { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Detail")]
-        public string? Detail { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Instance")]
-        public string? Instance { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
 
     }
 

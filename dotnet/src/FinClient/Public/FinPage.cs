@@ -33,25 +33,13 @@ public sealed class FinPage<T>
     }
 }
 
-/// <summary>Common FinCopy paging and sorting inputs for account lists.</summary>
+/// <summary>Paging and search inputs for FinCopy lists.</summary>
 public sealed class FinPageQuery
 {
     /// <summary>Requested page number.</summary>
     public int? PageNo { get; set; }
     /// <summary>Maximum rows to return.</summary>
     public int? PageSize { get; set; }
-    /// <summary>Row offset.</summary>
-    public int? PageOff { get; set; }
-    /// <summary>Whether the selected sort is ascending.</summary>
-    public bool? IsAsc { get; set; }
-    /// <summary>Sort field name.</summary>
-    public string? SortCol { get; set; }
-    /// <summary>Sort direction.</summary>
-    public string? SortDir { get; set; }
-    /// <summary>Field to search.</summary>
-    public string? SrchCol { get; set; }
-    /// <summary>Search value for SrchCol.</summary>
-    public string? SrchVal { get; set; }
     /// <summary>Search across the endpoint's searchable fields.</summary>
     public string? Search { get; set; }
     /// <summary>Sort clauses in the FinCopy page-query format.</summary>
@@ -66,12 +54,6 @@ public sealed class FinPageQuery
         var pairs = new List<string>();
         Add("PageNo", PageNo?.ToString(System.Globalization.CultureInfo.InvariantCulture));
         Add("PageSize", PageSize?.ToString(System.Globalization.CultureInfo.InvariantCulture));
-        Add("PageOff", PageOff?.ToString(System.Globalization.CultureInfo.InvariantCulture));
-        Add("IsAsc", IsAsc?.ToString().ToLowerInvariant());
-        Add("SortCol", SortCol);
-        Add("SortDir", SortDir);
-        Add("SrchCol", SrchCol);
-        Add("SrchVal", SrchVal);
         Add("search", Search);
         AddMany("SortBy", SortBy);
         AddMany("SrchBy", SrchBy);

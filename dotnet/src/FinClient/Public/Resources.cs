@@ -169,6 +169,18 @@ public sealed class AccountsResource
         CancellationToken cancellationToken = default) =>
         _http.SendPageAsync<DtoMemberActivity>("GET", Query(Account(acno) + "/activity", page, ("search", search)), cancellationToken: cancellationToken);
 
+    /// <summary>Previews applying a strategy (the account owner's or a FinCopy preset) to the account: what each symbol would
+    /// change and what it keeps. Nothing changes. Needs Trade permission.</summary>
+    public Task<DtoFxsStgCascadePreview> PreviewStrategyAsync(long acno, CmdApiFxsStgApply command,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsStgCascadePreview>("POST", Account(acno) + "/strategy/preview", command, cancellationToken: cancellationToken);
+
+    /// <summary>Applies a strategy to the account and its symbols; a side holding orders keeps what it must keep. Needs Trade
+    /// permission.</summary>
+    public Task<DtoFxsStgCascadeApplyResult> ApplyStrategyAsync(long acno, CmdApiFxsStgApply command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsStgCascadeApplyResult>("POST", Account(acno) + "/strategy/apply", command, idempotencyKey, cancellationToken);
+
     /// <summary>Lists recent terminal operations for one account.</summary>
     public Task<FinPage<DtoApiTermOperation>> OperationsAsync(long acno, FinPageQuery? page = null,
         CancellationToken cancellationToken = default) =>
@@ -261,19 +273,52 @@ public sealed class FxResource
     /// <summary>Lists activity across reachable accounts.</summary>
     public Task<FinPage<DtoMemberActivity>> ActivityAsync(FinFxsListQuery? query = null, CancellationToken cancellationToken = default) =>
         _http.SendPageAsync<DtoMemberActivity>("GET", ListQuery("v1/fxs/activity", query), cancellationToken: cancellationToken);
-    /// <summary>Lists strategies available to the member.</summary>
-    public Task<IReadOnlyList<DtoFxsStg>> StrategiesAsync(CancellationToken cancellationToken = default) =>
-        _http.SendAsync<IReadOnlyList<DtoFxsStg>>("GET", "v1/fxs/strategies", cancellationToken: cancellationToken);
+    /// <summary>HYBRID DCA proposals waiting for an answer across reachable accounts, newest first.</summary>
+    public Task<IReadOnlyList<DtoFxsOrdr>> DcaAsync(long? acno = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoFxsOrdr>>("GET", Query("v1/fxs/dca", null, ("acno", acno)), cancellationToken: cancellationToken);
+    /// <summary>The newest terminal operations across reachable accounts.</summary>
+    public Task<FinPage<DtoApiTermOperation>> OperationsAsync(FinPageQuery? page = null, long? acno = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoApiTermOperation>("GET", Query("v1/fxs/operations", page, ("acno", acno)), cancellationToken: cancellationToken);
+    /// <summary>The last 30 days by currency book across reachable accounts, or one account with <paramref name="acno"/>.
+    /// <paramref name="demo"/> narrows it to demo (true) or real (false) accounts.</summary>
+    public Task<DtoFxsPerfWindow> PerformanceWindowAsync(long? acno = null, bool? demo = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsPerfWindow>("GET", Query("v1/fxs/performance/window", null, ("acno", acno), ("demo", demo)),
+            cancellationToken: cancellationToken);
+    /// <summary>Daily performance bars across reachable accounts for an optional UTC date range.</summary>
+    public Task<DtoFxsPerfBars> PerformanceBarsAsync(long? acno = null, bool? demo = null, DateTimeOffset? fromDt = null,
+        DateTimeOffset? toDt = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsPerfBars>("GET", Query("v1/fxs/performance/bars", null, ("acno", acno), ("demo", demo),
+            ("fromDt", fromDt?.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture)),
+            ("toDt", toDt?.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))), cancellationToken: cancellationToken);
+    /// <summary>Lists the strategies you can apply: your own and FinCopy's presets. With <paramref name="acno"/>, that
+    /// account owner's strategies (needs Trade permission on the account).</summary>
+    public Task<IReadOnlyList<DtoFxsStg>> StrategiesAsync(long? acno = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoFxsStg>>("GET", Query("v1/fxs/strategies", null, ("acno", acno)), cancellationToken: cancellationToken);
     /// <summary>Reads one strategy.</summary>
     public Task<DtoFxsStg> StrategyAsync(int isno, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsStg>("GET", $"v1/fxs/strategies/{AccountsResource.Number(isno, nameof(isno))}", cancellationToken: cancellationToken);
+        _http.SendAsync<DtoFxsStg>("GET", Strategy(isno), cancellationToken: cancellationToken);
+    /// <summary>Creates one of your own strategies. Needs Trade permission.</summary>
+    public Task<DtoFxsStg> MakeStrategyAsync(CmdFxsStgMake command, string? idempotencyKey = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsStg>("POST", "v1/fxs/strategies", command, idempotencyKey, cancellationToken);
+    /// <summary>Changes one of your own strategies; fields left unset keep their values. Needs Trade permission.</summary>
+    public Task<DtoFxsStg> PatchStrategyAsync(int isno, CmdFxsStgPatch command, string? idempotencyKey = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsStg>("PATCH", Strategy(isno), command, idempotencyKey, cancellationToken);
+    /// <summary>Deletes one of your own strategies. Needs Trade permission.</summary>
+    public Task<bool> DeleteStrategyAsync(int isno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<bool>("DELETE", Strategy(isno), idempotencyKey: idempotencyKey, cancellationToken: cancellationToken);
     /// <summary>Reads the member's enabled-symbol signal shelf.</summary>
     public Task<DtoShelfSignals> SignalsAsync(CancellationToken cancellationToken = default) =>
         _http.SendAsync<DtoShelfSignals>("GET", "v1/fxs/signals", cancellationToken: cancellationToken);
     /// <summary>Lists warning and error activity.</summary>
     public Task<FinPage<DtoMemberActivity>> AlertsAsync(FinPageQuery? page = null, CancellationToken cancellationToken = default) =>
         _http.SendPageAsync<DtoMemberActivity>("GET", Query("v1/fxs/alerts", page), cancellationToken: cancellationToken);
-    /// <summary>Opens the live member event stream.</summary>
+    /// <summary>Opens the live event stream for reachable accounts. Each event names what changed; re-read it. The stream
+    /// does not reconnect: it ends when the server closes it (about every 30 minutes) or the connection breaks, so open it
+    /// again in a loop, waiting a few seconds between attempts.</summary>
     public IAsyncEnumerable<FinStreamEvent> ReadStreamAsync(CancellationToken cancellationToken = default) =>
         _http.ReadServerSentEventsAsync("v1/fxs/stream", cancellationToken);
     /// <summary>Searches broker servers available when adding an account.</summary>
@@ -281,6 +326,8 @@ public sealed class FxResource
         bool? demosOnly = null, CancellationToken cancellationToken = default) =>
         _http.SendAsync<IReadOnlyList<DtoBrokerServerSearch>>("GET", Query("v1/brokers", null,
             ("Q", query), ("Platform", platform), ("DemosOnly", demosOnly)), cancellationToken: cancellationToken);
+
+    private static string Strategy(int isno) => $"v1/fxs/strategies/{AccountsResource.Number(isno, nameof(isno))}";
 
     private static string ListQuery(string path, FinFxsListQuery? query) => Query(path, query?.Page,
         ("acno", query?.Acno), ("prno", query?.Prno), ("demo", query?.Demo), ("platform", query?.Platform), ("search", query?.Search));

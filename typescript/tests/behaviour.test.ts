@@ -1,6 +1,7 @@
 import { createHmac } from "node:crypto";
 import { describe, expect, it, vi } from "vitest";
-import { FinApiError, FinClient, FinWebhook } from "../src/index.js";
+import { FinApiError, FinClient } from "../src/index.js";
+import { FinWebhook } from "../src/webhook.js";
 
 function json(data: unknown, status = 200, extra: Record<string, string> = {}): Response {
   return new Response(JSON.stringify({ data, code: status, isOk: status >= 200 && status < 300, message: null, errors: null, chksum: null }), {
