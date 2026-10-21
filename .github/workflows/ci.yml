@@ -1,8 +1,10 @@
 name: CI
 
 on:
+  # Changes are tested on dev and in pull requests. main only receives dev once it is green, and a release tag runs the
+  # full build and tests again before publishing, so a push to main runs nothing here.
   push:
-    branches: [dev, main]
+    branches: [dev]
   pull_request:
     branches: [dev, main]
   schedule:
