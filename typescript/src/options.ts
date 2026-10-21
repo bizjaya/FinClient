@@ -1,7 +1,7 @@
 /** Configuration for a server-side FinCopy API client. */
 export interface FinClientOptions {
-  /** FinCopy API key. Keep it in trusted server-side code. */
-  apiKey: string;
+  /** FinCopy API key. Keep it in trusted server-side code. Optional when the supplied fetch authenticates a member session. */
+  apiKey?: string;
   /** Absolute API root. Defaults to the public FinCopy API. */
   baseUrl?: string;
   /** Per-attempt timeout in milliseconds. Defaults to 30 seconds. */
@@ -10,6 +10,8 @@ export interface FinClientOptions {
   maxRetries?: number;
   /** Optional fetch implementation, primarily useful for tests. */
   fetch?: typeof fetch;
+  /** Fetch credentials mode. Session clients default to include; key clients default to same-origin. */
+  credentials?: "omit" | "same-origin" | "include";
   /** Optional retry wait implementation, primarily useful for tests. */
   retryDelay?: (milliseconds: number, signal?: AbortSignal) => Promise<void>;
   /** Optional jitter source, primarily useful for tests. */

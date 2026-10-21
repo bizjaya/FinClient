@@ -17,11 +17,11 @@ public sealed class TransportTests
             "{\"data\":[{\"ACNO\":1234,\"USNO\":77,\"ValDt\":\"2026-10-20T00:00:00Z\",\"ACCTEQT\":10.5}],\"code\":200,\"isOk\":true}"));
         using var fin = NewClient(new FinClientOptions("unit-test-key"), handler);
 
-        var rows = await fin.Copy.Accounts.PerformanceAsync("acct/one");
+        var rows = await fin.Copy.Accounts.PerformanceAsync(1234);
 
         Assert.Equal(1234, rows[0].ACNO);
         Assert.Equal("unit-test-key", handler.Requests[0].Headers.GetValues("X-Api-Key").Single());
-        Assert.Equal("https://api.fincopy.io/v1/accounts/acct%2Fone/performance", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.pro/v1/fxs/accounts/1234/performance", handler.Requests[0].RequestUri!.AbsoluteUri);
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public sealed class TransportTests
         var handler = new QueueHandler(_ => Json(HttpStatusCode.OK, "{\"data\":[],\"code\":200,\"isOk\":true}"));
         using var fin = NewClient(new FinClientOptions("test"), handler);
 
-        await fin.Copy.Accounts.PerformanceAsync("a", new DateTimeOffset(2026, 10, 20, 8, 0, 0, TimeSpan.FromHours(8)));
+        await fin.Copy.Accounts.PerformanceAsync(1234, new DateTimeOffset(2026, 10, 20, 8, 0, 0, TimeSpan.FromHours(8)));
 
         Assert.Contains("fromDt=2026-10-20T00%3A00%3A00.0000000%2B00%3A00", handler.Requests[0].RequestUri!.Query);
     }
@@ -42,7 +42,7 @@ public sealed class TransportTests
             "{\"data\":[{}],\"paging\":{\"pageNo\":2,\"pageSize\":3,\"pageCount\":4,\"resCount\":11},\"code\":200,\"isOk\":true,\"errors\":[]}"));
         using var fin = NewClient(new FinClientOptions("test"), handler);
 
-        var page = await fin.Copy.Orders.ListAsync("a", new FinPageQuery { PageNo = 2, PageSize = 3, Search = "EUR USD" });
+        var page = await fin.Copy.Accounts.OrdersAsync(1234, new FinPageQuery { PageNo = 2, PageSize = 3, Search = "EUR USD" });
 
         Assert.Single(page.Items);
         Assert.Equal(2, page.Paging!.PageNo);
@@ -68,7 +68,7 @@ public sealed class TransportTests
         });
         using var fin = NewClient(new FinClientOptions("test") { MaxRetries = 1 }, handler, out var delays);
 
-        _ = await fin.Copy.Orders.MakeAsync("account", new CmdFxsOrdrMake { SYM = "EURUSD", LOT = 0.05 }, "same-key");
+        _ = await fin.Copy.Orders.MakeAsync(1234, new CmdApiFxsOrdrMake { SYM = "EURUSD", LOT = 0.05 }, "same-key");
 
         Assert.Equal(2, calls);
         Assert.Equal(new[] { TimeSpan.FromSeconds(5) }, delays);
@@ -177,7 +177,7 @@ public sealed class TransportTests
         });
         using var fin = NewClient(new FinClientOptions("test"), handler);
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => fin.Copy.Accounts.ListAsync(cancel.Token));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => fin.Copy.Accounts.ListAsync(cancellationToken: cancel.Token));
     }
 
     [Fact]
@@ -237,7 +237,7 @@ public sealed class TransportTests
         var handler = new QueueHandler(_ => Json(HttpStatusCode.OK, "{\"data\":{},\"code\":200,\"isOk\":true}"));
         using var fin = NewClient(new FinClientOptions("test"), handler);
 
-        await fin.Copy.Accounts.PatchPairAsync("a", 7, new CmdFxsPairPatch { Enabled = true });
+        await fin.Copy.Accounts.PatchPairAsync(1234, 7, new CmdApiFxsPairPatch { Enabled = true });
 
         Assert.Equal("{\"Enabled\":true}", handler.Bodies.Single());
     }
@@ -249,7 +249,7 @@ public sealed class TransportTests
             "{\"data\":{\"OID\":9,\"ACT\":\"SOME_NEW_ACTION\",\"ORD\":\"OPN\",\"CRSN\":\"SOME_NEW_REASON\",\"DIR\":\"buy\"},\"code\":200,\"isOk\":true}"));
         using var fin = NewClient(new FinClientOptions("test"), handler);
 
-        var order = await fin.Copy.Orders.GetAsync("a", 9);
+        var order = await fin.Copy.Accounts.OrderAsync(1234, 9);
 
         Assert.Equal(9, order.OID);
         Assert.Equal(FxsOrderStatus.OPN, order.ORD);
@@ -278,7 +278,7 @@ public sealed class TransportTests
             "{\"code\":400,\"isOk\":false,\"message\":\"Invalid lot\",\"errors\":[\"LOT must be positive\",{\"field\":\"LOT\"}]}"));
         using var fin = NewClient(new FinClientOptions("test"), handler);
 
-        var exception = await Assert.ThrowsAsync<FinApiException>(() => fin.Copy.Accounts.GetAsync("missing"));
+        var exception = await Assert.ThrowsAsync<FinApiException>(() => fin.Copy.Accounts.GetAsync(1234));
 
         Assert.Equal(400, exception.StatusCode);
         Assert.Equal(400, exception.Code);
@@ -362,6 +362,20 @@ public sealed class TransportTests
         using var provider = services.BuildServiceProvider();
         using var fin = provider.GetRequiredService<FinClient>();
         Assert.NotNull(fin.Copy.Accounts);
+    }
+
+    [Fact]
+    public async Task CallerHttpClientCanUseTheMemberSessionWithoutAnApiKey()
+    {
+        var handler = new QueueHandler(_ => Json(HttpStatusCode.OK, "{\"data\":{\"State\":{\"ACNO\":1234}},\"code\":200,\"isOk\":true}"));
+        using var http = new HttpClient(handler);
+        using var fin = new FinClient(new FinClientOptions(), http);
+
+        var account = await fin.Copy.Accounts.GetAsync(1234);
+
+        Assert.Equal(1234, account.State!.ACNO);
+        Assert.Equal("https://api.fincopy.pro/v1/fxs/accounts/1234", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.False(handler.Requests[0].Headers.Contains("X-Api-Key"));
     }
 
     private static FinClient NewClient(FinClientOptions options, HttpMessageHandler handler) => NewClient(options, handler, out _);

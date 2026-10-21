@@ -2,22 +2,142 @@
   "openapi": "3.0.4",
   "info": {
     "title": "FinCopy API",
-    "description": "Your hosted MT4 and MT5 accounts: read balance, equity and positions, and place or close trades. Authenticate every request with a personal API key in the X-Api-Key header; create keys in the member area under API, or have FinCopy issue one. A key reaches its member's own accounts and the accounts shared with that member (shared for trading: tradable; shared for viewing: read-only). Trades are asynchronous: a successful reply means the order is queued for your terminal, which picks it up within seconds; follow the change feed (or a webhook) to see it filled or rejected. Each key uses its configured requests-per-minute limit (default 60).",
+    "description": "Your hosted MT4 and MT5 accounts: read balance, equity and positions, and place or close trades. Authenticate with a personal API key in the X-Api-Key header or with your signed-in member session; create keys in the member area under API, or have FinCopy issue one. First-party browser clients send the signed-in fincopy_member session cookie; keep API keys on trusted servers. A key reaches its member's own accounts and the accounts shared with that member (shared for trading: tradable; shared for viewing: read-only). Trades are asynchronous: a successful reply means the order is queued for your terminal, which picks it up within seconds; follow the change feed (or a webhook) to see it filled or rejected. Each key uses its configured requests-per-minute limit (default 60).",
     "version": "v1"
   },
   "servers": [
     {
-      "url": "https://api.fincopy.io"
+      "url": "https://api.fincopy.pro"
     }
   ],
   "paths": {
-    "/v1/accounts": {
+    "/v1/fxs/accounts": {
       "get": {
         "tags": [
           "Api_Account"
         ],
         "summary": "List the accounts this key can reach, each with its terminal, broker server and latest state.",
         "operationId": "AccountList",
+        "parameters": [
+          {
+            "name": "Cond",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/OpCond"
+            }
+          },
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "QSlice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "PageOff",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ResCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "externalRef",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -74,20 +194,18 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DtoMemberAccountIReadOnlyListResPonse"
+                  "$ref": "#/components/schemas/DtoMemberAccountResPaged"
                 }
               }
             }
           }
         }
-      }
-    },
-    "/v1/accounts/make": {
+      },
       "post": {
         "tags": [
           "Api_Account"
         ],
-        "summary": "Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.\n            Send an Idempotency-Key: a retry with the same key returns the account the first call made. ExternalRef is your own id\n            for the account. Needs the Trade permission.",
+        "summary": "Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.\r\n            Send an Idempotency-Key: a retry with the same key returns the account the first call made. ExternalRef is your own id\r\n            for the account. Needs the Trade permission.",
         "operationId": "AccountMake",
         "parameters": [
           {
@@ -186,7 +304,182 @@
         }
       }
     },
-    "/v1/accounts/{accountId}": {
+    "/v1/fxs/accounts/demo": {
+      "post": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "Create a demo account.",
+        "operationId": "DemoMake",
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdMemberDemoMake"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdMemberDemoMake"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdMemberDemoMake"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdMemberDemoMake"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/demo-availability": {
+      "get": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "Places available for a demo terminal on the selected platform.",
+        "operationId": "DemoAvailability",
+        "parameters": [
+          {
+            "name": "platform",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoDemoAvailabilityResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}": {
       "get": {
         "tags": [
           "Api_Account"
@@ -195,11 +488,11 @@
         "operationId": "AccountView",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -265,22 +558,108 @@
             }
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "Remove the account and its hosted terminal. Only the account's owner can. The Idempotency-Key header is\r\n            required: a retry while the removal runs returns the same operation; after it finishes the account answers 404.\r\n            Needs the Trade permission. Returns the operation id.",
+        "operationId": "AccountRemove",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
+                }
+              }
+            }
+          }
+        }
       }
     },
-    "/v1/accounts/{accountId}/external-ref": {
+    "/v1/fxs/accounts/{acno}/external-ref": {
       "put": {
         "tags": [
           "Api_Account"
         ],
-        "summary": "Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the\n            account's first sync. It comes back on the account and on every change-feed row. Needs the Trade permission.",
+        "summary": "Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the\r\n            account is added. It comes back on the account and on every change-feed row. Needs the Trade permission.",
         "operationId": "AccountExternalRef",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -372,20 +751,20 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/fxs": {
+    "/v1/fxs/accounts/{acno}/settings": {
       "get": {
         "tags": [
           "Api_Account"
         ],
-        "summary": "The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the\n            account's first sync.",
+        "summary": "The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the\r\n            account is added; until its first sync, live account data is empty.",
         "operationId": "AccountFxs",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -456,15 +835,15 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "Change the account's settings, as the member screens do; every change is written to the account log. Needs the\n            Trade permission.",
+        "summary": "Change the account's settings, as the member screens do; every change is written to the account log. Needs the\r\n            Trade permission.",
         "operationId": "AccountSettings",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -472,22 +851,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsAcctPatch"
+                "$ref": "#/components/schemas/CmdApiFxsAcctPatch"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsAcctPatch"
+                "$ref": "#/components/schemas/CmdApiFxsAcctPatch"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsAcctPatch"
+                "$ref": "#/components/schemas/CmdApiFxsAcctPatch"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsAcctPatch"
+                "$ref": "#/components/schemas/CmdApiFxsAcctPatch"
               }
             }
           }
@@ -556,7 +935,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/pairs": {
+    "/v1/fxs/accounts/{acno}/pairs": {
       "get": {
         "tags": [
           "Api_Account"
@@ -565,11 +944,11 @@
         "operationId": "AccountPairs",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -769,7 +1148,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/pairs/{prno}": {
+    "/v1/fxs/accounts/{acno}/pairs/{prno}": {
       "get": {
         "tags": [
           "Api_Account"
@@ -778,11 +1157,11 @@
         "operationId": "AccountPair",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -862,15 +1241,15 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "Change one symbol's settings (SYMSTG, the DCA gates, ExternalRef), as the member screens do. Needs the Trade\n            permission.",
+        "summary": "Change one symbol's settings (SYMSTG, the DCA gates, ExternalRef), as the member screens do. Needs the Trade\r\n            permission.",
         "operationId": "AccountPairSettings",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -887,22 +1266,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsPairPatch"
+                "$ref": "#/components/schemas/CmdApiFxsPairPatch"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsPairPatch"
+                "$ref": "#/components/schemas/CmdApiFxsPairPatch"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsPairPatch"
+                "$ref": "#/components/schemas/CmdApiFxsPairPatch"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsPairPatch"
+                "$ref": "#/components/schemas/CmdApiFxsPairPatch"
               }
             }
           }
@@ -971,7 +1350,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/orders/history": {
+    "/v1/fxs/accounts/{acno}/history": {
       "get": {
         "tags": [
           "Api_Account"
@@ -980,11 +1359,11 @@
         "operationId": "AccountOrderHistory",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -1184,7 +1563,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/orders/history/{oid}": {
+    "/v1/fxs/accounts/{acno}/history/{oid}": {
       "get": {
         "tags": [
           "Api_Account"
@@ -1193,11 +1572,11 @@
         "operationId": "AccountOrderHistoryView",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -1274,7 +1653,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/orders": {
+    "/v1/fxs/accounts/{acno}/orders": {
       "get": {
         "tags": [
           "Api_Account"
@@ -1283,11 +1662,11 @@
         "operationId": "AccountOrders",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -1485,119 +1864,9 @@
             }
           }
         }
-      },
-      "post": {
-        "tags": [
-          "Api_Account"
-        ],
-        "summary": "Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. A close is allowed while an admin has\n            disabled the account's owner; an open or add is not. The Idempotency-Key header is required. Needs the Trade permission.",
-        "operationId": "AccountTradeMake",
-        "parameters": [
-          {
-            "name": "accountId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdFxsOrdrMake"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdFxsOrdrMake"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdFxsOrdrMake"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdFxsOrdrMake"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
-                }
-              }
-            }
-          }
-        }
       }
     },
-    "/v1/accounts/{accountId}/dca-queue": {
+    "/v1/fxs/accounts/{acno}/dca": {
       "get": {
         "tags": [
           "Api_Account"
@@ -1606,11 +1875,11 @@
         "operationId": "AccountDcaQueue",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -1678,20 +1947,20 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/dca/{oid}/answer": {
+    "/v1/fxs/accounts/{acno}/dca/{oid}": {
       "post": {
         "tags": [
           "Api_Account"
         ],
-        "summary": "Accept or reject a HYBRID DCA proposal. A reject adds nothing, so it is allowed while an admin has disabled the\n            account's owner; an accept is an add and is not. Needs the Trade permission.",
+        "summary": "Accept or reject a HYBRID DCA proposal. A reject adds nothing, so it is allowed while an admin has disabled the\r\n            account's owner; an accept is an add and is not. Needs the Trade permission.",
         "operationId": "AccountDcaAnswer",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -1792,7 +2061,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/orders/{oid}": {
+    "/v1/fxs/accounts/{acno}/orders/{oid}": {
       "get": {
         "tags": [
           "Api_Account"
@@ -1801,11 +2070,11 @@
         "operationId": "AccountOrder",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -1882,7 +2151,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/symbols": {
+    "/v1/fxs/accounts/{acno}/symbols": {
       "get": {
         "tags": [
           "Api_Account"
@@ -1891,11 +2160,11 @@
         "operationId": "AccountSymbols",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -1966,15 +2235,15 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "Add and/or remove symbols from the account's enabled list (at most 64, using broker names). The server\n            applies the changes to its current list, so a stale picker cannot replace a concurrent change. Needs Trade permission.",
+        "summary": "Add and/or remove symbols from the account's enabled list (at most 64, using broker names). The server\r\n            applies the changes to its current list, so a stale picker cannot replace a concurrent change. Needs Trade permission.",
         "operationId": "AccountSymbolsEdit",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -2066,7 +2335,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/quotes/{symbol}": {
+    "/v1/fxs/accounts/{acno}/quotes/{symbol}": {
       "get": {
         "tags": [
           "Api_Account"
@@ -2075,11 +2344,11 @@
         "operationId": "AccountQuote",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -2155,7 +2424,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/performance": {
+    "/v1/fxs/accounts/{acno}/performance": {
       "get": {
         "tags": [
           "Api_Account"
@@ -2164,11 +2433,11 @@
         "operationId": "AccountPerformance",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -2252,7 +2521,185 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/activity": {
+    "/v1/fxs/accounts/{acno}/performance/window": {
+      "get": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "The selected account's recent performance window.",
+        "operationId": "AccountPerformanceWindow",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/performance/bars": {
+      "get": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "The selected account's performance bars.",
+        "operationId": "AccountPerformanceBars",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "fromDt",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDt",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/activity": {
       "get": {
         "tags": [
           "Api_Account"
@@ -2261,9 +2708,127 @@
         "operationId": "AccountActivity",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Cond",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/OpCond"
+            }
+          },
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "QSlice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "PageOff",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ResCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
             "schema": {
               "type": "string"
             }
@@ -2325,7 +2890,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DtoMemberActivityIReadOnlyListResPonse"
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
                 }
               }
             }
@@ -2333,12 +2898,309 @@
         }
       }
     },
-    "/v1/accounts/changes": {
+    "/v1/fxs/accounts/{acno}/password": {
+      "post": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "Change the broker password and queue the terminal operation.",
+        "operationId": "AccountPassword",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdTermAccountPassword"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdTermAccountPassword"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdTermAccountPassword"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdTermAccountPassword"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/operations": {
       "get": {
         "tags": [
           "Api_Account"
         ],
-        "summary": "What changed on the accounts this key can reach, oldest first: Account (each sync and each settings change),\n            Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and\n            close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without\n            a cursor: that returns no rows and a cursor at \"now\", so read the accounts once, then follow the feed. Keep the\n            returned cursor and call again while `More` is true. The feed runs about ten seconds behind FinCopy's writes, so a\n            write still finishing is read on a later call. `take` is 1 to 1000 (default 500).",
+        "summary": "Recent terminal operations for this account.",
+        "operationId": "AccountOperations",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Cond",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/OpCond"
+            }
+          },
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "QSlice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "PageOff",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ResCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/changes": {
+      "get": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "What changed on the accounts this key can reach, oldest first: Account (each sync and each settings change),\r\n            Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and\r\n            close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without\r\n            a cursor: that returns no rows and a cursor at \"now\", so read the accounts once, then follow the feed. Keep the\r\n            returned cursor and call again while `More` is true. The feed runs about ten seconds behind FinCopy's writes, so a\r\n            write still finishing is read on a later call. `take` is 1 to 1000 (default 500).",
         "operationId": "Changes",
         "parameters": [
           {
@@ -2422,7 +3284,7 @@
         }
       }
     },
-    "/v1/accounts/webhook": {
+    "/v1/webhook": {
       "get": {
         "tags": [
           "Api_Account"
@@ -2496,7 +3358,7 @@
         "tags": [
           "Api_Account"
         ],
-        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\n            the webhook again makes a new secret and restarts it from now. Needs the Trade permission.",
+        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\r\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\r\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\r\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\r\n            the webhook again makes a new secret and restarts it from now. Needs the Trade permission.",
         "operationId": "WebhookSet",
         "requestBody": {
           "content": {
@@ -2655,7 +3517,7 @@
         }
       }
     },
-    "/v1/accounts/webhook/ping": {
+    "/v1/webhook/ping": {
       "post": {
         "tags": [
           "Api_Account"
@@ -2726,7 +3588,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/orders/preinfo": {
+    "/v1/fxs/accounts/{acno}/trade/preinfo": {
       "post": {
         "tags": [
           "Api_Account"
@@ -2735,11 +3597,11 @@
         "operationId": "AccountTradePreInfo",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -2747,22 +3609,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsPreInfo"
+                "$ref": "#/components/schemas/CmdApiFxsPreInfo"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsPreInfo"
+                "$ref": "#/components/schemas/CmdApiFxsPreInfo"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsPreInfo"
+                "$ref": "#/components/schemas/CmdApiFxsPreInfo"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsPreInfo"
+                "$ref": "#/components/schemas/CmdApiFxsPreInfo"
               }
             }
           }
@@ -2831,7 +3693,119 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/orders/hedge": {
+    "/v1/fxs/accounts/{acno}/trade": {
+      "post": {
+        "tags": [
+          "Api_Account"
+        ],
+        "summary": "Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. A close is allowed while an admin has\r\n            disabled the account's owner; an open or add is not. The Idempotency-Key header is required. Needs the Trade permission.",
+        "operationId": "AccountTradeMake",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsOrdrMake"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsOrdrMake"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsOrdrMake"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsOrdrMake"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/trade/hedge": {
       "post": {
         "tags": [
           "Api_Account"
@@ -2840,11 +3814,11 @@
         "operationId": "AccountTradeHedgeMake",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -2859,22 +3833,22 @@
           "content": {
             "application/json-patch+json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsHedgeMake"
+                "$ref": "#/components/schemas/CmdApiFxsHedgeMake"
               }
             },
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsHedgeMake"
+                "$ref": "#/components/schemas/CmdApiFxsHedgeMake"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsHedgeMake"
+                "$ref": "#/components/schemas/CmdApiFxsHedgeMake"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CmdFxsHedgeMake"
+                "$ref": "#/components/schemas/CmdApiFxsHedgeMake"
               }
             }
           }
@@ -2943,7 +3917,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/trades/modify": {
+    "/v1/fxs/accounts/{acno}/trade/modify": {
       "post": {
         "tags": [
           "Api_Account"
@@ -2952,11 +3926,11 @@
         "operationId": "AccountTradeModify",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -3055,7 +4029,7 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/trades/cancel-waiting": {
+    "/v1/fxs/accounts/{acno}/trade/cancel": {
       "post": {
         "tags": [
           "Api_Account"
@@ -3064,11 +4038,11 @@
         "operationId": "AccountTradeCancelWaiting",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           }
         ],
@@ -3160,20 +4134,20 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/start": {
+    "/v1/fxs/accounts/{acno}/start": {
       "post": {
         "tags": [
           "Api_Account"
         ],
-        "summary": "Start the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\n            Returns the operation id.",
+        "summary": "Start the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\r\n            Returns the operation id.",
         "operationId": "AccountStart",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -3248,20 +4222,20 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/stop": {
+    "/v1/fxs/accounts/{acno}/stop": {
       "post": {
         "tags": [
           "Api_Account"
         ],
-        "summary": "Stop the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\n            Returns the operation id.",
+        "summary": "Stop the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\r\n            Returns the operation id.",
         "operationId": "AccountStop",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -3336,20 +4310,20 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/restart": {
+    "/v1/fxs/accounts/{acno}/restart": {
       "post": {
         "tags": [
           "Api_Account"
         ],
-        "summary": "Restart the account's hosted terminal (a terminal never set up is started). The Idempotency-Key header is\n            required. Needs the Trade permission. Returns the operation id.",
+        "summary": "Restart the account's hosted terminal (a terminal never set up is started). The Idempotency-Key header is\r\n            required. Needs the Trade permission. Returns the operation id.",
         "operationId": "AccountRestart",
         "parameters": [
           {
-            "name": "accountId",
+            "name": "acno",
             "in": "path",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "integer"
             }
           },
           {
@@ -3424,25 +4398,150 @@
         }
       }
     },
-    "/v1/accounts/{accountId}/remove": {
-      "post": {
+    "/v1/fxs/pairs": {
+      "get": {
         "tags": [
-          "Api_Account"
+          "Api_Fxs"
         ],
-        "summary": "Remove the account and its hosted terminal. Only the account's owner can. The Idempotency-Key header is\n            required: a retry while the removal runs returns the same operation; after it finishes the account answers 404.\n            Needs the Trade permission. Returns the operation id.",
-        "operationId": "AccountRemove",
+        "summary": "Lists the pairs across accounts the caller can reach.",
+        "operationId": "Pairs",
         "parameters": [
           {
-            "name": "accountId",
-            "in": "path",
-            "required": true,
+            "name": "Cond",
+            "in": "query",
             "schema": {
-              "type": "string"
+              "$ref": "#/components/schemas/OpCond"
             }
           },
           {
-            "name": "Idempotency-Key",
-            "in": "header",
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "QSlice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "PageOff",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ResCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "demo",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/FxsPlatform"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
             "schema": {
               "type": "string"
             }
@@ -3504,7 +4603,1240 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
+                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/orders": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Lists open orders across accounts the caller can reach.",
+        "operationId": "Orders",
+        "parameters": [
+          {
+            "name": "Cond",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/OpCond"
+            }
+          },
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "QSlice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "PageOff",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ResCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "prno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "demo",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/FxsPlatform"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/history": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Lists settled orders across accounts the caller can reach.",
+        "operationId": "History",
+        "parameters": [
+          {
+            "name": "Cond",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/OpCond"
+            }
+          },
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "QSlice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "PageOff",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ResCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "prno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "demo",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/FxsPlatform"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/activity": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Lists activity across accounts the caller can reach.",
+        "operationId": "Activity",
+        "parameters": [
+          {
+            "name": "Cond",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/OpCond"
+            }
+          },
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "QSlice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "PageOff",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ResCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "acno",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/strategies": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Lists strategies available to the signed-in member.",
+        "operationId": "Strategies",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgIReadOnlyListResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/strategies/{isno}": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Reads one strategy by its strategy number.",
+        "operationId": "Strategy",
+        "parameters": [
+          {
+            "name": "isno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/signals": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Reads the signals shown for the member's enabled symbols.",
+        "operationId": "Signals",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoShelfSignalsResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/alerts": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Lists warning and error activity for the member.",
+        "operationId": "Alerts",
+        "parameters": [
+          {
+            "name": "Cond",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/OpCond"
+            }
+          },
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "QSlice",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/BsonElement"
+              }
+            }
+          },
+          {
+            "name": "PageOff",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ResCount",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/stream": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Opens a server-sent event stream for changes visible to the member.",
+        "operationId": "Stream",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/v1/brokers": {
+      "get": {
+        "tags": [
+          "Api_Fxs"
+        ],
+        "summary": "Searches broker servers available when adding a hosted account.",
+        "operationId": "Brokers",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "platform",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "demosOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoBrokerServerSearchIReadOnlyListResPonse"
                 }
               }
             }
@@ -3563,24 +5895,23 @@
         ],
         "type": "string"
       },
-      "CmdApiWebhookSet": {
+      "BsonElement": {
         "type": "object",
         "properties": {
-          "Url": {
+          "Name": {
+            "type": "string",
+            "nullable": true
+          },
+          "Value": {
             "type": "string",
             "nullable": true
           }
         },
-        "additionalProperties": false,
-        "description": "The key's webhook: the HTTPS address (port 443 only) FinCopy POSTs to when the key's accounts change."
+        "additionalProperties": false
       },
-      "CmdFxsAcctPatch": {
+      "CmdApiFxsAcctPatch": {
         "type": "object",
         "properties": {
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
           "Enabled": {
             "type": "boolean",
             "nullable": true
@@ -3612,67 +5943,12 @@
             "type": "boolean"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Public API settings patch. Account identity comes from the ACNO route."
       },
-      "CmdFxsCancelWaiting": {
+      "CmdApiFxsHedgeMake": {
         "type": "object",
         "properties": {
-          "Oid": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "RequestId": {
-            "type": "string",
-            "nullable": true
-          },
-          "TrPin": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CmdFxsDcaAnswer": {
-        "type": "object",
-        "properties": {
-          "Accept": {
-            "type": "boolean"
-          },
-          "TrPin": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CmdFxsHedgeLeg": {
-        "type": "object",
-        "properties": {
-          "ACT": {
-            "$ref": "#/components/schemas/FxsOrderAction"
-          },
-          "LOT": {
-            "type": "number",
-            "format": "double"
-          },
-          "SLP": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "SYMSTG": {
-            "$ref": "#/components/schemas/DtoEASymStg"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CmdFxsHedgeMake": {
-        "type": "object",
-        "properties": {
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
           "SYM": {
             "type": "string",
             "nullable": true
@@ -3714,53 +5990,12 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Public paired hedge request. Account identity comes from the ACNO route."
       },
-      "CmdFxsModify": {
+      "CmdApiFxsOrdrMake": {
         "type": "object",
         "properties": {
-          "Ticket": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "Price": {
-            "type": "number",
-            "format": "double"
-          },
-          "StopLossPrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "TakeProfitPrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "Expiry": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "RequestId": {
-            "type": "string",
-            "nullable": true
-          },
-          "ClearExpiry": {
-            "type": "boolean"
-          },
-          "TrPin": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "CmdFxsOrdrMake": {
-        "type": "object",
-        "properties": {
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
           "SYM": {
             "type": "string",
             "nullable": true
@@ -3848,15 +6083,12 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Public trade request. Account identity comes from the ACNO route."
       },
-      "CmdFxsPairPatch": {
+      "CmdApiFxsPairPatch": {
         "type": "object",
         "properties": {
-          "PRNO": {
-            "type": "integer",
-            "format": "int64"
-          },
           "Enabled": {
             "type": "boolean",
             "nullable": true
@@ -3881,21 +6113,120 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Public API pair patch. Pair identity comes from the PRNO route."
       },
-      "CmdFxsPreInfo": {
+      "CmdApiFxsPreInfo": {
         "type": "object",
         "properties": {
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
           "PRNO": {
             "type": "integer",
             "format": "int64",
             "nullable": true
           },
           "SYM": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Public trade preflight request. Account identity comes from the ACNO route."
+      },
+      "CmdApiWebhookSet": {
+        "type": "object",
+        "properties": {
+          "Url": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The key's webhook: the HTTPS address (port 443 only) FinCopy POSTs to when the key's accounts change."
+      },
+      "CmdFxsCancelWaiting": {
+        "type": "object",
+        "properties": {
+          "Oid": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "RequestId": {
+            "type": "string",
+            "nullable": true
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CmdFxsDcaAnswer": {
+        "type": "object",
+        "properties": {
+          "Accept": {
+            "type": "boolean"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CmdFxsHedgeLeg": {
+        "type": "object",
+        "properties": {
+          "ACT": {
+            "$ref": "#/components/schemas/FxsOrderAction"
+          },
+          "LOT": {
+            "type": "number",
+            "format": "double"
+          },
+          "SLP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SYMSTG": {
+            "$ref": "#/components/schemas/DtoEASymStg"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CmdFxsModify": {
+        "type": "object",
+        "properties": {
+          "Ticket": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Price": {
+            "type": "number",
+            "format": "double"
+          },
+          "StopLossPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "TakeProfitPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "Expiry": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "RequestId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ClearExpiry": {
+            "type": "boolean"
+          },
+          "TrPin": {
             "type": "string",
             "nullable": true
           }
@@ -3966,6 +6297,28 @@
         },
         "additionalProperties": false
       },
+      "CmdMemberDemoMake": {
+        "type": "object",
+        "properties": {
+          "Platform": {
+            "type": "string",
+            "nullable": true
+          },
+          "BrokerServerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Login": {
+            "type": "string",
+            "nullable": true
+          },
+          "BrokerPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CmdTermAccountExternalRef": {
         "type": "object",
         "properties": {
@@ -3976,6 +6329,41 @@
         },
         "additionalProperties": false,
         "description": "The managing system's own id for a hosted account; empty clears it."
+      },
+      "CmdTermAccountPassword": {
+        "type": "object",
+        "properties": {
+          "BrokerPassword": {
+            "type": "string",
+            "nullable": true
+          },
+          "BrokerServerId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeployKind": {
+        "enum": [
+          "Provision",
+          "Upgrade",
+          "Rollback",
+          "Remove",
+          "Start",
+          "Stop",
+          "Restart"
+        ],
+        "type": "string"
+      },
+      "DeployStatus": {
+        "enum": [
+          "Running",
+          "Done",
+          "Failed",
+          "RolledBack"
+        ],
+        "type": "string"
       },
       "DesiredTermState": {
         "enum": [
@@ -4079,7 +6467,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to\n            re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state."
+        "description": "One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to\r\n            re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state."
       },
       "DtoApiChangeFeed": {
         "type": "object",
@@ -4129,6 +6517,112 @@
           },
           "chksum": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoApiTermOperation": {
+        "type": "object",
+        "properties": {
+          "OperationId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Login": {
+            "type": "string",
+            "nullable": true
+          },
+          "Kind": {
+            "$ref": "#/components/schemas/DeployKind"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/DeployStatus"
+          },
+          "FromVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "ToVersion": {
+            "type": "string",
+            "nullable": true
+          },
+          "ProgressStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "Reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "Result": {
+            "type": "string",
+            "nullable": true
+          },
+          "StartedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "WorkerStartedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EndedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "RetryAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "RetryCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ElapsedMs": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoApiTermOperationResPaged": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoApiTermOperation"
+            },
+            "nullable": true
+          },
+          "paging": {
+            "$ref": "#/components/schemas/ResPage"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
             "nullable": true
           }
         },
@@ -4338,6 +6832,124 @@
           "NoSymbolMatchAt": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoBrokerServerSearch": {
+        "type": "object",
+        "properties": {
+          "ServerId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ServerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Platform": {
+            "type": "string",
+            "nullable": true
+          },
+          "Environment": {
+            "$ref": "#/components/schemas/BrokerServerEnvironment"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/BrokerServerStatus"
+          },
+          "BrokerName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoBrokerServerSearchIReadOnlyListResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoBrokerServerSearch"
+            },
+            "nullable": true
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoDemoAvailability": {
+        "type": "object",
+        "properties": {
+          "FreePlaces": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Quota": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "DurationHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "MemberHasActive": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "T652 E — demo places that can start now (a prepared terminal and a free slot), and whether this member already\r\n            runs one (one at a time)."
+      },
+      "DtoDemoAvailabilityResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoDemoAvailability"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -6658,6 +9270,227 @@
         },
         "additionalProperties": false
       },
+      "DtoFxsPerfAccountBars": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "AccountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "Bars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsPerfBar"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsPerfBar": {
+        "type": "object",
+        "properties": {
+          "Date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Realised": {
+            "type": "number",
+            "format": "double"
+          },
+          "Flow": {
+            "type": "number",
+            "format": "double"
+          },
+          "Equity": {
+            "type": "number",
+            "format": "double"
+          },
+          "Balance": {
+            "type": "number",
+            "format": "double"
+          },
+          "ReturnPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "HasData": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsPerfBars": {
+        "type": "object",
+        "properties": {
+          "FromDt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ToDt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Accounts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsPerfAccountBars"
+            },
+            "nullable": true
+          },
+          "Currencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsPerfCurrencyBars"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsPerfBarsResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoFxsPerfBars"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsPerfContribution": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "AccountName": {
+            "type": "string",
+            "nullable": true
+          },
+          "Currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "Virtual": {
+            "type": "boolean"
+          },
+          "Realised30": {
+            "type": "number",
+            "format": "double"
+          },
+          "SharePct": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsPerfCurrencyBars": {
+        "type": "object",
+        "properties": {
+          "Currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "Virtual": {
+            "type": "boolean"
+          },
+          "Bars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsPerfBar"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsPerfCurrencyWindow": {
+        "type": "object",
+        "properties": {
+          "Currency": {
+            "type": "string",
+            "nullable": true
+          },
+          "Virtual": {
+            "type": "boolean"
+          },
+          "Equity": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TodayEquityChange": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "TodayEquityChangePct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "RealisedToday": {
+            "type": "number",
+            "format": "double"
+          },
+          "RealisedTodayPct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Growth7Pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Growth30Pct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Realised30": {
+            "type": "number",
+            "format": "double"
+          },
+          "HasHistory": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "DtoFxsPerfIReadOnlyListResPonse": {
         "type": "object",
         "properties": {
@@ -6667,6 +9500,66 @@
               "$ref": "#/components/schemas/DtoFxsPerf"
             },
             "nullable": true
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsPerfWindow": {
+        "type": "object",
+        "properties": {
+          "AsOf": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "AccountCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Currencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsPerfCurrencyWindow"
+            },
+            "nullable": true
+          },
+          "Contributions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsPerfContribution"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsPerfWindowResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoFxsPerfWindow"
           },
           "code": {
             "type": "integer",
@@ -7338,6 +10231,192 @@
         },
         "additionalProperties": false
       },
+      "DtoFxsStg": {
+        "type": "object",
+        "properties": {
+          "ISNO": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "USNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "OwnerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "SeedKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "StratName": {
+            "type": "string",
+            "nullable": true
+          },
+          "RiskLev": {
+            "$ref": "#/components/schemas/FxsRiskLev"
+          },
+          "SigMode": {
+            "$ref": "#/components/schemas/TMode"
+          },
+          "En": {
+            "type": "boolean"
+          },
+          "EnAvg": {
+            "type": "boolean"
+          },
+          "Virtual": {
+            "type": "boolean"
+          },
+          "ACCSTG": {
+            "$ref": "#/components/schemas/DtoFxsStgAccStg"
+          },
+          "SYMSTG": {
+            "$ref": "#/components/schemas/DtoFxsStgSymStg"
+          },
+          "DCACooloffMins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EnDcaGate": {
+            "type": "boolean"
+          },
+          "StgLog": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsStgAccStg": {
+        "type": "object",
+        "properties": {
+          "EntMode": {
+            "$ref": "#/components/schemas/TMode"
+          },
+          "TRDSRC": {
+            "$ref": "#/components/schemas/TRDSRC"
+          },
+          "AvgMode": {
+            "$ref": "#/components/schemas/TMode"
+          },
+          "INDEP": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "POCNT": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "DCAIVMINS": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "POCLSMINS": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "MAXDDFRC": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "MAXDLYSECS": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "SYNCSECS": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "CONF": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "DCAGATE": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsStgIReadOnlyListResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsStg"
+            },
+            "nullable": true
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsStgResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoFxsStg"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DtoFxsStgSymStg": {
         "type": "object",
         "properties": {
@@ -7707,7 +10786,7 @@
         },
         "additionalProperties": false
       },
-      "DtoMemberAccountIReadOnlyListResPonse": {
+      "DtoMemberAccountResPaged": {
         "type": "object",
         "properties": {
           "data": {
@@ -7716,6 +10795,9 @@
               "$ref": "#/components/schemas/DtoMemberAccount"
             },
             "nullable": true
+          },
+          "paging": {
+            "$ref": "#/components/schemas/ResPage"
           },
           "code": {
             "type": "integer",
@@ -7734,10 +10816,6 @@
             "items": {
               "type": "string"
             },
-            "nullable": true
-          },
-          "chksum": {
-            "type": "string",
             "nullable": true
           }
         },
@@ -7826,7 +10904,7 @@
         },
         "additionalProperties": false
       },
-      "DtoMemberActivityIReadOnlyListResPonse": {
+      "DtoMemberActivityResPaged": {
         "type": "object",
         "properties": {
           "data": {
@@ -7835,6 +10913,9 @@
               "$ref": "#/components/schemas/DtoMemberActivity"
             },
             "nullable": true
+          },
+          "paging": {
+            "$ref": "#/components/schemas/ResPage"
           },
           "code": {
             "type": "integer",
@@ -7853,10 +10934,6 @@
             "items": {
               "type": "string"
             },
-            "nullable": true
-          },
-          "chksum": {
-            "type": "string",
             "nullable": true
           }
         },
@@ -7919,9 +10996,101 @@
         },
         "additionalProperties": false
       },
+      "DtoShelfSignal": {
+        "type": "object",
+        "properties": {
+          "Symbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "Signal": {
+            "type": "string",
+            "nullable": true
+          },
+          "Trend": {
+            "type": "string",
+            "nullable": true
+          },
+          "Confidence": {
+            "type": "string",
+            "nullable": true
+          },
+          "Score": {
+            "type": "number",
+            "description": "FinGraph's TA score, -10 … 10.",
+            "format": "double",
+            "nullable": true
+          },
+          "At": {
+            "type": "string",
+            "description": "When FinGraph last wrote this reading.",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's\r\n            (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names."
+      },
+      "DtoShelfSignals": {
+        "type": "object",
+        "properties": {
+          "Rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoShelfSignal"
+            },
+            "nullable": true
+          },
+          "NoReading": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The Signals card: the readings, strongest first, and the member's symbols with no fresh reading."
+      },
+      "DtoShelfSignalsResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoShelfSignals"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DtoTermAccount": {
         "type": "object",
         "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
           "Id": {
             "type": "string",
             "nullable": true
@@ -8320,6 +11489,14 @@
         ],
         "type": "string"
       },
+      "FxsRiskLev": {
+        "enum": [
+          "LOW",
+          "MID",
+          "HIGH"
+        ],
+        "type": "string"
+      },
       "FxsSide": {
         "enum": [
           "NONE",
@@ -8392,6 +11569,42 @@
         ],
         "type": "string"
       },
+      "OpCond": {
+        "enum": [
+          "and",
+          "or",
+          "all",
+          "in"
+        ],
+        "type": "string"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "Type": {
+            "type": "string",
+            "nullable": true
+          },
+          "Title": {
+            "type": "string",
+            "nullable": true
+          },
+          "Status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "Detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "Instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
       "ResPage": {
         "type": "object",
         "properties": {
@@ -8456,12 +11669,21 @@
         "description": "A personal API key, \"fck_…\", from the member area. Read keys can list and view; Trade keys can also trade.",
         "name": "X-Api-Key",
         "in": "header"
+      },
+      "MemberSession": {
+        "type": "apiKey",
+        "description": "The first-party member session cookie. Use from the signed-in browser client.",
+        "name": "fincopy_member",
+        "in": "cookie"
       }
     }
   },
   "security": [
     {
-      "ApiKey": []
+      "ApiKey": [ ]
+    },
+    {
+      "MemberSession": [ ]
     }
   ]
 }

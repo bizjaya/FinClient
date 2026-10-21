@@ -1,6 +1,6 @@
 # FinCopy OpenAPI snapshot
 
-`fincopy-v1.json` is FinCopy's public OpenAPI document, `https://api.fincopy.io/openapi/v1.json`, as of the SDK's last
+`fincopy-v1.json` is FinCopy's public OpenAPI document, `https://api.fincopy.pro/openapi/v1.json`, as of the SDK's last
 regeneration. Both SDKs' data types are generated from it:
 
 ```powershell

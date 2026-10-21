@@ -4,6 +4,8 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Runtime.CompilerServices;
+using Fin.Copy;
 
 namespace Fin;
 
@@ -21,12 +23,12 @@ internal sealed class FinHttpTransport
     private readonly FinClientOptions _options;
     private readonly Uri _baseUri;
 
-    public FinHttpTransport(HttpClient http, FinClientOptions options)
+    public FinHttpTransport(HttpClient http, FinClientOptions options, bool allowSession = false)
     {
         _http = http ?? throw new ArgumentNullException(nameof(http));
         if (options is null) throw new ArgumentNullException(nameof(options));
         _options = options.Snapshot();
-        _baseUri = _options.ValidatedBaseUri();
+        _baseUri = _options.ValidatedBaseUri(requireApiKey: !allowSession);
     }
 
     /// <summary>Waits between attempts. Replaceable so tests run without real delays.</summary>
@@ -67,6 +69,56 @@ internal sealed class FinHttpTransport
             envelope.Message, ErrorStrings(envelope.Errors), envelope.Chksum);
     }
 
+    public async IAsyncEnumerable<FinStreamEvent> ReadServerSentEventsAsync(string path,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var requestUri = new Uri(_baseUri, path.TrimStart('/'));
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
+        if (!string.IsNullOrWhiteSpace(_options.ApiKey))
+            request.Headers.TryAddWithoutValidation("X-Api-Key", _options.ApiKey);
+        using var response = await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+        if (!response.IsSuccessStatusCode)
+            throw ToException((int)response.StatusCode, await response.Content.ReadAsStringAsync().ConfigureAwait(false),
+                RetryAfterOf(response.Headers.RetryAfter));
+        using var stream = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+        using var reader = new StreamReader(stream);
+        string? eventName = null;
+        var data = new StringBuilder();
+        while (true)
+        {
+#if NET8_0_OR_GREATER
+            var line = await reader.ReadLineAsync(cancellationToken).ConfigureAwait(false);
+#else
+            cancellationToken.ThrowIfCancellationRequested();
+            var line = await reader.ReadLineAsync().ConfigureAwait(false);
+#endif
+            if (line is null)
+            {
+                if (data.Length > 0) yield return new FinStreamEvent(eventName ?? "message", data.ToString());
+                yield break;
+            }
+            if (line.Length == 0)
+            {
+                if (eventName is not null || data.Length > 0)
+                    yield return new FinStreamEvent(eventName ?? "message", data.ToString());
+                eventName = null;
+                data.Clear();
+                continue;
+            }
+            if (line[0] == ':') continue;
+            var separator = line.IndexOf(':');
+            var field = separator < 0 ? line : line.Substring(0, separator);
+            var value = separator < 0 ? "" : line.Substring(separator + 1).TrimStart(' ');
+            if (field == "event") eventName = value;
+            else if (field == "data")
+            {
+                if (data.Length > 0) data.Append('\n');
+                data.Append(value);
+            }
+        }
+    }
+
     private async Task<Reply> SendTextAsync(string method, string path, object? body, string? idempotencyKey,
         CancellationToken cancellationToken)
     {
@@ -94,7 +146,8 @@ internal sealed class FinHttpTransport
                 using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 timeout.CancelAfter(_options.Timeout);
                 using var request = new HttpRequestMessage(httpMethod, requestUri);
-                request.Headers.TryAddWithoutValidation("X-Api-Key", _options.ApiKey);
+                if (!string.IsNullOrWhiteSpace(_options.ApiKey))
+                    request.Headers.TryAddWithoutValidation("X-Api-Key", _options.ApiKey);
                 if (requestKey is not null) request.Headers.TryAddWithoutValidation("Idempotency-Key", requestKey);
                 if (requestJson is not null) request.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
                 response = await _http.SendAsync(request, HttpCompletionOption.ResponseContentRead, timeout.Token).ConfigureAwait(false);

@@ -16,7 +16,10 @@ public static class FinClientServiceCollectionExtensions
         if (configure is null) throw new ArgumentNullException(nameof(configure));
         services.Configure(configure);
         services.AddSingleton(provider => provider.GetRequiredService<IOptions<FinClientOptions>>().Value);
-        return services.AddHttpClient<FinClient>()
-            .ConfigureHttpClient(client => client.Timeout = System.Threading.Timeout.InfiniteTimeSpan);
+        return services.AddHttpClient<FinClient>((provider, client) =>
+        {
+            _ = provider.GetRequiredService<IOptions<FinClientOptions>>().Value.ValidatedBaseUri(requireApiKey: true);
+            client.Timeout = System.Threading.Timeout.InfiniteTimeSpan;
+        });
     }
 }

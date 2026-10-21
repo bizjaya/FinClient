@@ -1,188 +1,292 @@
+using System.Globalization;
 using System.Runtime.CompilerServices;
+using static Fin.Copy.FinApiQuery;
 
 namespace Fin.Copy;
 
-/// <summary>FinCopy API resources.</summary>
+/// <summary>FinCopy public API resources.</summary>
 public sealed class FinCopyResource
 {
     internal FinCopyResource(FinHttpTransport transport)
     {
         Accounts = new AccountsResource(transport);
         Orders = new OrdersResource(transport);
+        Fx = new FxResource(transport);
         Changes = new ChangesResource(transport);
         Webhooks = new WebhooksResource(transport);
     }
 
-    /// <summary>Account listing, details, settings, symbols and terminal actions.</summary>
+    /// <summary>Accounts, settings, positions, performance and terminal operations.</summary>
     public AccountsResource Accounts { get; }
-    /// <summary>Orders and trade actions.</summary>
+    /// <summary>Account order history and trading actions.</summary>
     public OrdersResource Orders { get; }
+    /// <summary>Cross-account FXS lists, strategies, signals, alerts, brokers and the live stream.</summary>
+    public FxResource Fx { get; }
     /// <summary>The change feed.</summary>
     public ChangesResource Changes { get; }
     /// <summary>Webhook configuration and ping.</summary>
     public WebhooksResource Webhooks { get; }
 }
 
+/// <summary>Common page and search filters for cross-account FXS lists.</summary>
+public sealed class FinFxsListQuery
+{
+    /// <summary>Paging and sort values.</summary>
+    public FinPageQuery Page { get; set; } = new();
+    /// <summary>Optional account number filter.</summary>
+    public long? Acno { get; set; }
+    /// <summary>Optional pair number filter.</summary>
+    public long? Prno { get; set; }
+    /// <summary>Optional demo-account filter.</summary>
+    public bool? Demo { get; set; }
+    /// <summary>Optional platform name.</summary>
+    public string? Platform { get; set; }
+    /// <summary>Search text.</summary>
+    public string? Search { get; set; }
+}
 
-/// <summary>Account listing, details, symbols and terminal actions.</summary>
+/// <summary>One server-sent event from the member change stream.</summary>
+public sealed class FinStreamEvent
+{
+    /// <summary>Creates one parsed server-sent event.</summary>
+    public FinStreamEvent(string eventName, string data) { Event = eventName; Data = data; }
+    /// <summary>The SSE event name.</summary>
+    public string Event { get; }
+    /// <summary>The SSE data payload.</summary>
+    public string Data { get; }
+}
+
+/// <summary>Account listing, lifecycle, settings, symbols and account-level results.</summary>
 public sealed class AccountsResource
 {
     private readonly FinHttpTransport _http;
     internal AccountsResource(FinHttpTransport http) => _http = http;
 
-    /// <summary>Lists the accounts this API key can reach.</summary>
-    public Task<IReadOnlyList<DtoMemberAccount>> ListAsync(CancellationToken cancellationToken = default) =>
-        _http.SendAsync<IReadOnlyList<DtoMemberAccount>>("GET", "v1/accounts", cancellationToken: cancellationToken);
+    /// <summary>Lists reachable accounts by ACNO, with an optional external reference filter.</summary>
+    public Task<FinPage<DtoMemberAccount>> ListAsync(FinPageQuery? page = null, string? externalRef = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoMemberAccount>("GET", Query("v1/fxs/accounts", page, ("externalRef", externalRef)), cancellationToken: cancellationToken);
 
-    /// <summary>Adds a hosted account for the key's owner.</summary>
+    /// <summary>Adds a hosted account for the signed-in member or API-key owner.</summary>
     public Task<DtoFleetAccount> MakeAsync(CmdMemberAccountMake command, string? idempotencyKey = null,
         CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFleetAccount>("POST", "v1/accounts/make", command, idempotencyKey, cancellationToken);
+        _http.SendAsync<DtoFleetAccount>("POST", "v1/fxs/accounts", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Reads one account and its latest state.</summary>
-    public Task<DtoMemberAccount> GetAsync(string accountId, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoMemberAccount>("GET", Account(accountId), cancellationToken: cancellationToken);
+    /// <summary>Creates a demo account.</summary>
+    public Task<DtoFleetAccount> MakeDemoAsync(CmdMemberDemoMake command, string? idempotencyKey = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFleetAccount>("POST", "v1/fxs/accounts/demo", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Reads demo terminal availability for one platform.</summary>
+    public Task<DtoDemoAvailability> DemoAvailabilityAsync(string? platform = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoDemoAvailability>("GET", Query("v1/fxs/accounts/demo-availability", null, ("platform", platform)), cancellationToken: cancellationToken);
+
+    /// <summary>Reads one account by ACNO.</summary>
+    public Task<DtoMemberAccount> GetAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoMemberAccount>("GET", Account(acno), cancellationToken: cancellationToken);
 
     /// <summary>Sets or clears the account's external reference.</summary>
-    public Task<DtoTermAccount> SetExternalRefAsync(string accountId, CmdTermAccountExternalRef command,
+    public Task<DtoTermAccount> SetExternalRefAsync(long acno, CmdTermAccountExternalRef command,
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoTermAccount>("PUT", Account(accountId) + "/external-ref", command, idempotencyKey, cancellationToken);
+        _http.SendAsync<DtoTermAccount>("PUT", Account(acno) + "/external-ref", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Reads the account's trading settings.</summary>
-    public Task<DtoFxsAcct> GetTradingAsync(string accountId, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsAcct>("GET", Account(accountId) + "/fxs", cancellationToken: cancellationToken);
+    /// <summary>Reads trading settings for one account.</summary>
+    public Task<DtoFxsAcct> GetSettingsAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsAcct>("GET", Account(acno) + "/settings", cancellationToken: cancellationToken);
 
-    /// <summary>Changes the account's trading settings.</summary>
-    public Task<DtoFxsAcct> PatchTradingAsync(string accountId, CmdFxsAcctPatch command, string? idempotencyKey = null,
+    /// <summary>Changes trading settings for one account.</summary>
+    public Task<DtoFxsAcct> PatchSettingsAsync(long acno, CmdApiFxsAcctPatch command, string? idempotencyKey = null,
         CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsAcct>("PATCH", Account(accountId) + "/fxs", command, idempotencyKey, cancellationToken);
+        _http.SendAsync<DtoFxsAcct>("PATCH", Account(acno) + "/settings", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Lists the account's symbols and their BUY and SELL books.</summary>
-    public Task<FinPage<DtoFxsPair>> ListPairsAsync(string accountId, FinPageQuery? query = null,
+    /// <summary>Lists the account's pairs.</summary>
+    public Task<FinPage<DtoFxsPair>> ListPairsAsync(long acno, FinPageQuery? page = null, string? search = null,
         CancellationToken cancellationToken = default) =>
-        _http.SendPageAsync<DtoFxsPair>("GET", Account(accountId) + "/pairs" + (query ?? new FinPageQuery()).ToQueryString(), cancellationToken: cancellationToken);
+        _http.SendPageAsync<DtoFxsPair>("GET", Query(Account(acno) + "/pairs", page, ("search", search)), cancellationToken: cancellationToken);
 
-    /// <summary>Reads one symbol and its settings.</summary>
-    public Task<DtoFxsPair> GetPairAsync(string accountId, long prno, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsPair>("GET", Account(accountId) + "/pairs/" + prno.ToString(System.Globalization.CultureInfo.InvariantCulture), cancellationToken: cancellationToken);
+    /// <summary>Reads a pair by PRNO.</summary>
+    public Task<DtoFxsPair> GetPairAsync(long acno, long prno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsPair>("GET", $"{Account(acno)}/pairs/{Number(prno, nameof(prno))}", cancellationToken: cancellationToken);
 
-    /// <summary>Changes one symbol's settings.</summary>
-    public Task<DtoFxsPair> PatchPairAsync(string accountId, long prno, CmdFxsPairPatch command,
+    /// <summary>Changes one pair's settings.</summary>
+    public Task<DtoFxsPair> PatchPairAsync(long acno, long prno, CmdApiFxsPairPatch command,
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsPair>("PATCH", Account(accountId) + "/pairs/" + prno.ToString(System.Globalization.CultureInfo.InvariantCulture), command, idempotencyKey, cancellationToken);
+        _http.SendAsync<DtoFxsPair>("PATCH", $"{Account(acno)}/pairs/{Number(prno, nameof(prno))}", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Lists the account's HYBRID DCA proposals waiting for an answer.</summary>
-    public Task<IReadOnlyList<DtoFxsOrdr>> DcaQueueAsync(string accountId, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<IReadOnlyList<DtoFxsOrdr>>("GET", Account(accountId) + "/dca-queue", cancellationToken: cancellationToken);
+    /// <summary>Reads the account's broker symbols and enabled list.</summary>
+    public Task<DtoFxsSymbolCatalog> SymbolsAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsSymbolCatalog>("GET", Account(acno) + "/symbols", cancellationToken: cancellationToken);
 
-    /// <summary>Reads broker symbols and the account's enabled symbols.</summary>
-    public Task<DtoFxsSymbolCatalog> SymbolsAsync(string accountId, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsSymbolCatalog>("GET", Account(accountId) + "/symbols", cancellationToken: cancellationToken);
-
-    /// <summary>Adds and removes symbols from the account's enabled list.</summary>
-    public Task<DtoFxsAccountState> EditSymbolsAsync(string accountId, CmdFxsSymbolsEdit command,
+    /// <summary>Adds or removes enabled symbols.</summary>
+    public Task<DtoFxsAccountState> EditSymbolsAsync(long acno, CmdFxsSymbolsEdit command,
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsAccountState>("PUT", Account(accountId) + "/symbols", command, idempotencyKey, cancellationToken);
+        _http.SendAsync<DtoFxsAccountState>("PUT", Account(acno) + "/symbols", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Reads a symbol's broker specification and latest quote.</summary>
-    public Task<DtoFxsSymbolSpec> QuoteAsync(string accountId, string symbol, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsSymbolSpec>("GET", Account(accountId) + "/quotes/" + Uri.EscapeDataString(symbol), cancellationToken: cancellationToken);
+    /// <summary>Reads one symbol's specification and latest quote.</summary>
+    public Task<DtoFxsSymbolSpec> QuoteAsync(long acno, string symbol, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsSymbolSpec>("GET", Account(acno) + "/quotes/" + Uri.EscapeDataString(Required(symbol, nameof(symbol))), cancellationToken: cancellationToken);
 
-    /// <summary>Reads daily performance rows for one account and optional UTC date range.</summary>
-    public Task<IReadOnlyList<DtoFxsPerf>> PerformanceAsync(string accountId, DateTimeOffset? fromDt = null,
-        DateTimeOffset? toDt = null, CancellationToken cancellationToken = default)
+    /// <summary>Lists live orders for the account.</summary>
+    public Task<FinPage<DtoFxsOrdr>> OrdersAsync(long acno, FinPageQuery? page = null, string? search = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoFxsOrdr>("GET", Query(Account(acno) + "/orders", page, ("search", search)), cancellationToken: cancellationToken);
+
+    /// <summary>Reads one live or settled order.</summary>
+    public Task<DtoFxsOrdr> OrderAsync(long acno, long oid, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsOrdr>("GET", $"{Account(acno)}/orders/{Number(oid, nameof(oid))}", cancellationToken: cancellationToken);
+
+    /// <summary>Lists settled orders for the account.</summary>
+    public Task<FinPage<DtoFxsOrdh>> HistoryAsync(long acno, FinPageQuery? page = null, string? search = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoFxsOrdh>("GET", Query(Account(acno) + "/history", page, ("search", search)), cancellationToken: cancellationToken);
+
+    /// <summary>Reads one settled order by OID.</summary>
+    public Task<DtoFxsOrdh> HistoryItemAsync(long acno, long oid, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsOrdh>("GET", $"{Account(acno)}/history/{Number(oid, nameof(oid))}", cancellationToken: cancellationToken);
+
+    /// <summary>Lists DCA proposals waiting for an answer.</summary>
+    public Task<IReadOnlyList<DtoFxsOrdr>> DcaQueueAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoFxsOrdr>>("GET", Account(acno) + "/dca", cancellationToken: cancellationToken);
+
+    /// <summary>Lists daily performance rows.</summary>
+    public Task<IReadOnlyList<DtoFxsPerf>> PerformanceAsync(long acno, DateTimeOffset? fromDt = null,
+        DateTimeOffset? toDt = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoFxsPerf>>("GET", Query(Account(acno) + "/performance", null,
+            ("fromDt", DateValue(fromDt)), ("toDt", DateValue(toDt))), cancellationToken: cancellationToken);
+
+    /// <summary>Reads the account's performance window.</summary>
+    public Task<DtoFxsPerfWindow> PerformanceWindowAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsPerfWindow>("GET", Account(acno) + "/performance/window", cancellationToken: cancellationToken);
+
+    /// <summary>Reads performance bars for an optional UTC date range.</summary>
+    public Task<DtoFxsPerfBars> PerformanceBarsAsync(long acno, DateTimeOffset? fromDt = null,
+        DateTimeOffset? toDt = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsPerfBars>("GET", Query(Account(acno) + "/performance/bars", null,
+            ("fromDt", DateValue(fromDt)), ("toDt", DateValue(toDt))), cancellationToken: cancellationToken);
+
+    /// <summary>Lists paged activity for one account.</summary>
+    public Task<FinPage<DtoMemberActivity>> ActivityAsync(long acno, FinPageQuery? page = null, string? search = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoMemberActivity>("GET", Query(Account(acno) + "/activity", page, ("search", search)), cancellationToken: cancellationToken);
+
+    /// <summary>Lists recent terminal operations for one account.</summary>
+    public Task<FinPage<DtoApiTermOperation>> OperationsAsync(long acno, FinPageQuery? page = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoApiTermOperation>("GET", Query(Account(acno) + "/operations", page), cancellationToken: cancellationToken);
+
+    /// <summary>Queues a broker-password change.</summary>
+    public Task<DtoOperationQueued> ChangePasswordAsync(long acno, CmdTermAccountPassword command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoOperationQueued>("POST", Account(acno) + "/password", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Queues a start operation.</summary>
+    public Task<DtoOperationQueued> StartAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        OperationAsync(acno, "start", idempotencyKey, cancellationToken);
+    /// <summary>Queues a stop operation.</summary>
+    public Task<DtoOperationQueued> StopAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        OperationAsync(acno, "stop", idempotencyKey, cancellationToken);
+    /// <summary>Queues a restart operation.</summary>
+    public Task<DtoOperationQueued> RestartAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        OperationAsync(acno, "restart", idempotencyKey, cancellationToken);
+    /// <summary>Queues account removal.</summary>
+    public Task<DtoOperationQueued> RemoveAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        OperationAsync(acno, "", idempotencyKey, cancellationToken, HttpMethod.Delete);
+
+    private Task<DtoOperationQueued> OperationAsync(long acno, string suffix, string? key, CancellationToken ct,
+        HttpMethod? method = null) => _http.SendAsync<DtoOperationQueued>(method?.Method ?? "POST",
+            Account(acno) + (suffix.Length == 0 ? "" : "/" + suffix), idempotencyKey: key, cancellationToken: ct);
+
+    internal static string Account(long acno) => $"v1/fxs/accounts/{Number(acno, nameof(acno), allowZero: false)}";
+    internal static string Number(long value, string name, bool allowZero = true)
     {
-        var query = new List<string>();
-        if (fromDt.HasValue) query.Add("fromDt=" + Uri.EscapeDataString(fromDt.Value.ToUniversalTime().ToString("O", System.Globalization.CultureInfo.InvariantCulture)));
-        if (toDt.HasValue) query.Add("toDt=" + Uri.EscapeDataString(toDt.Value.ToUniversalTime().ToString("O", System.Globalization.CultureInfo.InvariantCulture)));
-        return _http.SendAsync<IReadOnlyList<DtoFxsPerf>>("GET", Account(accountId) + "/performance" + (query.Count == 0 ? "" : "?" + string.Join("&", query)), cancellationToken: cancellationToken);
+        if (value < (allowZero ? 0 : 1)) throw new ArgumentOutOfRangeException(name);
+        return value.ToString(CultureInfo.InvariantCulture);
     }
-
-    /// <summary>Reads recent activity for one account.</summary>
-    public Task<IReadOnlyList<DtoMemberActivity>> ActivityAsync(string accountId, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<IReadOnlyList<DtoMemberActivity>>("GET", Account(accountId) + "/activity", cancellationToken: cancellationToken);
-
-    /// <summary>Queues a start operation for the hosted terminal.</summary>
-    public Task<DtoOperationQueued> StartAsync(string accountId, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        OperationAsync(accountId, "start", idempotencyKey, cancellationToken);
-    /// <summary>Queues a stop operation for the hosted terminal.</summary>
-    public Task<DtoOperationQueued> StopAsync(string accountId, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        OperationAsync(accountId, "stop", idempotencyKey, cancellationToken);
-    /// <summary>Queues a restart operation for the hosted terminal.</summary>
-    public Task<DtoOperationQueued> RestartAsync(string accountId, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        OperationAsync(accountId, "restart", idempotencyKey, cancellationToken);
-    /// <summary>Queues removal of the hosted account and its terminal.</summary>
-    public Task<DtoOperationQueued> RemoveAsync(string accountId, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        OperationAsync(accountId, "remove", idempotencyKey, cancellationToken);
-
-    private Task<DtoOperationQueued> OperationAsync(string accountId, string operation, string? key, CancellationToken ct) =>
-        _http.SendAsync<DtoOperationQueued>("POST", Account(accountId) + "/" + operation, idempotencyKey: key, cancellationToken: ct);
-
-    internal static string Account(string accountId)
-    {
-        if (string.IsNullOrWhiteSpace(accountId)) throw new ArgumentException("Account id is required.", nameof(accountId));
-        return "v1/accounts/" + Uri.EscapeDataString(accountId);
-    }
+    private static string Required(string value, string name) => string.IsNullOrWhiteSpace(value)
+        ? throw new ArgumentException("A value is required.", name) : value.Trim();
+    private static string? DateValue(DateTimeOffset? value) => value?.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture);
 }
 
-/// <summary>Orders and trade actions.</summary>
+/// <summary>Order history and trade actions.</summary>
 public sealed class OrdersResource
 {
     private readonly FinHttpTransport _http;
     internal OrdersResource(FinHttpTransport http) => _http = http;
 
-    /// <summary>Lists live orders, including queued and pending orders.</summary>
-    public Task<FinPage<DtoFxsOrdr>> ListAsync(string accountId, FinPageQuery? query = null,
+    /// <summary>Preflights a trade request.</summary>
+    public Task<DtoFxsPreInfo> PreInfoAsync(long acno, CmdApiFxsPreInfo command, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsPreInfo>("POST", AccountsResource.Account(acno) + "/trade/preinfo", command, cancellationToken: cancellationToken);
+
+    /// <summary>Sends one trading action. A successful response means queued, not filled.</summary>
+    public Task<DtoFxsAccountState> MakeAsync(long acno, CmdApiFxsOrdrMake command, string? idempotencyKey = null,
         CancellationToken cancellationToken = default) =>
-        _http.SendPageAsync<DtoFxsOrdr>("GET", AccountsResource.Account(accountId) + "/orders" + (query ?? new FinPageQuery()).ToQueryString(), cancellationToken: cancellationToken);
+        _http.SendAsync<DtoFxsAccountState>("POST", AccountsResource.Account(acno) + "/trade", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Lists settled orders, newest first.</summary>
-    public Task<FinPage<DtoFxsOrdh>> HistoryAsync(string accountId, FinPageQuery? query = null,
+    /// <summary>Sends paired BUY and SELL actions.</summary>
+    public Task<DtoFxsAccountState> HedgeAsync(long acno, CmdApiFxsHedgeMake command, string? idempotencyKey = null,
         CancellationToken cancellationToken = default) =>
-        _http.SendPageAsync<DtoFxsOrdh>("GET", AccountsResource.Account(accountId) + "/orders/history" + (query ?? new FinPageQuery()).ToQueryString(), cancellationToken: cancellationToken);
+        _http.SendAsync<DtoFxsAccountState>("POST", AccountsResource.Account(acno) + "/trade/hedge", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Reads one settled order.</summary>
-    public Task<DtoFxsOrdh> HistoryItemAsync(string accountId, long oid, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsOrdh>("GET", AccountsResource.Account(accountId) + "/orders/history/" + Id(oid), cancellationToken: cancellationToken);
-
-    /// <summary>Reads one live or settled order.</summary>
-    public Task<DtoFxsOrdr> GetAsync(string accountId, long oid, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsOrdr>("GET", AccountsResource.Account(accountId) + "/orders/" + Id(oid), cancellationToken: cancellationToken);
-
-    /// <summary>Sends one FXS action. A successful response means queued for the terminal, not filled.</summary>
-    public Task<DtoFxsAccountState> MakeAsync(string accountId, CmdFxsOrdrMake command, string? idempotencyKey = null,
+    /// <summary>Modifies a trade or pending order.</summary>
+    public Task<DtoFxsAccountState> ModifyAsync(long acno, CmdFxsModify command, string? idempotencyKey = null,
         CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsAccountState>("POST", AccountsResource.Account(accountId) + "/orders", command, idempotencyKey, cancellationToken);
+        _http.SendAsync<DtoFxsAccountState>("POST", AccountsResource.Account(acno) + "/trade/modify", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Accepts or rejects one HYBRID DCA proposal.</summary>
-    public Task<DtoFxsOrdr> AnswerDcaAsync(string accountId, long oid, CmdFxsDcaAnswer command,
+    /// <summary>Cancels an order that has not reached the terminal.</summary>
+    public Task<DtoFxsAccountState> CancelWaitingAsync(long acno, CmdFxsCancelWaiting command, string? idempotencyKey = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsAccountState>("POST", AccountsResource.Account(acno) + "/trade/cancel", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Accepts or rejects one DCA proposal.</summary>
+    public Task<DtoFxsOrdr> AnswerDcaAsync(long acno, long oid, CmdFxsDcaAnswer command,
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsOrdr>("POST", AccountsResource.Account(accountId) + "/dca/" + Id(oid) + "/answer", command, idempotencyKey, cancellationToken);
-
-    /// <summary>Reads the quote, limits, books and settings used by the trade ticket.</summary>
-    public Task<DtoFxsPreInfo> PreInfoAsync(string accountId, CmdFxsPreInfo command, string? idempotencyKey = null,
-        CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsPreInfo>("POST", AccountsResource.Account(accountId) + "/orders/preinfo", command, idempotencyKey, cancellationToken);
-
-    /// <summary>Sends a BUY and SELL trade together. A successful response means queued, not filled.</summary>
-    public Task<DtoFxsAccountState> HedgeAsync(string accountId, CmdFxsHedgeMake command, string? idempotencyKey = null,
-        CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsAccountState>("POST", AccountsResource.Account(accountId) + "/orders/hedge", command, idempotencyKey, cancellationToken);
-
-    /// <summary>Changes an order's TP field, SL field, expiry or pending price.</summary>
-    public Task<DtoFxsAccountState> ModifyAsync(string accountId, CmdFxsModify command, string? idempotencyKey = null,
-        CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsAccountState>("POST", AccountsResource.Account(accountId) + "/trades/modify", command, idempotencyKey, cancellationToken);
-
-    /// <summary>Cancels an order that has not yet been delivered to the terminal.</summary>
-    public Task<DtoFxsAccountState> CancelWaitingAsync(string accountId, CmdFxsCancelWaiting command,
-        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoFxsAccountState>("POST", AccountsResource.Account(accountId) + "/trades/cancel-waiting", command, idempotencyKey, cancellationToken);
-
-    private static string Id(long value) => value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        _http.SendAsync<DtoFxsOrdr>("POST", $"{AccountsResource.Account(acno)}/dca/{AccountsResource.Number(oid, nameof(oid))}", command, idempotencyKey, cancellationToken);
 }
 
-/// <summary>Changes feed resources.</summary>
+/// <summary>Cross-account lists, strategies, signals, alerts, broker search and server-sent events.</summary>
+public sealed class FxResource
+{
+    private readonly FinHttpTransport _http;
+    internal FxResource(FinHttpTransport http) => _http = http;
+
+    /// <summary>Lists pairs across reachable accounts.</summary>
+    public Task<FinPage<DtoFxsPair>> PairsAsync(FinFxsListQuery? query = null, CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoFxsPair>("GET", ListQuery("v1/fxs/pairs", query), cancellationToken: cancellationToken);
+    /// <summary>Lists open orders across reachable accounts.</summary>
+    public Task<FinPage<DtoFxsOrdr>> OrdersAsync(FinFxsListQuery? query = null, CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoFxsOrdr>("GET", ListQuery("v1/fxs/orders", query), cancellationToken: cancellationToken);
+    /// <summary>Lists settled orders across reachable accounts.</summary>
+    public Task<FinPage<DtoFxsOrdh>> HistoryAsync(FinFxsListQuery? query = null, CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoFxsOrdh>("GET", ListQuery("v1/fxs/history", query), cancellationToken: cancellationToken);
+    /// <summary>Lists activity across reachable accounts.</summary>
+    public Task<FinPage<DtoMemberActivity>> ActivityAsync(FinFxsListQuery? query = null, CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoMemberActivity>("GET", ListQuery("v1/fxs/activity", query), cancellationToken: cancellationToken);
+    /// <summary>Lists strategies available to the member.</summary>
+    public Task<IReadOnlyList<DtoFxsStg>> StrategiesAsync(CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoFxsStg>>("GET", "v1/fxs/strategies", cancellationToken: cancellationToken);
+    /// <summary>Reads one strategy.</summary>
+    public Task<DtoFxsStg> StrategyAsync(int isno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFxsStg>("GET", $"v1/fxs/strategies/{AccountsResource.Number(isno, nameof(isno))}", cancellationToken: cancellationToken);
+    /// <summary>Reads the member's enabled-symbol signal shelf.</summary>
+    public Task<DtoShelfSignals> SignalsAsync(CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoShelfSignals>("GET", "v1/fxs/signals", cancellationToken: cancellationToken);
+    /// <summary>Lists warning and error activity.</summary>
+    public Task<FinPage<DtoMemberActivity>> AlertsAsync(FinPageQuery? page = null, CancellationToken cancellationToken = default) =>
+        _http.SendPageAsync<DtoMemberActivity>("GET", Query("v1/fxs/alerts", page), cancellationToken: cancellationToken);
+    /// <summary>Opens the live member event stream.</summary>
+    public IAsyncEnumerable<FinStreamEvent> ReadStreamAsync(CancellationToken cancellationToken = default) =>
+        _http.ReadServerSentEventsAsync("v1/fxs/stream", cancellationToken);
+    /// <summary>Searches broker servers available when adding an account.</summary>
+    public Task<IReadOnlyList<DtoBrokerServerSearch>> BrokersAsync(string? query = null, string? platform = null,
+        bool? demosOnly = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoBrokerServerSearch>>("GET", Query("v1/brokers", null,
+            ("Q", query), ("Platform", platform), ("DemosOnly", demosOnly)), cancellationToken: cancellationToken);
+
+    private static string ListQuery(string path, FinFxsListQuery? query) => Query(path, query?.Page,
+        ("acno", query?.Acno), ("prno", query?.Prno), ("demo", query?.Demo), ("platform", query?.Platform), ("search", query?.Search));
+}
+
+/// <summary>Change-feed resource.</summary>
 public sealed class ChangesResource
 {
     private readonly FinHttpTransport _http;
@@ -192,16 +296,11 @@ public sealed class ChangesResource
     public Task<DtoApiChangeFeed> GetAsync(string? cursor = null, int take = 500, CancellationToken cancellationToken = default)
     {
         if (take is < 1 or > 1000) throw new ArgumentOutOfRangeException(nameof(take), "Take must be between 1 and 1000.");
-        var query = "?take=" + take.ToString(System.Globalization.CultureInfo.InvariantCulture);
-        if (!string.IsNullOrWhiteSpace(cursor)) query += "&cursor=" + Uri.EscapeDataString(cursor);
-        return _http.SendAsync<DtoApiChangeFeed>("GET", "v1/accounts/changes" + query, cancellationToken: cancellationToken);
+        return _http.SendAsync<DtoApiChangeFeed>("GET", Query("v1/changes", null,
+            ("take", take), ("cursor", cursor)), cancellationToken: cancellationToken);
     }
 
-    /// <summary>
-    /// Reads the change feed page by page, starting at <paramref name="cursor"/> (or at "now" when it is null) and following
-    /// each returned cursor while more rows remain. Process a page's rows, then save its <c>Cursor</c>: after a restart, pass
-    /// the saved cursor here to carry on where you stopped.
-    /// </summary>
+    /// <summary>Reads every available changes page, following each returned cursor.</summary>
     public async IAsyncEnumerable<DtoApiChangeFeed> ReadPagesAsync(string? cursor = null, int take = 500,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
@@ -209,33 +308,25 @@ public sealed class ChangesResource
         if (!string.IsNullOrWhiteSpace(cursor)) seen.Add(cursor!);
         while (true)
         {
-            cancellationToken.ThrowIfCancellationRequested();
             var page = await GetAsync(cursor, take, cancellationToken).ConfigureAwait(false);
             yield return page;
             if (page.More != true) yield break;
-            var nextCursor = page.Cursor;
-            if (string.IsNullOrWhiteSpace(nextCursor) || !seen.Add(nextCursor!))
+            if (string.IsNullOrWhiteSpace(page.Cursor) || !seen.Add(page.Cursor!))
                 throw new InvalidOperationException("The FinCopy change feed returned More without a new cursor.");
-            cursor = nextCursor;
+            cursor = page.Cursor;
         }
     }
 
-    /// <summary>
-    /// Streams every available change, following each returned cursor while more rows remain. This stream does not expose the
-    /// cursor; use <see cref="ReadPagesAsync"/> when the cursor must be saved to resume later.
-    /// </summary>
+    /// <summary>Streams all available changes. Use <see cref="ReadPagesAsync"/> to keep a resume cursor.</summary>
     public async IAsyncEnumerable<DtoApiChange> ReadAllAsync(string? cursor = null, int take = 500,
         [EnumeratorCancellation] CancellationToken cancellationToken = default)
     {
         await foreach (var page in ReadPagesAsync(cursor, take, cancellationToken).ConfigureAwait(false))
-        {
-            if (page.Changes is null) continue;
-            foreach (var change in page.Changes) yield return change;
-        }
+            foreach (var change in page.Changes ?? []) yield return change;
     }
 }
 
-/// <summary>Webhook management resources.</summary>
+/// <summary>Webhook configuration and test delivery.</summary>
 public sealed class WebhooksResource
 {
     private readonly FinHttpTransport _http;
@@ -243,18 +334,37 @@ public sealed class WebhooksResource
 
     /// <summary>Reads this key's webhook configuration.</summary>
     public Task<DtoApiWebhook> GetAsync(CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoApiWebhook>("GET", "v1/accounts/webhook", cancellationToken: cancellationToken);
-
-    /// <summary>Sets the HTTPS destination and returns its signing secret once.</summary>
+        _http.SendAsync<DtoApiWebhook>("GET", "v1/webhook", cancellationToken: cancellationToken);
+    /// <summary>Sets the webhook destination and returns its signing secret once.</summary>
     public Task<DtoApiWebhook> SetAsync(CmdApiWebhookSet command, string? idempotencyKey = null,
         CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoApiWebhook>("PUT", "v1/accounts/webhook", command, idempotencyKey, cancellationToken);
-
+        _http.SendAsync<DtoApiWebhook>("PUT", "v1/webhook", command, idempotencyKey, cancellationToken);
     /// <summary>Removes this key's webhook.</summary>
     public Task<bool> DeleteAsync(string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<bool>("DELETE", "v1/accounts/webhook", idempotencyKey: idempotencyKey, cancellationToken: cancellationToken);
-
-    /// <summary>Sends a signed test POST to this key's webhook.</summary>
+        _http.SendAsync<bool>("DELETE", "v1/webhook", idempotencyKey: idempotencyKey, cancellationToken: cancellationToken);
+    /// <summary>Sends a signed test delivery.</summary>
     public Task<DtoApiWebhookPing> PingAsync(string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoApiWebhookPing>("POST", "v1/accounts/webhook/ping", idempotencyKey: idempotencyKey, cancellationToken: cancellationToken);
+        _http.SendAsync<DtoApiWebhookPing>("POST", "v1/webhook/ping", idempotencyKey: idempotencyKey, cancellationToken: cancellationToken);
+}
+
+internal static class FinApiQuery
+{
+    internal static string Query(string path, FinPageQuery? page, params (string Name, object? Value)[] filters)
+    {
+        var values = new List<string>();
+        var pageQuery = (page ?? new FinPageQuery()).ToQueryString().TrimStart('?');
+        if (pageQuery.Length > 0) values.Add(pageQuery);
+        foreach (var (name, value) in filters)
+        {
+            if (value is null) continue;
+            var text = value switch
+            {
+                bool b => b ? "true" : "false",
+                IFormattable f => f.ToString(null, CultureInfo.InvariantCulture),
+                _ => value.ToString()
+            };
+            values.Add(Uri.EscapeDataString(name) + "=" + Uri.EscapeDataString(text ?? ""));
+        }
+        return values.Count == 0 ? path : path + "?" + string.Join("&", values);
+    }
 }

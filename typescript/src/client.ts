@@ -1,4 +1,4 @@
-import { ChangesResource, AccountsResource, OrdersResource, WebhooksResource } from "./resources.js";
+import { ChangesResource, AccountsResource, OrdersResource, WebhooksResource, FxResource } from "./resources.js";
 import { FinHttpTransport } from "./http-transport.js";
 import type { FinClientOptions } from "./options.js";
 
@@ -7,6 +7,7 @@ export class FinClient {
   readonly copy: {
     readonly accounts: AccountsResource;
     readonly orders: OrdersResource;
+    readonly fx: FxResource;
     readonly changes: ChangesResource;
     readonly webhooks: WebhooksResource;
   };
@@ -16,6 +17,7 @@ export class FinClient {
     this.copy = {
       accounts: new AccountsResource(transport),
       orders: new OrdersResource(transport),
+      fx: new FxResource(transport),
       changes: new ChangesResource(transport),
       webhooks: new WebhooksResource(transport),
     };
