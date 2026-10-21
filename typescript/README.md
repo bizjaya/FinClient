@@ -15,7 +15,7 @@ const accounts = await fin.copy.accounts.list();
 for (const account of accounts.items) console.log(account.Fleet?.Account?.ACNO, account.Fleet?.Account?.Login);
 
 // ACNO is in the route; the JSON body contains only trade fields.
-// await fin.copy.orders.make(52014125, { SYM: "EURUSD", LOT: 0.01 });
+// await fin.copy.orders.make(52014125, { SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.01 });
 ```
 
 The client defaults to `https://api.fincopy.pro`. Account-scoped methods take the numeric ACNO, and paged list methods

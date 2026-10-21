@@ -16,7 +16,10 @@ foreach (var account in page.Items)
     Console.WriteLine($"{account.Fleet?.Account?.ACNO}: {account.Fleet?.Account?.Login}");
 
 // ACNO is in the URL; request bodies do not contain an account id.
-// await fin.Copy.Orders.MakeAsync(52014125, new CmdApiFxsOrdrMake { SYM = "EURUSD", LOT = 0.01 });
+// await fin.Copy.Orders.MakeAsync(52014125, new CmdApiFxsOrdrMake
+// {
+//     SYM = "EURUSD", ACT = FxsOrderAction.NEW, OTY = FxsOrderType.OP_BUY, LOT = 0.01,
+// });
 ```
 
 ## TypeScript
@@ -28,7 +31,7 @@ const fin = new FinClient({ apiKey: process.env.FINCOPY_API_KEY! });
 const page = await fin.copy.accounts.list();
 for (const account of page.items) console.log(account.Fleet?.Account?.ACNO);
 
-// await fin.copy.orders.make(52014125, { SYM: "EURUSD", LOT: 0.01 });
+// await fin.copy.orders.make(52014125, { SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.01 });
 ```
 
 ## API key or member session

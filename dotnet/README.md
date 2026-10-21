@@ -18,7 +18,10 @@ foreach (var account in accounts.Items)
     Console.WriteLine($"{account.Fleet?.Account?.ACNO} · {account.Fleet?.Account?.Login}");
 
 // The account number is in the path, not in the trade body.
-// await fin.Copy.Orders.MakeAsync(52014125, new CmdApiFxsOrdrMake { SYM = "EURUSD", LOT = 0.01 });
+// await fin.Copy.Orders.MakeAsync(52014125, new CmdApiFxsOrdrMake
+// {
+//     SYM = "EURUSD", ACT = FxsOrderAction.NEW, OTY = FxsOrderType.OP_BUY, LOT = 0.01,
+// });
 ```
 
 ## Member session
