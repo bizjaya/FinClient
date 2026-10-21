@@ -1267,6 +1267,12 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("MemberEmail")]
         public string? MemberEmail { get; set; } = default!;
 
+        /// <summary>
+        /// The name on the MT4/MT5 account, as the EA reports it; null until the first sync.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AccountName")]
+        public string? AccountName { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("OperationId")]
         public string? OperationId { get; set; } = default!;
 
@@ -4167,6 +4173,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
         public long? ACNO { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("TMNO")]
+        public long? TMNO { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("Id")]
         public string? Id { get; set; } = default!;
 
@@ -4243,6 +4252,9 @@ namespace Fin.Copy
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoTermTerminal
     {
+
+        [System.Text.Json.Serialization.JsonPropertyName("TMNO")]
+        public long? TMNO { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Id")]
         public string? Id { get; set; } = default!;
