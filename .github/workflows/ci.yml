@@ -76,5 +76,5 @@ jobs:
           persist-credentials: false
       - run: >-
           curl --fail --silent --show-error --retry 3 --retry-all-errors --max-time 30
-          https://api.fincopy.io/openapi/v1.json --output "$RUNNER_TEMP/fincopy-v1.json"
+          https://api.fincopy.pro/openapi/v1.json --output "$RUNNER_TEMP/fincopy-v1.json"
       - run: node scripts/check-spec-drift.mjs spec/fincopy-v1.json "$RUNNER_TEMP/fincopy-v1.json"
