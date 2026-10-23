@@ -45,6 +45,12 @@ const account = await fin.copy.accounts.get(52014125);
 The API accepts browser requests only from FinCopy's own sites. Session trade writes pass the member's trade-PIN gate on
 the server. The main entry uses no Node.js built-ins, so it runs in browsers, Node.js 20+, Deno and Bun.
 
+`copy.accounts.remove(acno, { TrPin }, options)` disconnects the hosted terminal, forgets its broker password and frees its seat.
+Customer account settings and trade history remain so the login can be restored later; a free demo's account and terminal records
+are deleted. Open orders stay at the broker, and virtual TP, SL and TS stop working while no terminal runs. Include the member's
+trading PIN for a session account when its PIN is enabled; API-key requests do not use a session PIN. Pass an `idempotencyKey`
+in `options` so retries receive the same operation.
+
 ## Results, errors and the stream
 
 Trade calls report that an operation was queued; follow the stream, change feed or webhook for its terminal result. Errors

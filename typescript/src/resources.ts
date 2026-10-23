@@ -180,9 +180,14 @@ export class AccountsResource {
   stop(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoOperationQueuedResPonse">> { return this.operation(acno, "stop", options); }
   /** Queues a terminal restart. */
   restart(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoOperationQueuedResPonse">> { return this.operation(acno, "restart", options); }
-  /** Queues account removal. */
-  remove(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoOperationQueuedResPonse">> {
-    return this.http.request("DELETE", accountPath(acno), undefined, options);
+  /** Disconnects the hosted terminal. Pass TrPin for a session account that requires its trading PIN. */
+  remove(acno: number, options?: FinRequestOptions): Promise<D<"DtoOperationQueuedResPonse">>;
+  remove(acno: number, command: CopyDto<"CmdMemTerminalDisconnect">, options?: FinRequestOptions): Promise<D<"DtoOperationQueuedResPonse">>;
+  remove(acno: number, commandOrOptions: CopyDto<"CmdMemTerminalDisconnect"> | FinRequestOptions = {}, options: FinRequestOptions = {}): Promise<D<"DtoOperationQueuedResPonse">> {
+    const hasCommand = Object.prototype.hasOwnProperty.call(commandOrOptions, "TrPin");
+    const command = hasCommand ? commandOrOptions as CopyDto<"CmdMemTerminalDisconnect"> : { TrPin: null };
+    const requestOptions = hasCommand ? options : commandOrOptions as FinRequestOptions;
+    return this.http.request("DELETE", accountPath(acno), command, requestOptions);
   }
   private operation(acno: number, action: string, options: FinRequestOptions): Promise<D<"DtoOperationQueuedResPonse">> {
     return this.http.request("POST", `${accountPath(acno)}/${action}`, undefined, options);

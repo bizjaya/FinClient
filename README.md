@@ -61,7 +61,7 @@ Session trade writes pass the member's trade-PIN gate on the server.
 ## Resources
 
 - `copy.accounts`: accounts, settings, pairs, symbols, quotes, orders, history, DCA, performance, activity, strategy
-  preview and apply, broker password changes and terminal operations (start, stop, restart, remove).
+  preview and apply, broker password changes and terminal operations (start, stop, restart, disconnect).
 - `copy.orders`: preflight, trade, hedge, modify, cancel and DCA answers.
 - `copy.fx`: lists across every account you can reach (pairs, orders, history, activity, DCA, terminal operations,
   performance window and bars), strategies (list, read, create, change, delete), signals, alerts, brokers and the event
@@ -71,6 +71,12 @@ Session trade writes pass the member's trade-PIN gate on the server.
 DTO fields keep the API's PascalCase wire names. List methods return a page (`Items` / `items`) with its paging block.
 
 Trade calls return when the work is queued for the terminal. Follow the stream, change feed or webhook to see the result.
+
+`copy.accounts.remove(acno, { TrPin }, options)` disconnects the hosted terminal, forgets its broker password and frees its seat.
+Customer account settings and trade history remain so the login can be restored later; a free demo's account and terminal records
+are deleted. Open orders stay at the broker, and virtual TP, SL and TS stop working while no terminal runs. Include the member's
+trading PIN for a session account when its PIN is enabled; API-key requests do not use a session PIN. The `Idempotency-Key`
+lets a retry receive the same operation.
 
 The event stream does not reconnect. It ends when the server closes it (about every 30 minutes) or when the connection
 breaks (a network error); open it again in a loop and wait a few seconds between attempts.

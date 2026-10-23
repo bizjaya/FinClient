@@ -71,11 +71,7 @@ export interface paths {
         get: operations["AccountView"];
         put?: never;
         post?: never;
-        /**
-         * Remove the account and its hosted terminal. Only the account's owner can. The Idempotency-Key header is
-         *                 required: a retry while the removal runs returns the same operation; after it finishes the account answers 404.
-         *                 Needs the Trade permission. Returns the operation id.
-         */
+        /** Disconnect the hosted terminal from this account. The terminal is stopped and removed, its broker password is forgotten, and its seat is freed. Customer account settings and trade history remain so the login can be restored later; a free demo's account and terminal records are deleted. Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. Only the account's owner can disconnect it. The Idempotency-Key header is required; retries with the same key return the same operation id. Session requests also need the trading PIN when the account requires one. Needs the Trade permission. Returns the operation id. */
         delete: operations["AccountRemove"];
         options?: never;
         head?: never;
@@ -1123,6 +1119,10 @@ export interface components {
         CmdTermAccountPassword: {
             BrokerPassword?: string | null;
             BrokerServerId?: string | null;
+        };
+        CmdMemTerminalDisconnect: {
+            /** @description The member's trading PIN when required by the account. API keys do not use a session PIN. */
+            TrPin?: string | null;
         };
         /** @enum {string} */
         DeployKind: "Provision" | "Upgrade" | "Rollback" | "Remove" | "Start" | "Stop" | "Restart";
@@ -3366,7 +3366,11 @@ export interface operations {
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CmdMemTerminalDisconnect"];
+            };
+        };
         responses: {
             /** @description OK */
             200: {
