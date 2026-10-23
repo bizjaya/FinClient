@@ -67,7 +67,8 @@ public sealed class AccountsResource
         CancellationToken cancellationToken = default) =>
         _http.SendPageAsync<DtoMemberAccount>("GET", Query("v1/fxs/accounts", page, ("externalRef", externalRef)), cancellationToken: cancellationToken);
 
-    /// <summary>Adds a hosted account for the signed-in member or API-key owner.</summary>
+    /// <summary>Adds a hosted account or reconnects an earlier disconnected account for the signed-in member or API-key owner.
+    /// Retrying with the same idempotency key returns the account made or reconnected by the first request.</summary>
     public Task<DtoFleetAccount> MakeAsync(CmdMemberAccountMake command, string? idempotencyKey = null,
         CancellationToken cancellationToken = default) =>
         _http.SendAsync<DtoFleetAccount>("POST", "v1/fxs/accounts", command, idempotencyKey, cancellationToken);
@@ -200,7 +201,9 @@ public sealed class AccountsResource
     /// <summary>Queues a restart operation.</summary>
     public Task<DtoOperationQueued> RestartAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
         OperationAsync(acno, "restart", idempotencyKey, cancellationToken);
-    /// <summary>Queues account removal.</summary>
+    /// <summary>Disconnects the hosted terminal and frees its seat while keeping the account, settings and trade history.
+    /// Open orders remain at the broker; virtual exits stop working while no terminal runs. The Idempotency-Key lets a retry
+    /// return the same operation.</summary>
     public Task<DtoOperationQueued> RemoveAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
         OperationAsync(acno, "", idempotencyKey, cancellationToken, HttpMethod.Delete);
 

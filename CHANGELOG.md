@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- Hosted accounts and terminals carry `TMNO`, the terminal's number; fleet accounts carry `AccountName`, the name on the
+  MetaTrader account.
+
 ### Changed
 
 - TypeScript: Node.js 20 or newer is required; Node.js 18 has had no security fixes since April 2025. The package is

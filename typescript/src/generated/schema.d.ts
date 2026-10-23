@@ -1428,6 +1428,8 @@ export interface components {
             /** Format: double */
             AvgLatencyMs?: number | null;
             MemberEmail?: string | null;
+            /** @description The name on the MT4/MT5 account, as the EA reports it; null until the first sync. */
+            AccountName?: string | null;
             OperationId?: string | null;
         };
         DtoFleetAccountResPonse: {
@@ -2820,6 +2822,8 @@ export interface components {
         DtoTermAccount: {
             /** Format: int64 */
             ACNO?: number;
+            /** Format: int64 */
+            TMNO?: number;
             Id?: string | null;
             NodeId?: string | null;
             /** Format: int64 */
@@ -2848,6 +2852,8 @@ export interface components {
             chksum?: string | null;
         };
         DtoTermTerminal: {
+            /** Format: int64 */
+            TMNO?: number;
             Id?: string | null;
             NodeId?: string | null;
             /** Format: int64 */

@@ -40,7 +40,7 @@ gate by the API. API keys remain for trusted server-side clients; never ship the
 ## Resources
 
 - `Copy.Accounts`: paged accounts, creation, settings, pairs, symbols and quotes, orders, history, DCA, performance,
-  activity, strategy preview and apply, and terminal operations (start, stop, restart, remove).
+  activity, strategy preview and apply, and terminal operations (start, stop, restart, disconnect).
 - `Copy.Orders`: trade preflight, trade, hedge, modify, cancel and DCA answers.
 - `Copy.Fx`: lists across every account you can reach (pairs, orders, history, activity, DCA, terminal operations,
   performance window and bars), strategies (list, read, create, change, delete), signals, alerts, brokers and the event
@@ -49,6 +49,10 @@ gate by the API. API keys remain for trusted server-side clients; never ship the
 
 Paged methods return `FinPage<T>` with `Items` and paging metadata. Generated DTO properties retain PascalCase names.
 Trade writes return when queued for the terminal; observe completion through the stream, change feed or webhook.
+`Copy.Accounts.RemoveAsync` sends `DELETE /v1/fxs/accounts/{acno}` and disconnects the hosted terminal: it stops and
+removes the terminal, forgets the broker password, frees the seat, and keeps the account, settings and trade history.
+Open orders remain at the broker, and virtual TP, SL and TS stop working while no terminal runs. The method returns an
+operation id; retry with the same idempotency key to receive the same operation.
 
 API calls throw `FinApiException` with HTTP status, API code, message, validation errors and `RetryAfter` when present, and
 an `ErrorCode` of `timeout`, `network`, `rate_limited`, `invalid_response` or `empty_response` when the SDK set one. The
