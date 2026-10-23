@@ -6,12 +6,16 @@
 
 - Hosted accounts and terminals carry `TMNO`, the terminal's number; fleet accounts carry `AccountName`, the name on the
   MetaTrader account.
+- Account disconnect accepts the member trading PIN in the DELETE request body when a session account requires one.
 
 ### Changed
 
 - TypeScript: Node.js 20 or newer is required; Node.js 18 has had no security fixes since April 2025. The package is
   built for Node.js 20. The .NET package's support (.NET Standard 2.0 and .NET 8) is unchanged.
 - TypeScript test and build tools updated: vite 8, vitest 5, tsup 9, openapi-typescript 7.13 and @types/node 26.
+- Account disconnect stops and removes the terminal, forgets the broker password and frees its seat. Customer account
+  settings and trade history remain; a free demo's account and terminal records are deleted. Open orders stay at the
+  broker, and virtual exits stop working while no terminal runs.
 
 ## 0.2.0 (2026-10-21)
 

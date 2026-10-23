@@ -201,11 +201,14 @@ public sealed class AccountsResource
     /// <summary>Queues a restart operation.</summary>
     public Task<DtoOperationQueued> RestartAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
         OperationAsync(acno, "restart", idempotencyKey, cancellationToken);
-    /// <summary>Disconnects the hosted terminal and frees its seat while keeping the account, settings and trade history.
-    /// Open orders remain at the broker; virtual exits stop working while no terminal runs. The Idempotency-Key lets a retry
-    /// return the same operation.</summary>
-    public Task<DtoOperationQueued> RemoveAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        OperationAsync(acno, "", idempotencyKey, cancellationToken, HttpMethod.Delete);
+    /// <summary>Disconnects the hosted terminal, forgets its broker password and frees its seat. Customer account settings
+    /// and trade history remain; a free demo's account and terminal records are deleted. Open orders stay at the broker,
+    /// and virtual exits stop working while no terminal runs. Pass tradingPin when a member session requires it. The
+    /// Idempotency-Key lets a retry return the same operation.</summary>
+    public Task<DtoOperationQueued> RemoveAsync(long acno, string? idempotencyKey = null,
+        CancellationToken cancellationToken = default, string? tradingPin = null) =>
+        _http.SendAsync<DtoOperationQueued>(HttpMethod.Delete.Method, Account(acno),
+            new CmdMemTerminalDisconnect { TrPin = tradingPin }, idempotencyKey, cancellationToken);
 
     private Task<DtoOperationQueued> OperationAsync(long acno, string suffix, string? key, CancellationToken ct,
         HttpMethod? method = null) => _http.SendAsync<DtoOperationQueued>(method?.Method ?? "POST",

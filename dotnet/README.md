@@ -50,9 +50,16 @@ gate by the API. API keys remain for trusted server-side clients; never ship the
 Paged methods return `FinPage<T>` with `Items` and paging metadata. Generated DTO properties retain PascalCase names.
 Trade writes return when queued for the terminal; observe completion through the stream, change feed or webhook.
 `Copy.Accounts.RemoveAsync` sends `DELETE /v1/fxs/accounts/{acno}` and disconnects the hosted terminal: it stops and
-removes the terminal, forgets the broker password, frees the seat, and keeps the account, settings and trade history.
-Open orders remain at the broker, and virtual TP, SL and TS stop working while no terminal runs. The method returns an
-operation id; retry with the same idempotency key to receive the same operation.
+removes the terminal, forgets the broker password and frees the seat. Customer account settings and trade history remain;
+a free demo's account and terminal records are deleted. Open orders stay at the broker, and virtual TP, SL and TS stop
+working while no terminal runs. For a member session with a trading PIN, pass `tradingPin`:
+
+```csharp
+await fin.Copy.Accounts.RemoveAsync(acno, idempotencyKey: requestKey, tradingPin: tradingPin);
+```
+
+API-key requests do not use a session PIN. The method returns an operation id; retry with the same idempotency key to
+receive the same operation.
 
 API calls throw `FinApiException` with HTTP status, API code, message, validation errors and `RetryAfter` when present, and
 an `ErrorCode` of `timeout`, `network`, `rate_limited`, `invalid_response` or `empty_response` when the SDK set one. The
