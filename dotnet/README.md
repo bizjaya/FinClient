@@ -1,8 +1,8 @@
 # FinClient for .NET
 
 FinClient is the .NET SDK for the [FinCopy public API](https://fincopy.io/docs), with a default base URL of
-`https://api.fincopy.pro`. Version 0.2.0 uses numeric ACNO paths under `/v1/fxs` and changes the 0.1 API; see the
-changelog before upgrading. It targets .NET Standard 2.0 and .NET 8.
+`https://api.fincopy.io`. Since version 0.2.0 it uses numeric ACNO paths under `/v1/fxs`, which changed the 0.1 API; see
+the changelog before upgrading. It targets .NET Standard 2.0 and .NET 8.
 
 ```sh
 dotnet add package FinClient

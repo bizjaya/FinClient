@@ -144,11 +144,11 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("ChannelId")]
         public string? ChannelId { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AskAiAdviceId")]
-        public string? AskAiAdviceId { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotAdviceId")]
+        public string? AIBotAdviceId { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AskAiAcceptedSettings")]
-        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>>? AskAiAcceptedSettings { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotAcceptedSettings")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>>? AIBotAcceptedSettings { get; set; } = default!;
 
     }
 
@@ -212,11 +212,11 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("ChannelId")]
         public string? ChannelId { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AskAiAdviceId")]
-        public string? AskAiAdviceId { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotAdviceId")]
+        public string? AIBotAdviceId { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AskAiAcceptedSettings")]
-        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>>? AskAiAcceptedSettings { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotAcceptedSettings")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>>? AIBotAcceptedSettings { get; set; } = default!;
 
     }
 
@@ -1560,6 +1560,15 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("STARTBAL")]
         public double? STARTBAL { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotRiskPct")]
+        public double? AIBotRiskPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotPropFirm")]
+        public bool? AIBotPropFirm { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotDailyLossPct")]
+        public double? AIBotDailyLossPct { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("ABSPNLAMT")]
         public double? ABSPNLAMT { get; set; } = default!;
 
@@ -2636,6 +2645,12 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("PairLog")]
         public System.Collections.Generic.ICollection<string>? PairLog { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIMisc")]
+        public System.Collections.Generic.ICollection<string>? AIMisc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIMeta")]
+        public System.Collections.Generic.ICollection<string>? AIMeta { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("SyncDt")]
         public System.DateTimeOffset? SyncDt { get; set; } = default!;

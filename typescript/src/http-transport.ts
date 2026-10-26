@@ -44,7 +44,7 @@ export class FinHttpTransport {
   constructor(options: FinClientOptions) {
     this.apiKey = options.apiKey?.trim() ?? "";
     if (!this.apiKey && !options.fetch) throw new TypeError("apiKey is required unless a custom fetch authenticates the member session.");
-    this.baseUrl = (options.baseUrl ?? "https://api.fincopy.pro").replace(/\/+$/, "");
+    this.baseUrl = (options.baseUrl ?? "https://api.fincopy.io").replace(/\/+$/, "");
     const base = new URL(this.baseUrl);
     if (!/^https?:$/.test(base.protocol) || base.search || base.hash) {
       throw new TypeError("baseUrl must be an absolute HTTP or HTTPS URL without a query or fragment.");

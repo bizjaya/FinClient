@@ -49,7 +49,7 @@ public sealed class RoutesAndStreamTests
         await foreach (var item in fin.Copy.Fx.ReadStreamAsync()) names.Add(item.Event);
 
         Assert.Equal(new[] { "orders", "pairs" }, names);
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/stream", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/stream", handler.Requests[0].RequestUri!.AbsoluteUri);
         Assert.Equal("test", handler.Requests[0].Headers.GetValues("X-Api-Key").Single());
     }
 
@@ -97,9 +97,9 @@ public sealed class RoutesAndStreamTests
         await fin.Copy.Fx.OperationsAsync(new FinPageQuery { PageSize = 5 }, 1234567890);
         await fin.Copy.Fx.DcaAsync(1234567890);
 
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/pairs?PageNo=2&acno=1234567890&demo=true", handler.Requests[0].RequestUri!.AbsoluteUri);
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/operations?PageSize=5&acno=1234567890", handler.Requests[1].RequestUri!.AbsoluteUri);
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/dca?acno=1234567890", handler.Requests[2].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/pairs?PageNo=2&acno=1234567890&demo=true", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/operations?PageSize=5&acno=1234567890", handler.Requests[1].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/dca?acno=1234567890", handler.Requests[2].RequestUri!.AbsoluteUri);
     }
 
     [Fact]
@@ -111,8 +111,8 @@ public sealed class RoutesAndStreamTests
         await fin.Copy.Fx.PerformanceWindowAsync();
         await fin.Copy.Fx.PerformanceBarsAsync(acno: 1234567890, demo: false);
 
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/performance/window", handler.Requests[0].RequestUri!.AbsoluteUri);
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/performance/bars?acno=1234567890&demo=false", handler.Requests[1].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/performance/window", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/performance/bars?acno=1234567890&demo=false", handler.Requests[1].RequestUri!.AbsoluteUri);
     }
 
     [Fact]
@@ -126,7 +126,7 @@ public sealed class RoutesAndStreamTests
         await fin.Copy.Orders.CancelWaitingAsync(1234567890, new CmdFxsCancelWaiting { Oid = 6 });
         await fin.Copy.Orders.AnswerDcaAsync(1234567890, 7, new CmdFxsDcaAnswer { Accept = true });
 
-        var account = "https://api.fincopy.pro/v1/fxs/accounts/1234567890";
+        var account = "https://api.fincopy.io/v1/fxs/accounts/1234567890";
         Assert.Equal(new[] { $"{account}/trade/hedge", $"{account}/trade/modify", $"{account}/trade/cancel", $"{account}/dca/7" },
             handler.Requests.Select(x => x.RequestUri!.AbsoluteUri));
         Assert.All(handler.Requests, request =>
@@ -147,7 +147,7 @@ public sealed class RoutesAndStreamTests
 
         Assert.Equal("op-1", queued.OperationId);
         Assert.Equal(HttpMethod.Delete, handler.Requests[0].Method);
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/accounts/1234567890", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/accounts/1234567890", handler.Requests[0].RequestUri!.AbsoluteUri);
         Assert.Equal("remove-once", handler.Requests[0].Headers.GetValues("Idempotency-Key").Single());
     }
 
@@ -166,11 +166,11 @@ public sealed class RoutesAndStreamTests
         var uris = handler.Requests.Select(x => $"{x.Method} {x.RequestUri!.AbsoluteUri}").ToArray();
         Assert.Equal(new[]
         {
-            "POST https://api.fincopy.pro/v1/fxs/accounts/1234567890/strategy/preview",
-            "POST https://api.fincopy.pro/v1/fxs/accounts/1234567890/strategy/apply",
-            "POST https://api.fincopy.pro/v1/fxs/strategies",
-            "PATCH https://api.fincopy.pro/v1/fxs/strategies/42",
-            "GET https://api.fincopy.pro/v1/fxs/strategies?acno=1234567890"
+            "POST https://api.fincopy.io/v1/fxs/accounts/1234567890/strategy/preview",
+            "POST https://api.fincopy.io/v1/fxs/accounts/1234567890/strategy/apply",
+            "POST https://api.fincopy.io/v1/fxs/strategies",
+            "PATCH https://api.fincopy.io/v1/fxs/strategies/42",
+            "GET https://api.fincopy.io/v1/fxs/strategies?acno=1234567890"
         }, uris);
         Assert.Contains("\"ISNO\":42", handler.Bodies[1]);
     }

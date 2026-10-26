@@ -976,8 +976,8 @@ export interface components {
             RequestId?: string | null;
             RouteId?: string | null;
             ChannelId?: string | null;
-            AskAiAdviceId?: string | null;
-            AskAiAcceptedSettings?: {
+            AIBotAdviceId?: string | null;
+            AIBotAcceptedSettings?: {
                 [key: string]: string[];
             } | null;
         };
@@ -1008,8 +1008,8 @@ export interface components {
             RequestId?: string | null;
             RouteId?: string | null;
             ChannelId?: string | null;
-            AskAiAdviceId?: string | null;
-            AskAiAcceptedSettings?: {
+            AIBotAdviceId?: string | null;
+            AIBotAcceptedSettings?: {
                 [key: string]: string[];
             } | null;
         };
@@ -1552,6 +1552,11 @@ export interface components {
             ACCTMGNSOMODE?: string | null;
             /** Format: double */
             STARTBAL?: number | null;
+            /** Format: double */
+            AIBotRiskPct?: number;
+            AIBotPropFirm?: boolean;
+            /** Format: double */
+            AIBotDailyLossPct?: number;
             /** Format: double */
             ABSPNLAMT?: number | null;
             /** Format: double */
@@ -2109,6 +2114,8 @@ export interface components {
             SYMSTG?: components["schemas"]["DtoEASymStg"];
             Spec?: components["schemas"]["DtoFxsSpec"];
             PairLog?: string[] | null;
+            AIMisc?: string[] | null;
+            AIMeta?: string[] | null;
             /** Format: date-time */
             SyncDt?: string | null;
             /** Format: date-time */

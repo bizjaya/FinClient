@@ -1,7 +1,7 @@
 # FinClient
 
-FinClient provides .NET and TypeScript clients for the FinCopy public API at `https://api.fincopy.pro`. Version 0.2.0 uses
-the `/v1/fxs` trading routes and identifies accounts by their numeric ACNO. It changes the 0.1 API; see
+FinClient provides .NET and TypeScript clients for the FinCopy public API at `https://api.fincopy.io`. Since version 0.2.0
+it uses the `/v1/fxs` trading routes and identifies accounts by their numeric ACNO, which changed the 0.1 API; see
 [CHANGELOG.md](./CHANGELOG.md) before upgrading.
 
 ## .NET
