@@ -14,7 +14,7 @@ public sealed class FinClientOptions
     public string ApiKey { get; set; } = string.Empty;
 
     /// <summary>Absolute API root. Defaults to the public FinCopy API.</summary>
-    public string BaseUrl { get; set; } = "https://api.fincopy.pro";
+    public string BaseUrl { get; set; } = "https://api.fincopy.io";
 
     /// <summary>
     /// Per-attempt request timeout. Defaults to 30 seconds. When you pass your own <see cref="HttpClient"/>, its

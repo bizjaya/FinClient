@@ -21,7 +21,7 @@ public sealed class TransportTests
 
         Assert.Equal(1234, rows[0].ACNO);
         Assert.Equal("unit-test-key", handler.Requests[0].Headers.GetValues("X-Api-Key").Single());
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/accounts/1234/performance", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/accounts/1234/performance", handler.Requests[0].RequestUri!.AbsoluteUri);
     }
 
     [Fact]
@@ -374,7 +374,7 @@ public sealed class TransportTests
         var account = await fin.Copy.Accounts.GetAsync(1234);
 
         Assert.Equal(1234, account.State!.ACNO);
-        Assert.Equal("https://api.fincopy.pro/v1/fxs/accounts/1234", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/accounts/1234", handler.Requests[0].RequestUri!.AbsoluteUri);
         Assert.False(handler.Requests[0].Headers.Contains("X-Api-Key"));
     }
 

@@ -1,7 +1,7 @@
 # @bizjaya/finclient
 
-The official TypeScript SDK for FinCopy's public API, `https://api.fincopy.pro`. Version 0.2.0 uses numeric ACNO account
-paths under `/v1/fxs` and changes the 0.1 API; see the changelog before upgrading.
+The official TypeScript SDK for FinCopy's public API, `https://api.fincopy.io`. Since version 0.2.0 it uses numeric ACNO
+account paths under `/v1/fxs`, which changed the 0.1 API; see the changelog before upgrading.
 
 ```sh
 npm install @bizjaya/finclient
@@ -18,7 +18,7 @@ for (const account of accounts.items) console.log(account.Fleet?.Account?.ACNO, 
 // await fin.copy.orders.make(52014125, { SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.01 });
 ```
 
-The client defaults to `https://api.fincopy.pro`. Account-scoped methods take the numeric ACNO, and paged list methods
+The client defaults to `https://api.fincopy.io`. Account-scoped methods take the numeric ACNO, and paged list methods
 return `{ items, paging, ... }`. DTO fields keep the API's PascalCase names.
 
 - `copy.accounts`: settings and lifecycle, pairs, symbols, quotes, orders, history, DCA, performance, activity, strategy
