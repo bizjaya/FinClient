@@ -296,7 +296,7 @@ export class FxResource {
   }
   /** Searches broker servers available when adding an account. */
   brokers(query?: string, platform?: string, demosOnly?: boolean, options: FinRequestOptions = {}): Promise<D<"DtoBrokerServerSearchIReadOnlyListResPonse">> {
-    return this.http.request("GET", queryPath("v1/brokers", undefined, { Q: query, Platform: platform, DemosOnly: demosOnly }), undefined, options);
+    return this.http.request("GET", queryPath("v1/brokers", undefined, { query, Platform: platform, DemosOnly: demosOnly }), undefined, options);
   }
 }
 

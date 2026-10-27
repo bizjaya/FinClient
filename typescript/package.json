@@ -1,6 +1,6 @@
 {
   "name": "@bizjaya/finclient",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Official TypeScript SDK for the FinCopy public API",
   "license": "MIT",
   "author": "BizJaya TechLab S/B",
