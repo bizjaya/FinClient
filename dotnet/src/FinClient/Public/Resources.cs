@@ -331,7 +331,7 @@ public sealed class FxResource
     public Task<IReadOnlyList<DtoBrokerServerSearch>> BrokersAsync(string? query = null, string? platform = null,
         bool? demosOnly = null, CancellationToken cancellationToken = default) =>
         _http.SendAsync<IReadOnlyList<DtoBrokerServerSearch>>("GET", Query("v1/brokers", null,
-            ("Q", query), ("Platform", platform), ("DemosOnly", demosOnly)), cancellationToken: cancellationToken);
+            ("query", query), ("Platform", platform), ("DemosOnly", demosOnly)), cancellationToken: cancellationToken);
 
     private static string Strategy(int isno) => $"v1/fxs/strategies/{AccountsResource.Number(isno, nameof(isno))}";
 

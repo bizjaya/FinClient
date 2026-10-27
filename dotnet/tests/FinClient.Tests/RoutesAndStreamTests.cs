@@ -54,6 +54,21 @@ public sealed class RoutesAndStreamTests
     }
 
     [Fact]
+    public async Task BrokerSearchUsesTheQueryParameterExpectedByTheApi()
+    {
+        var handler = new Handler(_ => Json("{\"data\":[],\"code\":200,\"isOk\":true}"));
+        using var fin = new FinClient(new FinClientOptions("test"), handler);
+
+        await fin.Copy.Fx.BrokersAsync("MetaTrader 5", "MT5", true);
+
+        var query = handler.Requests[0].RequestUri!.Query;
+        Assert.Contains("query=MetaTrader%205", query, StringComparison.Ordinal);
+        Assert.DoesNotContain("Q=", query, StringComparison.Ordinal);
+        Assert.Contains("Platform=MT5", query, StringComparison.Ordinal);
+        Assert.Contains("DemosOnly=true", query, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task StreamThatCannotOpenIsANetworkError()
     {
         var handler = new Handler(_ => throw new HttpRequestException("refused"));

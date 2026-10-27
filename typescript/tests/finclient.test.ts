@@ -11,6 +11,23 @@ function json(data: unknown, status = 200, extra: Record<string, string> = {}): 
 }
 
 describe("FinClient", () => {
+  it("uses the broker search query parameter expected by the API", async () => {
+    let requested = "";
+    const fetch = vi.fn<typeof globalThis.fetch>(async input => {
+      requested = String(input);
+      return json([]);
+    });
+    const client = new FinClient({ apiKey: "example-key", fetch });
+
+    await client.copy.fx.brokers("MetaTrader 5", "MT5", true);
+
+    const search = new URL(requested).searchParams;
+    expect(search.get("query")).toBe("MetaTrader 5");
+    expect(search.get("Q")).toBeNull();
+    expect(search.get("Platform")).toBe("MT5");
+    expect(search.get("DemosOnly")).toBe("true");
+  });
+
   it("sends the API key and preserves PascalCase payload fields", async () => {
     const fetch = vi.fn<typeof globalThis.fetch>(async (_input, init) => {
       const headers = new Headers(init?.headers);
