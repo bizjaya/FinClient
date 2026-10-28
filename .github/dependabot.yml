@@ -14,6 +14,10 @@ updates:
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: Microsoft.Bcl.AsyncInterfaces
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      # Only the tests reference it. Dependabot's update also adds it to the library as a direct reference (the library
+      # gets it through Microsoft.Extensions.Http), which needs newer packages than the library's minimum versions and
+      # fails the build. Bump the tests' version by hand.
+      - dependency-name: Microsoft.Extensions.DependencyInjection
     groups:
       test-tools:
         patterns: ["xunit*", "Microsoft.NET.Test.Sdk", "coverlet*"]

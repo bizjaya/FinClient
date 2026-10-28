@@ -15,6 +15,27 @@ permissions:
   contents: read
 
 jobs:
+  # The release refuses a tag whose version has no changelog section, so check it here, before anything is tagged.
+  versions:
+    name: Package versions and changelog agree
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Both packages carry one version, and CHANGELOG.md has its section
+        shell: bash
+        run: |
+          dotnet_version=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' dotnet/src/FinClient/FinClient.csproj)
+          npm_version=$(node -p "require('./typescript/package.json').version")
+          if [[ -z "$dotnet_version" || "$dotnet_version" != "$npm_version" ]]; then
+            echo "FinClient.csproj has '$dotnet_version' but typescript/package.json has '$npm_version'." >&2; exit 1
+          fi
+          if ! grep -Eq "^## ${dotnet_version//./\\.}( |$)" CHANGELOG.md; then
+            echo "CHANGELOG.md has no '## $dotnet_version' section." >&2; exit 1
+          fi
+
   dotnet:
     name: .NET build and tests
     if: github.event_name != 'schedule'
