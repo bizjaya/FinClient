@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.2 (2026-10-28)
+
+### Fixed
+
+- Broker search (`Copy.Fx.BrokersAsync` in .NET, `copy.fx.brokers` in TypeScript) sends the search text as `query`, the
+  parameter the API reads. Earlier versions sent it as `Q`, which the API does not read, so the search text had no
+  effect.
+
 ## 0.2.1 (2026-10-26)
 
 ### Changed
