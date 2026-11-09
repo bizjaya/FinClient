@@ -158,7 +158,7 @@ export class AccountsResource {
   activity(acno: number, page: FinPageQuery = {}, search?: string, options: FinRequestOptions = {}): Promise<FinPage<CopyDto<"DtoMemberActivity">>> {
     return this.http.requestPage("GET", queryPath(`${accountPath(acno)}/activity`, page, { search }), options);
   }
-  /** Previews applying a strategy (the account owner's or a FinCopy preset): what each symbol would change. Nothing changes. */
+  /** Previews applying a strategy (yours or a FinCopy preset): what each symbol would change. Nothing changes. */
   previewStrategy(acno: number, command: CopyDto<"CmdApiFxsStgApply">, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgCascadePreviewResPonse">> {
     return this.http.request("POST", `${accountPath(acno)}/strategy/preview`, command, options);
   }
@@ -259,9 +259,9 @@ export class FxResource {
     return this.http.request("GET", queryPath("v1/fxs/performance/bars", undefined,
       { acno: query.acno, demo: query.demo, ...dateFilters(query) }), undefined, query);
   }
-  /** Lists the strategies you can apply: your own and FinCopy's presets; with `acno`, that account owner's. */
-  strategies(acno?: number, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgIReadOnlyListResPonse">> {
-    return this.http.request("GET", queryPath("v1/fxs/strategies", undefined, { acno }), undefined, options);
+  /** Lists the strategies you can apply: your own and FinCopy's presets. */
+  strategies(options: FinRequestOptions = {}): Promise<D<"DtoFxsStgIReadOnlyListResPonse">> {
+    return this.http.request("GET", "v1/fxs/strategies", undefined, options);
   }
   /** Reads one strategy. */
   strategy(isno: number, options: FinRequestOptions = {}): Promise<D<"DtoFxsStgResPonse">> {

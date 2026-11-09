@@ -176,7 +176,7 @@ public sealed class RoutesAndStreamTests
         await fin.Copy.Accounts.ApplyStrategyAsync(1234567890, new CmdApiFxsStgApply { ISNO = 42 });
         await fin.Copy.Fx.MakeStrategyAsync(new CmdFxsStgMake { StratName = "Mine" });
         await fin.Copy.Fx.PatchStrategyAsync(42, new CmdFxsStgPatch { StratName = "Renamed" });
-        await fin.Copy.Fx.StrategiesAsync(1234567890);
+        await fin.Copy.Fx.StrategiesAsync();
 
         var uris = handler.Requests.Select(x => $"{x.Method} {x.RequestUri!.AbsoluteUri}").ToArray();
         Assert.Equal(new[]
@@ -185,7 +185,7 @@ public sealed class RoutesAndStreamTests
             "POST https://api.fincopy.io/v1/fxs/accounts/1234567890/strategy/apply",
             "POST https://api.fincopy.io/v1/fxs/strategies",
             "PATCH https://api.fincopy.io/v1/fxs/strategies/42",
-            "GET https://api.fincopy.io/v1/fxs/strategies?acno=1234567890"
+            "GET https://api.fincopy.io/v1/fxs/strategies"
         }, uris);
         Assert.Contains("\"ISNO\":42", handler.Bodies[1]);
     }

@@ -11,7 +11,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** List the accounts this key can reach, each with its terminal, broker server and latest state. */
+        /** List the key owner's accounts, each with its terminal, broker server and latest state. */
         get: operations["AccountList"];
         put?: never;
         /**
@@ -75,8 +75,8 @@ export interface paths {
          * Disconnect the hosted terminal from this account. The terminal is stopped and removed, its broker password is
          *                 forgotten, and its seat is freed. A customer account, its settings and trade history remain so the login can be restored later;
          *                 a free demo's account and terminal records are deleted.
-         *                 Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. Only the account's owner can
-         *                 disconnect it. The Idempotency-Key header is required; a retry with the same key returns the same operation id. Needs
+         *                 Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. The Idempotency-Key header is
+         *                 required; a retry with the same key returns the same operation id. Needs
          *                 the Trade permission. A signed-in member session also needs its trading PIN when the account requires one.
          */
         delete: operations["AccountRemove"];
@@ -130,7 +130,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * What changed on the accounts this key can reach, oldest first: Account (each sync and each settings change),
+         * What changed on the key owner's accounts, oldest first: Account (each sync and each settings change),
          *                 Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and
          *                 close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without
          *                 a cursor: that returns no rows and a cursor at "now", so read the accounts once, then follow the feed. Keep the
@@ -199,8 +199,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * A server-sent event stream of changes on the accounts the caller can reach. Each caller holds up to eight
-         *                 streams; a ninth closes the oldest.
+         * A server-sent event stream of changes on the caller's accounts. Each caller holds up to eight streams; a ninth
+         *                 closes the oldest.
          */
         get: operations["Stream"];
         put?: never;
@@ -286,7 +286,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Lists open orders across accounts the caller can reach. */
+        /** Lists open orders across the caller's accounts. */
         get: operations["Orders"];
         put?: never;
         post?: never;
@@ -303,7 +303,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Lists settled orders across accounts the caller can reach. */
+        /** Lists settled orders across the caller's accounts. */
         get: operations["History"];
         put?: never;
         post?: never;
@@ -351,6 +351,38 @@ export interface paths {
         patch: operations["AccountPairSettings"];
         trace?: never;
     };
+    "/v1/fxs/accounts/{acno}/pairs/instrument-suggestions/{symbol}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["PairInstrumentSuggestions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/pairs/instrument-confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["PairInstrumentConfirm"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/fxs/pairs": {
         parameters: {
             query?: never;
@@ -358,7 +390,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Lists the pairs across accounts the caller can reach. */
+        /** Lists the pairs across the caller's accounts. */
         get: operations["Pairs"];
         put?: never;
         post?: never;
@@ -443,7 +475,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Lists activity across accounts the caller can reach, newest first. */
+        /** Lists activity across the caller's accounts, newest first. */
         get: operations["Activity"];
         put?: never;
         post?: never;
@@ -461,7 +493,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * The last 30 days by currency book (real and demo apart) across accounts the caller can reach: equity, today's
+         * The last 30 days by currency book (real and demo apart) across the caller's accounts: equity, today's
          *                 change, realised profit, 7- and 30-day growth, and each account's share. `acno` narrows it to one account;
          *                 `demo` to demo (true) or real (false) accounts.
          */
@@ -482,7 +514,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Daily performance bars across accounts the caller can reach, per account and per currency book, between two
+         * Daily performance bars across the caller's accounts, per account and per currency book, between two
          *                 dates (UTC). `acno` narrows it to one account; `demo` to demo (true) or real (false) accounts.
          */
         get: operations["PerformanceBars"];
@@ -563,7 +595,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Reads the signals shown for the enabled symbols across accounts the caller can reach. */
+        /** Reads the signals shown for the enabled symbols across the caller's accounts. */
         get: operations["Signals"];
         put?: never;
         post?: never;
@@ -580,7 +612,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Lists warning and error activity across accounts the caller can reach. */
+        /** Lists warning and error activity across the caller's accounts. */
         get: operations["Alerts"];
         put?: never;
         post?: never;
@@ -601,7 +633,7 @@ export interface paths {
         put?: never;
         /**
          * What applying a strategy to this account would change, per symbol, without changing anything. The strategy is
-         *                 one of the account owner's or a FinCopy preset (list them with the strategies route and this ACNO).
+         *                 one of your own or a FinCopy preset (list them with the strategies route).
          *                 Needs the Trade permission on the account.
          */
         post: operations["AccountStrategyPreview"];
@@ -621,7 +653,7 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Apply a strategy (the account owner's or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a
+         * Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a
          *                 side that holds orders keeps what it must keep. The reply counts what changed and what was held. Needs the Trade
          *                 permission on the account.
          */
@@ -639,10 +671,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /**
-         * Lists the strategies the caller can apply: its own and FinCopy's presets. With `acno`, the strategies of
-         *                 that account's owner (the caller needs the Trade permission on that account).
-         */
+        /** Lists the strategies the caller can apply: its own and FinCopy's presets. */
         get: operations["Strategies"];
         put?: never;
         /** Creates one of the caller's own strategies. Needs the Trade permission. */
@@ -777,8 +806,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * The newest terminal operations (start, stop, restart, set-up, removal) across accounts the caller can reach,
-         *                 newest first.
+         * The newest terminal operations (start, stop, restart, set-up, removal) across the caller's accounts, newest
+         *                 first.
          */
         get: operations["Operations"];
         put?: never;
@@ -815,10 +844,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /**
-         * Accept or reject a HYBRID DCA proposal. A reject adds nothing, so it is allowed while an admin has disabled the
-         *                 account's owner; an accept is an add and is not. Needs the Trade permission.
-         */
+        /** Accept or reject a HYBRID DCA proposal. Needs the Trade permission. */
         post: operations["AccountDcaAnswer"];
         delete?: never;
         options?: never;
@@ -837,7 +863,7 @@ export interface paths {
         put?: never;
         /**
          * The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings. For a signed-in
-         *                 member session it also says whether the account owner's trade PIN must be entered (a key never needs one).
+         *                 member session it also says whether the member's trading PIN must be entered (a key never needs one).
          */
         post: operations["AccountTradePreInfo"];
         delete?: never;
@@ -856,8 +882,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. A close is allowed while an admin has
-         *                 disabled the account's owner; an open or add is not. The Idempotency-Key header is required. Needs the Trade permission.
+         * Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. The Idempotency-Key header is
+         *                 required. Needs the Trade permission.
          */
         post: operations["AccountTradeMake"];
         delete?: never;
@@ -925,8 +951,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * HYBRID DCA proposals waiting for an answer, across accounts the caller can reach, newest first. For a signed-in
-         *                 member session each row says whether the account owner's trade PIN must be entered to answer it.
+         * HYBRID DCA proposals waiting for an answer, across the caller's accounts, newest first. For a signed-in member
+         *                 session each row says whether the member's trading PIN must be entered to answer it.
          */
         get: operations["Dca"];
         put?: never;
@@ -1055,6 +1081,10 @@ export interface components {
             SLP?: number | null;
             SYMSTG?: components["schemas"]["DtoEASymStg"];
         };
+        /**
+         * @description Edit one ticket's own exits (MOD). TrailPercent is the ticket's own TS, % of its TP money (T701 Q3-A): null keeps
+         *                 the ticket's current TS (while it keeps a TP), 0 clears it.
+         */
         CmdFxsModify: {
             /** Format: int64 */
             Ticket?: number;
@@ -1069,6 +1099,16 @@ export interface components {
             RequestId?: string | null;
             ClearExpiry?: boolean;
             TrPin?: string | null;
+            /** Format: double */
+            TrailPercent?: number | null;
+        };
+        CmdFxsPairInstrumentConfirm: {
+            /** Format: int64 */
+            ACNO?: number;
+            BrokerSymbol?: string | null;
+            InstrumentName?: string | null;
+            NoMatch?: boolean;
+            PreviewOnly?: boolean | null;
         };
         CmdFxsStgMake: {
             StratName?: string | null;
@@ -1214,6 +1254,9 @@ export interface components {
         DtoApiTermOperationResPaged: {
             data?: components["schemas"]["DtoApiTermOperation"][] | null;
             paging?: components["schemas"]["ResPage"];
+            grps?: {
+                [key: string]: components["schemas"]["ResGrp"][];
+            } | null;
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
@@ -1316,8 +1359,6 @@ export interface components {
             FreePlaces?: number;
             /** Format: int32 */
             Quota?: number;
-            /** Format: int32 */
-            DurationHours?: number;
             MemberHasActive?: boolean;
         };
         DtoDemoAvailabilityResPonse: {
@@ -1478,6 +1519,14 @@ export interface components {
             EnabledSymbols?: string[] | null;
             /** @description Every symbol the broker offers, as the terminal last reported it. */
             AllSymbols?: string[] | null;
+            /**
+             * Format: int32
+             * @description TRD2-B8: the plan's limit of enabled pairs (an admin override wins, else what the last sync worked out from the
+             *                 seat's plan); null until the account has synced. The symbols editor refuses a pair over it before saving.
+             */
+            PairLimit?: number | null;
+            /** @description Enabled symbols on a short AIBot preview: they are quoted but do not count toward PairLimit. */
+            PairPreviews?: string[] | null;
             AccountType?: components["schemas"]["DtoFxsAccountType"];
             Symbols?: components["schemas"]["DtoFxsSymbolSpec"][] | null;
         };
@@ -1504,6 +1553,7 @@ export interface components {
             AccountIdText?: string | null;
             TerminalIdText?: string | null;
             TermKind?: components["schemas"]["TermAccountKind"];
+            BrokerEnvironment?: components["schemas"]["BrokerServerEnvironment"];
             TerminalState?: components["schemas"]["ObservedTermState"];
             /** Format: int32 */
             OpenLegCount?: number;
@@ -1557,6 +1607,7 @@ export interface components {
             AIBotPropFirm?: boolean;
             /** Format: double */
             AIBotDailyLossPct?: number;
+            FullAuto?: components["schemas"]["FxsFullAutoSettings"];
             /** Format: double */
             ABSPNLAMT?: number | null;
             /** Format: double */
@@ -1581,6 +1632,10 @@ export interface components {
             EnDcaGate?: boolean;
             /** Format: int32 */
             DCACooloffMins?: number;
+            /** Format: int32 */
+            PairLimitOverride?: number | null;
+            /** Format: int32 */
+            PairLimitLastKnown?: number | null;
             EnSymList?: string[] | null;
             AvlSymList?: string[] | null;
             ACCSTG?: components["schemas"]["DtoEAAccStg"];
@@ -1614,7 +1669,6 @@ export interface components {
             /** Format: date-time */
             UpdatedAt?: string | null;
             OwnerEmail?: string | null;
-            USRMAILS?: components["schemas"]["DtoMemberMailSrch"][] | null;
         };
         DtoFxsAcctResPonse: {
             data?: components["schemas"]["DtoFxsAcct"];
@@ -1714,6 +1768,8 @@ export interface components {
             /** Format: double */
             TPP?: number;
             /** Format: double */
+            TSP?: number;
+            /** Format: double */
             SLPRC?: number;
             /** Format: double */
             TPPRC?: number;
@@ -1735,7 +1791,7 @@ export interface components {
             ExitErr?: number | null;
             ExitFix?: boolean | null;
             OwnExits?: boolean;
-            /** @description The account owner's PIN is required to answer this DCA proposal. */
+            /** @description The member's trading PIN is required to answer this DCA proposal. */
             TradePinRequired?: boolean;
             /** Format: date-time */
             ODT?: string | null;
@@ -1764,6 +1820,11 @@ export interface components {
             RouteId?: string | null;
             ChannelId?: string | null;
             HedgeId?: string | null;
+            AutoDecisionId?: string | null;
+            AIBotAuto?: boolean;
+            AIBotRole?: string | null;
+            /** Format: int32 */
+            PlannedHoldMins?: number | null;
             /** Format: int64 */
             EXP?: number;
             EXPRC?: boolean;
@@ -1774,6 +1835,9 @@ export interface components {
         DtoFxsOrdhResPaged: {
             data?: components["schemas"]["DtoFxsOrdh"][] | null;
             paging?: components["schemas"]["ResPage"];
+            grps?: {
+                [key: string]: components["schemas"]["ResGrp"][];
+            } | null;
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
@@ -1832,6 +1896,8 @@ export interface components {
             /** Format: double */
             TPP?: number;
             /** Format: double */
+            TSP?: number;
+            /** Format: double */
             SLPRC?: number;
             /** Format: double */
             TPPRC?: number;
@@ -1853,7 +1919,7 @@ export interface components {
             ExitErr?: number | null;
             ExitFix?: boolean | null;
             OwnExits?: boolean;
-            /** @description The account owner's PIN is required to answer this DCA proposal. */
+            /** @description The member's trading PIN is required to answer this DCA proposal. */
             TradePinRequired?: boolean;
             /** Format: date-time */
             ODT?: string | null;
@@ -1882,6 +1948,11 @@ export interface components {
             RouteId?: string | null;
             ChannelId?: string | null;
             HedgeId?: string | null;
+            AutoDecisionId?: string | null;
+            AIBotAuto?: boolean;
+            AIBotRole?: string | null;
+            /** Format: int32 */
+            PlannedHoldMins?: number | null;
             /** Format: int64 */
             EXP?: number;
             EXPRC?: boolean;
@@ -1901,6 +1972,9 @@ export interface components {
         DtoFxsOrdrResPaged: {
             data?: components["schemas"]["DtoFxsOrdr"][] | null;
             paging?: components["schemas"]["ResPage"];
+            grps?: {
+                [key: string]: components["schemas"]["ResGrp"][];
+            } | null;
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
@@ -2124,6 +2198,9 @@ export interface components {
         DtoFxsPairResPaged: {
             data?: components["schemas"]["DtoFxsPair"][] | null;
             paging?: components["schemas"]["ResPage"];
+            grps?: {
+                [key: string]: components["schemas"]["ResGrp"][];
+            } | null;
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
@@ -2362,6 +2439,8 @@ export interface components {
             /** Format: double */
             TPPRC?: number;
             /** Format: double */
+            TSP?: number;
+            /** Format: double */
             ExitTPPRC?: number | null;
             /** Format: double */
             ExitSLPRC?: number | null;
@@ -2506,6 +2585,7 @@ export interface components {
             Virtual?: boolean;
             ACCSTG?: components["schemas"]["DtoFxsStgAccStg"];
             SYMSTG?: components["schemas"]["DtoFxsStgSymStg"];
+            AIBot?: components["schemas"]["FxsAIBotStrategy"];
             /** Format: int32 */
             DCACooloffMins?: number;
             EnDcaGate?: boolean;
@@ -2741,6 +2821,9 @@ export interface components {
         DtoMemberAccountResPaged: {
             data?: components["schemas"]["DtoMemberAccount"][] | null;
             paging?: components["schemas"]["ResPage"];
+            grps?: {
+                [key: string]: components["schemas"]["ResGrp"][];
+            } | null;
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
@@ -2775,16 +2858,14 @@ export interface components {
         DtoMemberActivityResPaged: {
             data?: components["schemas"]["DtoMemberActivity"][] | null;
             paging?: components["schemas"]["ResPage"];
+            grps?: {
+                [key: string]: components["schemas"]["ResGrp"][];
+            } | null;
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
             message?: string | null;
             errors?: string[] | null;
-        };
-        DtoMemberMailSrch: {
-            /** Format: int64 */
-            USNO?: number;
-            Email?: string | null;
         };
         DtoOperationQueued: {
             /** @description The queued terminal operation; null when nothing needed doing. */
@@ -2854,6 +2935,7 @@ export interface components {
             /** Format: date-time */
             ExpiresAt?: string | null;
             Approved?: boolean;
+            MemberTerminalAlerts?: boolean;
             ExternalRef?: string | null;
         };
         DtoTermAccountResPonse: {
@@ -2903,6 +2985,11 @@ export interface components {
             /** Format: date-time */
             LastSyncAt?: string | null;
             LastSyncResult?: string | null;
+            /** Format: date-time */
+            PriceTickAt?: string | null;
+            /** Format: double */
+            PriceLagSec?: number | null;
+            OpenAlerts?: string[] | null;
             /** Format: int64 */
             TerminalMemoryBytes?: number;
             /** Format: double */
@@ -2953,11 +3040,75 @@ export interface components {
         };
         /** @enum {string} */
         FXMODE: "NONE" | "AWHOLE" | "GWHOLE" | "DETACH" | "CONTRA";
+        FxsAIBotPreferences: {
+            Horizon?: string | null;
+            Protection?: string | null;
+            AllowedExitModes?: string[] | null;
+            StopStyle?: string | null;
+            LadderEnabled?: boolean;
+            /** Format: int32 */
+            MaxLayers?: number;
+        };
+        /** @description Strategy-wide AI preferences. These are policy boundaries for the model, not a trade plan. */
+        FxsAIBotStrategy: {
+            Kind?: string | null;
+            Preferences?: components["schemas"]["FxsAIBotPreferences"];
+            PlaybookVersionId?: string | null;
+        };
         /**
          * @description Why a leg closed, as the EA reports it (`CRSN`).
          * @enum {string}
          */
         FxsCloseReason: "UNK" | "TP" | "SL" | "TS" | "GTP" | "API" | "EA" | "MAN" | "SO";
+        /**
+         * @description Per-account AIBot grant, switch (Off / Watch / On) and limits. The safe initial state is always Off and ungranted.
+         *                 T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone.
+         */
+        FxsFullAutoSettings: {
+            Granted?: boolean;
+            State?: string | null;
+            BreakerMode?: string | null;
+            BreakerTripped?: boolean;
+            BreakerReason?: string | null;
+            /** Format: date-time */
+            BreakerTrippedAt?: string | null;
+            /**
+             * Format: date-time
+             * @description Broker-local day key used to reset the daily loss breaker across a date boundary.
+             */
+            BrokerDayKey?: string | null;
+            /** Format: int32 */
+            LearningCallsToday?: number;
+            /** Format: date-time */
+            LearningCallDayKey?: string | null;
+            /** Format: double */
+            DailyLossPct?: number;
+            TradingHours?: string | null;
+            MaximumHold?: string | null;
+            /**
+             * Format: double
+             * @description T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.
+             */
+            SafetySlPct?: number;
+            /** @description T701 (Q11-A): the risk dial, CAREFUL / BALANCED / BOLD; AIAdvisor moves it one step, never above the ceiling. */
+            RiskDial?: string | null;
+            /** @description T701 (Q11-A): the highest dial step the member allows AIAdvisor to set. */
+            RiskCeiling?: string | null;
+            /** @description T701 (Q10-C): ASK (Ask me first, the default) or APPLY (Apply advice by itself). */
+            AdviceMode?: string | null;
+            /** @description T701 Phase 4.2: UTC times of day ("HH:mm") at which AIAdvisor advises, one to four. */
+            AdviceTimes?: string[] | null;
+            /** Format: int32 */
+            AdviceCallsToday?: number;
+            /** Format: date-time */
+            AdviceCallDayKey?: string | null;
+            /** Format: date-time */
+            LastAdviceAt?: string | null;
+            /** @description The last scheduled advice slot run, "yyyy-MM-dd HH:mm" UTC, so a slot runs once. */
+            LastAdviceSlot?: string | null;
+            /** @description The applied advice that Undo last advice reverts. */
+            UndoAdviceId?: string | null;
+        };
         /** @enum {string} */
         FxsOrderAction: "NEW" | "AVL" | "AVG" | "CLO" | "CLA" | "CLG" | "STP" | "CSL" | "MOD";
         /** @enum {string} */
@@ -2987,6 +3138,11 @@ export interface components {
         };
         /** @enum {string} */
         ObservedTermState: "Unknown" | "Starting" | "Running" | "Stopped" | "Faulted" | "Removed";
+        ResGrp: {
+            Val?: string | null;
+            /** Format: int64 */
+            Cnt?: number | null;
+        };
         ResPage: {
             /** Format: int32 */
             pageNo?: number;
@@ -4659,6 +4815,130 @@ export interface operations {
             };
         };
     };
+    PairInstrumentSuggestions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+                symbol: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    PairInstrumentConfirm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdFxsPairInstrumentConfirm"];
+                "application/json": components["schemas"]["CmdFxsPairInstrumentConfirm"];
+                "text/json": components["schemas"]["CmdFxsPairInstrumentConfirm"];
+                "application/*+json": components["schemas"]["CmdFxsPairInstrumentConfirm"];
+            };
+        };
+        responses: {
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
     Pairs: {
         parameters: {
             query?: {
@@ -5874,9 +6154,7 @@ export interface operations {
     };
     Strategies: {
         parameters: {
-            query?: {
-                acno?: number;
-            };
+            query?: never;
             header?: never;
             path?: never;
             cookie?: never;

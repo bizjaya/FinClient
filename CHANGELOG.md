@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.3.0 (2026-11-10)
+
+### Changed
+
+- **Breaking:** strategies take no account. `Copy.Fx.StrategiesAsync()` (.NET) and `copy.fx.strategies()` (TypeScript) list
+  your own strategies and FinCopy's presets; the `acno` argument is gone, because FinCopy no longer shares accounts between
+  members (an account is reached only by its owner). The API ignores an `acno` sent by an older SDK.
+- Fleet accounts no longer carry `USRMAILS` (the members an account was shared with), and the demo-availability answer no
+  longer carries `DurationHours`: the demo's length is in the public settings and may be part of an hour.
+- The API description and comments say a key reaches only its member's own accounts, and every trading PIN is the
+  member's own.
+
+### Added
+
+- Edit order (`CmdFxsModify`) carries `TrailPercent`: a trade's own TS as a percent of its TP money (needs FinCopy's EA
+  2.35); null keeps the TS the order has, 0 removes it. Orders, archived orders and pre-trade legs carry `TSP`.
+- Orders and archived orders carry `AIBotRole`, `AIBotAuto`, `AutoDecisionId` and `PlannedHoldMins` (who manages a trade
+  for AIBot); fleet accounts carry `FullAuto`, `BrokerEnvironment`, `PairLimitOverride` and `PairLimitLastKnown`; account
+  state carries `PairLimit` and `PairPreviews`; strategies carry `AIBot`.
+- Pair instrument suggestions and confirmation: `GET /v1/fxs/accounts/{acno}/pairs/instrument-suggestions/{symbol}` and
+  `POST /v1/fxs/accounts/{acno}/pairs/instrument-confirm`.
+- Hosted terminals carry `OpenAlerts`, `PriceLagSec` and `PriceTickAt`; hosted accounts carry `MemberTerminalAlerts`; paged
+  answers may carry `grps`.
+
 ## 0.2.2 (2026-10-28)
 
 ### Fixed

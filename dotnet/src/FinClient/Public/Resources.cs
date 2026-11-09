@@ -170,7 +170,7 @@ public sealed class AccountsResource
         CancellationToken cancellationToken = default) =>
         _http.SendPageAsync<DtoMemberActivity>("GET", Query(Account(acno) + "/activity", page, ("search", search)), cancellationToken: cancellationToken);
 
-    /// <summary>Previews applying a strategy (the account owner's or a FinCopy preset) to the account: what each symbol would
+    /// <summary>Previews applying a strategy (yours or a FinCopy preset) to the account: what each symbol would
     /// change and what it keeps. Nothing changes. Needs Trade permission.</summary>
     public Task<DtoFxsStgCascadePreview> PreviewStrategyAsync(long acno, CmdApiFxsStgApply command,
         CancellationToken cancellationToken = default) =>
@@ -298,10 +298,9 @@ public sealed class FxResource
         _http.SendAsync<DtoFxsPerfBars>("GET", Query("v1/fxs/performance/bars", null, ("acno", acno), ("demo", demo),
             ("fromDt", fromDt?.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture)),
             ("toDt", toDt?.ToUniversalTime().ToString("O", CultureInfo.InvariantCulture))), cancellationToken: cancellationToken);
-    /// <summary>Lists the strategies you can apply: your own and FinCopy's presets. With <paramref name="acno"/>, that
-    /// account owner's strategies (needs Trade permission on the account).</summary>
-    public Task<IReadOnlyList<DtoFxsStg>> StrategiesAsync(long? acno = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<IReadOnlyList<DtoFxsStg>>("GET", Query("v1/fxs/strategies", null, ("acno", acno)), cancellationToken: cancellationToken);
+    /// <summary>Lists the strategies you can apply: your own and FinCopy's presets.</summary>
+    public Task<IReadOnlyList<DtoFxsStg>> StrategiesAsync(CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoFxsStg>>("GET", "v1/fxs/strategies", cancellationToken: cancellationToken);
     /// <summary>Reads one strategy.</summary>
     public Task<DtoFxsStg> StrategyAsync(int isno, CancellationToken cancellationToken = default) =>
         _http.SendAsync<DtoFxsStg>("GET", Strategy(isno), cancellationToken: cancellationToken);

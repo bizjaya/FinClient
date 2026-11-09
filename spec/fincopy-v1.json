@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "FinCopy API",
-    "description": "Your hosted MT4 and MT5 accounts: read balance, equity and positions, and place or close trades. Authenticate with a personal API key in the X-Api-Key header or with your signed-in member session; create keys in the member area under API, or have FinCopy issue one. First-party browser clients send the signed-in fincopy_member session cookie; keep API keys on trusted servers. A key reaches its member's own accounts and the accounts shared with that member (shared for trading: tradable; shared for viewing: read-only). Trades are asynchronous: a successful reply means the order is queued for your terminal, which picks it up within seconds; follow the change feed (or a webhook) to see it filled or rejected. Each key uses its configured requests-per-minute limit (default 60).",
+    "description": "Your hosted MT4 and MT5 accounts: read balance, equity and positions, and place or close trades. Authenticate with a personal API key in the X-Api-Key header or with your signed-in member session; create keys in the member area under API, or have FinCopy issue one. First-party browser clients send the signed-in fincopy_member session cookie; keep API keys on trusted servers. A key reaches only its member's own accounts. Trades are asynchronous: a successful reply means the order is queued for your terminal, which picks it up within seconds; follow the change feed (or a webhook) to see it filled or rejected. Each key uses its configured requests-per-minute limit (default 60).",
     "version": "v1"
   },
   "servers": [
@@ -16,7 +16,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "List the accounts this key can reach, each with its terminal, broker server and latest state.",
+        "summary": "List the key owner's accounts, each with its terminal, broker server and latest state.",
         "operationId": "AccountList",
         "parameters": [
           {
@@ -168,7 +168,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.\n            Send an Idempotency-Key: a retry with the same key returns the account the first call made or reconnected. ExternalRef is your own id\n            for the account. Needs the Trade permission.",
+        "summary": "Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.\r\n            Send an Idempotency-Key: a retry with the same key returns the account the first call made or reconnected. ExternalRef is your own id\r\n            for the account. Needs the Trade permission.",
         "operationId": "AccountMake",
         "parameters": [
           {
@@ -526,7 +526,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Disconnect the hosted terminal from this account. The terminal is stopped and removed, its broker password is\n            forgotten, and its seat is freed. A customer account, its settings and trade history remain so the login can be restored later;\n            a free demo's account and terminal records are deleted.\n            Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. Only the account's owner can\n            disconnect it. The Idempotency-Key header is required; a retry with the same key returns the same operation id. Needs\n            the Trade permission. A signed-in member session also needs its trading PIN when the account requires one.",
+        "summary": "Disconnect the hosted terminal from this account. The terminal is stopped and removed, its broker password is\r\n            forgotten, and its seat is freed. A customer account, its settings and trade history remain so the login can be restored later;\r\n            a free demo's account and terminal records are deleted.\r\n            Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. The Idempotency-Key header is\r\n            required; a retry with the same key returns the same operation id. Needs\r\n            the Trade permission. A signed-in member session also needs its trading PIN when the account requires one.",
         "operationId": "AccountRemove",
         "parameters": [
           {
@@ -638,7 +638,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the\n            account is added. It comes back on the account and on every change-feed row. Needs the Trade permission.",
+        "summary": "Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the\r\n            account is added. It comes back on the account and on every change-feed row. Needs the Trade permission.",
         "operationId": "AccountExternalRef",
         "parameters": [
           {
@@ -838,7 +838,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "What changed on the accounts this key can reach, oldest first: Account (each sync and each settings change),\n            Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and\n            close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without\n            a cursor: that returns no rows and a cursor at \"now\", so read the accounts once, then follow the feed. Keep the\n            returned cursor and call again while `More` is true. The feed runs about ten seconds behind FinCopy's writes, so a\n            write still finishing is read on a later call. `take` is 1 to 1000 (default 500).",
+        "summary": "What changed on the key owner's accounts, oldest first: Account (each sync and each settings change),\r\n            Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and\r\n            close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without\r\n            a cursor: that returns no rows and a cursor at \"now\", so read the accounts once, then follow the feed. Keep the\r\n            returned cursor and call again while `More` is true. The feed runs about ten seconds behind FinCopy's writes, so a\r\n            write still finishing is read on a later call. `take` is 1 to 1000 (default 500).",
         "operationId": "Changes",
         "parameters": [
           {
@@ -927,7 +927,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\n            so a member session cannot call it.",
+        "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\r\n            so a member session cannot call it.",
         "operationId": "WebhookView",
         "responses": {
           "400": {
@@ -996,7 +996,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\n            the webhook again makes a new secret and restarts it from now. API key only, with the Trade permission.",
+        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\r\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\r\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\r\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\r\n            the webhook again makes a new secret and restarts it from now. API key only, with the Trade permission.",
         "operationId": "WebhookSet",
         "requestBody": {
           "content": {
@@ -1231,7 +1231,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "A server-sent event stream of changes on the accounts the caller can reach. Each caller holds up to eight\n            streams; a ninth closes the oldest.",
+        "summary": "A server-sent event stream of changes on the caller's accounts. Each caller holds up to eight streams; a ninth\r\n            closes the oldest.",
         "operationId": "Stream",
         "responses": {
           "400": {
@@ -1824,7 +1824,7 @@
         "tags": [
           "Orders and history"
         ],
-        "summary": "Lists open orders across accounts the caller can reach.",
+        "summary": "Lists open orders across the caller's accounts.",
         "operationId": "Orders",
         "parameters": [
           {
@@ -2008,7 +2008,7 @@
         "tags": [
           "Orders and history"
         ],
-        "summary": "Lists settled orders across accounts the caller can reach.",
+        "summary": "Lists settled orders across the caller's accounts.",
         "operationId": "History",
         "parameters": [
           {
@@ -2442,7 +2442,7 @@
         "tags": [
           "Pairs"
         ],
-        "summary": "Change one symbol's settings (SYMSTG, the DCA gates, ExternalRef), as the member screens do. Needs the Trade\n            permission.",
+        "summary": "Change one symbol's settings (SYMSTG, the DCA gates, ExternalRef), as the member screens do. Needs the Trade\r\n            permission.",
         "operationId": "AccountPairSettings",
         "parameters": [
           {
@@ -2551,12 +2551,184 @@
         }
       }
     },
+    "/v1/fxs/accounts/{acno}/pairs/instrument-suggestions/{symbol}": {
+      "get": {
+        "tags": [
+          "Pairs"
+        ],
+        "operationId": "PairInstrumentSuggestions",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "symbol",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/pairs/instrument-confirm": {
+      "put": {
+        "tags": [
+          "Pairs"
+        ],
+        "operationId": "PairInstrumentConfirm",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsPairInstrumentConfirm"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsPairInstrumentConfirm"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsPairInstrumentConfirm"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdFxsPairInstrumentConfirm"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/fxs/pairs": {
       "get": {
         "tags": [
           "Pairs"
         ],
-        "summary": "Lists the pairs across accounts the caller can reach.",
+        "summary": "Lists the pairs across the caller's accounts.",
         "operationId": "Pairs",
         "parameters": [
           {
@@ -3169,7 +3341,7 @@
         "tags": [
           "Performance and activity"
         ],
-        "summary": "Lists activity across accounts the caller can reach, newest first.",
+        "summary": "Lists activity across the caller's accounts, newest first.",
         "operationId": "Activity",
         "parameters": [
           {
@@ -3331,7 +3503,7 @@
         "tags": [
           "Performance and activity"
         ],
-        "summary": "The last 30 days by currency book (real and demo apart) across accounts the caller can reach: equity, today's\n            change, realised profit, 7- and 30-day growth, and each account's share. `acno` narrows it to one account;\n            `demo` to demo (true) or real (false) accounts.",
+        "summary": "The last 30 days by currency book (real and demo apart) across the caller's accounts: equity, today's\r\n            change, realised profit, 7- and 30-day growth, and each account's share. `acno` narrows it to one account;\r\n            `demo` to demo (true) or real (false) accounts.",
         "operationId": "PerformanceWindow",
         "parameters": [
           {
@@ -3419,7 +3591,7 @@
         "tags": [
           "Performance and activity"
         ],
-        "summary": "Daily performance bars across accounts the caller can reach, per account and per currency book, between two\n            dates (UTC). `acno` narrows it to one account; `demo` to demo (true) or real (false) accounts.",
+        "summary": "Daily performance bars across the caller's accounts, per account and per currency book, between two\r\n            dates (UTC). `acno` narrows it to one account; `demo` to demo (true) or real (false) accounts.",
         "operationId": "PerformanceBars",
         "parameters": [
           {
@@ -3523,7 +3695,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the\n            account is added; until its first sync, live account data is empty.",
+        "summary": "The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the\r\n            account is added; until its first sync, live account data is empty.",
         "operationId": "AccountFxs",
         "parameters": [
           {
@@ -3602,7 +3774,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Change the account's settings, as the member screens do; every change is written to the account log. Needs the\n            Trade permission.",
+        "summary": "Change the account's settings, as the member screens do; every change is written to the account log. Needs the\r\n            Trade permission.",
         "operationId": "AccountSettings",
         "parameters": [
           {
@@ -3786,7 +3958,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Add and/or remove symbols from the account's enabled list (at most 64, using broker names). The server\n            applies the changes to its current list, so a stale picker cannot replace a concurrent change. Needs Trade permission.",
+        "summary": "Add and/or remove symbols from the account's enabled list (at most 64, using broker names). The server\r\n            applies the changes to its current list, so a stale picker cannot replace a concurrent change. Needs Trade permission.",
         "operationId": "AccountSymbolsEdit",
         "parameters": [
           {
@@ -3980,7 +4152,7 @@
         "tags": [
           "Signals and alerts"
         ],
-        "summary": "Reads the signals shown for the enabled symbols across accounts the caller can reach.",
+        "summary": "Reads the signals shown for the enabled symbols across the caller's accounts.",
         "operationId": "Signals",
         "responses": {
           "400": {
@@ -4051,7 +4223,7 @@
         "tags": [
           "Signals and alerts"
         ],
-        "summary": "Lists warning and error activity across accounts the caller can reach.",
+        "summary": "Lists warning and error activity across the caller's accounts.",
         "operationId": "Alerts",
         "parameters": [
           {
@@ -4198,7 +4370,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\n            one of the account owner's or a FinCopy preset (list them with the strategies route and this ACNO).\n            Needs the Trade permission on the account.",
+        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\r\n            one of your own or a FinCopy preset (list them with the strategies route).\r\n            Needs the Trade permission on the account.",
         "operationId": "AccountStrategyPreview",
         "parameters": [
           {
@@ -4303,7 +4475,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "Apply a strategy (the account owner's or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. Needs the Trade\n            permission on the account.",
+        "summary": "Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\r\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. Needs the Trade\r\n            permission on the account.",
         "operationId": "AccountStrategyApply",
         "parameters": [
           {
@@ -4408,18 +4580,8 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "Lists the strategies the caller can apply: its own and FinCopy's presets. With `acno`, the strategies of\n            that account's owner (the caller needs the Trade permission on that account).",
+        "summary": "Lists the strategies the caller can apply: its own and FinCopy's presets.",
         "operationId": "Strategies",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        ],
         "responses": {
           "400": {
             "description": "Bad Request",
@@ -4662,7 +4824,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "Changes one of the caller's own strategies; omitted fields keep their values. FinCopy's presets cannot be\n            changed. Needs the Trade permission.",
+        "summary": "Changes one of the caller's own strategies; omitted fields keep their values. FinCopy's presets cannot be\r\n            changed. Needs the Trade permission.",
         "operationId": "StrategyPatch",
         "parameters": [
           {
@@ -5108,7 +5270,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Start the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\n            Returns the operation id.",
+        "summary": "Start the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\r\n            Returns the operation id.",
         "operationId": "AccountStart",
         "parameters": [
           {
@@ -5196,7 +5358,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Stop the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\n            Returns the operation id.",
+        "summary": "Stop the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\r\n            Returns the operation id.",
         "operationId": "AccountStop",
         "parameters": [
           {
@@ -5284,7 +5446,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Restart the account's hosted terminal (a terminal never set up is started). The Idempotency-Key header is\n            required. Needs the Trade permission. Returns the operation id.",
+        "summary": "Restart the account's hosted terminal (a terminal never set up is started). The Idempotency-Key header is\r\n            required. Needs the Trade permission. Returns the operation id.",
         "operationId": "AccountRestart",
         "parameters": [
           {
@@ -5372,7 +5534,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "The newest terminal operations (start, stop, restart, set-up, removal) across accounts the caller can reach,\n            newest first.",
+        "summary": "The newest terminal operations (start, stop, restart, set-up, removal) across the caller's accounts, newest\r\n            first.",
         "operationId": "Operations",
         "parameters": [
           {
@@ -5608,7 +5770,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Accept or reject a HYBRID DCA proposal. A reject adds nothing, so it is allowed while an admin has disabled the\n            account's owner; an accept is an add and is not. Needs the Trade permission.",
+        "summary": "Accept or reject a HYBRID DCA proposal. Needs the Trade permission.",
         "operationId": "AccountDcaAnswer",
         "parameters": [
           {
@@ -5722,7 +5884,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings. For a signed-in\n            member session it also says whether the account owner's trade PIN must be entered (a key never needs one).",
+        "summary": "The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings. For a signed-in\r\n            member session it also says whether the member's trading PIN must be entered (a key never needs one).",
         "operationId": "AccountTradePreInfo",
         "parameters": [
           {
@@ -5827,7 +5989,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. A close is allowed while an admin has\n            disabled the account's owner; an open or add is not. The Idempotency-Key header is required. Needs the Trade permission.",
+        "summary": "Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. The Idempotency-Key header is\r\n            required. Needs the Trade permission.",
         "operationId": "AccountTradeMake",
         "parameters": [
           {
@@ -6268,7 +6430,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "HYBRID DCA proposals waiting for an answer, across accounts the caller can reach, newest first. For a signed-in\n            member session each row says whether the account owner's trade PIN must be entered to answer it.",
+        "summary": "HYBRID DCA proposals waiting for an answer, across the caller's accounts, newest first. For a signed-in member\r\n            session each row says whether the member's trading PIN must be entered to answer it.",
         "operationId": "Dca",
         "parameters": [
           {
@@ -6726,6 +6888,37 @@
           "TrPin": {
             "type": "string",
             "nullable": true
+          },
+          "TrailPercent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Edit one ticket's own exits (MOD). TrailPercent is the ticket's own TS, % of its TP money (T701 Q3-A): null keeps\r\n            the ticket's current TS (while it keeps a TP), 0 clears it."
+      },
+      "CmdFxsPairInstrumentConfirm": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "BrokerSymbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "InstrumentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "NoMatch": {
+            "type": "boolean"
+          },
+          "PreviewOnly": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7059,7 +7252,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to\n            re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state."
+        "description": "One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to\r\n            re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state."
       },
       "DtoApiChangeFeed": {
         "type": "object",
@@ -7197,6 +7390,16 @@
           },
           "paging": {
             "$ref": "#/components/schemas/ResPage"
+          },
+          "grps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ResGrp"
+              }
+            },
+            "nullable": true
           },
           "code": {
             "type": "integer",
@@ -7504,16 +7707,12 @@
             "type": "integer",
             "format": "int32"
           },
-          "DurationHours": {
-            "type": "integer",
-            "format": "int32"
-          },
           "MemberHasActive": {
             "type": "boolean"
           }
         },
         "additionalProperties": false,
-        "description": "Demo places that can start now (a prepared terminal and a free slot), and whether this member already\n            runs one (one at a time)."
+        "description": "Demo places that can start now (a prepared terminal and a free slot), and whether this member already\r\n            runs one (one at a time)."
       },
       "DtoDemoAvailabilityResPonse": {
         "type": "object",
@@ -7988,6 +8187,20 @@
             "description": "Every symbol the broker offers, as the terminal last reported it.",
             "nullable": true
           },
+          "PairLimit": {
+            "type": "integer",
+            "description": "TRD2-B8: the plan's limit of enabled pairs (an admin override wins, else what the last sync worked out from the\r\n            seat's plan); null until the account has synced. The symbols editor refuses a pair over it before saving.",
+            "format": "int32",
+            "nullable": true
+          },
+          "PairPreviews": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Enabled symbols on a short AIBot preview: they are quoted but do not count toward PairLimit.",
+            "nullable": true
+          },
           "AccountType": {
             "$ref": "#/components/schemas/DtoFxsAccountType"
           },
@@ -8074,6 +8287,9 @@
           },
           "TermKind": {
             "$ref": "#/components/schemas/TermAccountKind"
+          },
+          "BrokerEnvironment": {
+            "$ref": "#/components/schemas/BrokerServerEnvironment"
           },
           "TerminalState": {
             "$ref": "#/components/schemas/ObservedTermState"
@@ -8226,6 +8442,9 @@
             "type": "number",
             "format": "double"
           },
+          "FullAuto": {
+            "$ref": "#/components/schemas/FxsFullAutoSettings"
+          },
           "ABSPNLAMT": {
             "type": "number",
             "format": "double",
@@ -8285,6 +8504,16 @@
           "DCACooloffMins": {
             "type": "integer",
             "format": "int32"
+          },
+          "PairLimitOverride": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "PairLimitLastKnown": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "EnSymList": {
             "uniqueItems": true,
@@ -8386,13 +8615,6 @@
           },
           "OwnerEmail": {
             "type": "string",
-            "nullable": true
-          },
-          "USRMAILS": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DtoMemberMailSrch"
-            },
             "nullable": true
           }
         },
@@ -8653,6 +8875,10 @@
             "type": "number",
             "format": "double"
           },
+          "TSP": {
+            "type": "number",
+            "format": "double"
+          },
           "SLPRC": {
             "type": "number",
             "format": "double"
@@ -8713,7 +8939,7 @@
           },
           "TradePinRequired": {
             "type": "boolean",
-            "description": "The account owner's PIN is required to answer this DCA proposal."
+            "description": "The member's trading PIN is required to answer this DCA proposal."
           },
           "ODT": {
             "type": "string",
@@ -8798,6 +9024,22 @@
             "type": "string",
             "nullable": true
           },
+          "AutoDecisionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "AIBotAuto": {
+            "type": "boolean"
+          },
+          "AIBotRole": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedHoldMins": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "EXP": {
             "type": "integer",
             "format": "int64"
@@ -8828,6 +9070,16 @@
           },
           "paging": {
             "$ref": "#/components/schemas/ResPage"
+          },
+          "grps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ResGrp"
+              }
+            },
+            "nullable": true
           },
           "code": {
             "type": "integer",
@@ -8990,6 +9242,10 @@
             "type": "number",
             "format": "double"
           },
+          "TSP": {
+            "type": "number",
+            "format": "double"
+          },
           "SLPRC": {
             "type": "number",
             "format": "double"
@@ -9050,7 +9306,7 @@
           },
           "TradePinRequired": {
             "type": "boolean",
-            "description": "The account owner's PIN is required to answer this DCA proposal."
+            "description": "The member's trading PIN is required to answer this DCA proposal."
           },
           "ODT": {
             "type": "string",
@@ -9135,6 +9391,22 @@
             "type": "string",
             "nullable": true
           },
+          "AutoDecisionId": {
+            "type": "string",
+            "nullable": true
+          },
+          "AIBotAuto": {
+            "type": "boolean"
+          },
+          "AIBotRole": {
+            "type": "string",
+            "nullable": true
+          },
+          "PlannedHoldMins": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "EXP": {
             "type": "integer",
             "format": "int64"
@@ -9201,6 +9473,16 @@
           },
           "paging": {
             "$ref": "#/components/schemas/ResPage"
+          },
+          "grps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ResGrp"
+              }
+            },
+            "nullable": true
           },
           "code": {
             "type": "integer",
@@ -9804,6 +10086,16 @@
           },
           "paging": {
             "$ref": "#/components/schemas/ResPage"
+          },
+          "grps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ResGrp"
+              }
+            },
+            "nullable": true
           },
           "code": {
             "type": "integer",
@@ -10503,6 +10795,10 @@
             "type": "number",
             "format": "double"
           },
+          "TSP": {
+            "type": "number",
+            "format": "double"
+          },
           "ExitTPPRC": {
             "type": "number",
             "format": "double",
@@ -10896,6 +11192,9 @@
           },
           "SYMSTG": {
             "$ref": "#/components/schemas/DtoFxsStgSymStg"
+          },
+          "AIBot": {
+            "$ref": "#/components/schemas/FxsAIBotStrategy"
           },
           "DCACooloffMins": {
             "type": "integer",
@@ -11596,6 +11895,16 @@
           "paging": {
             "$ref": "#/components/schemas/ResPage"
           },
+          "grps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ResGrp"
+              }
+            },
+            "nullable": true
+          },
           "code": {
             "type": "integer",
             "format": "int32"
@@ -11714,6 +12023,16 @@
           "paging": {
             "$ref": "#/components/schemas/ResPage"
           },
+          "grps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ResGrp"
+              }
+            },
+            "nullable": true
+          },
           "code": {
             "type": "integer",
             "format": "int32"
@@ -11731,20 +12050,6 @@
             "items": {
               "type": "string"
             },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "DtoMemberMailSrch": {
-        "type": "object",
-        "properties": {
-          "USNO": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "Email": {
-            "type": "string",
             "nullable": true
           }
         },
@@ -11826,7 +12131,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's\n            (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names."
+        "description": "FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's\r\n            (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names."
       },
       "DtoShelfSignals": {
         "type": "object",
@@ -11947,6 +12252,9 @@
             "nullable": true
           },
           "Approved": {
+            "type": "boolean"
+          },
+          "MemberTerminalAlerts": {
             "type": "boolean"
           },
           "ExternalRef": {
@@ -12096,6 +12404,23 @@
             "type": "string",
             "nullable": true
           },
+          "PriceTickAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "PriceLagSec": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "OpenAlerts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
           "TerminalMemoryBytes": {
             "type": "integer",
             "format": "int64"
@@ -12225,6 +12550,56 @@
         ],
         "type": "string"
       },
+      "FxsAIBotPreferences": {
+        "type": "object",
+        "properties": {
+          "Horizon": {
+            "type": "string",
+            "nullable": true
+          },
+          "Protection": {
+            "type": "string",
+            "nullable": true
+          },
+          "AllowedExitModes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "StopStyle": {
+            "type": "string",
+            "nullable": true
+          },
+          "LadderEnabled": {
+            "type": "boolean"
+          },
+          "MaxLayers": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxsAIBotStrategy": {
+        "type": "object",
+        "properties": {
+          "Kind": {
+            "type": "string",
+            "nullable": true
+          },
+          "Preferences": {
+            "$ref": "#/components/schemas/FxsAIBotPreferences"
+          },
+          "PlaybookVersionId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Strategy-wide AI preferences. These are policy boundaries for the model, not a trade plan."
+      },
       "FxsCloseReason": {
         "enum": [
           "UNK",
@@ -12239,6 +12614,115 @@
         ],
         "type": "string",
         "description": "Why a leg closed, as the EA reports it (`CRSN`)."
+      },
+      "FxsFullAutoSettings": {
+        "type": "object",
+        "properties": {
+          "Granted": {
+            "type": "boolean"
+          },
+          "State": {
+            "type": "string",
+            "nullable": true
+          },
+          "BreakerMode": {
+            "type": "string",
+            "nullable": true
+          },
+          "BreakerTripped": {
+            "type": "boolean"
+          },
+          "BreakerReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "BreakerTrippedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "BrokerDayKey": {
+            "type": "string",
+            "description": "Broker-local day key used to reset the daily loss breaker across a date boundary.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LearningCallsToday": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "LearningCallDayKey": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "DailyLossPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "TradingHours": {
+            "type": "string",
+            "nullable": true
+          },
+          "MaximumHold": {
+            "type": "string",
+            "nullable": true
+          },
+          "SafetySlPct": {
+            "type": "number",
+            "description": "T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.",
+            "format": "double"
+          },
+          "RiskDial": {
+            "type": "string",
+            "description": "T701 (Q11-A): the risk dial, CAREFUL / BALANCED / BOLD; AIAdvisor moves it one step, never above the ceiling.",
+            "nullable": true
+          },
+          "RiskCeiling": {
+            "type": "string",
+            "description": "T701 (Q11-A): the highest dial step the member allows AIAdvisor to set.",
+            "nullable": true
+          },
+          "AdviceMode": {
+            "type": "string",
+            "description": "T701 (Q10-C): ASK (Ask me first, the default) or APPLY (Apply advice by itself).",
+            "nullable": true
+          },
+          "AdviceTimes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "T701 Phase 4.2: UTC times of day (\"HH:mm\") at which AIAdvisor advises, one to four.",
+            "nullable": true
+          },
+          "AdviceCallsToday": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AdviceCallDayKey": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastAdviceAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastAdviceSlot": {
+            "type": "string",
+            "description": "The last scheduled advice slot run, \"yyyy-MM-dd HH:mm\" UTC, so a slot runs once.",
+            "nullable": true
+          },
+          "UndoAdviceId": {
+            "type": "string",
+            "description": "The applied advice that Undo last advice reverts.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Per-account AIBot grant, switch (Off / Watch / On) and limits. The safe initial state is always Off and ungranted.\r\n            T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone."
       },
       "FxsOrderAction": {
         "enum": [
@@ -12374,6 +12858,21 @@
         ],
         "type": "string"
       },
+      "ResGrp": {
+        "type": "object",
+        "properties": {
+          "Val": {
+            "type": "string",
+            "nullable": true
+          },
+          "Cnt": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ResPage": {
         "type": "object",
         "properties": {
@@ -12449,10 +12948,10 @@
   },
   "security": [
     {
-      "ApiKey": [ ]
+      "ApiKey": []
     },
     {
-      "MemberSession": [ ]
+      "MemberSession": []
     }
   ],
   "tags": [

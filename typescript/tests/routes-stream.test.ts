@@ -127,14 +127,14 @@ describe("routes", () => {
     await client.copy.fx.makeStrategy({ StratName: "Mine" });
     await client.copy.fx.patchStrategy(42, { StratName: "Renamed" });
     await client.copy.fx.deleteStrategy(42);
-    await client.copy.fx.strategies(1234567890);
+    await client.copy.fx.strategies();
     expect(calls.map((call) => `${call.method} ${call.url.pathname}${call.url.search}`)).toEqual([
       "POST /v1/fxs/accounts/1234567890/strategy/preview",
       "POST /v1/fxs/accounts/1234567890/strategy/apply",
       "POST /v1/fxs/strategies",
       "PATCH /v1/fxs/strategies/42",
       "DELETE /v1/fxs/strategies/42",
-      "GET /v1/fxs/strategies?acno=1234567890",
+      "GET /v1/fxs/strategies",
     ]);
     expect(calls[1]?.body).toEqual({ ISNO: 42 });
   });

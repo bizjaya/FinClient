@@ -332,6 +332,10 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// Edit one ticket's own exits (MOD). TrailPercent is the ticket's own TS, % of its TP money (T701 Q3-A): null keeps
+    /// <br/>            the ticket's current TS (while it keeps a TP), 0 clears it.
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CmdFxsModify
     {
@@ -359,6 +363,30 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
         public string? TrPin { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrailPercent")]
+        public double? TrailPercent { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdFxsPairInstrumentConfirm
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BrokerSymbol")]
+        public string? BrokerSymbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("InstrumentName")]
+        public string? InstrumentName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NoMatch")]
+        public bool? NoMatch { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PreviewOnly")]
+        public bool? PreviewOnly { get; set; } = default!;
 
     }
 
@@ -784,6 +812,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("paging")]
         public ResPage? Paging { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("grps")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<ResGrp>>? Grps { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
 
@@ -1025,9 +1056,6 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("Quota")]
         public int? Quota { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DurationHours")]
-        public int? DurationHours { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("MemberHasActive")]
         public bool? MemberHasActive { get; set; } = default!;
@@ -1384,6 +1412,19 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("AllSymbols")]
         public System.Collections.Generic.ICollection<string>? AllSymbols { get; set; } = default!;
 
+        /// <summary>
+        /// TRD2-B8: the plan's limit of enabled pairs (an admin override wins, else what the last sync worked out from the
+        /// <br/>            seat's plan); null until the account has synced. The symbols editor refuses a pair over it before saving.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("PairLimit")]
+        public int? PairLimit { get; set; } = default!;
+
+        /// <summary>
+        /// Enabled symbols on a short AIBot preview: they are quoted but do not count toward PairLimit.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("PairPreviews")]
+        public System.Collections.Generic.ICollection<string>? PairPreviews { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("AccountType")]
         public DtoFxsAccountType? AccountType { get; set; } = default!;
 
@@ -1453,6 +1494,10 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("TermKind")]
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TermAccountKind>))]
         public TermAccountKind? TermKind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BrokerEnvironment")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BrokerServerEnvironment>))]
+        public BrokerServerEnvironment? BrokerEnvironment { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("TerminalState")]
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<ObservedTermState>))]
@@ -1569,6 +1614,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("AIBotDailyLossPct")]
         public double? AIBotDailyLossPct { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("FullAuto")]
+        public FxsFullAutoSettings? FullAuto { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("ABSPNLAMT")]
         public double? ABSPNLAMT { get; set; } = default!;
 
@@ -1611,6 +1659,12 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("DCACooloffMins")]
         public int? DCACooloffMins { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PairLimitOverride")]
+        public int? PairLimitOverride { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PairLimitLastKnown")]
+        public int? PairLimitLastKnown { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("EnSymList")]
         public System.Collections.Generic.ICollection<string>? EnSymList { get; set; } = default!;
@@ -1671,9 +1725,6 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("OwnerEmail")]
         public string? OwnerEmail { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("USRMAILS")]
-        public System.Collections.Generic.ICollection<DtoMemberMailSrch>? USRMAILS { get; set; } = default!;
 
     }
 
@@ -1870,6 +1921,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("TPP")]
         public double? TPP { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("TSP")]
+        public double? TSP { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("SLPRC")]
         public double? SLPRC { get; set; } = default!;
 
@@ -1910,7 +1964,7 @@ namespace Fin.Copy
         public bool? OwnExits { get; set; } = default!;
 
         /// <summary>
-        /// The account owner's PIN is required to answer this DCA proposal.
+        /// The member's trading PIN is required to answer this DCA proposal.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("TradePinRequired")]
         public bool? TradePinRequired { get; set; } = default!;
@@ -1972,6 +2026,18 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("HedgeId")]
         public string? HedgeId { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("AutoDecisionId")]
+        public string? AutoDecisionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotAuto")]
+        public bool? AIBotAuto { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotRole")]
+        public string? AIBotRole { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PlannedHoldMins")]
+        public int? PlannedHoldMins { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("EXP")]
         public long? EXP { get; set; } = default!;
 
@@ -1995,6 +2061,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("paging")]
         public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("grps")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<ResGrp>>? Grps { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -2127,6 +2196,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("TPP")]
         public double? TPP { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("TSP")]
+        public double? TSP { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("SLPRC")]
         public double? SLPRC { get; set; } = default!;
 
@@ -2167,7 +2239,7 @@ namespace Fin.Copy
         public bool? OwnExits { get; set; } = default!;
 
         /// <summary>
-        /// The account owner's PIN is required to answer this DCA proposal.
+        /// The member's trading PIN is required to answer this DCA proposal.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("TradePinRequired")]
         public bool? TradePinRequired { get; set; } = default!;
@@ -2229,6 +2301,18 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("HedgeId")]
         public string? HedgeId { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("AutoDecisionId")]
+        public string? AutoDecisionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotAuto")]
+        public bool? AIBotAuto { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotRole")]
+        public string? AIBotRole { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PlannedHoldMins")]
+        public int? PlannedHoldMins { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("EXP")]
         public long? EXP { get; set; } = default!;
 
@@ -2276,6 +2360,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("paging")]
         public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("grps")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<ResGrp>>? Grps { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -2669,6 +2756,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("paging")]
         public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("grps")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<ResGrp>>? Grps { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -3180,6 +3270,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("TPPRC")]
         public double? TPPRC { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("TSP")]
+        public double? TSP { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("ExitTPPRC")]
         public double? ExitTPPRC { get; set; } = default!;
 
@@ -3458,6 +3551,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
         public DtoFxsStgSymStg? SYMSTG { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBot")]
+        public FxsAIBotStrategy? AIBot { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("DCACooloffMins")]
         public int? DCACooloffMins { get; set; } = default!;
@@ -3971,6 +4067,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("paging")]
         public ResPage? Paging { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("grps")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<ResGrp>>? Grps { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
 
@@ -4058,6 +4157,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("paging")]
         public ResPage? Paging { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("grps")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<ResGrp>>? Grps { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
 
@@ -4069,18 +4171,6 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("errors")]
         public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoMemberMailSrch
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("USNO")]
-        public long? USNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Email")]
-        public string? Email { get; set; } = default!;
 
     }
 
@@ -4247,6 +4337,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("Approved")]
         public bool? Approved { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("MemberTerminalAlerts")]
+        public bool? MemberTerminalAlerts { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("ExternalRef")]
         public string? ExternalRef { get; set; } = default!;
 
@@ -4360,6 +4453,15 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("LastSyncResult")]
         public string? LastSyncResult { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("PriceTickAt")]
+        public System.DateTimeOffset? PriceTickAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PriceLagSec")]
+        public double? PriceLagSec { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OpenAlerts")]
+        public System.Collections.Generic.ICollection<string>? OpenAlerts { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("TerminalMemoryBytes")]
         public long? TerminalMemoryBytes { get; set; } = default!;
 
@@ -4464,6 +4566,48 @@ namespace Fin.Copy
 
     }
 
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAIBotPreferences
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Horizon")]
+        public string? Horizon { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Protection")]
+        public string? Protection { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AllowedExitModes")]
+        public System.Collections.Generic.ICollection<string>? AllowedExitModes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StopStyle")]
+        public string? StopStyle { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LadderEnabled")]
+        public bool? LadderEnabled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaxLayers")]
+        public int? MaxLayers { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Strategy-wide AI preferences. These are policy boundaries for the model, not a trade plan.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAIBotStrategy
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Preferences")]
+        public FxsAIBotPreferences? Preferences { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PlaybookVersionId")]
+        public string? PlaybookVersionId { get; set; } = default!;
+
+    }
+
     /// <summary>
     /// Why a leg closed, as the EA reports it (`CRSN`).
     /// </summary>
@@ -4497,6 +4641,106 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"SO")]
         SO = 8,
+
+    }
+
+    /// <summary>
+    /// Per-account AIBot grant, switch (Off / Watch / On) and limits. The safe initial state is always Off and ungranted.
+    /// <br/>            T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsFullAutoSettings
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Granted")]
+        public bool? Granted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("State")]
+        public string? State { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerMode")]
+        public string? BreakerMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerTripped")]
+        public bool? BreakerTripped { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerReason")]
+        public string? BreakerReason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerTrippedAt")]
+        public System.DateTimeOffset? BreakerTrippedAt { get; set; } = default!;
+
+        /// <summary>
+        /// Broker-local day key used to reset the daily loss breaker across a date boundary.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BrokerDayKey")]
+        public System.DateTimeOffset? BrokerDayKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LearningCallsToday")]
+        public int? LearningCallsToday { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LearningCallDayKey")]
+        public System.DateTimeOffset? LearningCallDayKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DailyLossPct")]
+        public double? DailyLossPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TradingHours")]
+        public string? TradingHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumHold")]
+        public string? MaximumHold { get; set; } = default!;
+
+        /// <summary>
+        /// T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SafetySlPct")]
+        public double? SafetySlPct { get; set; } = default!;
+
+        /// <summary>
+        /// T701 (Q11-A): the risk dial, CAREFUL / BALANCED / BOLD; AIAdvisor moves it one step, never above the ceiling.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("RiskDial")]
+        public string? RiskDial { get; set; } = default!;
+
+        /// <summary>
+        /// T701 (Q11-A): the highest dial step the member allows AIAdvisor to set.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("RiskCeiling")]
+        public string? RiskCeiling { get; set; } = default!;
+
+        /// <summary>
+        /// T701 (Q10-C): ASK (Ask me first, the default) or APPLY (Apply advice by itself).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
+        public string? AdviceMode { get; set; } = default!;
+
+        /// <summary>
+        /// T701 Phase 4.2: UTC times of day ("HH:mm") at which AIAdvisor advises, one to four.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceTimes")]
+        public System.Collections.Generic.ICollection<string>? AdviceTimes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceCallsToday")]
+        public int? AdviceCallsToday { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceCallDayKey")]
+        public System.DateTimeOffset? AdviceCallDayKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LastAdviceAt")]
+        public System.DateTimeOffset? LastAdviceAt { get; set; } = default!;
+
+        /// <summary>
+        /// The last scheduled advice slot run, "yyyy-MM-dd HH:mm" UTC, so a slot runs once.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LastAdviceSlot")]
+        public string? LastAdviceSlot { get; set; } = default!;
+
+        /// <summary>
+        /// The applied advice that Undo last advice reverts.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UndoAdviceId")]
+        public string? UndoAdviceId { get; set; } = default!;
 
     }
 
@@ -4737,6 +4981,18 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"Removed")]
         Removed = 5,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ResGrp
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        public string? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Cnt")]
+        public long? Cnt { get; set; } = default!;
 
     }
 
