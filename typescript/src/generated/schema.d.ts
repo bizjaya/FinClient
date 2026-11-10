@@ -1063,6 +1063,10 @@ export interface components {
             SLP?: number;
             /** Format: double */
             TSP?: number;
+            /** Format: double */
+            TPPrice?: number;
+            /** Format: double */
+            SLPrice?: number;
         };
         CmdApiFxsOpenLegImport: {
             Legs?: components["schemas"]["CmdApiFxsOpenLeg"][] | null;
