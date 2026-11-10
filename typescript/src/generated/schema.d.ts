@@ -1488,8 +1488,23 @@ export interface components {
             SYM6?: string | null;
             EntMode?: components["schemas"]["TMode"];
             AvgMode?: components["schemas"]["TMode"];
-            BFXMO?: components["schemas"]["FXMODE"];
-            SFXMO?: components["schemas"]["FXMODE"];
+            BAMODE?: components["schemas"]["AMode"];
+            SAMODE?: components["schemas"]["AMode"];
+            /** Format: double */
+            BFRATIO?: number | null;
+            /** Format: double */
+            SFRATIO?: number | null;
+            /** Format: double */
+            BRISK?: number | null;
+            /** Format: double */
+            SRISK?: number | null;
+            BTRAIL?: boolean | null;
+            STRAIL?: boolean | null;
+            BALLOWED?: components["schemas"]["AMode"][] | null;
+            SALLOWED?: components["schemas"]["AMode"][] | null;
+            BPENDING?: components["schemas"]["AMode"];
+            SPENDING?: components["schemas"]["AMode"];
+            REBAL?: boolean | null;
             EALVL?: boolean | null;
             BCAN?: boolean | null;
             SCAN?: boolean | null;
@@ -3324,6 +3339,181 @@ export interface components {
         TermAccountKind: "Customer" | "Demo";
         /** @enum {string} */
         TerminalConnectionState: "Unknown" | "Connected" | "Disconnected" | "NeedsAddress" | "LoginFailed" | "CredentialsMissing";
+        /** @enum {string} */
+        AMode: "NONE" | "DCAW" | "DCAG" | "GRID" | "CONT" | "FRRR" | "COPY";
+        DtoTelegramCopyAccount: {
+            /** Format: int64 */
+            ACNO: number;
+            AccountName: string;
+            /** Format: double */
+            Balance: number;
+            Currency: string;
+            Broker: string;
+            Server: string;
+            Platform: string;
+            Demo: boolean;
+            Enabled: boolean;
+            /** Format: int32 */
+            RouteCap: number;
+            /** Format: int32 */
+            EnabledRoutes: number;
+            Plan: string;
+        };
+        CmdTelegramCopyRoute: {
+            RouteId?: string | null;
+            /** Format: int64 */
+            ChatId: number;
+            PeerType: string;
+            /** Format: int64 */
+            ACNO: number;
+            Enabled: boolean;
+            LotMode: string;
+            /** Format: double */
+            Lot?: number | null;
+            /** Format: double */
+            RiskPct?: number | null;
+            /** Format: double */
+            LotPerBalance?: number | null;
+            /** Format: double */
+            LotPerBalanceBalance?: number | null;
+            /** Format: double */
+            CopyRatio?: number | null;
+            DirectionSource: string;
+            Direction: string;
+            SymbolWhitelist: string[];
+            SymbolBlocklist: string[];
+            SymbolMappings: {
+                [key: string]: string;
+            };
+            EntrySource: string;
+            EntryMode: string;
+            /** Format: int32 */
+            EntryLayers: number;
+            EntrySplitMode: string;
+            TakeProfitSource: string;
+            TakeProfitMode: string;
+            TakeProfitFallbackOn: boolean;
+            /** Format: double */
+            TakeProfitFallbackPercent: number;
+            StopMode: string;
+            /** Format: double */
+            PersonalStopPercent?: number | null;
+            ConfirmNoStop: boolean;
+            TrailingOn: boolean;
+            TrailingMode: string;
+            /**
+             * @description T701 P5 (TP496 Q14-C): with Stop-loss on Channel and a signal that names no SL, REFUSE or ADD_SL
+             *                 (FC.Com.DTO.TgNoStopActions).
+             */
+            NoStopAction: string;
+            /**
+             * Format: double
+             * @description T701 P5 (TP496 Q6 note): Trail at the TP, a TS % each filled copy gets as its own trailing stop. 0 = off.
+             */
+            TrailAtTakeProfitPercent: number;
+            MaxOpenTradesOn: boolean;
+            /** Format: int32 */
+            MaxOpenTrades: number;
+            MaxOpenPerSymbolOn: boolean;
+            /** Format: int32 */
+            MaxOpenTradesPerSymbol: number;
+            OperationHoursOn: boolean;
+            OperationStart: string;
+            OperationEnd: string;
+            OperationTimeZone: string;
+            OperationDays: string;
+            CooldownOn: boolean;
+            /** Format: int32 */
+            CooldownPerSymbolSeconds: number;
+            CancelEntryOn: boolean;
+            /** Format: double */
+            CancelEntryAfterHours?: number | null;
+            /** Format: int32 */
+            MaxAgeSeconds: number;
+        };
+        DtoTelegramCopyRoute: {
+            RouteId: string;
+            /** Format: int64 */
+            USNO: number;
+            /** Format: int64 */
+            ChatId: number;
+            PeerType: string;
+            /** Format: int64 */
+            ACNO: number;
+            ChannelTitle: string;
+            Enabled: boolean;
+            LotMode: string;
+            /** Format: double */
+            Lot: number;
+            /** Format: double */
+            RiskPct: number;
+            /** Format: double */
+            LotPerBalance: number;
+            /** Format: double */
+            LotPerBalanceBalance: number;
+            /** Format: double */
+            CopyRatio: number;
+            DirectionSource: string;
+            Direction: string;
+            SymbolWhitelist: string[];
+            SymbolBlocklist: string[];
+            SymbolMappings: {
+                [key: string]: string;
+            };
+            EntrySource: string;
+            EntryMode: string;
+            /** Format: int32 */
+            EntryLayers: number;
+            EntrySplitMode: string;
+            TakeProfitSource: string;
+            TakeProfitMode: string;
+            TakeProfitFallbackOn: boolean;
+            /** Format: double */
+            TakeProfitFallbackPercent: number;
+            StopMode: string;
+            /** Format: double */
+            PersonalStopPercent: number;
+            ConfirmNoStop: boolean;
+            TrailingOn: boolean;
+            TrailingMode: string;
+            /**
+             * @description T701 P5 (TP496 Q14-C): with Stop-loss on Channel and a signal that names no SL, REFUSE or ADD_SL
+             *                 (FC.Com.DTO.TgNoStopActions).
+             */
+            NoStopAction: string;
+            /**
+             * Format: double
+             * @description T701 P5 (TP496 Q6 note): Trail at the TP, a TS % each filled copy gets as its own trailing stop. 0 = off.
+             */
+            TrailAtTakeProfitPercent: number;
+            MaxOpenTradesOn: boolean;
+            /** Format: int32 */
+            MaxOpenTrades: number;
+            MaxOpenPerSymbolOn: boolean;
+            /** Format: int32 */
+            MaxOpenTradesPerSymbol: number;
+            OperationHoursOn: boolean;
+            OperationStart: string;
+            OperationEnd: string;
+            OperationTimeZone: string;
+            OperationDays: string;
+            CooldownOn: boolean;
+            /** Format: int32 */
+            CooldownPerSymbolSeconds: number;
+            CancelEntryOn: boolean;
+            /** Format: double */
+            CancelEntryAfterHours: number;
+            /** Format: int32 */
+            MaxAgeSeconds: number;
+            Status: string;
+            LastSignal: string;
+            /** Format: int32 */
+            CopiedCount: number;
+            /** Format: int32 */
+            SkippedCount: number;
+            /** Format: date-time */
+            LastSignalAt?: string | null;
+        };
     };
     responses: never;
     parameters: never;
