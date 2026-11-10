@@ -313,6 +313,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/fxs/accounts/{acno}/open-legs/import": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Import open broker legs into FinCopy's order book, retaining the source OID so tagged FINQ5 tickets are adopted. */
+        post: operations["ImportOpenLegs"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/waitlist/join": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Join the caller's account waitlist. A caller can have one active place per waitlist kind. */
+        post: operations["WaitlistJoin"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/fxs/accounts/{acno}/pairs": {
         parameters: {
             query?: never;
@@ -1007,6 +1041,32 @@ export interface components {
                 [key: string]: string[];
             } | null;
         };
+        /** @description An open FINQ5 leg being adopted by a FinCopy hosted account. OID is the FINQ order id. */
+        CmdApiFxsOpenLeg: {
+            /** Format: int64 */
+            OID?: number;
+            /** Format: int64 */
+            Ticket?: number;
+            Symbol?: string | null;
+            Side?: string | null;
+            /** Format: double */
+            Lot?: number;
+            /** Format: double */
+            OpenPrice?: number;
+            /** Format: int32 */
+            Group?: number;
+            /** Format: int32 */
+            Level?: number;
+            /** Format: double */
+            TPP?: number;
+            /** Format: double */
+            SLP?: number;
+            /** Format: double */
+            TSP?: number;
+        };
+        CmdApiFxsOpenLegImport: {
+            Legs?: components["schemas"]["CmdApiFxsOpenLeg"][] | null;
+        };
         /** @description Public trade request. Account identity comes from the ACNO route. */
         CmdApiFxsOrdrMake: {
             SYM?: string | null;
@@ -1170,6 +1230,11 @@ export interface components {
         CmdTermAccountPassword: {
             BrokerPassword?: string | null;
             BrokerServerId?: string | null;
+            Login?: string | null;
+        };
+        CmdWaitlistJoin: {
+            Kind?: string | null;
+            Platform?: string | null;
         };
         /** @enum {string} */
         DeployKind: "Provision" | "Upgrade" | "Rollback" | "Remove" | "Start" | "Stop" | "Restart";
@@ -1219,6 +1284,22 @@ export interface components {
         };
         DtoApiChangeFeedResPonse: {
             data?: components["schemas"]["DtoApiChangeFeed"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoApiFxsOpenLegImport: {
+            /** Format: int32 */
+            Imported?: number;
+            /** Format: int32 */
+            AlreadyImported?: number;
+            OIDs?: number[] | null;
+        };
+        DtoApiFxsOpenLegImportResPonse: {
+            data?: components["schemas"]["DtoApiFxsOpenLegImport"];
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
@@ -1466,6 +1547,22 @@ export interface components {
             BDMUL?: number | null;
             /** Format: double */
             SDMUL?: number | null;
+        };
+        DtoFinInstrument: {
+            Name?: string | null;
+            AssetClass?: string | null;
+            TvdCol?: string | null;
+            TvdCode?: string | null;
+            Note?: string | null;
+        };
+        DtoFinInstrumentResPonse: {
+            data?: components["schemas"]["DtoFinInstrument"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
         };
         DtoFleetAccount: {
             Account?: components["schemas"]["DtoTermAccount"];
@@ -2880,6 +2977,28 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        DtoPairInstrumentCandidate: {
+            Name?: string | null;
+            AssetClass?: string | null;
+            TvdCol?: string | null;
+            TvdCode?: string | null;
+            Source?: string | null;
+            HasFinGraphReading?: boolean;
+        };
+        DtoPairInstrumentSuggestions: {
+            ServerName?: string | null;
+            BrokerSymbol?: string | null;
+            Suggestions?: components["schemas"]["DtoPairInstrumentCandidate"][] | null;
+        };
+        DtoPairInstrumentSuggestionsResPonse: {
+            data?: components["schemas"]["DtoPairInstrumentSuggestions"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
         /**
          * @description FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's
          *                 (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names.
@@ -3038,6 +3157,39 @@ export interface components {
             UnitName?: string | null;
             Folder?: string | null;
         };
+        DtoWaitlistEntry: {
+            Id?: string | null;
+            /** Format: int64 */
+            USNO?: number;
+            Email?: string | null;
+            Kind?: string | null;
+            Platform?: string | null;
+            /** Format: date-time */
+            Since?: string;
+            Status?: string | null;
+            NodeId?: string | null;
+            /** Format: date-time */
+            OfferedAt?: string | null;
+            /** Format: date-time */
+            OfferedUntil?: string | null;
+        };
+        DtoWaitlistState: {
+            HasFreeSlot?: boolean;
+            Kind?: string | null;
+            Platform?: string | null;
+            /** Format: int32 */
+            Position?: number | null;
+            Place?: components["schemas"]["DtoWaitlistEntry"];
+        };
+        DtoWaitlistStateResPonse: {
+            data?: components["schemas"]["DtoWaitlistState"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
         /** @enum {string} */
         FXMODE: "NONE" | "AWHOLE" | "GWHOLE" | "DETACH" | "CONTRA";
         FxsAIBotPreferences: {
@@ -3096,16 +3248,23 @@ export interface components {
             RiskCeiling?: string | null;
             /** @description T701 (Q10-C): ASK (Ask me first, the default) or APPLY (Apply advice by itself). */
             AdviceMode?: string | null;
-            /** @description T701 Phase 4.2: UTC times of day ("HH:mm") at which AIAdvisor advises, one to four. */
+            /**
+             * @description T701 Phase 4.2: UTC times of day ("HH:mm"), one to four. T703 (Q46-A): AIAdvisor advises once per member per
+             *                 UTC day, in one call for all of the member's AIBot accounts, at the earliest of these times across those accounts; the
+             *                 other times are kept and do not start a call. A stance lasts until the next such time.
+             */
             AdviceTimes?: string[] | null;
-            /** Format: int32 */
+            /**
+             * Format: int32
+             * @description T703: the member's AIAdvisor calls today (scheduled and Advise now), copied onto each of the member's accounts
+             *                 when a call is claimed so the AIBot pages can show it. The count the daily cap checks is kept per member, in
+             *                 fc_auto_attempt (key advise:u{USNO}:{day}).
+             */
             AdviceCallsToday?: number;
             /** Format: date-time */
             AdviceCallDayKey?: string | null;
             /** Format: date-time */
             LastAdviceAt?: string | null;
-            /** @description The last scheduled advice slot run, "yyyy-MM-dd HH:mm" UTC, so a slot runs once. */
-            LastAdviceSlot?: string | null;
             /** @description The applied advice that Undo last advice reverts. */
             UndoAdviceId?: string | null;
         };
@@ -3234,6 +3393,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -3301,6 +3469,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3380,6 +3557,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -3447,6 +3633,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -3507,6 +3702,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3590,6 +3794,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -3657,6 +3870,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3733,6 +3955,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -3801,6 +4032,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -3859,6 +4099,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3938,6 +4187,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -3996,6 +4254,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4068,6 +4335,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -4127,6 +4403,16 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": components["schemas"]["ObjectResPonse"];
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4213,6 +4499,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -4274,6 +4569,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4358,6 +4662,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -4419,6 +4732,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4505,6 +4827,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -4577,6 +4908,179 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    ImportOpenLegs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdApiFxsOpenLegImport"];
+                "application/json": components["schemas"]["CmdApiFxsOpenLegImport"];
+                "text/json": components["schemas"]["CmdApiFxsOpenLegImport"];
+                "application/*+json": components["schemas"]["CmdApiFxsOpenLegImport"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoApiFxsOpenLegImportResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    WaitlistJoin: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdWaitlistJoin"];
+                "application/json": components["schemas"]["CmdWaitlistJoin"];
+                "text/json": components["schemas"]["CmdWaitlistJoin"];
+                "application/*+json": components["schemas"]["CmdWaitlistJoin"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoWaitlistStateResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4661,6 +5165,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -4722,6 +5235,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4804,6 +5326,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -4827,6 +5358,15 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoPairInstrumentSuggestionsResPonse"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
@@ -4856,6 +5396,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -4892,6 +5441,15 @@ export interface operations {
             };
         };
         responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFinInstrumentResPonse"];
+                };
+            };
             /** @description Bad Request */
             400: {
                 headers: {
@@ -4921,6 +5479,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5006,6 +5573,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -5069,6 +5645,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5143,6 +5728,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -5206,6 +5800,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5290,6 +5893,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -5366,6 +5978,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -5427,6 +6048,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5504,6 +6134,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -5564,6 +6203,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5645,6 +6293,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -5705,6 +6362,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5786,6 +6452,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -5854,6 +6529,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -5912,6 +6596,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -5993,6 +6686,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -6060,6 +6762,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6141,6 +6852,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -6199,6 +6919,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6278,6 +7007,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -6345,6 +7083,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -6405,6 +7152,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6486,6 +7242,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -6553,6 +7318,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6636,6 +7410,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -6698,6 +7481,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6774,6 +7566,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -6836,6 +7637,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -6918,6 +7728,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -6978,6 +7797,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7060,6 +7888,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -7127,6 +7964,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7210,6 +8056,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -7279,6 +8134,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -7362,6 +8226,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -7436,6 +8309,15 @@ export interface operations {
                     "application/json": components["schemas"]["ObjectResPonse"];
                 };
             };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
             /** @description Too Many Requests */
             429: {
                 headers: {
@@ -7496,6 +8378,15 @@ export interface operations {
             };
             /** @description Not Found */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };

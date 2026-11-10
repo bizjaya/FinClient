@@ -153,6 +153,57 @@ namespace Fin.Copy
     }
 
     /// <summary>
+    /// An open FINQ5 leg being adopted by a FinCopy hosted account. OID is the FINQ order id.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdApiFxsOpenLeg
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("OID")]
+        public long? OID { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Ticket")]
+        public long? Ticket { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Lot")]
+        public double? Lot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OpenPrice")]
+        public double? OpenPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Group")]
+        public int? Group { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Level")]
+        public int? Level { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TPP")]
+        public double? TPP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SLP")]
+        public double? SLP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TSP")]
+        public double? TSP { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdApiFxsOpenLegImport
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Legs")]
+        public System.Collections.Generic.ICollection<CmdApiFxsOpenLeg>? Legs { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Public trade request. Account identity comes from the ACNO route.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -569,6 +620,21 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("BrokerServerId")]
         public string? BrokerServerId { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("Login")]
+        public string? Login { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdWaitlistJoin
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
+        public string? Platform { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -728,6 +794,45 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
         public DtoApiChangeFeed? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoApiFxsOpenLegImport
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Imported")]
+        public int? Imported { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AlreadyImported")]
+        public int? AlreadyImported { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OIDs")]
+        public System.Collections.Generic.ICollection<long>? OIDs { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoApiFxsOpenLegImportResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoApiFxsOpenLegImport? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -1282,6 +1387,51 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SDMUL")]
         public double? SDMUL { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFinInstrument
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AssetClass")]
+        public string? AssetClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TvdCol")]
+        public string? TvdCol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TvdCode")]
+        public string? TvdCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Note")]
+        public string? Note { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFinInstrumentResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoFinInstrument? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
 
     }
 
@@ -4210,6 +4360,69 @@ namespace Fin.Copy
 
     }
 
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoPairInstrumentCandidate
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AssetClass")]
+        public string? AssetClass { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TvdCol")]
+        public string? TvdCol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TvdCode")]
+        public string? TvdCode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Source")]
+        public string? Source { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("HasFinGraphReading")]
+        public bool? HasFinGraphReading { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoPairInstrumentSuggestions
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ServerName")]
+        public string? ServerName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BrokerSymbol")]
+        public string? BrokerSymbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Suggestions")]
+        public System.Collections.Generic.ICollection<DtoPairInstrumentCandidate>? Suggestions { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoPairInstrumentSuggestionsResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoPairInstrumentSuggestions? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
     /// <summary>
     /// FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's
     /// <br/>            (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names.
@@ -4546,6 +4759,87 @@ namespace Fin.Copy
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoWaitlistEntry
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("USNO")]
+        public long? USNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Email")]
+        public string? Email { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
+        public string? Platform { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Since")]
+        public System.DateTimeOffset? Since { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NodeId")]
+        public string? NodeId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OfferedAt")]
+        public System.DateTimeOffset? OfferedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OfferedUntil")]
+        public System.DateTimeOffset? OfferedUntil { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoWaitlistState
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("HasFreeSlot")]
+        public bool? HasFreeSlot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
+        public string? Platform { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Position")]
+        public int? Position { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Place")]
+        public DtoWaitlistEntry? Place { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoWaitlistStateResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoWaitlistState? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum FXMODE
     {
 
@@ -4716,11 +5010,18 @@ namespace Fin.Copy
         public string? AdviceMode { get; set; } = default!;
 
         /// <summary>
-        /// T701 Phase 4.2: UTC times of day ("HH:mm") at which AIAdvisor advises, one to four.
+        /// T701 Phase 4.2: UTC times of day ("HH:mm"), one to four. T703 (Q46-A): AIAdvisor advises once per member per
+        /// <br/>            UTC day, in one call for all of the member's AIBot accounts, at the earliest of these times across those accounts; the
+        /// <br/>            other times are kept and do not start a call. A stance lasts until the next such time.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("AdviceTimes")]
         public System.Collections.Generic.ICollection<string>? AdviceTimes { get; set; } = default!;
 
+        /// <summary>
+        /// T703: the member's AIAdvisor calls today (scheduled and Advise now), copied onto each of the member's accounts
+        /// <br/>            when a call is claimed so the AIBot pages can show it. The count the daily cap checks is kept per member, in
+        /// <br/>            fc_auto_attempt (key advise:u{USNO}:{day}).
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("AdviceCallsToday")]
         public int? AdviceCallsToday { get; set; } = default!;
 
@@ -4729,12 +5030,6 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("LastAdviceAt")]
         public System.DateTimeOffset? LastAdviceAt { get; set; } = default!;
-
-        /// <summary>
-        /// The last scheduled advice slot run, "yyyy-MM-dd HH:mm" UTC, so a slot runs once.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("LastAdviceSlot")]
-        public string? LastAdviceSlot { get; set; } = default!;
 
         /// <summary>
         /// The applied advice that Undo last advice reverts.

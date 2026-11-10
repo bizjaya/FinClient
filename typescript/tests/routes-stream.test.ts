@@ -76,14 +76,32 @@ describe("server-sent events", () => {
 describe("routes", () => {
   it("carries the filters of cross-account lists", async () => {
     const { calls, client } = recorder(() => json([]));
-    await client.copy.fx.pairs({ acno: 1234567890, demo: true, page: { PageNo: 2 } });
+    await client.copy.fx.pairs({ acno: 1234567890, demo: true, externalRef: "portfolio-7", page: { PageNo: 2 } });
     await client.copy.fx.operations({ PageSize: 5 }, 1234567890);
     await client.copy.fx.dca(1234567890);
     expect(calls.map((call) => `${call.url.pathname}${call.url.search}`)).toEqual([
-      "/v1/fxs/pairs?PageNo=2&acno=1234567890&demo=true",
+      "/v1/fxs/pairs?PageNo=2&acno=1234567890&demo=true&externalRef=portfolio-7",
       "/v1/fxs/operations?PageSize=5&acno=1234567890",
       "/v1/fxs/dca?acno=1234567890",
     ]);
+  });
+
+  it("calls the instrument, waitlist and open-leg import routes", async () => {
+    const { calls, client } = recorder();
+    await client.copy.accounts.pairInstrumentSuggestions(1234567890, "EURUSD");
+    await client.copy.accounts.confirmPairInstrument(1234567890, { BrokerSymbol: "EURUSD" });
+    await client.copy.fx.joinWaitlist({ Kind: "ACCOUNT", Platform: "MT5" });
+    await client.copy.accounts.importOpenLegs(1234567890, { Legs: [{ OID: 42, Ticket: 93, Symbol: "EURUSD", Side: "BUY", Lot: 0.1,
+      OpenPrice: 1.1, Group: 1, Level: 1, TPP: 1, SLP: 1, TSP: 0 }] });
+    expect(calls.map((call) => `${call.method} ${call.url.pathname}`)).toEqual([
+      "GET /v1/fxs/accounts/1234567890/pairs/instrument-suggestions/EURUSD",
+      "PUT /v1/fxs/accounts/1234567890/pairs/instrument-confirm",
+      "POST /v1/fxs/waitlist/join",
+      "POST /v1/fxs/accounts/1234567890/open-legs/import",
+    ]);
+    for (const call of calls.slice(1)) expect(call.headers.get("Idempotency-Key")).toMatch(/^[0-9a-f-]{36}$/i);
+    expect(calls[3]?.body).toEqual({ Legs: [{ OID: 42, Ticket: 93, Symbol: "EURUSD", Side: "BUY", Lot: 0.1,
+      OpenPrice: 1.1, Group: 1, Level: 1, TPP: 1, SLP: 1, TSP: 0 }] });
   });
 
   it("reads cross-account performance unless narrowed", async () => {
