@@ -13,6 +13,8 @@ function stable(value) {
   if (value && typeof value === "object") {
     return Object.fromEntries(Object.keys(value).sort().map(key => [key, stable(value[key])]));
   }
+  // A description written on Windows carries CRLF; the live API is built on Linux and carries LF. Same text.
+  if (typeof value === "string") return value.replace(/\r\n/g, "\n");
   return value;
 }
 
@@ -36,7 +38,7 @@ function changedPaths(left, right, path = "$", result = []) {
   return result;
 }
 
-// Key order and whitespace are ignored; every value, operation id included, must match.
+// Key order, whitespace and line endings are ignored; every value, operation id included, must match.
 const normalizedSnapshot = stable(snapshot);
 const normalizedLive = stable(live);
 if (JSON.stringify(normalizedSnapshot) !== JSON.stringify(normalizedLive)) {
