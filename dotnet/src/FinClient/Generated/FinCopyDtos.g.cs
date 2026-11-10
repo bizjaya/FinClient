@@ -192,6 +192,12 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("TSP")]
         public double? TSP { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("TPPrice")]
+        public double? TPPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SLPrice")]
+        public double? SLPrice { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
