@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.0 (2026-11-11)
+
+### Changed
+
+- Refresh the FXS schema for FinCopy's AMode rollout: per-side modes are DCAW, DCAG, GRID, CONT, FRRR and COPY, with the matching mode and risk settings.
+- Remove the retired Independent-orders field from the FinCopy strategy/account API shape.
+
 ## 0.4.0 (2026-11-10)
 
 ### Added
