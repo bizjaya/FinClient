@@ -7542,6 +7542,14 @@
           "TSP": {
             "type": "number",
             "format": "double"
+          },
+          "TPPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "SLPrice": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false,
