@@ -108,13 +108,39 @@ public sealed class RoutesAndStreamTests
         var handler = new Handler(_ => Json("{\"data\":[],\"code\":200,\"isOk\":true}"));
         using var fin = new FinClient(new FinClientOptions("test"), handler);
 
-        await fin.Copy.Fx.PairsAsync(new FinFxsListQuery { Acno = 1234567890, Demo = true, Page = new FinPageQuery { PageNo = 2 } });
+        await fin.Copy.Fx.PairsAsync(new FinFxsListQuery { Acno = 1234567890, Demo = true, ExternalRef = "portfolio-7", Page = new FinPageQuery { PageNo = 2 } });
         await fin.Copy.Fx.OperationsAsync(new FinPageQuery { PageSize = 5 }, 1234567890);
         await fin.Copy.Fx.DcaAsync(1234567890);
 
-        Assert.Equal("https://api.fincopy.io/v1/fxs/pairs?PageNo=2&acno=1234567890&demo=true", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://api.fincopy.io/v1/fxs/pairs?PageNo=2&acno=1234567890&demo=true&externalRef=portfolio-7", handler.Requests[0].RequestUri!.AbsoluteUri);
         Assert.Equal("https://api.fincopy.io/v1/fxs/operations?PageSize=5&acno=1234567890", handler.Requests[1].RequestUri!.AbsoluteUri);
         Assert.Equal("https://api.fincopy.io/v1/fxs/dca?acno=1234567890", handler.Requests[2].RequestUri!.AbsoluteUri);
+    }
+
+    [Fact]
+    public async Task ApiV04RoutesAndInstrumentMethodsUseTheContractVerbs()
+    {
+        var handler = new Handler(_ => Json(Ok));
+        using var fin = new FinClient(new FinClientOptions("test"), handler);
+
+        await fin.Copy.Accounts.PairInstrumentSuggestionsAsync(1234567890, "EURUSD");
+        await fin.Copy.Accounts.ConfirmPairInstrumentAsync(1234567890, new CmdFxsPairInstrumentConfirm { BrokerSymbol = "EURUSD" });
+        await fin.Copy.Fx.JoinWaitlistAsync(new CmdWaitlistJoin { Kind = "ACCOUNT", Platform = "MT5" });
+        await fin.Copy.Accounts.ImportOpenLegsAsync(1234567890, new CmdApiFxsOpenLegImport
+        {
+            Legs = [new CmdApiFxsOpenLeg { OID = 42, Ticket = 93, Symbol = "EURUSD", Side = "BUY", Lot = 0.1,
+                OpenPrice = 1.1, Group = 1, Level = 1, TPP = 1, SLP = 1, TSP = 0 }]
+        });
+
+        Assert.Equal(new[]
+        {
+            "GET https://api.fincopy.io/v1/fxs/accounts/1234567890/pairs/instrument-suggestions/EURUSD",
+            "PUT https://api.fincopy.io/v1/fxs/accounts/1234567890/pairs/instrument-confirm",
+            "POST https://api.fincopy.io/v1/fxs/waitlist/join",
+            "POST https://api.fincopy.io/v1/fxs/accounts/1234567890/open-legs/import"
+        }, handler.Requests.Select(x => $"{x.Method} {x.RequestUri!.AbsoluteUri}"));
+        Assert.All(handler.Requests.Skip(1), request => Assert.False(string.IsNullOrWhiteSpace(request.Headers.GetValues("Idempotency-Key").Single())));
+        Assert.Contains("\"OID\":42", handler.Bodies[3]);
     }
 
     [Fact]

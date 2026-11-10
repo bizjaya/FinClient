@@ -15,7 +15,7 @@ export interface FinPageQuery {
 
 /** Filters supported by cross-account FXS lists. */
 export interface FinFxsListQuery {
-  page?: FinPageQuery; acno?: number; prno?: number; demo?: boolean; platform?: string; search?: string;
+  page?: FinPageQuery; acno?: number; prno?: number; demo?: boolean; platform?: string; search?: string; externalRef?: string;
 }
 
 export interface FinPerformanceQuery extends FinRequestOptions { fromDt?: string | Date; toDt?: string | Date }
@@ -122,6 +122,15 @@ export class AccountsResource {
     if (!symbol.trim()) throw new TypeError("symbol is required.");
     return this.http.request("GET", `${accountPath(acno)}/quotes/${encodeURIComponent(symbol)}`, undefined, options);
   }
+  /** Gets instrument suggestions for a broker symbol. */
+  pairInstrumentSuggestions(acno: number, symbol: string, options: FinRequestOptions = {}): Promise<D<"DtoPairInstrumentSuggestionsResPonse">> {
+    if (!symbol.trim()) throw new TypeError("symbol is required.");
+    return this.http.request("GET", `${accountPath(acno)}/pairs/instrument-suggestions/${encodeURIComponent(symbol)}`, undefined, options);
+  }
+  /** Confirms the FinGraph instrument mapping for a broker symbol. */
+  confirmPairInstrument(acno: number, command: CopyDto<"CmdFxsPairInstrumentConfirm">, options: FinRequestOptions = {}): Promise<D<"DtoFinInstrumentResPonse">> {
+    return this.http.request("PUT", `${accountPath(acno)}/pairs/instrument-confirm`, command, options);
+  }
   /** Lists live orders for one account. */
   orders(acno: number, page: FinPageQuery = {}, search?: string, options: FinRequestOptions = {}): Promise<FinPage<CopyDto<"DtoFxsOrdr">>> {
     return this.http.requestPage("GET", queryPath(`${accountPath(acno)}/orders`, page, { search }), options);
@@ -173,6 +182,10 @@ export class AccountsResource {
   /** Queues a broker-password change. */
   changePassword(acno: number, command: CopyDto<"CmdTermAccountPassword">, options: FinRequestOptions = {}): Promise<D<"DtoOperationQueuedResPonse">> {
     return this.http.request("POST", `${accountPath(acno)}/password`, command, options);
+  }
+  /** Imports open broker legs from an external manager such as FINQ5. */
+  importOpenLegs(acno: number, command: CopyDto<"CmdApiFxsOpenLegImport">, options: FinRequestOptions = {}): Promise<D<"DtoApiFxsOpenLegImportResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/open-legs/import`, command, options);
   }
   /** Queues a terminal start. */
   start(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoOperationQueuedResPonse">> { return this.operation(acno, "start", options); }
@@ -298,6 +311,10 @@ export class FxResource {
   brokers(query?: string, platform?: string, demosOnly?: boolean, options: FinRequestOptions = {}): Promise<D<"DtoBrokerServerSearchIReadOnlyListResPonse">> {
     return this.http.request("GET", queryPath("v1/brokers", undefined, { query, Platform: platform, DemosOnly: demosOnly }), undefined, options);
   }
+  /** Joins the caller's account waitlist. */
+  joinWaitlist(command: CopyDto<"CmdWaitlistJoin">, options: FinRequestOptions = {}): Promise<D<"DtoWaitlistStateResPonse">> {
+    return this.http.request("POST", "v1/fxs/waitlist/join", command, options);
+  }
 }
 
 /** Changes feed resource. */
@@ -348,5 +365,5 @@ export type { FinPageInfo, FinStreamEvent };
 function strategyPath(isno: number): string { return `v1/fxs/strategies/${numericId(isno, "isno")}`; }
 
 function listPath(path: string, query: FinFxsListQuery): string {
-  return queryPath(path, query.page, { acno: query.acno, prno: query.prno, demo: query.demo, platform: query.platform, search: query.search });
+  return queryPath(path, query.page, { acno: query.acno, prno: query.prno, demo: query.demo, platform: query.platform, search: query.search, externalRef: query.externalRef });
 }

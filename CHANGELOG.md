@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 (2026-11-10)
+
+### Added
+
+- Idempotency-key protection for account, pair, symbol, DCA, strategy, instrument, credential, webhook and terminal write routes. Reusing a key cannot apply the write a second time.
+- Filter reachable accounts by the caller's external reference.
+- Join the account waitlist and import already-open broker legs into a hosted account, preserving the supplied order IDs and tickets.
+- Update the broker login, server and password through the account credentials route.
+- Instrument suggestions and confirmation are now fully described in the API schema; confirmation uses `PUT` and returns the confirmed FinGraph instrument.
+- .NET and TypeScript SDK methods for waitlist join and open-leg import.
 ## 0.3.0 (2026-11-10)
 
 ### Changed
@@ -20,7 +30,7 @@
   for AIBot); fleet accounts carry `FullAuto`, `BrokerEnvironment`, `PairLimitOverride` and `PairLimitLastKnown`; account
   state carries `PairLimit` and `PairPreviews`; strategies carry `AIBot`.
 - Pair instrument suggestions and confirmation: `GET /v1/fxs/accounts/{acno}/pairs/instrument-suggestions/{symbol}` and
-  `POST /v1/fxs/accounts/{acno}/pairs/instrument-confirm`.
+  `PUT /v1/fxs/accounts/{acno}/pairs/instrument-confirm`.
 - Hosted terminals carry `OpenAlerts`, `PriceLagSec` and `PriceTickAt`; hosted accounts carry `MemberTerminalAlerts`; paged
   answers may carry `grps`.
 

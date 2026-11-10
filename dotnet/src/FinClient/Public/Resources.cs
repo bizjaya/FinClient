@@ -43,6 +43,8 @@ public sealed class FinFxsListQuery
     public string? Platform { get; set; }
     /// <summary>Search text.</summary>
     public string? Search { get; set; }
+    /// <summary>Optional caller-owned external reference.</summary>
+    public string? ExternalRef { get; set; }
 }
 
 /// <summary>One server-sent event from the member change stream.</summary>
@@ -113,6 +115,17 @@ public sealed class AccountsResource
     public Task<DtoFxsPair> PatchPairAsync(long acno, long prno, CmdApiFxsPairPatch command,
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
         _http.SendAsync<DtoFxsPair>("PATCH", $"{Account(acno)}/pairs/{Number(prno, nameof(prno))}", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Gets instrument suggestions for a broker symbol.</summary>
+    public Task<DtoPairInstrumentSuggestions> PairInstrumentSuggestionsAsync(long acno, string symbol,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoPairInstrumentSuggestions>("GET", Account(acno) + "/pairs/instrument-suggestions/" + Uri.EscapeDataString(Required(symbol, nameof(symbol))),
+            cancellationToken: cancellationToken);
+
+    /// <summary>Confirms the FinGraph instrument mapping for a broker symbol.</summary>
+    public Task<DtoFinInstrument> ConfirmPairInstrumentAsync(long acno, CmdFxsPairInstrumentConfirm command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoFinInstrument>("PUT", Account(acno) + "/pairs/instrument-confirm", command, idempotencyKey, cancellationToken);
 
     /// <summary>Reads the account's broker symbols and enabled list.</summary>
     public Task<DtoFxsSymbolCatalog> SymbolsAsync(long acno, CancellationToken cancellationToken = default) =>
@@ -191,6 +204,11 @@ public sealed class AccountsResource
     public Task<DtoOperationQueued> ChangePasswordAsync(long acno, CmdTermAccountPassword command,
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
         _http.SendAsync<DtoOperationQueued>("POST", Account(acno) + "/password", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Imports open broker legs from an external manager such as FINQ5.</summary>
+    public Task<DtoApiFxsOpenLegImport> ImportOpenLegsAsync(long acno, CmdApiFxsOpenLegImport command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoApiFxsOpenLegImport>("POST", Account(acno) + "/open-legs/import", command, idempotencyKey, cancellationToken);
 
     /// <summary>Queues a start operation.</summary>
     public Task<DtoOperationQueued> StartAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
@@ -332,10 +350,15 @@ public sealed class FxResource
         _http.SendAsync<IReadOnlyList<DtoBrokerServerSearch>>("GET", Query("v1/brokers", null,
             ("query", query), ("Platform", platform), ("DemosOnly", demosOnly)), cancellationToken: cancellationToken);
 
+    /// <summary>Joins the caller's account waitlist.</summary>
+    public Task<DtoWaitlistState> JoinWaitlistAsync(CmdWaitlistJoin command, string? idempotencyKey = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoWaitlistState>("POST", "v1/fxs/waitlist/join", command, idempotencyKey, cancellationToken);
+
     private static string Strategy(int isno) => $"v1/fxs/strategies/{AccountsResource.Number(isno, nameof(isno))}";
 
     private static string ListQuery(string path, FinFxsListQuery? query) => Query(path, query?.Page,
-        ("acno", query?.Acno), ("prno", query?.Prno), ("demo", query?.Demo), ("platform", query?.Platform), ("search", query?.Search));
+        ("acno", query?.Acno), ("prno", query?.Prno), ("demo", query?.Demo), ("platform", query?.Platform), ("search", query?.Search), ("externalRef", query?.ExternalRef));
 }
 
 /// <summary>Change-feed resource.</summary>
