@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://api.fincopy.io"
+      "url": "https://localhost:12060"
     }
   ],
   "paths": {
@@ -102,16 +102,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberAccountResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -168,6 +158,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberAccountResPaged"
                 }
               }
             }
@@ -214,16 +214,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -280,6 +270,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
                 }
               }
             }
@@ -319,16 +319,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -385,6 +375,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
                 }
               }
             }
@@ -409,16 +409,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoDemoAvailabilityResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -475,6 +465,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoDemoAvailabilityResPonse"
                 }
               }
             }
@@ -500,16 +500,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberAccountResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -566,6 +556,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberAccountResPonse"
                 }
               }
             }
@@ -620,16 +620,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -686,6 +676,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -735,16 +735,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoTermAccountResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -801,6 +791,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoTermAccountResPonse"
                 }
               }
             }
@@ -840,16 +840,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoBrokerServerSearchIReadOnlyListResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -906,6 +896,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoBrokerServerSearchIReadOnlyListResPonse"
                 }
               }
             }
@@ -939,16 +939,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiChangeFeedResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1005,6 +995,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiChangeFeedResPonse"
                 }
               }
             }
@@ -1020,16 +1020,6 @@
         "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\r\n            so a member session cannot call it.",
         "operationId": "WebhookView",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiWebhookResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1086,6 +1076,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiWebhookResPonse"
                 }
               }
             }
@@ -1123,16 +1123,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiWebhookResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1189,6 +1179,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiWebhookResPonse"
                 }
               }
             }
@@ -1202,16 +1202,6 @@
         "summary": "Remove this key's webhook. API key only, with the Trade permission.",
         "operationId": "WebhookVoid",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1268,6 +1258,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResPonse"
                 }
               }
             }
@@ -1283,16 +1283,6 @@
         "summary": "Send a signed test POST (event \"ping\") to this key's webhook. API key only, with the Trade permission.",
         "operationId": "WebhookPing",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiWebhookPingResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1349,6 +1339,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiWebhookPingResPonse"
                 }
               }
             }
@@ -1364,9 +1364,6 @@
         "summary": "A server-sent event stream of changes on the caller's accounts. Each caller holds up to eight streams; a ninth\r\n            closes the oldest.",
         "operationId": "Stream",
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1456,6 +1453,9 @@
                 }
               }
             }
+          },
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -1559,16 +1559,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1625,6 +1615,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
                 }
               }
             }
@@ -1659,16 +1659,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdhResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1725,6 +1715,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdhResPonse"
                 }
               }
             }
@@ -1831,16 +1831,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1897,6 +1887,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
                 }
               }
             }
@@ -1931,16 +1931,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1997,6 +1987,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPonse"
                 }
               }
             }
@@ -2125,16 +2125,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2191,6 +2181,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
                 }
               }
             }
@@ -2319,16 +2319,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2385,6 +2375,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
                 }
               }
             }
@@ -2434,16 +2434,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiFxsOpenLegImportResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2500,6 +2490,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiFxsOpenLegImportResPonse"
                 }
               }
             }
@@ -2539,16 +2539,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoWaitlistStateResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2605,6 +2595,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoWaitlistStateResPonse"
                 }
               }
             }
@@ -2711,16 +2711,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2777,6 +2767,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
                 }
               }
             }
@@ -2811,16 +2811,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPairResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2877,6 +2867,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPairResPonse"
                 }
               }
             }
@@ -2933,16 +2933,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPairResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2999,6 +2989,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPairResPonse"
                 }
               }
             }
@@ -3031,16 +3031,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoPairInstrumentSuggestionsResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3097,6 +3087,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoPairInstrumentSuggestionsResPonse"
                 }
               }
             }
@@ -3145,16 +3145,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFinInstrumentResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3211,6 +3201,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFinInstrumentResPonse"
                 }
               }
             }
@@ -3331,16 +3331,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3397,6 +3387,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
                 }
               }
             }
@@ -3438,16 +3438,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfIReadOnlyListResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3504,6 +3494,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfIReadOnlyListResPonse"
                 }
               }
             }
@@ -3529,16 +3529,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3595,6 +3585,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
                 }
               }
             }
@@ -3636,16 +3636,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3702,6 +3692,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
                 }
               }
             }
@@ -3808,16 +3808,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3874,6 +3864,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
                 }
               }
             }
@@ -3980,16 +3980,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4046,6 +4036,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
                 }
               }
             }
@@ -4078,16 +4078,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4144,6 +4134,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
                 }
               }
             }
@@ -4192,16 +4192,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4258,6 +4248,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
                 }
               }
             }
@@ -4283,16 +4283,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAcctResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4349,6 +4339,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAcctResPonse"
                 }
               }
             }
@@ -4396,16 +4396,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAcctResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4462,6 +4452,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAcctResPonse"
                 }
               }
             }
@@ -4487,16 +4487,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsSymbolCatalogResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4553,6 +4543,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsSymbolCatalogResPonse"
                 }
               }
             }
@@ -4600,16 +4600,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4666,6 +4656,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -4699,16 +4699,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsSymbolSpecResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4765,6 +4755,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsSymbolSpecResPonse"
                 }
               }
             }
@@ -4780,16 +4780,6 @@
         "summary": "Reads the signals shown for the enabled symbols across the caller's accounts.",
         "operationId": "Signals",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoShelfSignalsResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4846,6 +4836,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoShelfSignalsResPonse"
                 }
               }
             }
@@ -4937,16 +4937,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5003,6 +4993,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
                 }
               }
             }
@@ -5052,16 +5052,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgCascadePreviewResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5118,6 +5108,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgCascadePreviewResPonse"
                 }
               }
             }
@@ -5167,16 +5167,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgCascadeApplyResultResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5233,6 +5223,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgCascadeApplyResultResPonse"
                 }
               }
             }
@@ -5248,16 +5248,6 @@
         "summary": "Lists the strategies the caller can apply: its own and FinCopy's presets.",
         "operationId": "Strategies",
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgIReadOnlyListResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5314,6 +5304,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgIReadOnlyListResPonse"
                 }
               }
             }
@@ -5351,16 +5351,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5417,6 +5407,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
                 }
               }
             }
@@ -5443,16 +5443,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5509,6 +5499,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
                 }
               }
             }
@@ -5557,16 +5557,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5623,6 +5613,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
                 }
               }
             }
@@ -5647,16 +5647,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5713,6 +5703,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResPonse"
                 }
               }
             }
@@ -5762,16 +5762,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5828,6 +5818,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -5927,16 +5927,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5993,6 +5983,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
                 }
               }
             }
@@ -6025,16 +6025,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6091,6 +6081,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -6123,16 +6123,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6189,6 +6179,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -6221,16 +6221,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6287,6 +6277,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -6386,16 +6386,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6452,6 +6442,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
                 }
               }
             }
@@ -6477,16 +6477,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6543,6 +6533,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
                 }
               }
             }
@@ -6601,16 +6601,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6667,6 +6657,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPonse"
                 }
               }
             }
@@ -6716,16 +6716,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPreInfoResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6782,6 +6772,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPreInfoResPonse"
                 }
               }
             }
@@ -6838,16 +6838,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6904,6 +6894,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -6960,16 +6960,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -7026,6 +7016,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -7082,16 +7082,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -7148,6 +7138,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -7197,16 +7197,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -7263,6 +7253,16 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -7288,16 +7288,6 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
-                }
-              }
-            }
-          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -7357,6 +7347,16 @@
                 }
               }
             }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
+                }
+              }
+            }
           }
         }
       }
@@ -7364,6 +7364,18 @@
   },
   "components": {
     "schemas": {
+      "AMode": {
+        "enum": [
+          "NONE",
+          "DCAW",
+          "DCAG",
+          "GRID",
+          "CONT",
+          "FRRR",
+          "COPY"
+        ],
+        "type": "string"
+      },
       "BooleanResPonse": {
         "type": "object",
         "properties": {
@@ -8757,7 +8769,20 @@
           "AvgMode": {
             "$ref": "#/components/schemas/TMode"
           },
-          "INDEP": {
+          "REBALMODE": {
+            "$ref": "#/components/schemas/RebalanceMode"
+          },
+          "DAYTP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DAYSL": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DAYSTOP": {
             "type": "boolean",
             "nullable": true
           },
@@ -8949,27 +8974,11 @@
             "format": "double",
             "nullable": true
           },
-          "BHRTP": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "SHRTP": {
-            "type": "boolean",
-            "nullable": true
-          },
           "BHRSL": {
             "type": "boolean",
             "nullable": true
           },
           "SHRSL": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "BHRTS": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "SHRTS": {
             "type": "boolean",
             "nullable": true
           },
@@ -9483,9 +9492,6 @@
           "ACCTFIFO": {
             "type": "boolean"
           },
-          "CanSetIndependentOrders": {
-            "type": "boolean"
-          },
           "SVROFFSEC": {
             "type": "integer",
             "format": "int32",
@@ -9687,6 +9693,19 @@
             "format": "date-time",
             "nullable": true
           },
+          "DAYHALT": {
+            "type": "boolean"
+          },
+          "DAYEQ0": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DAYHALTAT": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "DayStartEquity": {
             "type": "number",
             "format": "double",
@@ -9859,8 +9878,8 @@
             "format": "double",
             "nullable": true
           },
-          "FXMO": {
-            "$ref": "#/components/schemas/FXMODE"
+          "AMODE": {
+            "$ref": "#/components/schemas/AMode"
           }
         },
         "additionalProperties": false
@@ -10130,6 +10149,10 @@
             "nullable": true
           },
           "HedgeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "RebalId": {
             "type": "string",
             "nullable": true
           },
@@ -10497,6 +10520,10 @@
             "nullable": true
           },
           "HedgeId": {
+            "type": "string",
+            "nullable": true
+          },
+          "RebalId": {
             "type": "string",
             "nullable": true
           },
@@ -11748,9 +11775,6 @@
           "Enabled": {
             "type": "boolean"
           },
-          "INDEP": {
-            "type": "boolean"
-          },
           "Bid": {
             "type": "number",
             "format": "double",
@@ -12334,7 +12358,20 @@
           "AvgMode": {
             "$ref": "#/components/schemas/TMode"
           },
-          "INDEP": {
+          "REBALMODE": {
+            "$ref": "#/components/schemas/RebalanceMode"
+          },
+          "DAYTP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DAYSL": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DAYSTOP": {
             "type": "boolean",
             "nullable": true
           },
@@ -12625,11 +12662,63 @@
       "DtoFxsStgSymStg": {
         "type": "object",
         "properties": {
-          "BFXMO": {
-            "$ref": "#/components/schemas/FXMODE"
+          "BAMODE": {
+            "$ref": "#/components/schemas/AMode"
           },
-          "SFXMO": {
-            "$ref": "#/components/schemas/FXMODE"
+          "SAMODE": {
+            "$ref": "#/components/schemas/AMode"
+          },
+          "BFRATIO": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SFRATIO": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BRISK": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SRISK": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BTRAIL": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "STRAIL": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "BALLOWED": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AMode"
+            },
+            "nullable": true
+          },
+          "SALLOWED": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AMode"
+            },
+            "nullable": true
+          },
+          "BPENDING": {
+            "$ref": "#/components/schemas/AMode"
+          },
+          "SPENDING": {
+            "$ref": "#/components/schemas/AMode"
+          },
+          "REBAL": {
+            "type": "boolean",
+            "nullable": true
           },
           "EALVL": {
             "type": "boolean",
@@ -12687,27 +12776,11 @@
             "format": "double",
             "nullable": true
           },
-          "BHRTP": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "SHRTP": {
-            "type": "boolean",
-            "nullable": true
-          },
           "BHRSL": {
             "type": "boolean",
             "nullable": true
           },
           "SHRSL": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "BHRTS": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "SHRTS": {
             "type": "boolean",
             "nullable": true
           },
@@ -13713,6 +13786,15 @@
             "type": "integer",
             "format": "int32"
           },
+          "PriceLagRestartDayUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "PriceLagRestartsToday": {
+            "type": "integer",
+            "format": "int32"
+          },
           "OutageActive": {
             "type": "boolean"
           },
@@ -13836,16 +13918,6 @@
         },
         "additionalProperties": false
       },
-      "FXMODE": {
-        "enum": [
-          "NONE",
-          "AWHOLE",
-          "GWHOLE",
-          "DETACH",
-          "CONTRA"
-        ],
-        "type": "string"
-      },
       "FxsAIBotPreferences": {
         "type": "object",
         "properties": {
@@ -13906,7 +13978,9 @@
           "API",
           "EA",
           "MAN",
-          "SO"
+          "SO",
+          "RBL",
+          "DAY"
         ],
         "type": "string",
         "description": "Why a leg closed, as the EA reports it (`CRSN`)."
@@ -14026,7 +14100,8 @@
           "CLG",
           "STP",
           "CSL",
-          "MOD"
+          "MOD",
+          "RBL"
         ],
         "type": "string"
       },
@@ -14150,6 +14225,14 @@
         ],
         "type": "string"
       },
+      "RebalanceMode": {
+        "enum": [
+          "OFF",
+          "AUTO",
+          "MANUAL"
+        ],
+        "type": "string"
+      },
       "ResGrp": {
         "type": "object",
         "properties": {
@@ -14221,540 +14304,6 @@
           "CredentialsMissing"
         ],
         "type": "string"
-      },
-      "AMode": {
-        "enum": [
-          "NONE",
-          "DCAW",
-          "DCAG",
-          "GRID",
-          "CONT",
-          "FRRR",
-          "COPY"
-        ],
-        "type": "string"
-      },
-      "DtoTelegramCopyAccount": {
-        "required": [
-          "AccountName",
-          "ACNO",
-          "Balance",
-          "Broker",
-          "Currency",
-          "Demo",
-          "Enabled",
-          "EnabledRoutes",
-          "Plan",
-          "Platform",
-          "RouteCap",
-          "Server"
-        ],
-        "type": "object",
-        "properties": {
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "AccountName": {
-            "type": "string"
-          },
-          "Balance": {
-            "type": "number",
-            "format": "double"
-          },
-          "Currency": {
-            "type": "string"
-          },
-          "Broker": {
-            "type": "string"
-          },
-          "Server": {
-            "type": "string"
-          },
-          "Platform": {
-            "type": "string"
-          },
-          "Demo": {
-            "type": "boolean"
-          },
-          "Enabled": {
-            "type": "boolean"
-          },
-          "RouteCap": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "EnabledRoutes": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "Plan": {
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CmdTelegramCopyRoute": {
-        "required": [
-          "ACNO",
-          "CancelEntryOn",
-          "ChatId",
-          "ConfirmNoStop",
-          "CooldownOn",
-          "CooldownPerSymbolSeconds",
-          "Direction",
-          "DirectionSource",
-          "Enabled",
-          "EntryLayers",
-          "EntryMode",
-          "EntrySource",
-          "EntrySplitMode",
-          "LotMode",
-          "MaxAgeSeconds",
-          "MaxOpenPerSymbolOn",
-          "MaxOpenTrades",
-          "MaxOpenTradesOn",
-          "MaxOpenTradesPerSymbol",
-          "NoStopAction",
-          "OperationDays",
-          "OperationEnd",
-          "OperationHoursOn",
-          "OperationStart",
-          "OperationTimeZone",
-          "PeerType",
-          "StopMode",
-          "SymbolBlocklist",
-          "SymbolMappings",
-          "SymbolWhitelist",
-          "TakeProfitFallbackOn",
-          "TakeProfitFallbackPercent",
-          "TakeProfitMode",
-          "TakeProfitSource",
-          "TrailAtTakeProfitPercent",
-          "TrailingMode",
-          "TrailingOn"
-        ],
-        "type": "object",
-        "properties": {
-          "RouteId": {
-            "type": "string",
-            "nullable": true
-          },
-          "ChatId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "PeerType": {
-            "type": "string"
-          },
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "Enabled": {
-            "type": "boolean"
-          },
-          "LotMode": {
-            "type": "string"
-          },
-          "Lot": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "RiskPct": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "LotPerBalance": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "LotPerBalanceBalance": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "CopyRatio": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "DirectionSource": {
-            "type": "string"
-          },
-          "Direction": {
-            "type": "string"
-          },
-          "SymbolWhitelist": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "SymbolBlocklist": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "SymbolMappings": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "EntrySource": {
-            "type": "string"
-          },
-          "EntryMode": {
-            "type": "string"
-          },
-          "EntryLayers": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "EntrySplitMode": {
-            "type": "string"
-          },
-          "TakeProfitSource": {
-            "type": "string"
-          },
-          "TakeProfitMode": {
-            "type": "string"
-          },
-          "TakeProfitFallbackOn": {
-            "type": "boolean"
-          },
-          "TakeProfitFallbackPercent": {
-            "type": "number",
-            "format": "double"
-          },
-          "StopMode": {
-            "type": "string"
-          },
-          "PersonalStopPercent": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "ConfirmNoStop": {
-            "type": "boolean"
-          },
-          "TrailingOn": {
-            "type": "boolean"
-          },
-          "TrailingMode": {
-            "type": "string"
-          },
-          "NoStopAction": {
-            "type": "string",
-            "description": "T701 P5 (TP496 Q14-C): with Stop-loss on Channel and a signal that names no SL, REFUSE or ADD_SL\n            (FC.Com.DTO.TgNoStopActions)."
-          },
-          "TrailAtTakeProfitPercent": {
-            "type": "number",
-            "description": "T701 P5 (TP496 Q6 note): Trail at the TP, a TS % each filled copy gets as its own trailing stop. 0 = off.",
-            "format": "double"
-          },
-          "MaxOpenTradesOn": {
-            "type": "boolean"
-          },
-          "MaxOpenTrades": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "MaxOpenPerSymbolOn": {
-            "type": "boolean"
-          },
-          "MaxOpenTradesPerSymbol": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "OperationHoursOn": {
-            "type": "boolean"
-          },
-          "OperationStart": {
-            "type": "string"
-          },
-          "OperationEnd": {
-            "type": "string"
-          },
-          "OperationTimeZone": {
-            "type": "string"
-          },
-          "OperationDays": {
-            "type": "string"
-          },
-          "CooldownOn": {
-            "type": "boolean"
-          },
-          "CooldownPerSymbolSeconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "CancelEntryOn": {
-            "type": "boolean"
-          },
-          "CancelEntryAfterHours": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
-          },
-          "MaxAgeSeconds": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "DtoTelegramCopyRoute": {
-        "required": [
-          "ACNO",
-          "CancelEntryAfterHours",
-          "CancelEntryOn",
-          "ChannelTitle",
-          "ChatId",
-          "ConfirmNoStop",
-          "CooldownOn",
-          "CooldownPerSymbolSeconds",
-          "CopiedCount",
-          "CopyRatio",
-          "Direction",
-          "DirectionSource",
-          "Enabled",
-          "EntryLayers",
-          "EntryMode",
-          "EntrySource",
-          "EntrySplitMode",
-          "LastSignal",
-          "Lot",
-          "LotMode",
-          "LotPerBalance",
-          "LotPerBalanceBalance",
-          "MaxAgeSeconds",
-          "MaxOpenPerSymbolOn",
-          "MaxOpenTrades",
-          "MaxOpenTradesOn",
-          "MaxOpenTradesPerSymbol",
-          "NoStopAction",
-          "OperationDays",
-          "OperationEnd",
-          "OperationHoursOn",
-          "OperationStart",
-          "OperationTimeZone",
-          "PeerType",
-          "PersonalStopPercent",
-          "RiskPct",
-          "RouteId",
-          "SkippedCount",
-          "Status",
-          "StopMode",
-          "SymbolBlocklist",
-          "SymbolMappings",
-          "SymbolWhitelist",
-          "TakeProfitFallbackOn",
-          "TakeProfitFallbackPercent",
-          "TakeProfitMode",
-          "TakeProfitSource",
-          "TrailAtTakeProfitPercent",
-          "TrailingMode",
-          "TrailingOn",
-          "USNO"
-        ],
-        "type": "object",
-        "properties": {
-          "RouteId": {
-            "type": "string"
-          },
-          "USNO": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "ChatId": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "PeerType": {
-            "type": "string"
-          },
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "ChannelTitle": {
-            "type": "string"
-          },
-          "Enabled": {
-            "type": "boolean"
-          },
-          "LotMode": {
-            "type": "string"
-          },
-          "Lot": {
-            "type": "number",
-            "format": "double"
-          },
-          "RiskPct": {
-            "type": "number",
-            "format": "double"
-          },
-          "LotPerBalance": {
-            "type": "number",
-            "format": "double"
-          },
-          "LotPerBalanceBalance": {
-            "type": "number",
-            "format": "double"
-          },
-          "CopyRatio": {
-            "type": "number",
-            "format": "double"
-          },
-          "DirectionSource": {
-            "type": "string"
-          },
-          "Direction": {
-            "type": "string"
-          },
-          "SymbolWhitelist": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "SymbolBlocklist": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "SymbolMappings": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "EntrySource": {
-            "type": "string"
-          },
-          "EntryMode": {
-            "type": "string"
-          },
-          "EntryLayers": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "EntrySplitMode": {
-            "type": "string"
-          },
-          "TakeProfitSource": {
-            "type": "string"
-          },
-          "TakeProfitMode": {
-            "type": "string"
-          },
-          "TakeProfitFallbackOn": {
-            "type": "boolean"
-          },
-          "TakeProfitFallbackPercent": {
-            "type": "number",
-            "format": "double"
-          },
-          "StopMode": {
-            "type": "string"
-          },
-          "PersonalStopPercent": {
-            "type": "number",
-            "format": "double"
-          },
-          "ConfirmNoStop": {
-            "type": "boolean"
-          },
-          "TrailingOn": {
-            "type": "boolean"
-          },
-          "TrailingMode": {
-            "type": "string"
-          },
-          "NoStopAction": {
-            "type": "string",
-            "description": "T701 P5 (TP496 Q14-C): with Stop-loss on Channel and a signal that names no SL, REFUSE or ADD_SL\n            (FC.Com.DTO.TgNoStopActions)."
-          },
-          "TrailAtTakeProfitPercent": {
-            "type": "number",
-            "description": "T701 P5 (TP496 Q6 note): Trail at the TP, a TS % each filled copy gets as its own trailing stop. 0 = off.",
-            "format": "double"
-          },
-          "MaxOpenTradesOn": {
-            "type": "boolean"
-          },
-          "MaxOpenTrades": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "MaxOpenPerSymbolOn": {
-            "type": "boolean"
-          },
-          "MaxOpenTradesPerSymbol": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "OperationHoursOn": {
-            "type": "boolean"
-          },
-          "OperationStart": {
-            "type": "string"
-          },
-          "OperationEnd": {
-            "type": "string"
-          },
-          "OperationTimeZone": {
-            "type": "string"
-          },
-          "OperationDays": {
-            "type": "string"
-          },
-          "CooldownOn": {
-            "type": "boolean"
-          },
-          "CooldownPerSymbolSeconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "CancelEntryOn": {
-            "type": "boolean"
-          },
-          "CancelEntryAfterHours": {
-            "type": "number",
-            "format": "double"
-          },
-          "MaxAgeSeconds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "Status": {
-            "type": "string"
-          },
-          "LastSignal": {
-            "type": "string"
-          },
-          "CopiedCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "SkippedCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "LastSignalAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -14774,10 +14323,10 @@
   },
   "security": [
     {
-      "ApiKey": []
+      "ApiKey": [ ]
     },
     {
-      "MemberSession": []
+      "MemberSession": [ ]
     }
   ],
   "tags": [

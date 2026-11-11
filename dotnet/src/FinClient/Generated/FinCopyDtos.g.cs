@@ -29,6 +29,33 @@ namespace Fin.Copy
     
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum AMode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
+        NONE = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DCAW")]
+        DCAW = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DCAG")]
+        DCAG = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GRID")]
+        GRID = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CONT")]
+        CONT = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FRRR")]
+        FRRR = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"COPY")]
+        COPY = 6,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BooleanResPonse
     {
 
@@ -1216,8 +1243,18 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
         public TMode? AvgMode { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("INDEP")]
-        public bool? INDEP { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("REBALMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<RebalanceMode>))]
+        public RebalanceMode? REBALMODE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DAYTP")]
+        public double? DAYTP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DAYSL")]
+        public double? DAYSL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DAYSTOP")]
+        public bool? DAYSTOP { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("DCAGATE")]
         public bool? DCAGATE { get; set; } = default!;
@@ -1275,13 +1312,50 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
         public TMode? AvgMode { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("BFXMO")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FXMODE>))]
-        public FXMODE? BFXMO { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("BAMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? BAMODE { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SFXMO")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FXMODE>))]
-        public FXMODE? SFXMO { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("SAMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? SAMODE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BFRATIO")]
+        public double? BFRATIO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SFRATIO")]
+        public double? SFRATIO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BRISK")]
+        public double? BRISK { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SRISK")]
+        public double? SRISK { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BTRAIL")]
+        public bool? BTRAIL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("STRAIL")]
+        public bool? STRAIL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BALLOWED")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<AMode>? BALLOWED { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SALLOWED")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<AMode>? SALLOWED { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BPENDING")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? BPENDING { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SPENDING")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? SPENDING { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("REBAL")]
+        public bool? REBAL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("EALVL")]
         public bool? EALVL { get; set; } = default!;
@@ -1319,23 +1393,11 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("STSP")]
         public double? STSP { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("BHRTP")]
-        public bool? BHRTP { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SHRTP")]
-        public bool? SHRTP { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("BHRSL")]
         public bool? BHRSL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("SHRSL")]
         public bool? SHRSL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("BHRTS")]
-        public bool? BHRTS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SHRTS")]
-        public bool? SHRTS { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("T646B")]
         public bool? T646B { get; set; } = default!;
@@ -1725,9 +1787,6 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("ACCTFIFO")]
         public bool? ACCTFIFO { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("CanSetIndependentOrders")]
-        public bool? CanSetIndependentOrders { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("SVROFFSEC")]
         public int? SVROFFSEC { get; set; } = default!;
 
@@ -1858,6 +1917,15 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("DayStartAt")]
         public System.DateTimeOffset? DayStartAt { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("DAYHALT")]
+        public bool? DAYHALT { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DAYEQ0")]
+        public double? DAYEQ0 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DAYHALTAT")]
+        public System.DateTimeOffset? DAYHALTAT { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("DayStartEquity")]
         public double? DayStartEquity { get; set; } = default!;
 
@@ -1969,9 +2037,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("TSA")]
         public double? TSA { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("FXMO")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FXMODE>))]
-        public FXMODE? FXMO { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("AMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? AMODE { get; set; } = default!;
 
     }
 
@@ -2181,6 +2249,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("HedgeId")]
         public string? HedgeId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RebalId")]
+        public string? RebalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("AutoDecisionId")]
         public string? AutoDecisionId { get; set; } = default!;
@@ -2456,6 +2527,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("HedgeId")]
         public string? HedgeId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RebalId")]
+        public string? RebalId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("AutoDecisionId")]
         public string? AutoDecisionId { get; set; } = default!;
@@ -3312,9 +3386,6 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("Enabled")]
         public bool? Enabled { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("INDEP")]
-        public bool? INDEP { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("Bid")]
         public double? Bid { get; set; } = default!;
 
@@ -3738,8 +3809,18 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
         public TMode? AvgMode { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("INDEP")]
-        public bool? INDEP { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("REBALMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<RebalanceMode>))]
+        public RebalanceMode? REBALMODE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DAYTP")]
+        public double? DAYTP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DAYSL")]
+        public double? DAYSL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DAYSTOP")]
+        public bool? DAYSTOP { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("POCNT")]
         public int? POCNT { get; set; } = default!;
@@ -3951,13 +4032,50 @@ namespace Fin.Copy
     public partial class DtoFxsStgSymStg
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("BFXMO")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FXMODE>))]
-        public FXMODE? BFXMO { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("BAMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? BAMODE { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SFXMO")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FXMODE>))]
-        public FXMODE? SFXMO { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("SAMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? SAMODE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BFRATIO")]
+        public double? BFRATIO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SFRATIO")]
+        public double? SFRATIO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BRISK")]
+        public double? BRISK { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SRISK")]
+        public double? SRISK { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BTRAIL")]
+        public bool? BTRAIL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("STRAIL")]
+        public bool? STRAIL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BALLOWED")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<AMode>? BALLOWED { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SALLOWED")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<AMode>? SALLOWED { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BPENDING")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? BPENDING { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SPENDING")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? SPENDING { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("REBAL")]
+        public bool? REBAL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("EALVL")]
         public bool? EALVL { get; set; } = default!;
@@ -3995,23 +4113,11 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("STSP")]
         public double? STSP { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("BHRTP")]
-        public bool? BHRTP { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SHRTP")]
-        public bool? SHRTP { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("BHRSL")]
         public bool? BHRSL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("SHRSL")]
         public bool? SHRSL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("BHRTS")]
-        public bool? BHRTS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SHRTS")]
-        public bool? SHRTS { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("LOGEXP")]
         public double? LOGEXP { get; set; } = default!;
@@ -4750,6 +4856,12 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("StaleHeartbeatRestarts")]
         public int? StaleHeartbeatRestarts { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("PriceLagRestartDayUtc")]
+        public System.DateTimeOffset? PriceLagRestartDayUtc { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PriceLagRestartsToday")]
+        public int? PriceLagRestartsToday { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("OutageActive")]
         public bool? OutageActive { get; set; } = default!;
 
@@ -4846,27 +4958,6 @@ namespace Fin.Copy
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum FXMODE
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
-        NONE = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"AWHOLE")]
-        AWHOLE = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"GWHOLE")]
-        GWHOLE = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"DETACH")]
-        DETACH = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CONTRA")]
-        CONTRA = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class FxsAIBotPreferences
     {
 
@@ -4941,6 +5032,12 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"SO")]
         SO = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RBL")]
+        RBL = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DAY")]
+        DAY = 10,
 
     }
 
@@ -5075,6 +5172,9 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"MOD")]
         MOD = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RBL")]
+        RBL = 9,
 
     }
 
@@ -5282,6 +5382,21 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"Removed")]
         Removed = 5,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum RebalanceMode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OFF")]
+        OFF = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AUTO")]
+        AUTO = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MANUAL")]
+        MANUAL = 2,
 
     }
 
