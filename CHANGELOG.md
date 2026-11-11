@@ -6,6 +6,15 @@
 
 - Refresh the FXS schema for FinCopy's AMode rollout: per-side modes are DCAW, DCAG, GRID, CONT, FRRR and COPY, with the matching mode and risk settings.
 - Remove the retired Independent-orders field from the FinCopy strategy/account API shape.
+- Mode names: DCA Whole Side (DCAW), DCA Per Group (DCAG), Detached Grid (GRID), Contra Offset (CONT), Fixed Risk:Reward (FRRR), Copy Trade (COPY). `FXMODE` is gone; `BAMODE` / `SAMODE` carry the mode.
+- The trailing switch `BTRAIL` / `STRAIL` replaces the TP and TS notches (`BHRTP`, `SHRTP`, `BHRTS`, `SHRTS` are gone); the SL keeps its notch.
+- Fixed Risk:Reward settings `BFRATIO` / `SFRATIO` and `BRISK` / `SRISK`; the allowed modes AIBot may switch a side to, `BALLOWED` / `SALLOWED`.
+
+### Added
+
+- Rebalance: `RebalanceMode` (OFF, AUTO, MANUAL) on the account as `REBALMODE`, the order action `RBL`, the close reason `RBL`, and `RebalId` on order rows that belong to one rebalance.
+- The day stop: `DAYSTOP`, `DAYTP`, `DAYSL` on the account, the close reason `DAY`, and the refusal codes `DAYSTOP` and `AMODE` (a side's mode refuses the order); `NOT_CLOSED` when the broker kept a position FinCopy asked to close.
+- Unreferenced Telegram copy schemas dropped from the public document.
 
 ## 0.4.0 (2026-11-10)
 
