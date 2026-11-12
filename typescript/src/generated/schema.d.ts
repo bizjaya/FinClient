@@ -2132,6 +2132,11 @@ export interface components {
             SYM6?: string | null;
             ExternalRef?: string | null;
             EN?: boolean;
+            /**
+             * @description Read-only AIBot mode: OFF (Off), EXITS (Exits only), FULL (Full auto). Set through AIBot, never /v1.
+             * @enum {string|null}
+             */
+            readonly AIBotMode?: "OFF" | "EXITS" | "FULL" | null;
             /** Format: double */
             BID?: number | null;
             /** Format: double */

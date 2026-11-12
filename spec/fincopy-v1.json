@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://localhost:12060"
+      "url": "https://api.fincopy.io"
     }
   ],
   "paths": {
@@ -178,7 +178,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.\r\n            Send an Idempotency-Key: a retry with the same key returns the account the first call made or reconnected. ExternalRef is your own id\r\n            for the account. Needs the Trade permission.",
+        "summary": "Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.\n            Send an Idempotency-Key: a retry with the same key returns the account the first call made or reconnected. ExternalRef is your own id\n            for the account. Needs the Trade permission.",
         "operationId": "AccountMake",
         "parameters": [
           {
@@ -576,7 +576,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Disconnect the hosted terminal from this account. The terminal is stopped and removed, its broker password is\r\n            forgotten, and its seat is freed. A customer account, its settings and trade history remain so the login can be restored later;\r\n            a free demo's account and terminal records are deleted.\r\n            Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. The Idempotency-Key header is\r\n            required; a retry with the same key returns the same operation id. Needs\r\n            the Trade permission. A signed-in member session also needs its trading PIN when the account requires one.",
+        "summary": "Disconnect the hosted terminal from this account. The terminal is stopped and removed, its broker password is\n            forgotten, and its seat is freed. A customer account, its settings and trade history remain so the login can be restored later;\n            a free demo's account and terminal records are deleted.\n            Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. The Idempotency-Key header is\n            required; a retry with the same key returns the same operation id. Needs\n            the Trade permission. A signed-in member session also needs its trading PIN when the account requires one.",
         "operationId": "AccountRemove",
         "parameters": [
           {
@@ -698,7 +698,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the\r\n            account is added. It comes back on the account and on every change-feed row. Needs the Trade permission.",
+        "summary": "Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the\n            account is added. It comes back on the account and on every change-feed row. Needs the Trade permission.",
         "operationId": "AccountExternalRef",
         "parameters": [
           {
@@ -918,7 +918,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "What changed on the key owner's accounts, oldest first: Account (each sync and each settings change),\r\n            Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and\r\n            close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without\r\n            a cursor: that returns no rows and a cursor at \"now\", so read the accounts once, then follow the feed. Keep the\r\n            returned cursor and call again while `More` is true. The feed runs about ten seconds behind FinCopy's writes, so a\r\n            write still finishing is read on a later call. `take` is 1 to 1000 (default 500).",
+        "summary": "What changed on the key owner's accounts, oldest first: Account (each sync and each settings change),\n            Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and\n            close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without\n            a cursor: that returns no rows and a cursor at \"now\", so read the accounts once, then follow the feed. Keep the\n            returned cursor and call again while `More` is true. The feed runs about ten seconds behind FinCopy's writes, so a\n            write still finishing is read on a later call. `take` is 1 to 1000 (default 500).",
         "operationId": "Changes",
         "parameters": [
           {
@@ -1017,7 +1017,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\r\n            so a member session cannot call it.",
+        "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\n            so a member session cannot call it.",
         "operationId": "WebhookView",
         "responses": {
           "400": {
@@ -1096,7 +1096,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\r\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\r\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\r\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\r\n            the webhook again makes a new secret and restarts it from now. API key only, with the Trade permission.",
+        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\n            the webhook again makes a new secret and restarts it from now. API key only, with the Trade permission.",
         "operationId": "WebhookSet",
         "requestBody": {
           "content": {
@@ -1361,7 +1361,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "A server-sent event stream of changes on the caller's accounts. Each caller holds up to eight streams; a ninth\r\n            closes the oldest.",
+        "summary": "A server-sent event stream of changes on the caller's accounts. Each caller holds up to eight streams; a ninth\n            closes the oldest.",
         "operationId": "Stream",
         "responses": {
           "400": {
@@ -2887,7 +2887,7 @@
         "tags": [
           "Pairs"
         ],
-        "summary": "Change one symbol's settings (SYMSTG, the DCA gates, ExternalRef), as the member screens do. Needs the Trade\r\n            permission.",
+        "summary": "Change one symbol's settings (SYMSTG, the DCA gates, ExternalRef), as the member screens do. Needs the Trade\n            permission.",
         "operationId": "AccountPairSettings",
         "parameters": [
           {
@@ -4058,7 +4058,7 @@
         "tags": [
           "Performance and activity"
         ],
-        "summary": "The last 30 days by currency book (real and demo apart) across the caller's accounts: equity, today's\r\n            change, realised profit, 7- and 30-day growth, and each account's share. `acno` narrows it to one account;\r\n            `demo` to demo (true) or real (false) accounts.",
+        "summary": "The last 30 days by currency book (real and demo apart) across the caller's accounts: equity, today's\n            change, realised profit, 7- and 30-day growth, and each account's share. `acno` narrows it to one account;\n            `demo` to demo (true) or real (false) accounts.",
         "operationId": "PerformanceWindow",
         "parameters": [
           {
@@ -4156,7 +4156,7 @@
         "tags": [
           "Performance and activity"
         ],
-        "summary": "Daily performance bars across the caller's accounts, per account and per currency book, between two\r\n            dates (UTC). `acno` narrows it to one account; `demo` to demo (true) or real (false) accounts.",
+        "summary": "Daily performance bars across the caller's accounts, per account and per currency book, between two\n            dates (UTC). `acno` narrows it to one account; `demo` to demo (true) or real (false) accounts.",
         "operationId": "PerformanceBars",
         "parameters": [
           {
@@ -4270,7 +4270,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the\r\n            account is added; until its first sync, live account data is empty.",
+        "summary": "The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the\n            account is added; until its first sync, live account data is empty.",
         "operationId": "AccountFxs",
         "parameters": [
           {
@@ -4359,7 +4359,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Change the account's settings, as the member screens do; every change is written to the account log. Needs the\r\n            Trade permission.",
+        "summary": "Change the account's settings, as the member screens do; every change is written to the account log. Needs the\n            Trade permission.",
         "operationId": "AccountSettings",
         "parameters": [
           {
@@ -4563,7 +4563,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Add and/or remove symbols from the account's enabled list (at most 64, using broker names). The server\r\n            applies the changes to its current list, so a stale picker cannot replace a concurrent change. Needs Trade permission.",
+        "summary": "Add and/or remove symbols from the account's enabled list (at most 64, using broker names). The server\n            applies the changes to its current list, so a stale picker cannot replace a concurrent change. Needs Trade permission.",
         "operationId": "AccountSymbolsEdit",
         "parameters": [
           {
@@ -5015,7 +5015,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\r\n            one of your own or a FinCopy preset (list them with the strategies route).\r\n            Needs the Trade permission on the account.",
+        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\n            one of your own or a FinCopy preset (list them with the strategies route).\n            Needs the Trade permission on the account.",
         "operationId": "AccountStrategyPreview",
         "parameters": [
           {
@@ -5130,7 +5130,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\r\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. Needs the Trade\r\n            permission on the account.",
+        "summary": "Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. Needs the Trade\n            permission on the account.",
         "operationId": "AccountStrategyApply",
         "parameters": [
           {
@@ -5519,7 +5519,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "Changes one of the caller's own strategies; omitted fields keep their values. FinCopy's presets cannot be\r\n            changed. Needs the Trade permission.",
+        "summary": "Changes one of the caller's own strategies; omitted fields keep their values. FinCopy's presets cannot be\n            changed. Needs the Trade permission.",
         "operationId": "StrategyPatch",
         "parameters": [
           {
@@ -6005,7 +6005,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Start the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\r\n            Returns the operation id.",
+        "summary": "Start the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\n            Returns the operation id.",
         "operationId": "AccountStart",
         "parameters": [
           {
@@ -6103,7 +6103,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Stop the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\r\n            Returns the operation id.",
+        "summary": "Stop the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\n            Returns the operation id.",
         "operationId": "AccountStop",
         "parameters": [
           {
@@ -6201,7 +6201,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Restart the account's hosted terminal (a terminal never set up is started). The Idempotency-Key header is\r\n            required. Needs the Trade permission. Returns the operation id.",
+        "summary": "Restart the account's hosted terminal (a terminal never set up is started). The Idempotency-Key header is\n            required. Needs the Trade permission. Returns the operation id.",
         "operationId": "AccountRestart",
         "parameters": [
           {
@@ -6299,7 +6299,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "The newest terminal operations (start, stop, restart, set-up, removal) across the caller's accounts, newest\r\n            first.",
+        "summary": "The newest terminal operations (start, stop, restart, set-up, removal) across the caller's accounts, newest\n            first.",
         "operationId": "Operations",
         "parameters": [
           {
@@ -6679,7 +6679,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings. For a signed-in\r\n            member session it also says whether the member's trading PIN must be entered (a key never needs one).",
+        "summary": "The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings. For a signed-in\n            member session it also says whether the member's trading PIN must be entered (a key never needs one).",
         "operationId": "AccountTradePreInfo",
         "parameters": [
           {
@@ -6794,7 +6794,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. The Idempotency-Key header is\r\n            required. Needs the Trade permission.",
+        "summary": "Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. The Idempotency-Key header is\n            required. Needs the Trade permission.",
         "operationId": "AccountTradeMake",
         "parameters": [
           {
@@ -7275,7 +7275,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "HYBRID DCA proposals waiting for an answer, across the caller's accounts, newest first. For a signed-in member\r\n            session each row says whether the member's trading PIN must be entered to answer it.",
+        "summary": "HYBRID DCA proposals waiting for an answer, across the caller's accounts, newest first. For a signed-in member\n            session each row says whether the member's trading PIN must be entered to answer it.",
         "operationId": "Dca",
         "parameters": [
           {
@@ -7835,7 +7835,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Edit one ticket's own exits (MOD). TrailPercent is the ticket's own TS, % of its TP money (T701 Q3-A): null keeps\r\n            the ticket's current TS (while it keeps a TP), 0 clears it."
+        "description": "Edit one ticket's own exits (MOD). TrailPercent is the ticket's own TS, % of its TP money (T701 Q3-A): null keeps\n            the ticket's current TS (while it keeps a TP), 0 clears it."
       },
       "CmdFxsPairInstrumentConfirm": {
         "type": "object",
@@ -8209,7 +8209,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to\r\n            re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state."
+        "description": "One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to\n            re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state."
       },
       "DtoApiChangeFeed": {
         "type": "object",
@@ -8723,7 +8723,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Demo places that can start now (a prepared terminal and a free slot), and whether this member already\r\n            runs one (one at a time)."
+        "description": "Demo places that can start now (a prepared terminal and a free slot), and whether this member already\n            runs one (one at a time)."
       },
       "DtoDemoAvailabilityResPonse": {
         "type": "object",
@@ -9307,7 +9307,7 @@
           },
           "PairLimit": {
             "type": "integer",
-            "description": "TRD2-B8: the plan's limit of enabled pairs (an admin override wins, else what the last sync worked out from the\r\n            seat's plan); null until the account has synced. The symbols editor refuses a pair over it before saving.",
+            "description": "TRD2-B8: the plan's limit of enabled pairs (an admin override wins, else what the last sync worked out from the\n            seat's plan); null until the account has synced. The symbols editor refuses a pair over it before saving.",
             "format": "int32",
             "nullable": true
           },
@@ -10722,6 +10722,17 @@
           },
           "EN": {
             "type": "boolean"
+          },
+          "AIBotMode": {
+            "enum": [
+              "OFF",
+              "EXITS",
+              "FULL"
+            ],
+            "type": "string",
+            "description": "Read-only AIBot mode: OFF (Off), EXITS (Exits only), FULL (Full auto). Set through AIBot, never /v1.",
+            "nullable": true,
+            "readOnly": true
           },
           "BID": {
             "type": "number",
@@ -13395,7 +13406,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's\r\n            (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names."
+        "description": "FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's\n            (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names."
       },
       "DtoShelfSignals": {
         "type": "object",
@@ -14063,12 +14074,12 @@
             "items": {
               "type": "string"
             },
-            "description": "T701 Phase 4.2: UTC times of day (\"HH:mm\"), one to four. T703 (Q46-A): AIAdvisor advises once per member per\r\n            UTC day, in one call for all of the member's AIBot accounts, at the earliest of these times across those accounts; the\r\n            other times are kept and do not start a call. A stance lasts until the next such time.",
+            "description": "T701 Phase 4.2: UTC times of day (\"HH:mm\"), one to four. T703 (Q46-A): AIAdvisor advises once per member per\n            UTC day, in one call for all of the member's AIBot accounts, at the earliest of these times across those accounts; the\n            other times are kept and do not start a call. A stance lasts until the next such time.",
             "nullable": true
           },
           "AdviceCallsToday": {
             "type": "integer",
-            "description": "T703: the member's AIAdvisor calls today (scheduled and Advise now), copied onto each of the member's accounts\r\n            when a call is claimed so the AIBot pages can show it. The count the daily cap checks is kept per member, in\r\n            fc_auto_attempt (key advise:u{USNO}:{day}).",
+            "description": "T703: the member's AIAdvisor calls today (scheduled and Advise now), copied onto each of the member's accounts\n            when a call is claimed so the AIBot pages can show it. The count the daily cap checks is kept per member, in\n            fc_auto_attempt (key advise:u{USNO}:{day}).",
             "format": "int32"
           },
           "AdviceCallDayKey": {
@@ -14088,7 +14099,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Per-account AIBot grant, switch (Off / Watch / On) and limits. The safe initial state is always Off and ungranted.\r\n            T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone."
+        "description": "Per-account AIBot grant, switch (Off / Watch / On) and limits. The safe initial state is always Off and ungranted.\n            T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone."
       },
       "FxsOrderAction": {
         "enum": [
