@@ -70,6 +70,9 @@ Session trade writes pass the member's trade-PIN gate on the server.
 
 DTO fields keep the API's PascalCase wire names. List methods return a page (`Items` / `items`) with its paging block.
 
+Pair lists and pair views include read-only `AIBotMode`: `OFF` (Off), `EXITS` (Exits only), or `FULL` (Full auto).
+The public API cannot change this mode.
+
 Trade calls return when the work is queued for the terminal. Follow the stream, change feed or webhook to see the result.
 
 `copy.accounts.remove(acno, { TrPin }, options)` disconnects the hosted terminal, forgets its broker password and frees its seat.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.0 (2026-11-12)
+
+### Added
+- Pair lists and pair views expose read-only `AIBotMode`: `OFF` (Off), `EXITS` (Exits only), or `FULL` (Full auto).
+  Both clients are generated from the same API spec. The public API cannot change this mode.
+
 ## 0.5.0 (2026-11-11)
 
 ### Changed
