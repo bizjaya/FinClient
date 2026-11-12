@@ -10,6 +10,24 @@ namespace Fin.Tests;
 
 public sealed class TransportTests
 {
+    [Theory]
+    [InlineData("OFF")]
+    [InlineData("EXITS")]
+    [InlineData("FULL")]
+    public async Task PairListAndViewCarryAIBotMode(string mode)
+    {
+        var pair = "{\"PRNO\":12,\"SYM\":\"EURUSD\",\"AIBotMode\":\"" + mode + "\"}";
+        var handler = new QueueHandler(request => Json(HttpStatusCode.OK,
+            "{\"data\":" + (request.RequestUri!.AbsolutePath.EndsWith("/12") ? pair : "[" + pair + "]")
+            + ",\"code\":200,\"isOk\":true}"));
+        using var fin = NewClient(new FinClientOptions("test"), handler);
+        var list = await fin.Copy.Accounts.ListPairsAsync(1234);
+        var view = await fin.Copy.Accounts.GetPairAsync(1234, 12);
+        Assert.Equal(mode, Assert.Single(list.Items).AIBotMode.ToString());
+        Assert.Equal(mode, view.AIBotMode.ToString());
+        Assert.Contains("\"AIBotMode\":\"" + mode + "\"", System.Text.Json.JsonSerializer.Serialize(view));
+    }
+
     [Fact]
     public async Task UsesApiKeyAndPreservesPascalCaseData()
     {

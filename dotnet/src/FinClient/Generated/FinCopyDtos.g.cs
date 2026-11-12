@@ -2676,6 +2676,13 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("EN")]
         public bool? EN { get; set; } = default!;
 
+        /// <summary>
+        /// Read-only AIBot mode: OFF (Off), EXITS (Exits only), FULL (Full auto). Set through AIBot, never /v1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotMode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DtoFxsPairAIBotMode>))]
+        public DtoFxsPairAIBotMode? AIBotMode { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("BID")]
         public double? BID { get; set; } = default!;
 
@@ -5496,6 +5503,21 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"CredentialsMissing")]
         CredentialsMissing = 5,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum DtoFxsPairAIBotMode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OFF")]
+        OFF = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EXITS")]
+        EXITS = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FULL")]
+        FULL = 2,
 
     }
 

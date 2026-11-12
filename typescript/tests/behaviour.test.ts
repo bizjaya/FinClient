@@ -14,6 +14,20 @@ function client(fetch: typeof globalThis.fetch, delays: number[] = [], extra: Pa
   return new FinClient({ apiKey: "example-key", fetch, retryDelay: async ms => { delays.push(ms); }, random: () => 0.5, ...extra });
 }
 
+describe("pair AIBot mode", () => {
+  it.each(["OFF", "EXITS", "FULL"] as const)("reads %s from pair lists and views", async mode => {
+    const pair = { PRNO: 12, SYM: "EURUSD", AIBotMode: mode };
+    const fetch = vi.fn<typeof globalThis.fetch>(async input =>
+      json(String(input).endsWith("/12") ? pair : [pair]));
+    const fin = client(fetch);
+    const list = await fin.copy.accounts.pairs(1234);
+    const view = await fin.copy.accounts.pair(1234, 12);
+    const typedMode: "OFF" | "EXITS" | "FULL" | null | undefined = view.AIBotMode;
+    expect(typedMode).toBe(mode);
+    expect(list.items[0]?.AIBotMode).toBe(mode);
+  });
+});
+
 describe("retries and errors", () => {
   it("waits whole seconds on a 429 without Retry-After", async () => {
     let calls = 0;
