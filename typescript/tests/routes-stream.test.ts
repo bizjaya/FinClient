@@ -91,17 +91,15 @@ describe("routes", () => {
     await client.copy.accounts.pairInstrumentSuggestions(1234567890, "EURUSD");
     await client.copy.accounts.confirmPairInstrument(1234567890, { BrokerSymbol: "EURUSD" });
     await client.copy.fx.joinWaitlist({ Kind: "ACCOUNT", Platform: "MT5" });
-    await client.copy.accounts.importOpenLegs(1234567890, { Legs: [{ OID: 42, Ticket: 93, Symbol: "EURUSD", Side: "BUY", Lot: 0.1,
-      OpenPrice: 1.1, Group: 1, Level: 1, TPP: 1, SLP: 1, TSP: 0 }] });
+    await client.copy.accounts.adoptOpenTrades(1234567890, { Preview: true });
     expect(calls.map((call) => `${call.method} ${call.url.pathname}`)).toEqual([
       "GET /v1/fxs/accounts/1234567890/pairs/instrument-suggestions/EURUSD",
       "PUT /v1/fxs/accounts/1234567890/pairs/instrument-confirm",
       "POST /v1/fxs/waitlist/join",
-      "POST /v1/fxs/accounts/1234567890/open-legs/import",
+      "POST /v1/fxs/accounts/1234567890/trade/adopt",
     ]);
     for (const call of calls.slice(1)) expect(call.headers.get("Idempotency-Key")).toMatch(/^[0-9a-f-]{36}$/i);
-    expect(calls[3]?.body).toEqual({ Legs: [{ OID: 42, Ticket: 93, Symbol: "EURUSD", Side: "BUY", Lot: 0.1,
-      OpenPrice: 1.1, Group: 1, Level: 1, TPP: 1, SLP: 1, TSP: 0 }] });
+    expect(calls[3]?.body).toEqual({ Preview: true });
   });
 
   it("reads cross-account performance unless narrowed", async () => {

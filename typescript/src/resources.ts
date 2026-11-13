@@ -183,9 +183,14 @@ export class AccountsResource {
   changePassword(acno: number, command: CopyDto<"CmdTermAccountPassword">, options: FinRequestOptions = {}): Promise<D<"DtoOperationQueuedResPonse">> {
     return this.http.request("POST", `${accountPath(acno)}/password`, command, options);
   }
-  /** Imports open broker legs from an external manager such as FINQ5. */
-  importOpenLegs(acno: number, command: CopyDto<"CmdApiFxsOpenLegImport">, options: FinRequestOptions = {}): Promise<D<"DtoApiFxsOpenLegImportResPonse">> {
-    return this.http.request("POST", `${accountPath(acno)}/open-legs/import`, command, options);
+  /**
+   * Adopts open trades: every market position opened outside FinCopy becomes FinCopy's own, keeping its ticket, lot, price and
+   * open time. FinCopy enables each trade's pair within the plan's pair limit (oldest first); a pair that does not fit is refused
+   * whole and listed with its tickets. Send `{ Preview: true }` to see the result without changing anything. Needs the Trade
+   * permission and an EA of 2.38 or later.
+   */
+  adoptOpenTrades(acno: number, command: CopyDto<"CmdApiFxsAdopt"> = {}, options: FinRequestOptions = {}): Promise<D<"DtoApiFxsAdoptResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/trade/adopt`, command, options);
   }
   /** Queues a terminal start. */
   start(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoOperationQueuedResPonse">> { return this.operation(acno, "start", options); }
