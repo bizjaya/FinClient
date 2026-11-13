@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.8.0 (2026-11-14)
+
+### Added
+
+- `AdoptOpenTradesAsync` (.NET) and `adoptOpenTrades` (TypeScript): `POST /v1/fxs/accounts/{acno}/trade/adopt`. One press makes every market
+  position opened outside FinCopy on the account FinCopy's own, keeping its ticket, lot, price and open time. FinCopy enables each trade's
+  pair within the plan's pair limit, oldest first; a pair that does not fit is refused whole and listed with its tickets (`Refused`).
+  The broker's TP and SL on an adopted trade stay until its side gets an add or the symbol's TP or SL settings change. `Preview: true`
+  returns what would happen and changes nothing. It needs the Trade permission and an EA of 2.38 or later, and honours `Idempotency-Key`.
+- Types `CmdApiFxsAdopt`, `DtoApiFxsAdopt`, `DtoApiFxsAdoptPair` and `DtoApiFxsAdoptRefused`, generated from FinCopy's T709 API document.
+
+### Removed
+
+- `ImportOpenLegsAsync` / `importOpenLegs` (`POST /v1/fxs/accounts/{acno}/open-legs/import`) and its types
+  `CmdApiFxsOpenLeg`, `CmdApiFxsOpenLegImport` and `DtoApiFxsOpenLegImport`: the FINQ5 open-legs import is gone; use Adopt open trades.
+
 ## 0.7.0 (2026-11-13)
 
 ### Changed

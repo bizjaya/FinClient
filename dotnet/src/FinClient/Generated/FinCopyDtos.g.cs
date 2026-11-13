@@ -144,6 +144,19 @@ namespace Fin.Copy
     }
 
     /// <summary>
+    /// T709 (Q257-A): press "Adopt open trades" for the account in the route. Preview returns what would happen and writes
+    /// <br/>            nothing. Send an Idempotency-Key: a second press with the same key returns the first answer.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdApiFxsAdopt
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Preview")]
+        public bool? Preview { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Public paired hedge request. Account identity comes from the ACNO route.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -176,63 +189,6 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("AIBotAcceptedSettings")]
         public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<string>>? AIBotAcceptedSettings { get; set; } = default!;
-
-    }
-
-    /// <summary>
-    /// An open FINQ5 leg being adopted by a FinCopy hosted account. OID is the FINQ order id.
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdApiFxsOpenLeg
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("OID")]
-        public long? OID { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Ticket")]
-        public long? Ticket { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Side")]
-        public string? Side { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Lot")]
-        public double? Lot { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OpenPrice")]
-        public double? OpenPrice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Group")]
-        public int? Group { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Level")]
-        public int? Level { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TPP")]
-        public double? TPP { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SLP")]
-        public double? SLP { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TSP")]
-        public double? TSP { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TPPrice")]
-        public double? TPPrice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SLPrice")]
-        public double? SLPrice { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdApiFxsOpenLegImport
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Legs")]
-        public System.Collections.Generic.ICollection<CmdApiFxsOpenLeg>? Legs { get; set; } = default!;
 
     }
 
@@ -845,27 +801,87 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// What an adoption did (or, in a preview, would do). Oids are the new FinCopy order ids of the adopted trades.
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiFxsOpenLegImport
+    public partial class DtoApiFxsAdopt
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Imported")]
-        public int? Imported { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Adopted")]
+        public int? Adopted { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AlreadyImported")]
-        public int? AlreadyImported { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Oids")]
+        public System.Collections.Generic.ICollection<long>? Oids { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("OIDs")]
-        public System.Collections.Generic.ICollection<long>? OIDs { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<DtoApiFxsAdoptPair>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Refused")]
+        public System.Collections.Generic.ICollection<DtoApiFxsAdoptRefused>? Refused { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PairLimit")]
+        public int? PairLimit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Preview")]
+        public bool? Preview { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OpenTradeLimit")]
+        public int? OpenTradeLimit { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One pair's share of an adoption: the buys and sells taken over, and whether FinCopy had to enable the pair.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoApiFxsAdoptPair
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Buy")]
+        public int? Buy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Sell")]
+        public int? Sell { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnabledNow")]
+        public bool? EnabledNow { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuySide")]
+        public DtoApiFxsAdoptSide? BuySide { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellSide")]
+        public DtoApiFxsAdoptSide? SellSide { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// A pair left out of an adoption, why, and the tickets still outside FinCopy.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoApiFxsAdoptRefused
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Reason")]
+        public string? Reason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Tickets")]
+        public System.Collections.Generic.ICollection<long>? Tickets { get; set; } = default!;
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiFxsOpenLegImportResPonse
+    public partial class DtoApiFxsAdoptResPonse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiFxsOpenLegImport? Data { get; set; } = default!;
+        public DtoApiFxsAdopt? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -881,6 +897,32 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("chksum")]
         public string? Chksum { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// What the pair's settings do with one side after adoption (adoption never changes AvgMode): its averaging mode, the next
+    /// <br/>            level the side would add, the price that add triggers at (a % beyond the newest fill), and whether today's price is already
+    /// <br/>            past it, so an automatic add would follow at once.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoApiFxsAdoptSide
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("AvgMode")]
+        public string? AvgMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NextLevel")]
+        public int? NextLevel { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TriggerPrice")]
+        public double? TriggerPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PastTrigger")]
+        public bool? PastTrigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Automatic")]
+        public bool? Automatic { get; set; } = default!;
 
     }
 

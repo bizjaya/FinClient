@@ -313,23 +313,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/fxs/accounts/{acno}/open-legs/import": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Import open broker legs into FinCopy's order book, retaining the source OID so tagged FINQ5 tickets are adopted. */
-        post: operations["ImportOpenLegs"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/fxs/waitlist/join": {
         parameters: {
             query?: never;
@@ -852,6 +835,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/fxs/accounts/{acno}/trade/adopt": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Adopt open trades: every market position on the account that was opened outside FinCopy becomes FinCopy's own, keeping
+         *                 its ticket, lot, price and open time. FinCopy enables each trade's pair within the plan's pair limit (oldest trade first); a pair
+         *                 that does not fit is refused whole and listed with its tickets. The broker TP and SL a trade holds are kept until its side gets
+         *                 an add or the symbol's TP or SL settings change. Send Preview true to see what would happen without writing anything. Send an
+         *                 Idempotency-Key: a retry returns the first answer. Needs the Trade permission and an EA of 2.38 or later.
+         */
+        post: operations["AdoptOpenTrades"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/fxs/accounts/{acno}/dca": {
         parameters: {
             query?: never;
@@ -1029,6 +1035,13 @@ export interface components {
             SymbolDefaults?: components["schemas"]["DtoFxsStgSymStg"];
             CascadeSymbolDefaults?: boolean;
         };
+        /**
+         * @description T709 (Q257-A): press "Adopt open trades" for the account in the route. Preview returns what would happen and writes
+         *                 nothing. Send an Idempotency-Key: a second press with the same key returns the first answer.
+         */
+        CmdApiFxsAdopt: {
+            Preview?: boolean;
+        };
         /** @description Public paired hedge request. Account identity comes from the ACNO route. */
         CmdApiFxsHedgeMake: {
             SYM?: string | null;
@@ -1042,36 +1055,6 @@ export interface components {
             AIBotAcceptedSettings?: {
                 [key: string]: string[];
             } | null;
-        };
-        /** @description An open FINQ5 leg being adopted by a FinCopy hosted account. OID is the FINQ order id. */
-        CmdApiFxsOpenLeg: {
-            /** Format: int64 */
-            OID?: number;
-            /** Format: int64 */
-            Ticket?: number;
-            Symbol?: string | null;
-            Side?: string | null;
-            /** Format: double */
-            Lot?: number;
-            /** Format: double */
-            OpenPrice?: number;
-            /** Format: int32 */
-            Group?: number;
-            /** Format: int32 */
-            Level?: number;
-            /** Format: double */
-            TPP?: number;
-            /** Format: double */
-            SLP?: number;
-            /** Format: double */
-            TSP?: number;
-            /** Format: double */
-            TPPrice?: number;
-            /** Format: double */
-            SLPrice?: number;
-        };
-        CmdApiFxsOpenLegImport: {
-            Legs?: components["schemas"]["CmdApiFxsOpenLeg"][] | null;
         };
         /** @description Public trade request. Account identity comes from the ACNO route. */
         CmdApiFxsOrdrMake: {
@@ -1297,21 +1280,58 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        DtoApiFxsOpenLegImport: {
+        /** @description What an adoption did (or, in a preview, would do). Oids are the new FinCopy order ids of the adopted trades. */
+        DtoApiFxsAdopt: {
             /** Format: int32 */
-            Imported?: number;
+            Adopted?: number;
+            Oids?: number[] | null;
+            Pairs?: components["schemas"]["DtoApiFxsAdoptPair"][] | null;
+            Refused?: components["schemas"]["DtoApiFxsAdoptRefused"][] | null;
             /** Format: int32 */
-            AlreadyImported?: number;
-            OIDs?: number[] | null;
+            PairLimit?: number;
+            Preview?: boolean;
+            /** Format: int32 */
+            OpenTradeLimit?: number;
         };
-        DtoApiFxsOpenLegImportResPonse: {
-            data?: components["schemas"]["DtoApiFxsOpenLegImport"];
+        /** @description One pair's share of an adoption: the buys and sells taken over, and whether FinCopy had to enable the pair. */
+        DtoApiFxsAdoptPair: {
+            Symbol?: string | null;
+            /** Format: int32 */
+            Buy?: number;
+            /** Format: int32 */
+            Sell?: number;
+            EnabledNow?: boolean;
+            BuySide?: components["schemas"]["DtoApiFxsAdoptSide"];
+            SellSide?: components["schemas"]["DtoApiFxsAdoptSide"];
+        };
+        /** @description A pair left out of an adoption, why, and the tickets still outside FinCopy. */
+        DtoApiFxsAdoptRefused: {
+            Symbol?: string | null;
+            Reason?: string | null;
+            Tickets?: number[] | null;
+        };
+        DtoApiFxsAdoptResPonse: {
+            data?: components["schemas"]["DtoApiFxsAdopt"];
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
             message?: string | null;
             errors?: string[] | null;
             chksum?: string | null;
+        };
+        /**
+         * @description What the pair's settings do with one side after adoption (adoption never changes AvgMode): its averaging mode, the next
+         *                 level the side would add, the price that add triggers at (a % beyond the newest fill), and whether today's price is already
+         *                 past it, so an automatic add would follow at once.
+         */
+        DtoApiFxsAdoptSide: {
+            AvgMode?: string | null;
+            /** Format: int32 */
+            NextLevel?: number;
+            /** Format: double */
+            TriggerPrice?: number;
+            PastTrigger?: boolean;
+            Automatic?: boolean;
         };
         DtoApiTermOperation: {
             OperationId?: string | null;
@@ -4987,89 +5007,6 @@ export interface operations {
             };
         };
     };
-    ImportOpenLegs: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json-patch+json": components["schemas"]["CmdApiFxsOpenLegImport"];
-                "application/json": components["schemas"]["CmdApiFxsOpenLegImport"];
-                "text/json": components["schemas"]["CmdApiFxsOpenLegImport"];
-                "application/*+json": components["schemas"]["CmdApiFxsOpenLegImport"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoApiFxsOpenLegImportResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
     WaitlistJoin: {
         parameters: {
             query?: never;
@@ -7742,6 +7679,89 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DtoApiTermOperationResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdoptOpenTrades: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdApiFxsAdopt"];
+                "application/json": components["schemas"]["CmdApiFxsAdopt"];
+                "text/json": components["schemas"]["CmdApiFxsAdopt"];
+                "application/*+json": components["schemas"]["CmdApiFxsAdopt"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoApiFxsAdoptResPonse"];
                 };
             };
             /** @description Bad Request */

@@ -2392,121 +2392,6 @@
         }
       }
     },
-    "/v1/fxs/accounts/{acno}/open-legs/import": {
-      "post": {
-        "tags": [
-          "Other"
-        ],
-        "summary": "Import open broker legs into FinCopy's order book, retaining the source OID so tagged FINQ5 tickets are adopted.",
-        "operationId": "ImportOpenLegs",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdApiFxsOpenLegImport"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdApiFxsOpenLegImport"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdApiFxsOpenLegImport"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdApiFxsOpenLegImport"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiFxsOpenLegImportResPonse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/fxs/waitlist/join": {
       "post": {
         "tags": [
@@ -6459,6 +6344,121 @@
         }
       }
     },
+    "/v1/fxs/accounts/{acno}/trade/adopt": {
+      "post": {
+        "tags": [
+          "Trading"
+        ],
+        "summary": "Adopt open trades: every market position on the account that was opened outside FinCopy becomes FinCopy's own, keeping\n            its ticket, lot, price and open time. FinCopy enables each trade's pair within the plan's pair limit (oldest trade first); a pair\n            that does not fit is refused whole and listed with its tickets. The broker TP and SL a trade holds are kept until its side gets\n            an add or the symbol's TP or SL settings change. Send Preview true to see what would happen without writing anything. Send an\n            Idempotency-Key: a retry returns the first answer. Needs the Trade permission and an EA of 2.38 or later.",
+        "operationId": "AdoptOpenTrades",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsAdopt"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsAdopt"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsAdopt"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdApiFxsAdopt"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiFxsAdoptResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/fxs/accounts/{acno}/dca": {
       "get": {
         "tags": [
@@ -7461,6 +7461,16 @@
         "additionalProperties": false,
         "description": "Public API settings patch. Account identity comes from the ACNO route."
       },
+      "CmdApiFxsAdopt": {
+        "type": "object",
+        "properties": {
+          "Preview": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "T709 (Q257-A): press \"Adopt open trades\" for the account in the route. Preview returns what would happen and writes\n            nothing. Send an Idempotency-Key: a second press with the same key returns the first answer."
+      },
       "CmdApiFxsHedgeMake": {
         "type": "object",
         "properties": {
@@ -7507,78 +7517,6 @@
         },
         "additionalProperties": false,
         "description": "Public paired hedge request. Account identity comes from the ACNO route."
-      },
-      "CmdApiFxsOpenLeg": {
-        "type": "object",
-        "properties": {
-          "OID": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "Ticket": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "Symbol": {
-            "type": "string",
-            "nullable": true
-          },
-          "Side": {
-            "type": "string",
-            "nullable": true
-          },
-          "Lot": {
-            "type": "number",
-            "format": "double"
-          },
-          "OpenPrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "Group": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "Level": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "TPP": {
-            "type": "number",
-            "format": "double"
-          },
-          "SLP": {
-            "type": "number",
-            "format": "double"
-          },
-          "TSP": {
-            "type": "number",
-            "format": "double"
-          },
-          "TPPrice": {
-            "type": "number",
-            "format": "double"
-          },
-          "SLPrice": {
-            "type": "number",
-            "format": "double"
-          }
-        },
-        "additionalProperties": false,
-        "description": "An open FINQ5 leg being adopted by a FinCopy hosted account. OID is the FINQ order id."
-      },
-      "CmdApiFxsOpenLegImport": {
-        "type": "object",
-        "properties": {
-          "Legs": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CmdApiFxsOpenLeg"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       },
       "CmdApiFxsOrdrMake": {
         "type": "object",
@@ -8264,18 +8202,90 @@
         },
         "additionalProperties": false
       },
-      "DtoApiFxsOpenLegImport": {
+      "DtoApiFxsAdopt": {
         "type": "object",
         "properties": {
-          "Imported": {
+          "Adopted": {
             "type": "integer",
             "format": "int32"
           },
-          "AlreadyImported": {
+          "Oids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "Pairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoApiFxsAdoptPair"
+            },
+            "nullable": true
+          },
+          "Refused": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoApiFxsAdoptRefused"
+            },
+            "nullable": true
+          },
+          "PairLimit": {
             "type": "integer",
             "format": "int32"
           },
-          "OIDs": {
+          "Preview": {
+            "type": "boolean"
+          },
+          "OpenTradeLimit": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "What an adoption did (or, in a preview, would do). Oids are the new FinCopy order ids of the adopted trades."
+      },
+      "DtoApiFxsAdoptPair": {
+        "type": "object",
+        "properties": {
+          "Symbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "Buy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Sell": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EnabledNow": {
+            "type": "boolean"
+          },
+          "BuySide": {
+            "$ref": "#/components/schemas/DtoApiFxsAdoptSide"
+          },
+          "SellSide": {
+            "$ref": "#/components/schemas/DtoApiFxsAdoptSide"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One pair's share of an adoption: the buys and sells taken over, and whether FinCopy had to enable the pair."
+      },
+      "DtoApiFxsAdoptRefused": {
+        "type": "object",
+        "properties": {
+          "Symbol": {
+            "type": "string",
+            "nullable": true
+          },
+          "Reason": {
+            "type": "string",
+            "nullable": true
+          },
+          "Tickets": {
             "type": "array",
             "items": {
               "type": "integer",
@@ -8284,13 +8294,14 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "A pair left out of an adoption, why, and the tickets still outside FinCopy."
       },
-      "DtoApiFxsOpenLegImportResPonse": {
+      "DtoApiFxsAdoptResPonse": {
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/DtoApiFxsOpenLegImport"
+            "$ref": "#/components/schemas/DtoApiFxsAdopt"
           },
           "code": {
             "type": "integer",
@@ -8317,6 +8328,31 @@
           }
         },
         "additionalProperties": false
+      },
+      "DtoApiFxsAdoptSide": {
+        "type": "object",
+        "properties": {
+          "AvgMode": {
+            "type": "string",
+            "nullable": true
+          },
+          "NextLevel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "TriggerPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "PastTrigger": {
+            "type": "boolean"
+          },
+          "Automatic": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false,
+        "description": "What the pair's settings do with one side after adoption (adoption never changes AvgMode): its averaging mode, the next\n            level the side would add, the price that add triggers at (a % beyond the newest fill), and whether today's price is already\n            past it, so an automatic add would follow at once."
       },
       "DtoApiTermOperation": {
         "type": "object",
