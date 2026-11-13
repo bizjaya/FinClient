@@ -205,10 +205,13 @@ public sealed class AccountsResource
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
         _http.SendAsync<DtoOperationQueued>("POST", Account(acno) + "/password", command, idempotencyKey, cancellationToken);
 
-    /// <summary>Imports open broker legs from an external manager such as FINQ5.</summary>
-    public Task<DtoApiFxsOpenLegImport> ImportOpenLegsAsync(long acno, CmdApiFxsOpenLegImport command,
+    /// <summary>Adopts open trades: every market position opened outside FinCopy becomes FinCopy's own, keeping its ticket, lot,
+    /// price and open time. FinCopy enables each trade's pair within the plan's pair limit (oldest first); a pair that does not fit
+    /// is refused whole and listed with its tickets. Set <c>Preview</c> to see the result without changing anything. Needs the
+    /// Trade permission and an EA of 2.38 or later.</summary>
+    public Task<DtoApiFxsAdopt> AdoptOpenTradesAsync(long acno, CmdApiFxsAdopt? command = null,
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
-        _http.SendAsync<DtoApiFxsOpenLegImport>("POST", Account(acno) + "/open-legs/import", command, idempotencyKey, cancellationToken);
+        _http.SendAsync<DtoApiFxsAdopt>("POST", Account(acno) + "/trade/adopt", command ?? new CmdApiFxsAdopt(), idempotencyKey, cancellationToken);
 
     /// <summary>Queues a start operation.</summary>
     public Task<DtoOperationQueued> StartAsync(long acno, string? idempotencyKey = null, CancellationToken cancellationToken = default) =>

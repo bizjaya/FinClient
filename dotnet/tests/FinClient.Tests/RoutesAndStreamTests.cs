@@ -126,21 +126,17 @@ public sealed class RoutesAndStreamTests
         await fin.Copy.Accounts.PairInstrumentSuggestionsAsync(1234567890, "EURUSD");
         await fin.Copy.Accounts.ConfirmPairInstrumentAsync(1234567890, new CmdFxsPairInstrumentConfirm { BrokerSymbol = "EURUSD" });
         await fin.Copy.Fx.JoinWaitlistAsync(new CmdWaitlistJoin { Kind = "ACCOUNT", Platform = "MT5" });
-        await fin.Copy.Accounts.ImportOpenLegsAsync(1234567890, new CmdApiFxsOpenLegImport
-        {
-            Legs = [new CmdApiFxsOpenLeg { OID = 42, Ticket = 93, Symbol = "EURUSD", Side = "BUY", Lot = 0.1,
-                OpenPrice = 1.1, Group = 1, Level = 1, TPP = 1, SLP = 1, TSP = 0 }]
-        });
+        await fin.Copy.Accounts.AdoptOpenTradesAsync(1234567890, new CmdApiFxsAdopt { Preview = true });
 
         Assert.Equal(new[]
         {
             "GET https://api.fincopy.io/v1/fxs/accounts/1234567890/pairs/instrument-suggestions/EURUSD",
             "PUT https://api.fincopy.io/v1/fxs/accounts/1234567890/pairs/instrument-confirm",
             "POST https://api.fincopy.io/v1/fxs/waitlist/join",
-            "POST https://api.fincopy.io/v1/fxs/accounts/1234567890/open-legs/import"
+            "POST https://api.fincopy.io/v1/fxs/accounts/1234567890/trade/adopt"
         }, handler.Requests.Select(x => $"{x.Method} {x.RequestUri!.AbsoluteUri}"));
         Assert.All(handler.Requests.Skip(1), request => Assert.False(string.IsNullOrWhiteSpace(request.Headers.GetValues("Idempotency-Key").Single())));
-        Assert.Contains("\"OID\":42", handler.Bodies[3]);
+        Assert.Contains("\"Preview\":true", handler.Bodies[3]);
     }
 
     [Fact]
