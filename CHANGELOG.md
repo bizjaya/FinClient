@@ -18,11 +18,11 @@
 
 ### Changed
 
-- Refresh the FXS schema for FinCopy's AMode rollout: per-side modes are DCAW, DCAG, GRID, CONT, FIRR and COPY, with the matching mode and risk settings.
+- Refresh the FXS schema for FinCopy's AMode rollout: per-side modes are DCAW, DCAG, GRID, CONT, FRRR and COPY, with the matching mode and risk settings.
 - Remove the retired Independent-orders field from the FinCopy strategy/account API shape.
-- Mode names: DCA Whole Side (DCAW), DCA Per Group (DCAG), Detached Grid (GRID), Contra Offset (CONT), Fixed Risk/Reward (FIRR), Copy Trade (COPY). `FXMODE` is gone; `BAMODE` / `SAMODE` carry the mode.
+- Mode names: DCA Whole Side (DCAW), DCA Per Group (DCAG), Detached Grid (GRID), Contra Offset (CONT), Fixed Risk:Reward (FRRR), Copy Trade (COPY). `FXMODE` is gone; `BAMODE` / `SAMODE` carry the mode.
 - The trailing switch `BTRAIL` / `STRAIL` replaces the TP and TS notches (`BHRTP`, `SHRTP`, `BHRTS`, `SHRTS` are gone); the SL keeps its notch.
-- Fixed Risk/Reward settings `BFRATIO` / `SFRATIO` and `BRISK` / `SRISK`; the allowed modes AIBot may switch a side to, `BALLOWED` / `SALLOWED`.
+- Fixed Risk:Reward settings `BFRATIO` / `SFRATIO` and `BRISK` / `SRISK`; the allowed modes AIBot may switch a side to, `BALLOWED` / `SALLOWED`.
 
 ### Added
 
