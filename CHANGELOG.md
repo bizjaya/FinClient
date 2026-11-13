@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.0 (2026-11-13)
+
+### Changed
+
+- Rename mode 5 to `FIRR` (Fixed Risk/Reward); the numeric identity stays 5.
+- Regenerate both clients from FinCopy’s T709 API document.
+- Use the shared mode names with codes: DCA Whole Side (DCAW), DCA Per Group (DCAG), Detached Grid (GRID), Contra Offset (CONT), Fixed Risk/Reward (FIRR), Copy Trade (COPY).
+
 ## 0.6.0 (2026-11-12)
 
 ### Added

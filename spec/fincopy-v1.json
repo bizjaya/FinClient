@@ -7371,7 +7371,7 @@
           "DCAG",
           "GRID",
           "CONT",
-          "FRRR",
+          "FIRR",
           "COPY"
         ],
         "type": "string"
