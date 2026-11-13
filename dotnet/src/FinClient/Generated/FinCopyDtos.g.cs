@@ -826,6 +826,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("Preview")]
         public bool? Preview { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("OpenTradeLimit")]
+        public int? OpenTradeLimit { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -846,6 +849,12 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("EnabledNow")]
         public bool? EnabledNow { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuySide")]
+        public DtoApiFxsAdoptSide? BuySide { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellSide")]
+        public DtoApiFxsAdoptSide? SellSide { get; set; } = default!;
 
     }
 
@@ -888,6 +897,32 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("chksum")]
         public string? Chksum { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// What the pair's settings do with one side after adoption (adoption never changes AvgMode): its averaging mode, the next
+    /// <br/>            level the side would add, the price that add triggers at (a % beyond the newest fill), and whether today's price is already
+    /// <br/>            past it, so an automatic add would follow at once.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoApiFxsAdoptSide
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("AvgMode")]
+        public string? AvgMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NextLevel")]
+        public int? NextLevel { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TriggerPrice")]
+        public double? TriggerPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PastTrigger")]
+        public bool? PastTrigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Automatic")]
+        public bool? Automatic { get; set; } = default!;
 
     }
 

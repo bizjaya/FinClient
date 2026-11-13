@@ -1290,6 +1290,8 @@ export interface components {
             /** Format: int32 */
             PairLimit?: number;
             Preview?: boolean;
+            /** Format: int32 */
+            OpenTradeLimit?: number;
         };
         /** @description One pair's share of an adoption: the buys and sells taken over, and whether FinCopy had to enable the pair. */
         DtoApiFxsAdoptPair: {
@@ -1299,6 +1301,8 @@ export interface components {
             /** Format: int32 */
             Sell?: number;
             EnabledNow?: boolean;
+            BuySide?: components["schemas"]["DtoApiFxsAdoptSide"];
+            SellSide?: components["schemas"]["DtoApiFxsAdoptSide"];
         };
         /** @description A pair left out of an adoption, why, and the tickets still outside FinCopy. */
         DtoApiFxsAdoptRefused: {
@@ -1314,6 +1318,20 @@ export interface components {
             message?: string | null;
             errors?: string[] | null;
             chksum?: string | null;
+        };
+        /**
+         * @description What the pair's settings do with one side after adoption (adoption never changes AvgMode): its averaging mode, the next
+         *                 level the side would add, the price that add triggers at (a % beyond the newest fill), and whether today's price is already
+         *                 past it, so an automatic add would follow at once.
+         */
+        DtoApiFxsAdoptSide: {
+            AvgMode?: string | null;
+            /** Format: int32 */
+            NextLevel?: number;
+            /** Format: double */
+            TriggerPrice?: number;
+            PastTrigger?: boolean;
+            Automatic?: boolean;
         };
         DtoApiTermOperation: {
             OperationId?: string | null;
