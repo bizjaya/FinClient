@@ -47,8 +47,8 @@ namespace Fin.Copy
         [System.Runtime.Serialization.EnumMember(Value = @"CONT")]
         CONT = 4,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"FRRR")]
-        FRRR = 5,
+        [System.Runtime.Serialization.EnumMember(Value = @"FIRR")]
+        FIRR = 5,
 
         [System.Runtime.Serialization.EnumMember(Value = @"COPY")]
         COPY = 6,
