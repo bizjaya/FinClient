@@ -1002,7 +1002,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {string} */
-        AMode: "NONE" | "DCAW" | "DCAG" | "GRID" | "CONT" | "FRRR" | "COPY";
+        AMode: "NONE" | "DCAW" | "DCAG" | "GRID" | "CONT" | "FIRR" | "COPY";
         BooleanResPonse: {
             data?: boolean;
             /** Format: int32 */
