@@ -430,6 +430,7 @@ namespace Fin.Copy
     /// <summary>
     /// TP496 Q285-A: a strategy's AIBot settings as a save sends them. Sent, its two parts replace the strategy's limits and
     /// <br/>            pair defaults (a null part or a null field is then not part of the strategy and never travels); not sent, both stay as they are.
+    /// <br/>            T709: Protection (SL or DCA, the ladder) is the strategy's preference; null leaves it.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CmdFxsStgAIBot
@@ -440,6 +441,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("PairDefaults")]
         public FxsAIBotStgPair? PairDefaults { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Protection")]
+        public string? Protection { get; set; } = default!;
 
     }
 
@@ -491,10 +495,15 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("SigHot")]
         public SigMinsRng? SigHot { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
     }
 
     /// <summary>
-    /// Edits a strategy: each field sent replaces the stored one (a range whole; a set whole).
+    /// Edits a strategy: each field sent replaces the stored one (a range whole; a set whole). Clear names
+    /// <br/>            the nullable ranges to empty (back to "not part of the strategy"): ACCSTG.&lt;field&gt; or SYMSTG.&lt;field&gt; of a range field, since a
+    /// <br/>            null in ACCSTG / SYMSTG means "unchanged". TrPin: the member's Trading PIN (the member routes ask it).
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CmdFxsStgPatch
@@ -540,6 +549,12 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SigHot")]
         public SigMinsRng? SigHot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Clear")]
+        public System.Collections.Generic.ICollection<string>? Clear { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
 
     }
 
@@ -1705,6 +1720,12 @@ namespace Fin.Copy
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
         public long? ACNO { get; set; } = default!;
+
+        /// <summary>
+        /// T709: the strategy the account follows (FxsAcct.ISNO; 0 = none), so a member's strategy page lists its accounts.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
+        public int? ISNO { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("MARGIN_CCY")]
         public string? MARGIN_CCY { get; set; } = default!;

@@ -7804,10 +7804,14 @@
           },
           "PairDefaults": {
             "$ref": "#/components/schemas/FxsAIBotStgPair"
+          },
+          "Protection": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "TP496 Q285-A: a strategy's AIBot settings as a save sends them. Sent, its two parts replace the strategy's limits and\n            pair defaults (a null part or a null field is then not part of the strategy and never travels); not sent, both stay as they are."
+        "description": "TP496 Q285-A: a strategy's AIBot settings as a save sends them. Sent, its two parts replace the strategy's limits and\n            pair defaults (a null part or a null field is then not part of the strategy and never travels); not sent, both stay as they are.\n            T709: Protection (SL or DCA, the ladder) is the strategy's preference; null leaves it."
       },
       "CmdFxsStgMake": {
         "type": "object",
@@ -7856,6 +7860,10 @@
           },
           "SigHot": {
             "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7905,10 +7913,21 @@
           },
           "SigHot": {
             "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "Clear": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Edits a strategy: each field sent replaces the stored one (a range whole; a set whole)."
+        "description": "Edits a strategy: each field sent replaces the stored one (a range whole; a set whole). Clear names\n            the nullable ranges to empty (back to \"not part of the strategy\"): ACCSTG.<field> or SYMSTG.<field> of a range field, since a\n            null in ACCSTG / SYMSTG means \"unchanged\". TrPin: the member's Trading PIN (the member routes ask it)."
       },
       "CmdFxsSymbolsEdit": {
         "type": "object",
@@ -9333,6 +9352,11 @@
             "type": "integer",
             "description": "The trading record's number (FxsAcct.ACNO); the Trade window's Pre-info and Make name the account by it.",
             "format": "int64"
+          },
+          "ISNO": {
+            "type": "integer",
+            "description": "T709: the strategy the account follows (FxsAcct.ISNO; 0 = none), so a member's strategy page lists its accounts.",
+            "format": "int32"
           },
           "MARGIN_CCY": {
             "type": "string",

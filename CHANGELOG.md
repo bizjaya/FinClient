@@ -14,6 +14,9 @@ that FinCopy held twice keep one home. **Breaking:** the removed fields below, a
   accounts (`DtoFxsAcct`) carry `SigCold`, `SigWarm` and `SigHot`; HOT has no score.
 - `DtoFxsStgSymRng`: a strategy's symbol template, its numbers as ranges, per side.
 - `FxsFullAutoSettings.OpenPerSide`: most AIBot trades open on one side at once.
+- `DtoFxsAccountState.ISNO`: the strategy the account follows (0 = none).
+- `CmdFxsStgAIBot.Protection` (`SL` or `DCA`, the ladder) and `CmdFxsStgPatch.Clear` (the nullable ACCSTG / SYMSTG ranges to
+  empty); `CmdFxsStgMake` / `CmdFxsStgPatch` carry `TrPin` (FinCopy's member routes ask the Trading PIN; an API key does not).
 - Types already in FinCopy's API and now in the SDKs: `CmdFxsStgAIBot`, `FxsAIBotStgLimits`, `FxsAIBotStgPair`,
   `FxsAIBotEntryRules`, `DtoFxsStgCascadeChange`, and the AIBot fields of the cascade preview and result.
 

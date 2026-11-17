@@ -1161,10 +1161,12 @@ export interface components {
         /**
          * @description TP496 Q285-A: a strategy's AIBot settings as a save sends them. Sent, its two parts replace the strategy's limits and
          *                 pair defaults (a null part or a null field is then not part of the strategy and never travels); not sent, both stay as they are.
+         *                 T709: Protection (SL or DCA, the ladder) is the strategy's preference; null leaves it.
          */
         CmdFxsStgAIBot: {
             Limits?: components["schemas"]["FxsAIBotStgLimits"];
             PairDefaults?: components["schemas"]["FxsAIBotStgPair"];
+            Protection?: string | null;
         };
         CmdFxsStgMake: {
             StratName?: string | null;
@@ -1182,8 +1184,13 @@ export interface components {
             SigCold?: components["schemas"]["SigMinsRng"];
             SigWarm?: components["schemas"]["SigMinsRng"];
             SigHot?: components["schemas"]["SigMinsRng"];
+            TrPin?: string | null;
         };
-        /** @description Edits a strategy: each field sent replaces the stored one (a range whole; a set whole). */
+        /**
+         * @description Edits a strategy: each field sent replaces the stored one (a range whole; a set whole). Clear names
+         *                 the nullable ranges to empty (back to "not part of the strategy"): ACCSTG.<field> or SYMSTG.<field> of a range field, since a
+         *                 null in ACCSTG / SYMSTG means "unchanged". TrPin: the member's Trading PIN (the member routes ask it).
+         */
         CmdFxsStgPatch: {
             StratName?: string | null;
             RiskLev?: components["schemas"]["FxsRiskLev"];
@@ -1198,6 +1205,8 @@ export interface components {
             SigCold?: components["schemas"]["SigMinsRng"];
             SigWarm?: components["schemas"]["SigMinsRng"];
             SigHot?: components["schemas"]["SigMinsRng"];
+            Clear?: string[] | null;
+            TrPin?: string | null;
         };
         /** @description Add or remove symbols from the account's enabled list. */
         CmdFxsSymbolsEdit: {
@@ -1666,6 +1675,11 @@ export interface components {
              * @description The trading record's number (FxsAcct.ACNO); the Trade window's Pre-info and Make name the account by it.
              */
             ACNO?: number;
+            /**
+             * Format: int32
+             * @description T709: the strategy the account follows (FxsAcct.ISNO; 0 = none), so a member's strategy page lists its accounts.
+             */
+            ISNO?: number;
             MARGIN_CCY?: string | null;
             /** @description Whether the account's broker server is a demo server. */
             Virtual?: boolean;
