@@ -110,7 +110,11 @@ namespace Fin.Copy
     }
 
     /// <summary>
-    /// Public API settings patch. Account identity comes from the ACNO route.
+    /// Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as
+    /// <br/>            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
+    /// <br/>            weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,
+    /// <br/>            and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change
+    /// <br/>            is written to the account log.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CmdApiFxsAcctPatch
@@ -137,6 +141,15 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("CascadeSymbolDefaults")]
         public bool? CascadeSymbolDefaults { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigCold")]
+        public SigMins? SigCold { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigWarm")]
+        public SigMins? SigWarm { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigHot")]
+        public SigMins? SigHot { get; set; } = default!;
 
     }
 

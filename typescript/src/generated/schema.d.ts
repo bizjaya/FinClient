@@ -561,8 +561,8 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Change the account's settings, as the member screens do; every change is written to the account log. Needs the
-         *                 Trade permission.
+         * Change the account's settings, as the member screens do, its three signal sets included; every change is written
+         *                 to the account log. Needs the Trade permission.
          */
         patch: operations["AccountSettings"];
         trace?: never;
@@ -1022,7 +1022,13 @@ export interface components {
         BrokerServerEnvironment: "Demo" | "Live" | "Unknown";
         /** @enum {string} */
         BrokerServerStatus: "Submitted" | "Verified" | "Retired";
-        /** @description Public API settings patch. Account identity comes from the ACNO route. */
+        /**
+         * @description Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as
+         *                 stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
+         *                 weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,
+         *                 and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change
+         *                 is written to the account log.
+         */
         CmdApiFxsAcctPatch: {
             Enabled?: boolean | null;
             /** Format: int32 */
@@ -1033,6 +1039,9 @@ export interface components {
             AccStg?: components["schemas"]["DtoEAAccStg"];
             SymbolDefaults?: components["schemas"]["DtoFxsStgSymStg"];
             CascadeSymbolDefaults?: boolean;
+            SigCold?: components["schemas"]["SigMins"];
+            SigWarm?: components["schemas"]["SigMins"];
+            SigHot?: components["schemas"]["SigMins"];
         };
         /**
          * @description T709 (Q257-A): press "Adopt open trades" for the account in the route. Preview returns what would happen and writes

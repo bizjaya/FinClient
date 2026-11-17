@@ -4244,7 +4244,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Change the account's settings, as the member screens do; every change is written to the account log. Needs the\n            Trade permission.",
+        "summary": "Change the account's settings, as the member screens do, its three signal sets included; every change is written\n            to the account log. Needs the Trade permission.",
         "operationId": "AccountSettings",
         "parameters": [
           {
@@ -7452,10 +7452,19 @@
           },
           "CascadeSymbolDefaults": {
             "type": "boolean"
+          },
+          "SigCold": {
+            "$ref": "#/components/schemas/SigMins"
+          },
+          "SigWarm": {
+            "$ref": "#/components/schemas/SigMins"
+          },
+          "SigHot": {
+            "$ref": "#/components/schemas/SigMins"
           }
         },
         "additionalProperties": false,
-        "description": "Public API settings patch. Account identity comes from the ACNO route."
+        "description": "Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as\n            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the\n            weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,\n            and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change\n            is written to the account log."
       },
       "CmdApiFxsAdopt": {
         "type": "object",
