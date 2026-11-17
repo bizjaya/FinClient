@@ -4244,7 +4244,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Change the account's settings, as the member screens do, its three signal sets included; every change is written\n            to the account log. Needs the Trade permission.",
+        "summary": "Change the account's settings, as the member screens do, its three signal sets included; every change is written\n            to the account log. Needs the Trade permission. A member session that sends a signal set (SigCold, SigWarm or SigHot) gives\n            its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.",
         "operationId": "AccountSettings",
         "parameters": [
           {
@@ -7461,10 +7461,14 @@
           },
           "SigHot": {
             "$ref": "#/components/schemas/SigMins"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as\n            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the\n            weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,\n            and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change\n            is written to the account log."
+        "description": "Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as\n            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the\n            weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,\n            and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change\n            is written to the account log. A member session (the member's screens) that sends any of the three sets gives its Trading PIN\n            in TrPin, as the member's own AIBot settings do; an API key does not."
       },
       "CmdApiFxsAdopt": {
         "type": "object",
@@ -12898,7 +12902,8 @@
           },
           "PnlPct": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "WinPct": {
             "type": "number",
@@ -12906,7 +12911,8 @@
           },
           "MaxDDPct": {
             "type": "number",
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "Score": {
             "type": "integer",

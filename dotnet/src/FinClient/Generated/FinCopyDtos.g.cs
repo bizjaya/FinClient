@@ -114,7 +114,8 @@ namespace Fin.Copy
     /// <br/>            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
     /// <br/>            weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,
     /// <br/>            and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change
-    /// <br/>            is written to the account log.
+    /// <br/>            is written to the account log. A member session (the member's screens) that sends any of the three sets gives its Trading PIN
+    /// <br/>            in TrPin, as the member's own AIBot settings do; an API key does not.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CmdApiFxsAcctPatch
@@ -150,6 +151,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SigHot")]
         public SigMins? SigHot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
 
     }
 

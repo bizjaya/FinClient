@@ -17,10 +17,13 @@ that FinCopy held twice keep one home. **Breaking:** the removed fields below, a
 - `DtoFxsAccountState.ISNO`: the strategy the account follows (0 = none).
 - `CmdApiFxsAcctPatch.SigCold`, `SigWarm` and `SigHot`: the account's own three signal sets, each optional (absent leaves it
   as stored) and replaced whole, checked as the member's own AIBot settings are and written to the account log. A trend
-  minimum may be any step of `Trend` (BUY `VSD`-`VSU`, SELL mirrored), or null for Any.
+  minimum may be any step of `Trend` (BUY `VSD`-`VSU`, SELL mirrored), or null for Any. `CmdApiFxsAcctPatch.TrPin`: a member
+  session (cookie or Telegram bearer) that sends any of the three sets gives its Trading PIN, as the member's own AIBot settings
+  do; an API key does not.
 - `DtoFxsStgRank` and `DtoFxsStg.Rank`: a strategy's ranking from its followers' last 30 days, rebuilt by FinCopy each night
   (`Followers`, `Trades`, `Wins`, `PnlAmt`, `EqtBase` and how it was valued, `PnlPct`, `WinPct`, `MaxDDPct`, `Score` 0-100 or
-  null for "New" under 10 closed trades, `WinFrom` / `WinTo`). No ratings.
+  null for "New" under 10 closed trades, `WinFrom` / `WinTo`). No ratings. `PnlPct` and `MaxDDPct` are null when the followers'
+  equity base is zero or less (nothing to measure against), and the score is then null too.
 - `DtoFxsStg.PicFile` and `PicUrl`: the strategy's picture, a 256 px WebP FinCopy made, served at `PicUrl` (a path on the API's
   origin, `/media/stg/<file>`); null when the strategy has none.
 - `CmdFxsStgAIBot.Protection` (`SL` or `DCA`, the ladder) and `CmdFxsStgPatch.Clear` (the nullable ACCSTG / SYMSTG ranges to

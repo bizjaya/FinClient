@@ -562,7 +562,8 @@ export interface paths {
         head?: never;
         /**
          * Change the account's settings, as the member screens do, its three signal sets included; every change is written
-         *                 to the account log. Needs the Trade permission.
+         *                 to the account log. Needs the Trade permission. A member session that sends a signal set (SigCold, SigWarm or SigHot) gives
+         *                 its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.
          */
         patch: operations["AccountSettings"];
         trace?: never;
@@ -1027,7 +1028,8 @@ export interface components {
          *                 stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
          *                 weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,
          *                 and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change
-         *                 is written to the account log.
+         *                 is written to the account log. A member session (the member's screens) that sends any of the three sets gives its Trading PIN
+         *                 in TrPin, as the member's own AIBot settings do; an API key does not.
          */
         CmdApiFxsAcctPatch: {
             Enabled?: boolean | null;
@@ -1042,6 +1044,7 @@ export interface components {
             SigCold?: components["schemas"]["SigMins"];
             SigWarm?: components["schemas"]["SigMins"];
             SigHot?: components["schemas"]["SigMins"];
+            TrPin?: string | null;
         };
         /**
          * @description T709 (Q257-A): press "Adopt open trades" for the account in the route. Preview returns what would happen and writes
@@ -2941,11 +2944,11 @@ export interface components {
             /** Format: int32 */
             BaseNow?: number;
             /** Format: double */
-            PnlPct?: number;
+            PnlPct?: number | null;
             /** Format: double */
             WinPct?: number;
             /** Format: double */
-            MaxDDPct?: number;
+            MaxDDPct?: number | null;
             /** Format: int32 */
             Score?: number | null;
             /** Format: date-time */
