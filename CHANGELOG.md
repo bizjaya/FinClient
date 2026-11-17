@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.9.0 (2026-11-17)
+
+Regenerated from FinCopy's T709 API document. FinCopy strategies now hold ranges and per-side signal sets; several facts
+that FinCopy held twice keep one home. **Breaking:** the removed fields below, and strategy numbers that were plain numbers.
+
+### Added
+
+- `DecRng` (`Min`, `Def`, `Max`): every number a strategy holds is a range. The account and each pair keep one value, read
+  against the strategy's range; a cascade sends each range's `Def`.
+- `SigMins` and `SigMinsRng`, with `Signal`, `Trend` and `Confidence`: the per-side signal minimums (`BuySig`, `SellSig`,
+  `BuyTrd`, `SellTrd` (null = Any), `Conf`, `Score` 0-10). Strategies (`DtoFxsStg`, `CmdFxsStgMake`, `CmdFxsStgPatch`) and
+  accounts (`DtoFxsAcct`) carry `SigCold`, `SigWarm` and `SigHot`; HOT has no score.
+- `DtoFxsStgSymRng`: a strategy's symbol template, its numbers as ranges, per side.
+- `FxsFullAutoSettings.OpenPerSide`: most AIBot trades open on one side at once.
+- Types already in FinCopy's API and now in the SDKs: `CmdFxsStgAIBot`, `FxsAIBotStgLimits`, `FxsAIBotStgPair`,
+  `FxsAIBotEntryRules`, `DtoFxsStgCascadeChange`, and the AIBot fields of the cascade preview and result.
+
+### Changed
+
+- `DtoFxsStg.SYMSTG` is a `DtoFxsStgSymRng`, and `DtoFxsStgAccStg`'s numbers (`DAYTP`, `DAYSL`, `POCNT`, `DCAIVMINS`,
+  `POCLSMINS`, `MAXDDFRC`, `MAXDLYSECS`, `SYNCSECS`) and `DCACooloffMins` are `DecRng`, on the strategy only.
+- `FxsAIBotPreferences.Protection`: `DCA` is the ladder.
+
+### Removed
+
+- `EnDcaGate` (`CmdApiFxsAcctPatch`, `CmdFxsStgMake`, `CmdFxsStgPatch`, `DtoFxsStg`, `DtoFxsAcct`): the DCA gate is
+  `ACCSTG.DCAGATE` alone.
+- `DtoFxsAcct.AIBotRiskPct` (risk a trade is `SYMSTG.BRISK` / `SRISK`) and `AIBotDailyLossPct` (the daily loss is
+  `ACCSTG.DAYSL`).
+- `FxsFullAutoSettings.DailyLossPct`, `RiskDial`, `RiskCeiling` and `AdviceTimes` (the risk dial is gone; one `AdviceTime`).
+- `FxsAIBotPreferences.StopStyle`, `LadderEnabled` and `MaxLayers` (the hard SL is `BHRSL` / `SHRSL`, the ladder is
+  Protection `DCA`, the most levels and groups are `BLMAX` / `BGMAX`).
+
 ## 0.8.0 (2026-11-14)
 
 ### Added
