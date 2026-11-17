@@ -2792,6 +2792,11 @@ export interface components {
             AccountCount?: number;
             /** Format: int32 */
             PairCount?: number;
+            /** @description T709 Q412-A: the picture's file name in FinCopy's media folder (null: none, the screens show the initials). */
+            PicFile?: string | null;
+            /** @description T709 Q412-A: the picture's path on the API's origin (`/media/stg/<file>`); null when there is none. */
+            PicUrl?: string | null;
+            Rank?: components["schemas"]["DtoFxsStgRank"];
         };
         /** @description Wire twin of a strategy's ACCSTG (FxsStgAccStg): its numbers as ranges (T709 Q387-A). No BSON attributes. */
         DtoFxsStgAccStg: {
@@ -2911,6 +2916,42 @@ export interface components {
             message?: string | null;
             errors?: string[] | null;
             chksum?: string | null;
+        };
+        /**
+         * @description T709 Q411-A: a strategy's ranking as the strategy list and view routes return it (see FC.Com.Doms.IFxsStgRank).
+         *                 Score null reads "New".
+         */
+        DtoFxsStgRank: {
+            /** Format: int32 */
+            ISNO?: number;
+            /** Format: int32 */
+            Followers?: number;
+            /** Format: int32 */
+            Trades?: number;
+            /** Format: int32 */
+            Wins?: number;
+            /** Format: double */
+            PnlAmt?: number;
+            /** Format: double */
+            EqtBase?: number;
+            /** Format: int32 */
+            BaseAtStart?: number;
+            /** Format: int32 */
+            BaseInWin?: number;
+            /** Format: int32 */
+            BaseNow?: number;
+            /** Format: double */
+            PnlPct?: number;
+            /** Format: double */
+            WinPct?: number;
+            /** Format: double */
+            MaxDDPct?: number;
+            /** Format: int32 */
+            Score?: number | null;
+            /** Format: date-time */
+            WinFrom?: string;
+            /** Format: date-time */
+            WinTo?: string;
         };
         DtoFxsStgResPonse: {
             data?: components["schemas"]["DtoFxsStg"];

@@ -12492,6 +12492,19 @@
           "PairCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "PicFile": {
+            "type": "string",
+            "description": "T709 Q412-A: the picture's file name in FinCopy's media folder (null: none, the screens show the initials).",
+            "nullable": true
+          },
+          "PicUrl": {
+            "type": "string",
+            "description": "T709 Q412-A: the picture's path on the API's origin (`/media/stg/<file>`); null when there is none.",
+            "nullable": true
+          },
+          "Rank": {
+            "$ref": "#/components/schemas/DtoFxsStgRank"
           }
         },
         "additionalProperties": false
@@ -12843,6 +12856,74 @@
           }
         },
         "additionalProperties": false
+      },
+      "DtoFxsStgRank": {
+        "type": "object",
+        "properties": {
+          "ISNO": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Followers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Trades": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Wins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PnlAmt": {
+            "type": "number",
+            "format": "double"
+          },
+          "EqtBase": {
+            "type": "number",
+            "format": "double"
+          },
+          "BaseAtStart": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "BaseInWin": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "BaseNow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PnlPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "WinPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "MaxDDPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "Score": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "WinFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "WinTo": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "T709 Q411-A: a strategy's ranking as the strategy list and view routes return it (see FC.Com.Doms.IFxsStgRank).\n            Score null reads \"New\"."
       },
       "DtoFxsStgResPonse": {
         "type": "object",

@@ -3965,6 +3965,21 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("PairCount")]
         public int? PairCount { get; set; } = default!;
 
+        /// <summary>
+        /// T709 Q412-A: the picture's file name in FinCopy's media folder (null: none, the screens show the initials).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("PicFile")]
+        public string? PicFile { get; set; } = default!;
+
+        /// <summary>
+        /// T709 Q412-A: the picture's path on the API's origin (`/media/stg/&lt;file&gt;`); null when there is none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("PicUrl")]
+        public string? PicUrl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
+        public DtoFxsStgRank? Rank { get; set; } = default!;
+
     }
 
     /// <summary>
@@ -4242,6 +4257,61 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("chksum")]
         public string? Chksum { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// T709 Q411-A: a strategy's ranking as the strategy list and view routes return it (see FC.Com.Doms.IFxsStgRank).
+    /// <br/>            Score null reads "New".
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsStgRank
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
+        public int? ISNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Followers")]
+        public int? Followers { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trades")]
+        public int? Trades { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Wins")]
+        public int? Wins { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PnlAmt")]
+        public double? PnlAmt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EqtBase")]
+        public double? EqtBase { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BaseAtStart")]
+        public int? BaseAtStart { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BaseInWin")]
+        public int? BaseInWin { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BaseNow")]
+        public int? BaseNow { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PnlPct")]
+        public double? PnlPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("WinPct")]
+        public double? WinPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaxDDPct")]
+        public double? MaxDDPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public int? Score { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("WinFrom")]
+        public System.DateTimeOffset? WinFrom { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("WinTo")]
+        public System.DateTimeOffset? WinTo { get; set; } = default!;
 
     }
 

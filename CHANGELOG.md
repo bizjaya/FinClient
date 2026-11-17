@@ -18,6 +18,11 @@ that FinCopy held twice keep one home. **Breaking:** the removed fields below, a
 - `CmdApiFxsAcctPatch.SigCold`, `SigWarm` and `SigHot`: the account's own three signal sets, each optional (absent leaves it
   as stored) and replaced whole, checked as the member's own AIBot settings are and written to the account log. A trend
   minimum may be any step of `Trend` (BUY `VSD`-`VSU`, SELL mirrored), or null for Any.
+- `DtoFxsStgRank` and `DtoFxsStg.Rank`: a strategy's ranking from its followers' last 30 days, rebuilt by FinCopy each night
+  (`Followers`, `Trades`, `Wins`, `PnlAmt`, `EqtBase` and how it was valued, `PnlPct`, `WinPct`, `MaxDDPct`, `Score` 0-100 or
+  null for "New" under 10 closed trades, `WinFrom` / `WinTo`). No ratings.
+- `DtoFxsStg.PicFile` and `PicUrl`: the strategy's picture, a 256 px WebP FinCopy made, served at `PicUrl` (a path on the API's
+  origin, `/media/stg/<file>`); null when the strategy has none.
 - `CmdFxsStgAIBot.Protection` (`SL` or `DCA`, the ladder) and `CmdFxsStgPatch.Clear` (the nullable ACCSTG / SYMSTG ranges to
   empty); `CmdFxsStgMake` / `CmdFxsStgPatch` carry `TrPin` (FinCopy's member routes ask the Trading PIN; an API key does not).
 - Types already in FinCopy's API and now in the SDKs: `CmdFxsStgAIBot`, `FxsAIBotStgLimits`, `FxsAIBotStgPair`,
