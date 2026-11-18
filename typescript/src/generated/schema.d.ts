@@ -1026,10 +1026,10 @@ export interface components {
         /**
          * @description Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as
          *                 stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
-         *                 weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,
-         *                 and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change
-         *                 is written to the account log. A member session (the member's screens) that sends any of the three sets gives its Trading PIN
-         *                 in TrPin, as the member's own AIBot settings do; an API key does not.
+         *                 weakest signal (any step of the scale: BUY VSS-VSB, SELL mirrored VSB-VSS) and trend (any step of the scale, or null for Any)
+         *                 accepted, the lowest confidence, and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own
+         *                 AIBot settings are, and a change is written to the account log. A member session (the member's screens) that sends any of the
+         *                 three sets gives its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.
          */
         CmdApiFxsAcctPatch: {
             Enabled?: boolean | null;

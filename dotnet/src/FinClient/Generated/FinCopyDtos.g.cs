@@ -112,10 +112,10 @@ namespace Fin.Copy
     /// <summary>
     /// Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as
     /// <br/>            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
-    /// <br/>            weakest signal (BUY NB-VSB, SELL NS-VSS) and trend (any step of the scale, or null for Any) accepted, the lowest confidence,
-    /// <br/>            and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own AIBot settings are, and a change
-    /// <br/>            is written to the account log. A member session (the member's screens) that sends any of the three sets gives its Trading PIN
-    /// <br/>            in TrPin, as the member's own AIBot settings do; an API key does not.
+    /// <br/>            weakest signal (any step of the scale: BUY VSS-VSB, SELL mirrored VSB-VSS) and trend (any step of the scale, or null for Any)
+    /// <br/>            accepted, the lowest confidence, and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own
+    /// <br/>            AIBot settings are, and a change is written to the account log. A member session (the member's screens) that sends any of the
+    /// <br/>            three sets gives its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CmdApiFxsAcctPatch

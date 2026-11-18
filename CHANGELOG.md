@@ -10,16 +10,18 @@ that FinCopy held twice keep one home. **Breaking:** the removed fields below, a
 - `DecRng` (`Min`, `Def`, `Max`): every number a strategy holds is a range. The account and each pair keep one value, read
   against the strategy's range; a cascade sends each range's `Def`.
 - `SigMins` and `SigMinsRng`, with `Signal`, `Trend` and `Confidence`: the per-side signal minimums (`BuySig`, `SellSig`,
-  `BuyTrd`, `SellTrd` (null = Any), `Conf`, `Score` 0-10). Strategies (`DtoFxsStg`, `CmdFxsStgMake`, `CmdFxsStgPatch`) and
-  accounts (`DtoFxsAcct`) carry `SigCold`, `SigWarm` and `SigHot`; HOT has no score.
+  `BuyTrd`, `SellTrd` (null = Any), `Conf`, `Score` 0-10). A signal minimum may be any step of `Signal` (BUY `VSS`-`VSB`, a BUY
+  passing at or above it; SELL mirrored, `VSB`-`VSS`, passing at or below it; `N` lets a neutral reading through), and a trend
+  minimum any step of `Trend`. Strategies (`DtoFxsStg`, `CmdFxsStgMake`, `CmdFxsStgPatch`) and accounts (`DtoFxsAcct`) carry
+  `SigCold`, `SigWarm` and `SigHot`; HOT has no score.
 - `DtoFxsStgSymRng`: a strategy's symbol template, its numbers as ranges, per side.
 - `FxsFullAutoSettings.OpenPerSide`: most AIBot trades open on one side at once.
 - `DtoFxsAccountState.ISNO`: the strategy the account follows (0 = none).
 - `CmdApiFxsAcctPatch.SigCold`, `SigWarm` and `SigHot`: the account's own three signal sets, each optional (absent leaves it
-  as stored) and replaced whole, checked as the member's own AIBot settings are and written to the account log. A trend
-  minimum may be any step of `Trend` (BUY `VSD`-`VSU`, SELL mirrored), or null for Any. `CmdApiFxsAcctPatch.TrPin`: a member
-  session (cookie or Telegram bearer) that sends any of the three sets gives its Trading PIN, as the member's own AIBot settings
-  do; an API key does not.
+  as stored) and replaced whole, checked as the member's own AIBot settings are and written to the account log. A signal
+  minimum may be any step of `Signal` (BUY `VSS`-`VSB`, SELL mirrored); a trend minimum any step of `Trend` (BUY `VSD`-`VSU`,
+  SELL mirrored), or null for Any. `CmdApiFxsAcctPatch.TrPin`: a member session (cookie or Telegram bearer) that sends any of
+  the three sets gives its Trading PIN, as the member's own AIBot settings do; an API key does not.
 - `DtoFxsStgRank` and `DtoFxsStg.Rank`: a strategy's ranking from its followers' last 30 days, rebuilt by FinCopy each night
   (`Followers`, `Trades`, `Wins`, `PnlAmt`, `EqtBase` and how it was valued, `PnlPct`, `WinPct`, `MaxDDPct`, `Score` 0-100 or
   null for "New" under 10 closed trades, `WinFrom` / `WinTo`). No ratings. `PnlPct` and `MaxDDPct` are null when the followers'
