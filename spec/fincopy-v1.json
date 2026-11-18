@@ -4244,7 +4244,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Change the account's settings, as the member screens do; every change is written to the account log. Needs the\n            Trade permission.",
+        "summary": "Change the account's settings, as the member screens do, its three signal sets included; every change is written\n            to the account log. Needs the Trade permission. A member session that sends a signal set (SigCold, SigWarm or SigHot) gives\n            its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.",
         "operationId": "AccountSettings",
         "parameters": [
           {
@@ -4900,7 +4900,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\n            one of your own or a FinCopy preset (list them with the strategies route).\n            Needs the Trade permission on the account.",
+        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\n            one of your own or a FinCopy preset (list them with the strategies route). EA settings only: a strategy's AIBot settings\n            never travel through this API. Needs the Trade permission on the account.",
         "operationId": "AccountStrategyPreview",
         "parameters": [
           {
@@ -5015,7 +5015,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. Needs the Trade\n            permission on the account.",
+        "summary": "Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. A strategy's AIBot\n            settings never travel this way: AIBot is managed in FinCopy. Needs the Trade permission on the account.",
         "operationId": "AccountStrategyApply",
         "parameters": [
           {
@@ -7439,10 +7439,6 @@
           "SigMode": {
             "$ref": "#/components/schemas/TMode"
           },
-          "EnDcaGate": {
-            "type": "boolean",
-            "nullable": true
-          },
           "DCACooloffMins": {
             "type": "integer",
             "format": "int32",
@@ -7456,10 +7452,23 @@
           },
           "CascadeSymbolDefaults": {
             "type": "boolean"
+          },
+          "SigCold": {
+            "$ref": "#/components/schemas/SigMins"
+          },
+          "SigWarm": {
+            "$ref": "#/components/schemas/SigMins"
+          },
+          "SigHot": {
+            "$ref": "#/components/schemas/SigMins"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "Public API settings patch. Account identity comes from the ACNO route."
+        "description": "Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as\n            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the\n            weakest signal (any step of the scale: BUY VSS-VSB, SELL mirrored VSB-VSS) and trend (any step of the scale, or null for Any)\n            accepted, the lowest confidence, and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own\n            AIBot settings are, and a change is written to the account log. A member session (the member's screens) that sends any of the\n            three sets gives its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not."
       },
       "CmdApiFxsAdopt": {
         "type": "object",
@@ -7800,6 +7809,23 @@
         },
         "additionalProperties": false
       },
+      "CmdFxsStgAIBot": {
+        "type": "object",
+        "properties": {
+          "Limits": {
+            "$ref": "#/components/schemas/FxsAIBotStgLimits"
+          },
+          "PairDefaults": {
+            "$ref": "#/components/schemas/FxsAIBotStgPair"
+          },
+          "Protection": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP496 Q285-A: a strategy's AIBot settings as a save sends them. Sent, its two parts replace the strategy's limits and\n            pair defaults (a null part or a null field is then not part of the strategy and never travels); not sent, both stay as they are.\n            T709: Protection (SL or DCA, the ladder) is the strategy's preference; null leaves it."
+      },
       "CmdFxsStgMake": {
         "type": "object",
         "properties": {
@@ -7823,17 +7849,34 @@
             "$ref": "#/components/schemas/TMode"
           },
           "DCACooloffMins": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "EnDcaGate": {
-            "type": "boolean"
+            "$ref": "#/components/schemas/DecRng"
           },
           "ACCSTG": {
             "$ref": "#/components/schemas/DtoFxsStgAccStg"
           },
           "SYMSTG": {
-            "$ref": "#/components/schemas/DtoFxsStgSymStg"
+            "$ref": "#/components/schemas/DtoFxsStgSymRng"
+          },
+          "AIBot": {
+            "$ref": "#/components/schemas/CmdFxsStgAIBot"
+          },
+          "CopyFrom": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "SigCold": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "SigWarm": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "SigHot": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -7864,22 +7907,40 @@
             "$ref": "#/components/schemas/TMode"
           },
           "DCACooloffMins": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "EnDcaGate": {
-            "type": "boolean",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "ACCSTG": {
             "$ref": "#/components/schemas/DtoFxsStgAccStg"
           },
           "SYMSTG": {
-            "$ref": "#/components/schemas/DtoFxsStgSymStg"
+            "$ref": "#/components/schemas/DtoFxsStgSymRng"
+          },
+          "AIBot": {
+            "$ref": "#/components/schemas/CmdFxsStgAIBot"
+          },
+          "SigCold": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "SigWarm": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "SigHot": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "Clear": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Edits a strategy: each field sent replaces the stored one (a range whole; a set whole). Clear names\n            the nullable ranges to empty (back to \"not part of the strategy\"): ACCSTG.<field> or SYMSTG.<field> of a range field, since a\n            null in ACCSTG / SYMSTG means \"unchanged\". TrPin: the member's Trading PIN (the member routes ask it)."
       },
       "CmdFxsSymbolsEdit": {
         "type": "object",
@@ -8020,6 +8081,35 @@
           "Platform": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Confidence": {
+        "enum": [
+          "None",
+          "VLow",
+          "Low",
+          "Med",
+          "High",
+          "VHigh"
+        ],
+        "type": "string"
+      },
+      "DecRng": {
+        "type": "object",
+        "properties": {
+          "Min": {
+            "type": "number",
+            "format": "double"
+          },
+          "Def": {
+            "type": "number",
+            "format": "double"
+          },
+          "Max": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -9276,6 +9366,11 @@
             "description": "The trading record's number (FxsAcct.ACNO); the Trade window's Pre-info and Make name the account by it.",
             "format": "int64"
           },
+          "ISNO": {
+            "type": "integer",
+            "description": "T709: the strategy the account follows (FxsAcct.ISNO; 0 = none), so a member's strategy page lists its accounts.",
+            "format": "int32"
+          },
           "MARGIN_CCY": {
             "type": "string",
             "nullable": true
@@ -9582,16 +9677,8 @@
             "format": "double",
             "nullable": true
           },
-          "AIBotRiskPct": {
-            "type": "number",
-            "format": "double"
-          },
           "AIBotPropFirm": {
             "type": "boolean"
-          },
-          "AIBotDailyLossPct": {
-            "type": "number",
-            "format": "double"
           },
           "FullAuto": {
             "$ref": "#/components/schemas/FxsFullAutoSettings"
@@ -9649,8 +9736,14 @@
           "SigMode": {
             "$ref": "#/components/schemas/TMode"
           },
-          "EnDcaGate": {
-            "type": "boolean"
+          "SigCold": {
+            "$ref": "#/components/schemas/SigMins"
+          },
+          "SigWarm": {
+            "$ref": "#/components/schemas/SigMins"
+          },
+          "SigHot": {
+            "$ref": "#/components/schemas/SigMins"
           },
           "DCACooloffMins": {
             "type": "integer",
@@ -12358,6 +12451,15 @@
           "SigMode": {
             "$ref": "#/components/schemas/TMode"
           },
+          "SigCold": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "SigWarm": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
+          "SigHot": {
+            "$ref": "#/components/schemas/SigMinsRng"
+          },
           "En": {
             "type": "boolean"
           },
@@ -12371,17 +12473,13 @@
             "$ref": "#/components/schemas/DtoFxsStgAccStg"
           },
           "SYMSTG": {
-            "$ref": "#/components/schemas/DtoFxsStgSymStg"
+            "$ref": "#/components/schemas/DtoFxsStgSymRng"
           },
           "AIBot": {
             "$ref": "#/components/schemas/FxsAIBotStrategy"
           },
           "DCACooloffMins": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "EnDcaGate": {
-            "type": "boolean"
+            "$ref": "#/components/schemas/DecRng"
           },
           "StgLog": {
             "type": "array",
@@ -12389,6 +12487,28 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "AccountCount": {
+            "type": "integer",
+            "description": "TP496 Q284-B: the accounts on this strategy and their enabled pairs (the caller's own, for a member).",
+            "format": "int32"
+          },
+          "PairCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PicFile": {
+            "type": "string",
+            "description": "T709 Q412-A: the picture's file name in FinCopy's media folder (null: none, the screens show the initials).",
+            "nullable": true
+          },
+          "PicUrl": {
+            "type": "string",
+            "description": "T709 Q412-A: the picture's path on the API's origin (`/media/stg/<file>`); null when there is none.",
+            "nullable": true
+          },
+          "Rank": {
+            "$ref": "#/components/schemas/DtoFxsStgRank"
           }
         },
         "additionalProperties": false
@@ -12409,48 +12529,32 @@
             "$ref": "#/components/schemas/RebalanceMode"
           },
           "DAYTP": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "DAYSL": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "DAYSTOP": {
             "type": "boolean",
             "nullable": true
           },
           "POCNT": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "DCAIVMINS": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "POCLSMINS": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "MAXDDFRC": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "MAXDLYSECS": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "SYNCSECS": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/DecRng"
           },
           "CONF": {
             "type": "boolean",
@@ -12461,7 +12565,8 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Wire twin of a strategy's ACCSTG (FxsStgAccStg): its numbers as ranges (T709 Q387-A). No BSON attributes."
       },
       "DtoFxsStgCascadeApplyResult": {
         "type": "object",
@@ -12491,6 +12596,18 @@
             "format": "int32"
           },
           "SellSidesHeld": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AIBotLimitsWritten": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AIBotPairModesChanged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AIBotRefusals": {
             "type": "integer",
             "format": "int32"
           }
@@ -12529,6 +12646,25 @@
         },
         "additionalProperties": false
       },
+      "DtoFxsStgCascadeChange": {
+        "type": "object",
+        "properties": {
+          "Field": {
+            "type": "string",
+            "nullable": true
+          },
+          "From": {
+            "type": "string",
+            "nullable": true
+          },
+          "To": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One field a cascade changes: its name and the value before and after, as text."
+      },
       "DtoFxsStgCascadePair": {
         "type": "object",
         "properties": {
@@ -12555,9 +12691,24 @@
               "type": "string"
             },
             "nullable": true
+          },
+          "AIBot": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsStgCascadeChange"
+            },
+            "nullable": true
+          },
+          "AIBotRefused": {
+            "type": "string",
+            "nullable": true
+          },
+          "ToFullAuto": {
+            "type": "boolean"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "One pair in a cascade preview. TP496 Q285-A: AIBot lists the AIBot mode, exit template and entry rule\n            changes; AIBotRefused names why the pair's AIBot mode is not changed; ToFullAuto marks a pair\n            the cascade puts on Full auto."
       },
       "DtoFxsStgCascadePreview": {
         "type": "object",
@@ -12602,9 +12753,45 @@
           "PairCountChanged": {
             "type": "integer",
             "format": "int32"
+          },
+          "Login": {
+            "type": "string",
+            "nullable": true
+          },
+          "SVRNAME": {
+            "type": "string",
+            "nullable": true
+          },
+          "AIBotLimits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsStgCascadeChange"
+            },
+            "nullable": true
+          },
+          "AIBotLimitsRefused": {
+            "type": "string",
+            "nullable": true
+          },
+          "AdviceTimeAlso": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "nullable": true
+          },
+          "FullAutoPairs": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "AIBotRefusals": {
+            "type": "integer",
+            "format": "int32"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "What a cascade would change on one account. TP496 Q285-A: AIBotLimits lists the AIBot limits it writes,\n            AIBotLimitsRefused names why none are written, AdviceTimeAlso lists the member's other AIBot\n            accounts that take the same advice time (one per member, TP513 Q267-A)."
       },
       "DtoFxsStgCascadePreviewResPonse": {
         "type": "object",
@@ -12674,6 +12861,76 @@
         },
         "additionalProperties": false
       },
+      "DtoFxsStgRank": {
+        "type": "object",
+        "properties": {
+          "ISNO": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Followers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Trades": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Wins": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PnlAmt": {
+            "type": "number",
+            "format": "double"
+          },
+          "EqtBase": {
+            "type": "number",
+            "format": "double"
+          },
+          "BaseAtStart": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "BaseInWin": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "BaseNow": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "PnlPct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "WinPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "MaxDDPct": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Score": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "WinFrom": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "WinTo": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "T709 Q411-A: a strategy's ranking as the strategy list and view routes return it (see FC.Com.Doms.IFxsStgRank).\n            Score null reads \"New\"."
+      },
       "DtoFxsStgResPonse": {
         "type": "object",
         "properties": {
@@ -12705,6 +12962,163 @@
           }
         },
         "additionalProperties": false
+      },
+      "DtoFxsStgSymRng": {
+        "type": "object",
+        "properties": {
+          "BAMODE": {
+            "$ref": "#/components/schemas/AMode"
+          },
+          "SAMODE": {
+            "$ref": "#/components/schemas/AMode"
+          },
+          "BFRATIO": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SFRATIO": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BRISK": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SRISK": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BTRAIL": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "STRAIL": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "BALLOWED": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AMode"
+            },
+            "nullable": true
+          },
+          "SALLOWED": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AMode"
+            },
+            "nullable": true
+          },
+          "BPENDING": {
+            "$ref": "#/components/schemas/AMode"
+          },
+          "SPENDING": {
+            "$ref": "#/components/schemas/AMode"
+          },
+          "REBAL": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "EALVL": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "BCAN": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "SCAN": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "USEPO": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "BNLOT": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SNLOT": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BTPP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "STPP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BSLP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SSLP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BTSP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "STSP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BHRSL": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "SHRSL": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "LOGEXP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BGMAX": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SGMAX": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BLMAX": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SLMAX": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BGMUL": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SGMUL": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BLMUL": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SLMUL": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BLGP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SLGP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BGGP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SGGP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "DCAEXP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "USEDESC": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "BDMUL": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SDMUL": {
+            "$ref": "#/components/schemas/DecRng"
+          }
+        },
+        "additionalProperties": false,
+        "description": "T709: wire twin of a strategy's symbol template with ranges (FxsStgSymRng). This type deliberately has no BSON\n            attributes; the ranges are BizJaya.Core's shared DecRng."
       },
       "DtoFxsStgSymStg": {
         "type": "object",
@@ -13965,6 +14379,17 @@
         },
         "additionalProperties": false
       },
+      "FxsAIBotEntryRules": {
+        "type": "object",
+        "properties": {
+          "NewsFilter": {
+            "type": "boolean",
+            "description": "Skip a side that FinNews of the last 24 hours on the pair's currencies leans against."
+          }
+        },
+        "additionalProperties": false,
+        "description": "T701 (Q8-A): when Full auto opens a side on a FinGraph reading change. T709 (Q378-A, Q385-A): the signal, trend,\n            confidence and score minimums moved into the account's signal sets (FxsAcct.SigWarm, read through the shared SigMinsHlp.Passes);\n            the pair keeps only the FinNews filter."
+      },
       "FxsAIBotPreferences": {
         "type": "object",
         "properties": {
@@ -13974,6 +14399,7 @@
           },
           "Protection": {
             "type": "string",
+            "description": "SL: every trade carries an SL and the book takes no ladder. DCA: a ladder of adds instead of an SL.",
             "nullable": true
           },
           "AllowedExitModes": {
@@ -13982,20 +14408,58 @@
               "type": "string"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The New bot wizard's policy boundaries for the model. T709 (Q396-A): one home per fact: the ladder is Protection DCA\n            (LadderEnabled went), the most levels and groups are SYMSTG.BLMAX / BGMAX (MaxLayers went), the hard SL is SYMSTG.BHRSL / SHRSL\n            (StopStyle went)."
+      },
+      "FxsAIBotStgLimits": {
+        "type": "object",
+        "properties": {
+          "SafetySlPct": {
+            "$ref": "#/components/schemas/DecRng"
           },
-          "StopStyle": {
+          "OpenPerSide": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BreakerMode": {
             "type": "string",
             "nullable": true
           },
-          "LadderEnabled": {
-            "type": "boolean"
+          "TradingHours": {
+            "type": "string",
+            "nullable": true
           },
-          "MaxLayers": {
-            "type": "integer",
-            "format": "int32"
+          "MaximumHold": {
+            "type": "string",
+            "nullable": true
+          },
+          "AdviceMode": {
+            "type": "string",
+            "nullable": true
+          },
+          "AdviceTime": {
+            "type": "string",
+            "description": "TP513 Q267-A: one per member. A cascade that writes it on an AIBot account writes it on all the member's AIBot accounts.",
+            "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "TP496 Q285-A: the AIBot limits a strategy carries to the accounts on it, the fields of FC.Com.Doms.FxsFullAutoSettings\n            a member edits on the AIBot page. Never the switch (State), the grant, the breaker's state or a counter: those stay each\n            account's. A null field is not part of the strategy and never travels; a cascade writes only the fields the strategy holds.\n            T709: the numbers are ranges (Q387-A), a cascade sends each one's Def (Q389-A); the risk dial and its ceiling are gone (Q375-A);\n            FC.Com.Doms.FxsAIBotStgLimits.OpenPerSide is the dial step's \"most open per side\" standing on its own. The daily loss is ACCSTG.DAYSL, the\n            field the EA reads (Q396-A)."
+      },
+      "FxsAIBotStgPair": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "type": "string",
+            "nullable": true
+          },
+          "Entry": {
+            "$ref": "#/components/schemas/FxsAIBotEntryRules"
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP496 Q285-A: the defaults a strategy carries to its accounts' pairs: AIBot's mode (OFF, EXITS, FULL) and the entry\n            rules of FC.Com.Doms.FxsAIBotPair. A null part is not part of the strategy and never travels. T709 (Q396-A): AIBot's exit\n            template went; a pair's TP, SL and TS are its SYMSTG's per-side fields, which the strategy's SYMSTG carries."
       },
       "FxsAIBotStrategy": {
         "type": "object",
@@ -14010,10 +14474,16 @@
           "PlaybookVersionId": {
             "type": "string",
             "nullable": true
+          },
+          "Limits": {
+            "$ref": "#/components/schemas/FxsAIBotStgLimits"
+          },
+          "PairDefaults": {
+            "$ref": "#/components/schemas/FxsAIBotStgPair"
           }
         },
         "additionalProperties": false,
-        "description": "Strategy-wide AI preferences. These are policy boundaries for the model, not a trade plan."
+        "description": "A strategy's AIBot block. FC.Com.Doms.FxsAIBotStrategy.Preferences are the New bot wizard's policy boundaries for the model, not a\n            trade plan. TP496 Q285-A: FC.Com.Doms.FxsAIBotStrategy.Limits and FC.Com.Doms.FxsAIBotStrategy.PairDefaults are the AIBot settings the strategy carries to\n            its accounts and their pairs through a cascade, as its ACCSTG and SYMSTG carry the EA settings."
       },
       "FxsCloseReason": {
         "enum": [
@@ -14073,10 +14543,6 @@
             "format": "date-time",
             "nullable": true
           },
-          "DailyLossPct": {
-            "type": "number",
-            "format": "double"
-          },
           "TradingHours": {
             "type": "string",
             "nullable": true
@@ -14090,27 +14556,19 @@
             "description": "T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.",
             "format": "double"
           },
-          "RiskDial": {
-            "type": "string",
-            "description": "T701 (Q11-A): the risk dial, CAREFUL / BALANCED / BOLD; AIAdvisor moves it one step, never above the ceiling.",
-            "nullable": true
-          },
-          "RiskCeiling": {
-            "type": "string",
-            "description": "T701 (Q11-A): the highest dial step the member allows AIAdvisor to set.",
-            "nullable": true
+          "OpenPerSide": {
+            "type": "integer",
+            "description": "T709 (Q375-A): most AIBot trades open on one side at once (the risk dial's \"most open per side\", standing on its\n            own). It counts on a GRID side; every other method opens only on a flat side.",
+            "format": "int32"
           },
           "AdviceMode": {
             "type": "string",
             "description": "T701 (Q10-C): ASK (Ask me first, the default) or APPLY (Apply advice by itself).",
             "nullable": true
           },
-          "AdviceTimes": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "T701 Phase 4.2: UTC times of day (\"HH:mm\"), one to four. T703 (Q46-A): AIAdvisor advises once per member per\n            UTC day, in one call for all of the member's AIBot accounts, at the earliest of these times across those accounts; the\n            other times are kept and do not start a call. A stance lasts until the next such time.",
+          "AdviceTime": {
+            "type": "string",
+            "description": "TP513 Q267-A: the UTC time of day (\"HH:mm\") AIAdvisor advises at, one per member (saving it on one AIBot account\n            saves it on all the member's AIBot accounts). AIAdvisor advises once per member per UTC day, in one call for all of the\n            member's AIBot accounts, at the earliest of the accounts' times (an account granted later may still hold its own default\n            until the member saves). A stance lasts until the next such time.",
             "nullable": true
           },
           "AdviceCallsToday": {
@@ -14317,6 +14775,100 @@
         },
         "additionalProperties": false
       },
+      "SigMins": {
+        "type": "object",
+        "properties": {
+          "Score": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BuySig": {
+            "$ref": "#/components/schemas/Signal"
+          },
+          "BuySig_": {
+            "$ref": "#/components/schemas/Signal"
+          },
+          "SellSig": {
+            "$ref": "#/components/schemas/Signal"
+          },
+          "SellSig_": {
+            "$ref": "#/components/schemas/Signal"
+          },
+          "BuyTrd": {
+            "$ref": "#/components/schemas/Trend"
+          },
+          "BuyTrd_": {
+            "$ref": "#/components/schemas/Trend"
+          },
+          "SellTrd": {
+            "$ref": "#/components/schemas/Trend"
+          },
+          "SellTrd_": {
+            "$ref": "#/components/schemas/Trend"
+          },
+          "Conf": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "Conf_": {
+            "$ref": "#/components/schemas/Confidence"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SigMinsRng": {
+        "type": "object",
+        "properties": {
+          "Score": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BuySig": {
+            "$ref": "#/components/schemas/Signal"
+          },
+          "BuySig_": {
+            "$ref": "#/components/schemas/Signal"
+          },
+          "SellSig": {
+            "$ref": "#/components/schemas/Signal"
+          },
+          "SellSig_": {
+            "$ref": "#/components/schemas/Signal"
+          },
+          "BuyTrd": {
+            "$ref": "#/components/schemas/Trend"
+          },
+          "BuyTrd_": {
+            "$ref": "#/components/schemas/Trend"
+          },
+          "SellTrd": {
+            "$ref": "#/components/schemas/Trend"
+          },
+          "SellTrd_": {
+            "$ref": "#/components/schemas/Trend"
+          },
+          "Conf": {
+            "$ref": "#/components/schemas/Confidence"
+          },
+          "Conf_": {
+            "$ref": "#/components/schemas/Confidence"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Signal": {
+        "enum": [
+          "N",
+          "NB",
+          "B",
+          "SB",
+          "VSB",
+          "VSS",
+          "SS",
+          "S",
+          "NS"
+        ],
+        "type": "string"
+      },
       "TMode": {
         "enum": [
           "NONE",
@@ -14349,6 +14901,20 @@
           "NeedsAddress",
           "LoginFailed",
           "CredentialsMissing"
+        ],
+        "type": "string"
+      },
+      "Trend": {
+        "enum": [
+          "N",
+          "NU",
+          "U",
+          "SU",
+          "VSU",
+          "VSD",
+          "SD",
+          "D",
+          "ND"
         ],
         "type": "string"
       }
