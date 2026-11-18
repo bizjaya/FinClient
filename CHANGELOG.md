@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.9.0 (2026-11-17)
+## 0.9.0 (2026-11-18)
 
 Regenerated from FinCopy's T709 API document. FinCopy strategies now hold ranges and per-side signal sets; several facts
 that FinCopy held twice keep one home. **Breaking:** the removed fields below, and strategy numbers that were plain numbers.
