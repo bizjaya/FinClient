@@ -561,8 +561,9 @@ export interface paths {
         options?: never;
         head?: never;
         /**
-         * Change the account's settings, as the member screens do; every change is written to the account log. Needs the
-         *                 Trade permission.
+         * Change the account's settings, as the member screens do, its three signal sets included; every change is written
+         *                 to the account log. Needs the Trade permission. A member session that sends a signal set (SigCold, SigWarm or SigHot) gives
+         *                 its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.
          */
         patch: operations["AccountSettings"];
         trace?: never;
@@ -650,8 +651,8 @@ export interface paths {
         put?: never;
         /**
          * What applying a strategy to this account would change, per symbol, without changing anything. The strategy is
-         *                 one of your own or a FinCopy preset (list them with the strategies route).
-         *                 Needs the Trade permission on the account.
+         *                 one of your own or a FinCopy preset (list them with the strategies route). EA settings only: a strategy's AIBot settings
+         *                 never travel through this API. Needs the Trade permission on the account.
          */
         post: operations["AccountStrategyPreview"];
         delete?: never;
@@ -671,8 +672,8 @@ export interface paths {
         put?: never;
         /**
          * Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a
-         *                 side that holds orders keeps what it must keep. The reply counts what changed and what was held. Needs the Trade
-         *                 permission on the account.
+         *                 side that holds orders keeps what it must keep. The reply counts what changed and what was held. A strategy's AIBot
+         *                 settings never travel this way: AIBot is managed in FinCopy. Needs the Trade permission on the account.
          */
         post: operations["AccountStrategyApply"];
         delete?: never;
@@ -1022,18 +1023,28 @@ export interface components {
         BrokerServerEnvironment: "Demo" | "Live" | "Unknown";
         /** @enum {string} */
         BrokerServerStatus: "Submitted" | "Verified" | "Retired";
-        /** @description Public API settings patch. Account identity comes from the ACNO route. */
+        /**
+         * @description Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as
+         *                 stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
+         *                 weakest signal (any step of the scale: BUY VSS-VSB, SELL mirrored VSB-VSS) and trend (any step of the scale, or null for Any)
+         *                 accepted, the lowest confidence, and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own
+         *                 AIBot settings are, and a change is written to the account log. A member session (the member's screens) that sends any of the
+         *                 three sets gives its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.
+         */
         CmdApiFxsAcctPatch: {
             Enabled?: boolean | null;
             /** Format: int32 */
             ISNO?: number | null;
             SigMode?: components["schemas"]["TMode"];
-            EnDcaGate?: boolean | null;
             /** Format: int32 */
             DCACooloffMins?: number | null;
             AccStg?: components["schemas"]["DtoEAAccStg"];
             SymbolDefaults?: components["schemas"]["DtoFxsStgSymStg"];
             CascadeSymbolDefaults?: boolean;
+            SigCold?: components["schemas"]["SigMins"];
+            SigWarm?: components["schemas"]["SigMins"];
+            SigHot?: components["schemas"]["SigMins"];
+            TrPin?: string | null;
         };
         /**
          * @description T709 (Q257-A): press "Adopt open trades" for the account in the route. Preview returns what would happen and writes
@@ -1159,6 +1170,16 @@ export interface components {
             NoMatch?: boolean;
             PreviewOnly?: boolean | null;
         };
+        /**
+         * @description TP496 Q285-A: a strategy's AIBot settings as a save sends them. Sent, its two parts replace the strategy's limits and
+         *                 pair defaults (a null part or a null field is then not part of the strategy and never travels); not sent, both stay as they are.
+         *                 T709: Protection (SL or DCA, the ladder) is the strategy's preference; null leaves it.
+         */
+        CmdFxsStgAIBot: {
+            Limits?: components["schemas"]["FxsAIBotStgLimits"];
+            PairDefaults?: components["schemas"]["FxsAIBotStgPair"];
+            Protection?: string | null;
+        };
         CmdFxsStgMake: {
             StratName?: string | null;
             RiskLev?: components["schemas"]["FxsRiskLev"];
@@ -1166,12 +1187,22 @@ export interface components {
             EnAvg?: boolean;
             Virtual?: boolean;
             SigMode?: components["schemas"]["TMode"];
-            /** Format: int32 */
-            DCACooloffMins?: number;
-            EnDcaGate?: boolean;
+            DCACooloffMins?: components["schemas"]["DecRng"];
             ACCSTG?: components["schemas"]["DtoFxsStgAccStg"];
-            SYMSTG?: components["schemas"]["DtoFxsStgSymStg"];
+            SYMSTG?: components["schemas"]["DtoFxsStgSymRng"];
+            AIBot?: components["schemas"]["CmdFxsStgAIBot"];
+            /** Format: int32 */
+            CopyFrom?: number | null;
+            SigCold?: components["schemas"]["SigMinsRng"];
+            SigWarm?: components["schemas"]["SigMinsRng"];
+            SigHot?: components["schemas"]["SigMinsRng"];
+            TrPin?: string | null;
         };
+        /**
+         * @description Edits a strategy: each field sent replaces the stored one (a range whole; a set whole). Clear names
+         *                 the nullable ranges to empty (back to "not part of the strategy"): ACCSTG.<field> or SYMSTG.<field> of a range field, since a
+         *                 null in ACCSTG / SYMSTG means "unchanged". TrPin: the member's Trading PIN (the member routes ask it).
+         */
         CmdFxsStgPatch: {
             StratName?: string | null;
             RiskLev?: components["schemas"]["FxsRiskLev"];
@@ -1179,11 +1210,15 @@ export interface components {
             EnAvg?: boolean | null;
             Virtual?: boolean | null;
             SigMode?: components["schemas"]["TMode"];
-            /** Format: int32 */
-            DCACooloffMins?: number | null;
-            EnDcaGate?: boolean | null;
+            DCACooloffMins?: components["schemas"]["DecRng"];
             ACCSTG?: components["schemas"]["DtoFxsStgAccStg"];
-            SYMSTG?: components["schemas"]["DtoFxsStgSymStg"];
+            SYMSTG?: components["schemas"]["DtoFxsStgSymRng"];
+            AIBot?: components["schemas"]["CmdFxsStgAIBot"];
+            SigCold?: components["schemas"]["SigMinsRng"];
+            SigWarm?: components["schemas"]["SigMinsRng"];
+            SigHot?: components["schemas"]["SigMinsRng"];
+            Clear?: string[] | null;
+            TrPin?: string | null;
         };
         /** @description Add or remove symbols from the account's enabled list. */
         CmdFxsSymbolsEdit: {
@@ -1224,6 +1259,16 @@ export interface components {
         CmdWaitlistJoin: {
             Kind?: string | null;
             Platform?: string | null;
+        };
+        /** @enum {string} */
+        Confidence: "None" | "VLow" | "Low" | "Med" | "High" | "VHigh";
+        DecRng: {
+            /** Format: double */
+            Min?: number;
+            /** Format: double */
+            Def?: number;
+            /** Format: double */
+            Max?: number;
         };
         /** @enum {string} */
         DeployKind: "Provision" | "Upgrade" | "Rollback" | "Remove" | "Start" | "Stop" | "Restart";
@@ -1642,6 +1687,11 @@ export interface components {
              * @description The trading record's number (FxsAcct.ACNO); the Trade window's Pre-info and Make name the account by it.
              */
             ACNO?: number;
+            /**
+             * Format: int32
+             * @description T709: the strategy the account follows (FxsAcct.ISNO; 0 = none), so a member's strategy page lists its accounts.
+             */
+            ISNO?: number;
             MARGIN_CCY?: string | null;
             /** @description Whether the account's broker server is a demo server. */
             Virtual?: boolean;
@@ -1740,11 +1790,7 @@ export interface components {
             ACCTMGNSOMODE?: string | null;
             /** Format: double */
             STARTBAL?: number | null;
-            /** Format: double */
-            AIBotRiskPct?: number;
             AIBotPropFirm?: boolean;
-            /** Format: double */
-            AIBotDailyLossPct?: number;
             FullAuto?: components["schemas"]["FxsFullAutoSettings"];
             /** Format: double */
             ABSPNLAMT?: number | null;
@@ -1767,7 +1813,9 @@ export interface components {
             /** Format: int32 */
             ISNO?: number;
             SigMode?: components["schemas"]["TMode"];
-            EnDcaGate?: boolean;
+            SigCold?: components["schemas"]["SigMins"];
+            SigWarm?: components["schemas"]["SigMins"];
+            SigHot?: components["schemas"]["SigMins"];
             /** Format: int32 */
             DCACooloffMins?: number;
             /** Format: int32 */
@@ -2729,39 +2777,45 @@ export interface components {
             StratName?: string | null;
             RiskLev?: components["schemas"]["FxsRiskLev"];
             SigMode?: components["schemas"]["TMode"];
+            SigCold?: components["schemas"]["SigMinsRng"];
+            SigWarm?: components["schemas"]["SigMinsRng"];
+            SigHot?: components["schemas"]["SigMinsRng"];
             En?: boolean;
             EnAvg?: boolean;
             Virtual?: boolean;
             ACCSTG?: components["schemas"]["DtoFxsStgAccStg"];
-            SYMSTG?: components["schemas"]["DtoFxsStgSymStg"];
+            SYMSTG?: components["schemas"]["DtoFxsStgSymRng"];
             AIBot?: components["schemas"]["FxsAIBotStrategy"];
-            /** Format: int32 */
-            DCACooloffMins?: number;
-            EnDcaGate?: boolean;
+            DCACooloffMins?: components["schemas"]["DecRng"];
             StgLog?: string[] | null;
+            /**
+             * Format: int32
+             * @description TP496 Q284-B: the accounts on this strategy and their enabled pairs (the caller's own, for a member).
+             */
+            AccountCount?: number;
+            /** Format: int32 */
+            PairCount?: number;
+            /** @description T709 Q412-A: the picture's file name in FinCopy's media folder (null: none, the screens show the initials). */
+            PicFile?: string | null;
+            /** @description T709 Q412-A: the picture's path on the API's origin (`/media/stg/<file>`); null when there is none. */
+            PicUrl?: string | null;
+            Rank?: components["schemas"]["DtoFxsStgRank"];
         };
+        /** @description Wire twin of a strategy's ACCSTG (FxsStgAccStg): its numbers as ranges (T709 Q387-A). No BSON attributes. */
         DtoFxsStgAccStg: {
             EntMode?: components["schemas"]["TMode"];
             TRDSRC?: components["schemas"]["TRDSRC"];
             AvgMode?: components["schemas"]["TMode"];
             REBALMODE?: components["schemas"]["RebalanceMode"];
-            /** Format: double */
-            DAYTP?: number | null;
-            /** Format: double */
-            DAYSL?: number | null;
+            DAYTP?: components["schemas"]["DecRng"];
+            DAYSL?: components["schemas"]["DecRng"];
             DAYSTOP?: boolean | null;
-            /** Format: int32 */
-            POCNT?: number | null;
-            /** Format: int32 */
-            DCAIVMINS?: number | null;
-            /** Format: int32 */
-            POCLSMINS?: number | null;
-            /** Format: double */
-            MAXDDFRC?: number | null;
-            /** Format: int32 */
-            MAXDLYSECS?: number | null;
-            /** Format: int32 */
-            SYNCSECS?: number | null;
+            POCNT?: components["schemas"]["DecRng"];
+            DCAIVMINS?: components["schemas"]["DecRng"];
+            POCLSMINS?: components["schemas"]["DecRng"];
+            MAXDDFRC?: components["schemas"]["DecRng"];
+            MAXDLYSECS?: components["schemas"]["DecRng"];
+            SYNCSECS?: components["schemas"]["DecRng"];
             CONF?: boolean | null;
             DCAGATE?: boolean | null;
         };
@@ -2780,6 +2834,12 @@ export interface components {
             BuySidesHeld?: number;
             /** Format: int32 */
             SellSidesHeld?: number;
+            /** Format: int32 */
+            AIBotLimitsWritten?: number;
+            /** Format: int32 */
+            AIBotPairModesChanged?: number;
+            /** Format: int32 */
+            AIBotRefusals?: number;
         };
         DtoFxsStgCascadeApplyResultResPonse: {
             data?: components["schemas"]["DtoFxsStgCascadeApplyResult"];
@@ -2790,13 +2850,32 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        /** @description One field a cascade changes: its name and the value before and after, as text. */
+        DtoFxsStgCascadeChange: {
+            Field?: string | null;
+            From?: string | null;
+            To?: string | null;
+        };
+        /**
+         * @description One pair in a cascade preview. TP496 Q285-A: AIBot lists the AIBot mode, exit template and entry rule
+         *                 changes; AIBotRefused names why the pair's AIBot mode is not changed; ToFullAuto marks a pair
+         *                 the cascade puts on Full auto.
+         */
         DtoFxsStgCascadePair: {
             SYM?: string | null;
             BuyHeld?: boolean;
             SellHeld?: boolean;
             FieldsToWrite?: string[] | null;
             FieldsHeld?: string[] | null;
+            AIBot?: components["schemas"]["DtoFxsStgCascadeChange"][] | null;
+            AIBotRefused?: string | null;
+            ToFullAuto?: boolean;
         };
+        /**
+         * @description What a cascade would change on one account. TP496 Q285-A: AIBotLimits lists the AIBot limits it writes,
+         *                 AIBotLimitsRefused names why none are written, AdviceTimeAlso lists the member's other AIBot
+         *                 accounts that take the same advice time (one per member, TP513 Q267-A).
+         */
         DtoFxsStgCascadePreview: {
             /** Format: int32 */
             ISNO?: number;
@@ -2813,6 +2892,15 @@ export interface components {
             SellHeldCount?: number;
             /** Format: int32 */
             PairCountChanged?: number;
+            Login?: string | null;
+            SVRNAME?: string | null;
+            AIBotLimits?: components["schemas"]["DtoFxsStgCascadeChange"][] | null;
+            AIBotLimitsRefused?: string | null;
+            AdviceTimeAlso?: number[] | null;
+            /** Format: int32 */
+            FullAutoPairs?: number;
+            /** Format: int32 */
+            AIBotRefusals?: number;
         };
         DtoFxsStgCascadePreviewResPonse: {
             data?: components["schemas"]["DtoFxsStgCascadePreview"];
@@ -2832,6 +2920,42 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        /**
+         * @description T709 Q411-A: a strategy's ranking as the strategy list and view routes return it (see FC.Com.Doms.IFxsStgRank).
+         *                 Score null reads "New".
+         */
+        DtoFxsStgRank: {
+            /** Format: int32 */
+            ISNO?: number;
+            /** Format: int32 */
+            Followers?: number;
+            /** Format: int32 */
+            Trades?: number;
+            /** Format: int32 */
+            Wins?: number;
+            /** Format: double */
+            PnlAmt?: number;
+            /** Format: double */
+            EqtBase?: number;
+            /** Format: int32 */
+            BaseAtStart?: number;
+            /** Format: int32 */
+            BaseInWin?: number;
+            /** Format: int32 */
+            BaseNow?: number;
+            /** Format: double */
+            PnlPct?: number | null;
+            /** Format: double */
+            WinPct?: number;
+            /** Format: double */
+            MaxDDPct?: number | null;
+            /** Format: int32 */
+            Score?: number | null;
+            /** Format: date-time */
+            WinFrom?: string;
+            /** Format: date-time */
+            WinTo?: string;
+        };
         DtoFxsStgResPonse: {
             data?: components["schemas"]["DtoFxsStg"];
             /** Format: int32 */
@@ -2840,6 +2964,56 @@ export interface components {
             message?: string | null;
             errors?: string[] | null;
             chksum?: string | null;
+        };
+        /**
+         * @description T709: wire twin of a strategy's symbol template with ranges (FxsStgSymRng). This type deliberately has no BSON
+         *                 attributes; the ranges are BizJaya.Core's shared DecRng.
+         */
+        DtoFxsStgSymRng: {
+            BAMODE?: components["schemas"]["AMode"];
+            SAMODE?: components["schemas"]["AMode"];
+            BFRATIO?: components["schemas"]["DecRng"];
+            SFRATIO?: components["schemas"]["DecRng"];
+            BRISK?: components["schemas"]["DecRng"];
+            SRISK?: components["schemas"]["DecRng"];
+            BTRAIL?: boolean | null;
+            STRAIL?: boolean | null;
+            BALLOWED?: components["schemas"]["AMode"][] | null;
+            SALLOWED?: components["schemas"]["AMode"][] | null;
+            BPENDING?: components["schemas"]["AMode"];
+            SPENDING?: components["schemas"]["AMode"];
+            REBAL?: boolean | null;
+            EALVL?: boolean | null;
+            BCAN?: boolean | null;
+            SCAN?: boolean | null;
+            USEPO?: boolean | null;
+            BNLOT?: components["schemas"]["DecRng"];
+            SNLOT?: components["schemas"]["DecRng"];
+            BTPP?: components["schemas"]["DecRng"];
+            STPP?: components["schemas"]["DecRng"];
+            BSLP?: components["schemas"]["DecRng"];
+            SSLP?: components["schemas"]["DecRng"];
+            BTSP?: components["schemas"]["DecRng"];
+            STSP?: components["schemas"]["DecRng"];
+            BHRSL?: boolean | null;
+            SHRSL?: boolean | null;
+            LOGEXP?: components["schemas"]["DecRng"];
+            BGMAX?: components["schemas"]["DecRng"];
+            SGMAX?: components["schemas"]["DecRng"];
+            BLMAX?: components["schemas"]["DecRng"];
+            SLMAX?: components["schemas"]["DecRng"];
+            BGMUL?: components["schemas"]["DecRng"];
+            SGMUL?: components["schemas"]["DecRng"];
+            BLMUL?: components["schemas"]["DecRng"];
+            SLMUL?: components["schemas"]["DecRng"];
+            BLGP?: components["schemas"]["DecRng"];
+            SLGP?: components["schemas"]["DecRng"];
+            BGGP?: components["schemas"]["DecRng"];
+            SGGP?: components["schemas"]["DecRng"];
+            DCAEXP?: components["schemas"]["DecRng"];
+            USEDESC?: boolean | null;
+            BDMUL?: components["schemas"]["DecRng"];
+            SDMUL?: components["schemas"]["DecRng"];
         };
         /** @description Wire twin of the account symbol template. This type deliberately has no BSON attributes. */
         DtoFxsStgSymStg: {
@@ -3262,20 +3436,64 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        /**
+         * @description T701 (Q8-A): when Full auto opens a side on a FinGraph reading change. T709 (Q378-A, Q385-A): the signal, trend,
+         *                 confidence and score minimums moved into the account's signal sets (FxsAcct.SigWarm, read through the shared SigMinsHlp.Passes);
+         *                 the pair keeps only the FinNews filter.
+         */
+        FxsAIBotEntryRules: {
+            /** @description Skip a side that FinNews of the last 24 hours on the pair's currencies leans against. */
+            NewsFilter?: boolean;
+        };
+        /**
+         * @description The New bot wizard's policy boundaries for the model. T709 (Q396-A): one home per fact: the ladder is Protection DCA
+         *                 (LadderEnabled went), the most levels and groups are SYMSTG.BLMAX / BGMAX (MaxLayers went), the hard SL is SYMSTG.BHRSL / SHRSL
+         *                 (StopStyle went).
+         */
         FxsAIBotPreferences: {
             Horizon?: string | null;
+            /** @description SL: every trade carries an SL and the book takes no ladder. DCA: a ladder of adds instead of an SL. */
             Protection?: string | null;
             AllowedExitModes?: string[] | null;
-            StopStyle?: string | null;
-            LadderEnabled?: boolean;
-            /** Format: int32 */
-            MaxLayers?: number;
         };
-        /** @description Strategy-wide AI preferences. These are policy boundaries for the model, not a trade plan. */
+        /**
+         * @description TP496 Q285-A: the AIBot limits a strategy carries to the accounts on it, the fields of FC.Com.Doms.FxsFullAutoSettings
+         *                 a member edits on the AIBot page. Never the switch (State), the grant, the breaker's state or a counter: those stay each
+         *                 account's. A null field is not part of the strategy and never travels; a cascade writes only the fields the strategy holds.
+         *                 T709: the numbers are ranges (Q387-A), a cascade sends each one's Def (Q389-A); the risk dial and its ceiling are gone (Q375-A);
+         *                 FC.Com.Doms.FxsAIBotStgLimits.OpenPerSide is the dial step's "most open per side" standing on its own. The daily loss is ACCSTG.DAYSL, the
+         *                 field the EA reads (Q396-A).
+         */
+        FxsAIBotStgLimits: {
+            SafetySlPct?: components["schemas"]["DecRng"];
+            OpenPerSide?: components["schemas"]["DecRng"];
+            BreakerMode?: string | null;
+            TradingHours?: string | null;
+            MaximumHold?: string | null;
+            AdviceMode?: string | null;
+            /** @description TP513 Q267-A: one per member. A cascade that writes it on an AIBot account writes it on all the member's AIBot accounts. */
+            AdviceTime?: string | null;
+        };
+        /**
+         * @description TP496 Q285-A: the defaults a strategy carries to its accounts' pairs: AIBot's mode (OFF, EXITS, FULL) and the entry
+         *                 rules of FC.Com.Doms.FxsAIBotPair. A null part is not part of the strategy and never travels. T709 (Q396-A): AIBot's exit
+         *                 template went; a pair's TP, SL and TS are its SYMSTG's per-side fields, which the strategy's SYMSTG carries.
+         */
+        FxsAIBotStgPair: {
+            Mode?: string | null;
+            Entry?: components["schemas"]["FxsAIBotEntryRules"];
+        };
+        /**
+         * @description A strategy's AIBot block. FC.Com.Doms.FxsAIBotStrategy.Preferences are the New bot wizard's policy boundaries for the model, not a
+         *                 trade plan. TP496 Q285-A: FC.Com.Doms.FxsAIBotStrategy.Limits and FC.Com.Doms.FxsAIBotStrategy.PairDefaults are the AIBot settings the strategy carries to
+         *                 its accounts and their pairs through a cascade, as its ACCSTG and SYMSTG carry the EA settings.
+         */
         FxsAIBotStrategy: {
             Kind?: string | null;
             Preferences?: components["schemas"]["FxsAIBotPreferences"];
             PlaybookVersionId?: string | null;
+            Limits?: components["schemas"]["FxsAIBotStgLimits"];
+            PairDefaults?: components["schemas"]["FxsAIBotStgPair"];
         };
         /**
          * @description Why a leg closed, as the EA reports it (`CRSN`).
@@ -3303,8 +3521,6 @@ export interface components {
             LearningCallsToday?: number;
             /** Format: date-time */
             LearningCallDayKey?: string | null;
-            /** Format: double */
-            DailyLossPct?: number;
             TradingHours?: string | null;
             MaximumHold?: string | null;
             /**
@@ -3312,18 +3528,21 @@ export interface components {
              * @description T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.
              */
             SafetySlPct?: number;
-            /** @description T701 (Q11-A): the risk dial, CAREFUL / BALANCED / BOLD; AIAdvisor moves it one step, never above the ceiling. */
-            RiskDial?: string | null;
-            /** @description T701 (Q11-A): the highest dial step the member allows AIAdvisor to set. */
-            RiskCeiling?: string | null;
+            /**
+             * Format: int32
+             * @description T709 (Q375-A): most AIBot trades open on one side at once (the risk dial's "most open per side", standing on its
+             *                 own). It counts on a GRID side; every other method opens only on a flat side.
+             */
+            OpenPerSide?: number;
             /** @description T701 (Q10-C): ASK (Ask me first, the default) or APPLY (Apply advice by itself). */
             AdviceMode?: string | null;
             /**
-             * @description T701 Phase 4.2: UTC times of day ("HH:mm"), one to four. T703 (Q46-A): AIAdvisor advises once per member per
-             *                 UTC day, in one call for all of the member's AIBot accounts, at the earliest of these times across those accounts; the
-             *                 other times are kept and do not start a call. A stance lasts until the next such time.
+             * @description TP513 Q267-A: the UTC time of day ("HH:mm") AIAdvisor advises at, one per member (saving it on one AIBot account
+             *                 saves it on all the member's AIBot accounts). AIAdvisor advises once per member per UTC day, in one call for all of the
+             *                 member's AIBot accounts, at the earliest of the accounts' times (an account granted later may still hold its own default
+             *                 until the member saves). A stance lasts until the next such time.
              */
-            AdviceTimes?: string[] | null;
+            AdviceTime?: string | null;
             /**
              * Format: int32
              * @description T703: the member's AIAdvisor calls today (scheduled and Advise now), copied onto each of the member's accounts
@@ -3384,6 +3603,35 @@ export interface components {
             /** Format: int64 */
             resCount?: number;
         };
+        SigMins: {
+            /** Format: double */
+            Score?: number | null;
+            BuySig?: components["schemas"]["Signal"];
+            BuySig_?: components["schemas"]["Signal"];
+            SellSig?: components["schemas"]["Signal"];
+            SellSig_?: components["schemas"]["Signal"];
+            BuyTrd?: components["schemas"]["Trend"];
+            BuyTrd_?: components["schemas"]["Trend"];
+            SellTrd?: components["schemas"]["Trend"];
+            SellTrd_?: components["schemas"]["Trend"];
+            Conf?: components["schemas"]["Confidence"];
+            Conf_?: components["schemas"]["Confidence"];
+        };
+        SigMinsRng: {
+            Score?: components["schemas"]["DecRng"];
+            BuySig?: components["schemas"]["Signal"];
+            BuySig_?: components["schemas"]["Signal"];
+            SellSig?: components["schemas"]["Signal"];
+            SellSig_?: components["schemas"]["Signal"];
+            BuyTrd?: components["schemas"]["Trend"];
+            BuyTrd_?: components["schemas"]["Trend"];
+            SellTrd?: components["schemas"]["Trend"];
+            SellTrd_?: components["schemas"]["Trend"];
+            Conf?: components["schemas"]["Confidence"];
+            Conf_?: components["schemas"]["Confidence"];
+        };
+        /** @enum {string} */
+        Signal: "N" | "NB" | "B" | "SB" | "VSB" | "VSS" | "SS" | "S" | "NS";
         /** @enum {string} */
         TMode: "NONE" | "AUTO" | "HYBRID" | "MANUAL";
         /** @enum {string} */
@@ -3392,6 +3640,8 @@ export interface components {
         TermAccountKind: "Customer" | "Demo";
         /** @enum {string} */
         TerminalConnectionState: "Unknown" | "Connected" | "Disconnected" | "NeedsAddress" | "LoginFailed" | "CredentialsMissing";
+        /** @enum {string} */
+        Trend: "N" | "NU" | "U" | "SU" | "VSU" | "VSD" | "SD" | "D" | "ND";
     };
     responses: never;
     parameters: never;
