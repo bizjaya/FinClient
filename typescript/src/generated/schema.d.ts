@@ -1009,7 +1009,19 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {string} */
-        AMode: "NONE" | "DCAW" | "DCAG" | "GRID" | "CONT" | "FIRR" | "COPY";
+        AMode: "NONE" | "WDCA" | "GDCA" | "GRID" | "CONT" | "FIRR" | "COPY";
+        AModeBotPick: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["AMode"];
+            Opts?: components["schemas"]["AMode"][] | null;
+        };
+        BooleanBotPick: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: boolean;
+            Opts?: boolean[] | null;
+        };
         BooleanResPonse: {
             data?: boolean;
             /** Format: int32 */
@@ -1019,6 +1031,18 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        BotDec: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            /** Format: double */
+            Val?: number;
+            /** Format: double */
+            Min?: number | null;
+            /** Format: double */
+            Max?: number | null;
+        };
+        /** @enum {string} */
+        BotValMode: "FIXED" | "RANGE" | "STRAT";
         /** @enum {string} */
         BrokerServerEnvironment: "Demo" | "Live" | "Unknown";
         /** @enum {string} */
@@ -1045,6 +1069,7 @@ export interface components {
             SigWarm?: components["schemas"]["SigMins"];
             SigHot?: components["schemas"]["SigMins"];
             TrPin?: string | null;
+            Values?: components["schemas"]["DtoAIBotValues"];
         };
         /**
          * @description T709 (Q257-A): press "Adopt open trades" for the account in the route. Preview returns what would happen and writes
@@ -1107,6 +1132,7 @@ export interface components {
             SymbolSettings?: components["schemas"]["DtoEASymStg"];
             TrPin?: string | null;
             ExternalRef?: string | null;
+            Values?: components["schemas"]["DtoAIBotValues"];
         };
         /** @description Public trade preflight request. Account identity comes from the ACNO route. */
         CmdApiFxsPreInfo: {
@@ -1178,7 +1204,6 @@ export interface components {
         CmdFxsStgAIBot: {
             Limits?: components["schemas"]["FxsAIBotStgLimits"];
             PairDefaults?: components["schemas"]["FxsAIBotStgPair"];
-            Protection?: string | null;
         };
         CmdFxsStgMake: {
             StratName?: string | null;
@@ -1262,6 +1287,13 @@ export interface components {
         };
         /** @enum {string} */
         Confidence: "None" | "VLow" | "Low" | "Med" | "High" | "VHigh";
+        ConfidenceBotStep: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["Confidence"] | null;
+            Min?: components["schemas"]["Confidence"] | null;
+            Max?: components["schemas"]["Confidence"] | null;
+        };
         DecRng: {
             /** Format: double */
             Min?: number;
@@ -1276,6 +1308,25 @@ export interface components {
         DeployStatus: "Running" | "Done" | "Failed" | "RolledBack";
         /** @enum {string} */
         DesiredTermState: "Running" | "Stopped" | "Removed";
+        /** @description Ordinary per-value edits. There is no account-wide stored switch. */
+        DtoAIBotValues: {
+            Numbers?: {
+                [key: string]: components["schemas"]["BotDec"];
+            } | null;
+            Signals?: {
+                [key: string]: components["schemas"]["SignalBotStep"];
+            } | null;
+            Trends?: {
+                [key: string]: components["schemas"]["TrendBotStep"];
+            } | null;
+            Confidence?: {
+                [key: string]: components["schemas"]["ConfidenceBotStep"];
+            } | null;
+            Methods?: {
+                [key: string]: components["schemas"]["AModeBotPick"];
+            } | null;
+            NewsFilter?: components["schemas"]["BooleanBotPick"];
+        };
         /**
          * @description One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to
          *                 re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state.
@@ -1734,6 +1785,7 @@ export interface components {
             FifoClose?: boolean;
         };
         DtoFxsAcct: {
+            Values?: components["schemas"]["DtoAIBotValues"];
             /** Format: int64 */
             ACNO?: number;
             /** Format: int64 */
@@ -2185,6 +2237,7 @@ export interface components {
         };
         /** @description Wire DTO for a trading pair; it intentionally has no BSON attributes or extra-elements bag. */
         DtoFxsPair: {
+            Values?: components["schemas"]["DtoAIBotValues"];
             /** Format: int64 */
             PRNO?: number;
             /** Format: int64 */
@@ -3445,15 +3498,9 @@ export interface components {
             /** @description Skip a side that FinNews of the last 24 hours on the pair's currencies leans against. */
             NewsFilter?: boolean;
         };
-        /**
-         * @description The New bot wizard's policy boundaries for the model. T709 (Q396-A): one home per fact: the ladder is Protection DCA
-         *                 (LadderEnabled went), the most levels and groups are SYMSTG.BLMAX / BGMAX (MaxLayers went), the hard SL is SYMSTG.BHRSL / SHRSL
-         *                 (StopStyle went).
-         */
+        /** @description The advisor horizon and allowed exit types. The side method alone decides SL versus ladder (Q461-A). */
         FxsAIBotPreferences: {
             Horizon?: string | null;
-            /** @description SL: every trade carries an SL and the book takes no ladder. DCA: a ladder of adds instead of an SL. */
-            Protection?: string | null;
             AllowedExitModes?: string[] | null;
         };
         /**
@@ -3465,20 +3512,13 @@ export interface components {
          *                 field the EA reads (Q396-A).
          */
         FxsAIBotStgLimits: {
-            SafetySlPct?: components["schemas"]["DecRng"];
             OpenPerSide?: components["schemas"]["DecRng"];
-            BreakerMode?: string | null;
             TradingHours?: string | null;
-            MaximumHold?: string | null;
+            MaximumHoldHours?: components["schemas"]["DecRng"];
             AdviceMode?: string | null;
             /** @description TP513 Q267-A: one per member. A cascade that writes it on an AIBot account writes it on all the member's AIBot accounts. */
             AdviceTime?: string | null;
         };
-        /**
-         * @description TP496 Q285-A: the defaults a strategy carries to its accounts' pairs: AIBot's mode (OFF, EXITS, FULL) and the entry
-         *                 rules of FC.Com.Doms.FxsAIBotPair. A null part is not part of the strategy and never travels. T709 (Q396-A): AIBot's exit
-         *                 template went; a pair's TP, SL and TS are its SYMSTG's per-side fields, which the strategy's SYMSTG carries.
-         */
         FxsAIBotStgPair: {
             Mode?: string | null;
             Entry?: components["schemas"]["FxsAIBotEntryRules"];
@@ -3500,14 +3540,13 @@ export interface components {
          * @enum {string}
          */
         FxsCloseReason: "UNK" | "TP" | "SL" | "TS" | "GTP" | "API" | "EA" | "MAN" | "SO" | "RBL" | "DAY";
-        /**
-         * @description Per-account AIBot grant, switch (Off / Watch / On) and limits. The safe initial state is always Off and ungranted.
-         *                 T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone.
-         */
         FxsFullAutoSettings: {
+            /** Format: double */
+            DdStartBalance?: number;
+            /** Format: double */
+            DdPeakEquity?: number;
             Granted?: boolean;
             State?: string | null;
-            BreakerMode?: string | null;
             BreakerTripped?: boolean;
             BreakerReason?: string | null;
             /** Format: date-time */
@@ -3522,12 +3561,17 @@ export interface components {
             /** Format: date-time */
             LearningCallDayKey?: string | null;
             TradingHours?: string | null;
-            MaximumHold?: string | null;
-            /**
-             * Format: double
-             * @description T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.
-             */
-            SafetySlPct?: number;
+            /** Format: double */
+            MaximumHoldHours?: number;
+            /** Format: double */
+            DayFirmPct?: number;
+            /** Format: double */
+            DayClosePct?: number;
+            /** Format: double */
+            DdFirmPct?: number;
+            /** Format: double */
+            DdClosePct?: number;
+            DdMeasure?: string | null;
             /**
              * Format: int32
              * @description T709 (Q375-A): most AIBot trades open on one side at once (the risk dial's "most open per side", standing on its
@@ -3632,6 +3676,13 @@ export interface components {
         };
         /** @enum {string} */
         Signal: "N" | "NB" | "B" | "SB" | "VSB" | "VSS" | "SS" | "S" | "NS";
+        SignalBotStep: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["Signal"] | null;
+            Min?: components["schemas"]["Signal"] | null;
+            Max?: components["schemas"]["Signal"] | null;
+        };
         /** @enum {string} */
         TMode: "NONE" | "AUTO" | "HYBRID" | "MANUAL";
         /** @enum {string} */
@@ -3642,6 +3693,13 @@ export interface components {
         TerminalConnectionState: "Unknown" | "Connected" | "Disconnected" | "NeedsAddress" | "LoginFailed" | "CredentialsMissing";
         /** @enum {string} */
         Trend: "N" | "NU" | "U" | "SU" | "VSU" | "VSD" | "SD" | "D" | "ND";
+        TrendBotStep: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["Trend"] | null;
+            Min?: components["schemas"]["Trend"] | null;
+            Max?: components["schemas"]["Trend"] | null;
+        };
     };
     responses: never;
     parameters: never;

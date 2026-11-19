@@ -7367,14 +7367,58 @@
       "AMode": {
         "enum": [
           "NONE",
-          "DCAW",
-          "DCAG",
+          "WDCA",
+          "GDCA",
           "GRID",
           "CONT",
           "FIRR",
           "COPY"
         ],
         "type": "string"
+      },
+      "AModeBotPick": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "$ref": "#/components/schemas/AMode"
+          },
+          "Opts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AMode"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BooleanBotPick": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "type": "boolean"
+          },
+          "Opts": {
+            "type": "array",
+            "items": {
+              "type": "boolean"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "BooleanResPonse": {
         "type": "object",
@@ -7407,6 +7451,40 @@
           }
         },
         "additionalProperties": false
+      },
+      "BotDec": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "type": "number",
+            "format": "double"
+          },
+          "Min": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Max": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "BotValMode": {
+        "enum": [
+          "FIXED",
+          "RANGE",
+          "STRAT"
+        ],
+        "type": "string"
       },
       "BrokerServerEnvironment": {
         "enum": [
@@ -7465,6 +7543,9 @@
           "TrPin": {
             "type": "string",
             "nullable": true
+          },
+          "Values": {
+            "$ref": "#/components/schemas/DtoAIBotValues"
           }
         },
         "additionalProperties": false,
@@ -7645,6 +7726,9 @@
           "ExternalRef": {
             "type": "string",
             "nullable": true
+          },
+          "Values": {
+            "$ref": "#/components/schemas/DtoAIBotValues"
           }
         },
         "additionalProperties": false,
@@ -7817,10 +7901,6 @@
           },
           "PairDefaults": {
             "$ref": "#/components/schemas/FxsAIBotStgPair"
-          },
-          "Protection": {
-            "type": "string",
-            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -8096,6 +8176,42 @@
         ],
         "type": "string"
       },
+      "ConfidenceBotStep": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Confidence"
+              }
+            ],
+            "nullable": true
+          },
+          "Min": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Confidence"
+              }
+            ],
+            "nullable": true
+          },
+          "Max": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Confidence"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DecRng": {
         "type": "object",
         "properties": {
@@ -8142,6 +8258,51 @@
           "Removed"
         ],
         "type": "string"
+      },
+      "DtoAIBotValues": {
+        "type": "object",
+        "properties": {
+          "Numbers": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BotDec"
+            },
+            "nullable": true
+          },
+          "Signals": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/SignalBotStep"
+            },
+            "nullable": true
+          },
+          "Trends": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/TrendBotStep"
+            },
+            "nullable": true
+          },
+          "Confidence": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ConfidenceBotStep"
+            },
+            "nullable": true
+          },
+          "Methods": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AModeBotPick"
+            },
+            "nullable": true
+          },
+          "NewsFilter": {
+            "$ref": "#/components/schemas/BooleanBotPick"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Ordinary per-value edits. There is no account-wide stored switch."
       },
       "DtoApiChange": {
         "type": "object",
@@ -9514,6 +9675,9 @@
       "DtoFxsAcct": {
         "type": "object",
         "properties": {
+          "Values": {
+            "$ref": "#/components/schemas/DtoAIBotValues"
+          },
           "ACNO": {
             "type": "integer",
             "format": "int64"
@@ -10806,6 +10970,9 @@
       "DtoFxsPair": {
         "type": "object",
         "properties": {
+          "Values": {
+            "$ref": "#/components/schemas/DtoAIBotValues"
+          },
           "PRNO": {
             "type": "integer",
             "format": "int64"
@@ -14397,11 +14564,6 @@
             "type": "string",
             "nullable": true
           },
-          "Protection": {
-            "type": "string",
-            "description": "SL: every trade carries an SL and the book takes no ladder. DCA: a ladder of adds instead of an SL.",
-            "nullable": true
-          },
           "AllowedExitModes": {
             "type": "array",
             "items": {
@@ -14411,28 +14573,20 @@
           }
         },
         "additionalProperties": false,
-        "description": "The New bot wizard's policy boundaries for the model. T709 (Q396-A): one home per fact: the ladder is Protection DCA\n            (LadderEnabled went), the most levels and groups are SYMSTG.BLMAX / BGMAX (MaxLayers went), the hard SL is SYMSTG.BHRSL / SHRSL\n            (StopStyle went)."
+        "description": "The advisor horizon and allowed exit types. The side method alone decides SL versus ladder (Q461-A)."
       },
       "FxsAIBotStgLimits": {
         "type": "object",
         "properties": {
-          "SafetySlPct": {
-            "$ref": "#/components/schemas/DecRng"
-          },
           "OpenPerSide": {
             "$ref": "#/components/schemas/DecRng"
-          },
-          "BreakerMode": {
-            "type": "string",
-            "nullable": true
           },
           "TradingHours": {
             "type": "string",
             "nullable": true
           },
-          "MaximumHold": {
-            "type": "string",
-            "nullable": true
+          "MaximumHoldHours": {
+            "$ref": "#/components/schemas/DecRng"
           },
           "AdviceMode": {
             "type": "string",
@@ -14458,8 +14612,7 @@
             "$ref": "#/components/schemas/FxsAIBotEntryRules"
           }
         },
-        "additionalProperties": false,
-        "description": "TP496 Q285-A: the defaults a strategy carries to its accounts' pairs: AIBot's mode (OFF, EXITS, FULL) and the entry\n            rules of FC.Com.Doms.FxsAIBotPair. A null part is not part of the strategy and never travels. T709 (Q396-A): AIBot's exit\n            template went; a pair's TP, SL and TS are its SYMSTG's per-side fields, which the strategy's SYMSTG carries."
+        "additionalProperties": false
       },
       "FxsAIBotStrategy": {
         "type": "object",
@@ -14505,14 +14658,18 @@
       "FxsFullAutoSettings": {
         "type": "object",
         "properties": {
+          "DdStartBalance": {
+            "type": "number",
+            "format": "double"
+          },
+          "DdPeakEquity": {
+            "type": "number",
+            "format": "double"
+          },
           "Granted": {
             "type": "boolean"
           },
           "State": {
-            "type": "string",
-            "nullable": true
-          },
-          "BreakerMode": {
             "type": "string",
             "nullable": true
           },
@@ -14547,14 +14704,29 @@
             "type": "string",
             "nullable": true
           },
-          "MaximumHold": {
+          "MaximumHoldHours": {
+            "type": "number",
+            "format": "double"
+          },
+          "DayFirmPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "DayClosePct": {
+            "type": "number",
+            "format": "double"
+          },
+          "DdFirmPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "DdClosePct": {
+            "type": "number",
+            "format": "double"
+          },
+          "DdMeasure": {
             "type": "string",
             "nullable": true
-          },
-          "SafetySlPct": {
-            "type": "number",
-            "description": "T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.",
-            "format": "double"
           },
           "OpenPerSide": {
             "type": "integer",
@@ -14592,8 +14764,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": false,
-        "description": "Per-account AIBot grant, switch (Off / Watch / On) and limits. The safe initial state is always Off and ungranted.\n            T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone."
+        "additionalProperties": false
       },
       "FxsOrderAction": {
         "enum": [
@@ -14869,6 +15040,42 @@
         ],
         "type": "string"
       },
+      "SignalBotStep": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Signal"
+              }
+            ],
+            "nullable": true
+          },
+          "Min": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Signal"
+              }
+            ],
+            "nullable": true
+          },
+          "Max": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Signal"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TMode": {
         "enum": [
           "NONE",
@@ -14917,6 +15124,42 @@
           "ND"
         ],
         "type": "string"
+      },
+      "TrendBotStep": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Trend"
+              }
+            ],
+            "nullable": true
+          },
+          "Min": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Trend"
+              }
+            ],
+            "nullable": true
+          },
+          "Max": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Trend"
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
