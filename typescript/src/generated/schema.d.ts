@@ -1009,7 +1009,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {string} */
-        AMode: "NONE" | "DCAW" | "DCAG" | "GRID" | "CONT" | "FIRR" | "COPY";
+        AMode: "NONE" | "WDCA" | "GDCA" | "GRID" | "CONT" | "FIRR" | "COPY";
         BooleanResPonse: {
             data?: boolean;
             /** Format: int32 */
@@ -1178,7 +1178,6 @@ export interface components {
         CmdFxsStgAIBot: {
             Limits?: components["schemas"]["FxsAIBotStgLimits"];
             PairDefaults?: components["schemas"]["FxsAIBotStgPair"];
-            Protection?: string | null;
         };
         CmdFxsStgMake: {
             StratName?: string | null;
@@ -3445,15 +3444,9 @@ export interface components {
             /** @description Skip a side that FinNews of the last 24 hours on the pair's currencies leans against. */
             NewsFilter?: boolean;
         };
-        /**
-         * @description The New bot wizard's policy boundaries for the model. T709 (Q396-A): one home per fact: the ladder is Protection DCA
-         *                 (LadderEnabled went), the most levels and groups are SYMSTG.BLMAX / BGMAX (MaxLayers went), the hard SL is SYMSTG.BHRSL / SHRSL
-         *                 (StopStyle went).
-         */
+        /** @description The advisor horizon and allowed exit types. The side method alone decides SL versus ladder (Q461-A). */
         FxsAIBotPreferences: {
             Horizon?: string | null;
-            /** @description SL: every trade carries an SL and the book takes no ladder. DCA: a ladder of adds instead of an SL. */
-            Protection?: string | null;
             AllowedExitModes?: string[] | null;
         };
         /**
@@ -3465,11 +3458,9 @@ export interface components {
          *                 field the EA reads (Q396-A).
          */
         FxsAIBotStgLimits: {
-            SafetySlPct?: components["schemas"]["DecRng"];
             OpenPerSide?: components["schemas"]["DecRng"];
-            BreakerMode?: string | null;
             TradingHours?: string | null;
-            MaximumHold?: string | null;
+            MaximumHoldHours?: components["schemas"]["DecRng"];
             AdviceMode?: string | null;
             /** @description TP513 Q267-A: one per member. A cascade that writes it on an AIBot account writes it on all the member's AIBot accounts. */
             AdviceTime?: string | null;
@@ -3505,9 +3496,12 @@ export interface components {
          *                 T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone.
          */
         FxsFullAutoSettings: {
+            /** Format: double */
+            DdStartBalance?: number;
+            /** Format: double */
+            DdPeakEquity?: number;
             Granted?: boolean;
             State?: string | null;
-            BreakerMode?: string | null;
             BreakerTripped?: boolean;
             BreakerReason?: string | null;
             /** Format: date-time */
@@ -3522,12 +3516,17 @@ export interface components {
             /** Format: date-time */
             LearningCallDayKey?: string | null;
             TradingHours?: string | null;
-            MaximumHold?: string | null;
-            /**
-             * Format: double
-             * @description T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.
-             */
-            SafetySlPct?: number;
+            /** Format: double */
+            MaximumHoldHours?: number;
+            /** Format: double */
+            DayFirmPct?: number;
+            /** Format: double */
+            DayClosePct?: number;
+            /** Format: double */
+            DdFirmPct?: number;
+            /** Format: double */
+            DdClosePct?: number;
+            DdMeasure?: string | null;
             /**
              * Format: int32
              * @description T709 (Q375-A): most AIBot trades open on one side at once (the risk dial's "most open per side", standing on its

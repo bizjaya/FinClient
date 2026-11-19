@@ -35,11 +35,11 @@ namespace Fin.Copy
         [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
         NONE = 0,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"DCAW")]
-        DCAW = 1,
+        [System.Runtime.Serialization.EnumMember(Value = @"WDCA")]
+        WDCA = 1,
 
-        [System.Runtime.Serialization.EnumMember(Value = @"DCAG")]
-        DCAG = 2,
+        [System.Runtime.Serialization.EnumMember(Value = @"GDCA")]
+        GDCA = 2,
 
         [System.Runtime.Serialization.EnumMember(Value = @"GRID")]
         GRID = 3,
@@ -458,9 +458,6 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("PairDefaults")]
         public FxsAIBotStgPair? PairDefaults { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Protection")]
-        public string? Protection { get; set; } = default!;
 
     }
 
@@ -5441,9 +5438,7 @@ namespace Fin.Copy
     }
 
     /// <summary>
-    /// The New bot wizard's policy boundaries for the model. T709 (Q396-A): one home per fact: the ladder is Protection DCA
-    /// <br/>            (LadderEnabled went), the most levels and groups are SYMSTG.BLMAX / BGMAX (MaxLayers went), the hard SL is SYMSTG.BHRSL / SHRSL
-    /// <br/>            (StopStyle went).
+    /// The advisor horizon and allowed exit types. The side method alone decides SL versus ladder (Q461-A).
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class FxsAIBotPreferences
@@ -5451,12 +5446,6 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("Horizon")]
         public string? Horizon { get; set; } = default!;
-
-        /// <summary>
-        /// SL: every trade carries an SL and the book takes no ladder. DCA: a ladder of adds instead of an SL.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Protection")]
-        public string? Protection { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("AllowedExitModes")]
         public System.Collections.Generic.ICollection<string>? AllowedExitModes { get; set; } = default!;
@@ -5475,20 +5464,14 @@ namespace Fin.Copy
     public partial class FxsAIBotStgLimits
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("SafetySlPct")]
-        public DecRng? SafetySlPct { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("OpenPerSide")]
         public DecRng? OpenPerSide { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("BreakerMode")]
-        public string? BreakerMode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("TradingHours")]
         public string? TradingHours { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("MaximumHold")]
-        public string? MaximumHold { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumHoldHours")]
+        public DecRng? MaximumHoldHours { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
         public string? AdviceMode { get; set; } = default!;
@@ -5594,14 +5577,17 @@ namespace Fin.Copy
     public partial class FxsFullAutoSettings
     {
 
+        [System.Text.Json.Serialization.JsonPropertyName("DdStartBalance")]
+        public double? DdStartBalance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdPeakEquity")]
+        public double? DdPeakEquity { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("Granted")]
         public bool? Granted { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("State")]
         public string? State { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("BreakerMode")]
-        public string? BreakerMode { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("BreakerTripped")]
         public bool? BreakerTripped { get; set; } = default!;
@@ -5627,14 +5613,23 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("TradingHours")]
         public string? TradingHours { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("MaximumHold")]
-        public string? MaximumHold { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumHoldHours")]
+        public double? MaximumHoldHours { get; set; } = default!;
 
-        /// <summary>
-        /// T701 (TP496 Q4-B): SL as a % of price for a managed trade the exit rules give no SL; 0 turns it off.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("SafetySlPct")]
-        public double? SafetySlPct { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("DayFirmPct")]
+        public double? DayFirmPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DayClosePct")]
+        public double? DayClosePct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdFirmPct")]
+        public double? DdFirmPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdClosePct")]
+        public double? DdClosePct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdMeasure")]
+        public string? DdMeasure { get; set; } = default!;
 
         /// <summary>
         /// T709 (Q375-A): most AIBot trades open on one side at once (the risk dial's "most open per side", standing on its

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.10.0 (2026-11-19)
+
+- Regenerate FinCopy DTOs for the T709 SL model and account limits.
+- Rename AMode DCAW/DCAG to WDCA/GDCA; numeric IDs remain 1 and 2.
+- Keep the .NET and TypeScript generated contracts matched to the FinCopy public OpenAPI source.
+
 ## 0.9.0 (2026-11-18)
 
 Regenerated from FinCopy's T709 API document. FinCopy strategies now hold ranges and per-side signal sets; several facts
