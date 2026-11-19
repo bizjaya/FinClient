@@ -56,6 +56,48 @@ namespace Fin.Copy
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class AModeBotPick
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Opts")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<AMode>? Opts { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BooleanBotPick
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        public bool? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Opts")]
+        public System.Collections.Generic.ICollection<bool>? Opts { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class BooleanResPonse
     {
 
@@ -76,6 +118,44 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("chksum")]
         public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class BotDec
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        public double? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Min")]
+        public double? Min { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Max")]
+        public double? Max { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum BotValMode
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FIXED")]
+        FIXED = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RANGE")]
+        RANGE = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"STRAT")]
+        STRAT = 2,
 
     }
 
@@ -154,6 +234,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
         public string? TrPin { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
 
     }
 
@@ -298,6 +381,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("ExternalRef")]
         public string? ExternalRef { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
 
     }
 
@@ -717,6 +803,32 @@ namespace Fin.Copy
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ConfidenceBotStep
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
+        public Confidence? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Min")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
+        public Confidence? Min { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Max")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
+        public Confidence? Max { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DecRng
     {
 
@@ -788,6 +900,33 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"Removed")]
         Removed = 2,
+
+    }
+
+    /// <summary>
+    /// Ordinary per-value edits. There is no account-wide stored switch.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotValues
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Numbers")]
+        public System.Collections.Generic.IDictionary<string, BotDec>? Numbers { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Signals")]
+        public System.Collections.Generic.IDictionary<string, SignalBotStep>? Signals { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trends")]
+        public System.Collections.Generic.IDictionary<string, TrendBotStep>? Trends { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
+        public System.Collections.Generic.IDictionary<string, ConfidenceBotStep>? Confidence { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Methods")]
+        public System.Collections.Generic.IDictionary<string, AModeBotPick>? Methods { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NewsFilter")]
+        public BooleanBotPick? NewsFilter { get; set; } = default!;
 
     }
 
@@ -1847,6 +1986,9 @@ namespace Fin.Copy
     public partial class DtoFxsAcct
     {
 
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
         public long? ACNO { get; set; } = default!;
 
@@ -2791,6 +2933,9 @@ namespace Fin.Copy
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoFxsPair
     {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("PRNO")]
         public long? PRNO { get; set; } = default!;
@@ -5484,11 +5629,6 @@ namespace Fin.Copy
 
     }
 
-    /// <summary>
-    /// TP496 Q285-A: the defaults a strategy carries to its accounts' pairs: AIBot's mode (OFF, EXITS, FULL) and the entry
-    /// <br/>            rules of FC.Com.Doms.FxsAIBotPair. A null part is not part of the strategy and never travels. T709 (Q396-A): AIBot's exit
-    /// <br/>            template went; a pair's TP, SL and TS are its SYMSTG's per-side fields, which the strategy's SYMSTG carries.
-    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class FxsAIBotStgPair
     {
@@ -5569,10 +5709,6 @@ namespace Fin.Copy
 
     }
 
-    /// <summary>
-    /// Per-account AIBot grant, switch (Off / Watch / On) and limits. The safe initial state is always Off and ungranted.
-    /// <br/>            T701 (TP496 Q13-A): there is no model look any more, so the look counters and the look interval are gone.
-    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class FxsFullAutoSettings
     {
@@ -6095,6 +6231,32 @@ namespace Fin.Copy
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class SignalBotStep
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
+        public Signal? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Min")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
+        public Signal? Min { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Max")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
+        public Signal? Max { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum TMode
     {
 
@@ -6193,6 +6355,32 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"ND")]
         ND = 8,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TrendBotStep
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
+        public Trend? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Min")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
+        public Trend? Min { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Max")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
+        public Trend? Max { get; set; } = default!;
 
     }
 

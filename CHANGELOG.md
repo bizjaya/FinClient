@@ -3,6 +3,8 @@
 ## 0.10.0 (2026-11-19)
 
 - Regenerate FinCopy DTOs for the T709 SL model and account limits.
+- Carry native Fixed / My range / Strategy values and cached ranges in account contracts, including nullable Any steps and boolean / enum choices.
+- Account patches accept ordinary per-value state edits; AIBot-only controls remain on FinCopy's member API.
 - Rename AMode DCAW/DCAG to WDCA/GDCA; numeric IDs remain 1 and 2.
 - Keep the .NET and TypeScript generated contracts matched to the FinCopy public OpenAPI source.
 
