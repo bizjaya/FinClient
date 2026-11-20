@@ -1,13 +1,13 @@
 import { readFile } from "node:fs/promises";
+import { basename } from "node:path";
 
-const [snapshotPath, livePath] = process.argv.slice(2);
-if (!snapshotPath || !livePath) {
-  console.error("Usage: node scripts/check-spec-drift.mjs <snapshot.json> <live.json>");
+// One or more <snapshot.json> <live.json> pairs, for example:
+//   node scripts/check-spec-drift.mjs spec/fincopy-v1.json live/fincopy-v1.json spec/fingraph-v1.json live/fingraph-v1.json
+const paths = process.argv.slice(2);
+if (paths.length === 0 || paths.length % 2 !== 0) {
+  console.error("Usage: node scripts/check-spec-drift.mjs <snapshot.json> <live.json> [<snapshot.json> <live.json> ...]");
   process.exit(2);
 }
-
-const snapshot = JSON.parse(await readFile(snapshotPath, "utf8"));
-const live = JSON.parse(await readFile(livePath, "utf8"));
 function stable(value) {
   if (Array.isArray(value)) return value.map(stable);
   if (value && typeof value === "object") {
@@ -39,12 +39,26 @@ function changedPaths(left, right, path = "$", result = []) {
 }
 
 // Key order, whitespace and line endings are ignored; every value, operation id included, must match.
-const normalizedSnapshot = stable(snapshot);
-const normalizedLive = stable(live);
-if (JSON.stringify(normalizedSnapshot) !== JSON.stringify(normalizedLive)) {
-  console.error("The FinCopy OpenAPI contract changed. Changed paths:");
-  for (const path of changedPaths(normalizedSnapshot, normalizedLive)) console.error(`- ${path}`);
-  console.error("Review the live document, update spec/fincopy-v1.json, and regenerate both DTO sets.");
-  process.exit(1);
+let drifted = false;
+for (let i = 0; i < paths.length; i += 2) {
+  const [snapshotPath, livePath] = [paths[i], paths[i + 1]];
+  const name = basename(snapshotPath);
+  const live = JSON.parse(await readFile(livePath, "utf8"));
+  // A live document with no schemas is a site that is still deploying, not a contract change to snapshot.
+  if (!live.components?.schemas || Object.keys(live.components.schemas).length === 0) {
+    console.error(`The live document for ${name} has no schemas; it is not a usable contract.`);
+    drifted = true;
+    continue;
+  }
+  const normalizedSnapshot = stable(JSON.parse(await readFile(snapshotPath, "utf8")));
+  const normalizedLive = stable(live);
+  if (JSON.stringify(normalizedSnapshot) !== JSON.stringify(normalizedLive)) {
+    console.error(`The OpenAPI contract behind ${name} changed. Changed paths:`);
+    for (const path of changedPaths(normalizedSnapshot, normalizedLive)) console.error(`- ${path}`);
+    console.error(`Review the live document, update spec/${name}, and regenerate the SDK types (scripts/generate-all.ps1).`);
+    drifted = true;
+  } else {
+    console.log(`The live OpenAPI contract matches spec/${name}.`);
+  }
 }
-console.log("The live FinCopy OpenAPI contract matches spec/fincopy-v1.json.");
+if (drifted) process.exit(1);
