@@ -1,6 +1,9 @@
 <Solution>
   <Folder Name="/examples/">
+    <Project Path="examples/GraphQuickStart/GraphQuickStart.csproj" />
+    <Project Path="examples/NewsQuickStart/NewsQuickStart.csproj" />
     <Project Path="examples/QuickStart/QuickStart.csproj" />
+    <Project Path="examples/SocialQuickStart/SocialQuickStart.csproj" />
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/FinClient/FinClient.csproj" />

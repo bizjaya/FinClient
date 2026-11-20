@@ -1,7 +1,7 @@
 {
   "name": "@bizjaya/finclient",
-  "version": "0.10.0",
-  "description": "Official TypeScript SDK for the FinCopy public API",
+  "version": "0.11.0",
+  "description": "Official TypeScript SDK for the Fin APIs (FinCopy, FinGraph, FinNews, FinSocial)",
   "license": "MIT",
   "author": "BizJaya TechLab S/B",
   "homepage": "https://fincopy.io/docs",
@@ -48,11 +48,12 @@
     "node": ">=20"
   },
   "scripts": {
-    "generate:types": "openapi-typescript ../spec/fincopy-v1.json --output src/generated/schema.d.ts",
+    "generate:types": "openapi-typescript ../spec/fincopy-v1.json --output src/generated/schema.d.ts && openapi-typescript ../spec/fingraph-v1.json --output src/generated/graph-schema.d.ts && openapi-typescript ../spec/finnews-v1.json --output src/generated/news-schema.d.ts && openapi-typescript ../spec/finsocial-v1.json --output src/generated/social-schema.d.ts",
     "prepack": "node -e \"require('fs').copyFileSync('../LICENSE', 'LICENSE')\"",
     "build": "tsup src/index.ts src/webhook.ts --format esm,cjs --dts --clean --target node20",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "generate:surface": "node ../scripts/generate-surface.mjs"
   },
   "devDependencies": {
     "@types/node": "26.6.5",
