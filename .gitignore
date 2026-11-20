@@ -31,3 +31,6 @@ python/*.egg-info/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
+# Copied from the root LICENSE when the Python package is built
+python/LICENSE
