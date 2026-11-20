@@ -20,3 +20,14 @@ artifacts/
 
 # Copied from the root LICENSE when the npm package is packed
 typescript/LICENSE
+
+# Python
+python/.venv/
+python/dist/
+python/build/
+python/*.egg-info/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
