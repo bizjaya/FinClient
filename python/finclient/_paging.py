@@ -3,10 +3,9 @@ from __future__ import annotations
 
 from typing import Any, Callable, Dict, Generic, Iterable, Iterator, List, Mapping, Optional, Tuple, TypedDict, TypeVar
 
-__all__ = ["Page", "PageInfo", "iter_items", "iter_offset_pages", "iter_qry_pages"]
+__all__ = ["Page", "PageInfo", "iter_items", "iter_pages", "iter_qry_pages"]
 
 T = TypeVar("T")
-DEFAULT_LIMIT = 100
 
 
 class PageInfo(TypedDict, total=False):
@@ -19,9 +18,10 @@ class PageInfo(TypedDict, total=False):
 
 
 class Page(Generic[T]):
-    """One page of a list: ``items`` and the API's ``paging`` block. Iterating a page yields its items."""
+    """One page of a list: ``items``, the API's ``paging`` block and ``not_found``, the symbols a ``syms`` lookup named
+    that no row carries. Iterating a page yields its items."""
 
-    __slots__ = ("items", "paging", "code", "message", "errors", "chksum")
+    __slots__ = ("items", "paging", "code", "message", "errors", "chksum", "not_found")
 
     def __init__(
         self,
@@ -31,6 +31,7 @@ class Page(Generic[T]):
         message: Optional[str] = None,
         errors: Tuple[str, ...] = (),
         chksum: Optional[str] = None,
+        not_found: Tuple[str, ...] = (),
     ) -> None:
         self.items = items
         self.paging = paging
@@ -38,6 +39,7 @@ class Page(Generic[T]):
         self.message = message
         self.errors = errors
         self.chksum = chksum
+        self.not_found = not_found
 
     def __iter__(self) -> Iterator[T]:
         return iter(self.items)
@@ -80,20 +82,20 @@ def iter_qry_pages(
         number += 1
 
 
-def iter_offset_pages(
-    fetch: Callable[[int, int], List[T]], *, limit: Optional[int] = None, offset: Optional[int] = None
-) -> Iterator[List[T]]:
-    """Call ``fetch(limit, offset)``, advancing ``offset`` by the rows returned, until a short or empty page."""
-    size = limit or DEFAULT_LIMIT
-    position = offset or 0
+def iter_pages(fetch: Callable[[int], "Page[T]"], *, first: Optional[int] = None) -> Iterator["Page[T]"]:
+    """Call ``fetch(number)`` for page ``first`` (1 when unset), then the next, until the last page or an empty page."""
+    number = first or 1
     while True:
-        rows = fetch(size, position)
-        if not rows:
+        page = fetch(number)
+        if not page.items:
             return
-        yield rows
-        if len(rows) < size:
+        yield page
+        info: Mapping[str, Any] = page.paging or {}
+        shown = info.get("pageNo") or number
+        count = info.get("pageCount")
+        if count is not None and shown >= count:
             return
-        position += len(rows)
+        number = shown + 1
 
 
 def iter_items(pages: Iterable[Any]) -> Iterator[Any]:

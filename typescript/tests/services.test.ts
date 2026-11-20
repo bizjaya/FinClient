@@ -42,9 +42,9 @@ describe("service keys and addresses", () => {
     const { seen, fetch } = recorder(ok({ data: [], code: 200, isOk: true }));
     const fin = clientFor(fetch);
 
-    await fin.graph.assets.types();
-    await fin.news.categories.flat();
-    await fin.social.videos.list();
+    await fin.graph.assets.exchanges();
+    await fin.news.categories.list();
+    await fin.social.videos.videos();
 
     expect(seen.map((s) => s.url.origin)).toEqual(["https://x.fingraph.io", "https://x.finnews.io", "https://x.finsocial.io"]);
     expect(seen.map((s) => s.headers.get("FinUsrKey"))).toEqual(["graph-key", "news-key", "social-key"]);
@@ -57,10 +57,10 @@ describe("service keys and addresses", () => {
       apiKey: "copy-key", graph: { apiKey: "g", baseUrl: "https://graph.example.test/" }, fetch, retryDelay: noWait,
     });
 
-    await fin.graph.assets.types();
+    await fin.graph.assets.exchanges();
     await fin.copy.accounts.list();
 
-    expect(seen[0]!.url.href).toBe("https://graph.example.test/api/assets/types");
+    expect(seen[0]!.url.href).toBe("https://graph.example.test/api/assets/exchanges");
     expect(seen[0]!.headers.get("FinUsrKey")).toBe("g");
     expect(seen[1]!.url.origin).toBe("https://api.fincopy.io");
     expect(seen[1]!.headers.get("X-Api-Key")).toBe("copy-key");
@@ -74,7 +74,7 @@ describe("service keys and addresses", () => {
     try {
       const fin = new FinClient({ graph: { apiKey: "g" } });
 
-      await expect(fin.graph.assets.types()).resolves.toBeDefined();
+      await expect(fin.graph.assets.exchanges()).resolves.toBeDefined();
       await expect(fin.copy.accounts.list()).rejects.toThrow(/FinCopy needs an API key/);
       expect(seen).toHaveLength(1);
     } finally {
@@ -90,10 +90,10 @@ describe("service keys and addresses", () => {
     const { seen, fetch } = recorder(ok({ data: [], code: 200, isOk: true }));
     const fin = new FinClient({ apiKey: "copy-key", news: { apiKey: "n" }, fetch });
 
-    await expect(fin.graph.assets.types()).rejects.toThrow(/FinGraph needs an API key.*graph: \{ apiKey \}/);
-    await expect(fin.social.markets.pulseList()).rejects.toThrow(/FinSocial needs an API key/);
+    await expect(fin.graph.assets.exchanges()).rejects.toThrow(/FinGraph needs an API key.*graph: \{ apiKey \}/);
+    await expect(fin.social.pulse.pulse()).rejects.toThrow(/FinSocial needs an API key/);
     expect(seen).toHaveLength(0);
-    await expect(fin.news.categories.flat()).resolves.toBeDefined();
+    await expect(fin.news.categories.list()).resolves.toBeDefined();
   });
 
   it("applies the shared timeout and retry settings to every service", async () => {
@@ -101,7 +101,7 @@ describe("service keys and addresses", () => {
     const { fetch } = recorder(() => (++calls < 3 ? new Response("{}", { status: 503 }) : ok({ data: [], isOk: true })));
     const fin = new FinClient({ news: { apiKey: "n" }, fetch, retryDelay: noWait, maxRetries: 2, random: () => 0.5 });
 
-    await fin.news.categories.flat();
+    await fin.news.categories.list();
 
     expect(calls).toBe(3);
   });
@@ -114,13 +114,13 @@ describe("the two surfaces", () => {
 
     await fin.graph.tickers.list();
     await fin.graph.v1.tickers.list();
-    await fin.news.sources.categories();
-    await fin.news.v1.sources.categories();
-    await fin.social.markets.pulseList();
-    await fin.social.v1.markets.pulseList();
+    await fin.news.sources.list();
+    await fin.news.v1.sources.list();
+    await fin.social.pulse.pulse();
+    await fin.social.v1.pulse.pulse();
 
     expect(seen.map((s) => s.url.pathname)).toEqual([
-      "/api/tickers", "/v1/tickers", "/api/sources/categories", "/v1/sources/categories", "/api/markets/pulse", "/v1/markets/pulse",
+      "/api/tickers", "/v1/tickers", "/api/sources", "/v1/sources", "/api/pulse", "/v1/pulse",
     ]);
     expect(seen.every((s) => s.init.method === "GET")).toBe(true);
   });
@@ -132,10 +132,11 @@ describe("the two surfaces", () => {
     await fin.graph.tickers.view("BTC/USDT");
     await fin.graph.v1.assets.get("a b");
     await fin.news.news.view("abc123");
-    await fin.social.markets.historyList("m-1", { Limit: 5 });
+    await fin.social.markets.market("m-1", { days: 5 });
+    await fin.graph.screens.eqtUsa("top gain", { page: 2 });
 
     expect(seen.map((s) => s.url.pathname + s.url.search)).toEqual([
-      "/api/tickers/BTC%2FUSDT", "/v1/assets/a%20b", "/api/news/abc123", "/api/markets/history/m-1?Limit=5",
+      "/api/tickers/BTC%2FUSDT", "/v1/assets/a%20b", "/api/news/abc123", "/api/markets/m-1?days=5", "/api/screens/eqtusa/top%20gain?page=2",
     ]);
   });
 
@@ -151,62 +152,38 @@ describe("the two surfaces", () => {
     const { seen, fetch } = recorder(ok({ data: [], isOk: true }));
     const fin = clientFor(fetch);
 
-    await fin.graph.assets.list({ dax: "BIN", canTrade: false, limit: 25, quote: undefined });
+    await fin.graph.assets.list({ exchange: "BINANCE", canTrade: false, size: 25, quote: undefined });
     await fin.graph.ohlcv.view("BTCUSDT", { timeframe: "1d", from: "2026-11-01T00:00:00Z", limit: 10 });
-    await fin.social.markets.historyList("m-1", { From: new Date("2026-11-01T08:00:00+08:00") });
-    await fin.graph.sigDax.topGain({ dax: "BIN" });
+    await fin.graph.markets.eqtUsa({ syms: "NVDA,MSFT", sort: "-chg1d" });
 
-    expect(seen[0]!.url.search).toBe("?dax=BIN&canTrade=false&limit=25");
+    expect(seen[0]!.url.search).toBe("?exchange=BINANCE&canTrade=false&size=25");
     expect(seen[1]!.url.search).toBe("?timeframe=1d&from=2026-11-01T00%3A00%3A00Z&limit=10");
-    expect(seen[2]!.url.search).toBe("?From=2026-11-01T00%3A00%3A00.000Z");
-    expect(seen[3]!.url.searchParams.get("dax")).toBe("BIN");
+    expect(seen[2]!.url.pathname).toBe("/api/markets/eqtusa");
+    expect(seen[2]!.url.searchParams.get("syms")).toBe("NVDA,MSFT");
+    expect(seen[2]!.url.searchParams.get("sort")).toBe("-chg1d");
   });
 
-  it("encodes the qry object as one JSON value and leaves out nulls", async () => {
+  it("sends list filters as plain query values and no qry parameter", async () => {
     const { seen, fetch } = recorder(ok({ data: [], paging: { pageNo: 1, pageCount: 1 }, isOk: true }));
     const fin = clientFor(fetch);
 
-    await fin.news.news.list({ pageNo: 2, pageSize: 10, sortBy: [["published", "desc"]], Symbols: "AAPL,MSFT", Search: undefined });
-    await fin.social.v1.social.postList({ Ticker: "BTC", Platform: null as never });
-    await fin.news.v1.news.all();
+    await fin.news.news.list({ syms: "AAPL,MSFT", sort: "-published", page: 2, size: 10, q: undefined });
+    await fin.social.v1.posts.posts({ syms: "BTC", stance: "bull" });
 
     expect(seen[0]!.url.pathname).toBe("/api/news");
-    expect([...seen[0]!.url.searchParams.keys()]).toEqual(["qry"]);
-    expect(JSON.parse(seen[0]!.url.searchParams.get("qry")!)).toEqual({
-      pageNo: 2, pageSize: 10, sortBy: [["published", "desc"]], Symbols: "AAPL,MSFT",
-    });
-    expect(JSON.parse(seen[1]!.url.searchParams.get("qry")!)).toEqual({ Ticker: "BTC" });
-    expect(seen[2]!.url.pathname).toBe("/v1/news/all");
-    expect(seen[2]!.url.searchParams.get("qry")).toBe("{}");
+    expect(seen[0]!.url.search).toBe("?syms=AAPL%2CMSFT&sort=-published&page=2&size=10");
+    expect(seen[1]!.url.pathname).toBe("/v1/posts");
+    expect(seen[1]!.url.searchParams.has("qry")).toBe(false);
+    expect(seen[1]!.url.searchParams.get("stance")).toBe("bull");
   });
 
-  it("sends a JSON body with an idempotency key for a write, and reuses the key on a retry", async () => {
-    const { seen, fetch } = recorder(new Response("{}", { status: 503 }), ok({ data: { Title: "x" }, code: 200, isOk: true }));
+  it("formats a date query value as ISO 8601", async () => {
+    const { seen, fetch } = recorder(ok({ data: [], isOk: true }));
     const fin = clientFor(fetch);
 
-    const reply = await fin.news.news.ratingMake("abc123", { ReqSite: "finquest", ReqUsno: 77 }, { idempotencyKey: "rate-1" });
+    await fin.news.news.list({ since: new Date("2026-11-01T08:00:00+08:00") });
 
-    expect(reply.data).toEqual({ Title: "x" });
-    expect(seen).toHaveLength(2);
-    for (const s of seen) {
-      expect(s.url.pathname).toBe("/api/news/abc123/rating");
-      expect(s.init.method).toBe("POST");
-      expect(s.headers.get("Content-Type")).toBe("application/json");
-      expect(s.headers.get("Idempotency-Key")).toBe("rate-1");
-      expect(s.headers.get("FinUsrKey")).toBe("news-key");
-      expect(JSON.parse(String(s.init.body))).toEqual({ ReqSite: "finquest", ReqUsno: 77 });
-    }
-  });
-
-  it("makes an idempotency key for a write when none is given, and none for a read", async () => {
-    const { seen, fetch } = recorder(ok({ data: {}, isOk: true }));
-    const fin = clientFor(fetch);
-
-    await fin.news.videos.ratingMake("v1", {});
-    await fin.news.videos.view("v1");
-
-    expect(seen[0]!.headers.get("Idempotency-Key")).toMatch(/^[0-9a-f-]{36}$/);
-    expect(seen[1]!.headers.get("Idempotency-Key")).toBeNull();
+    expect(seen[0]!.url.searchParams.get("since")).toBe("2026-11-01T00:00:00.000Z");
   });
 
   it("returns the whole documented reply, not just its data", async () => {
@@ -219,12 +196,15 @@ describe("the two surfaces", () => {
     expect(reply).toEqual(body);
   });
 
-  it("returns a /v1 reply as it is", async () => {
-    const body = { offset: 0, limit: 100, data: [{ Id: "a" }], count: 1 };
+  it("returns a /v1 reply as it is, with the symbols a lookup did not find", async () => {
+    const body = { data: [{ Id: "a" }], NotFound: ["NOPE"], paging: { pageNo: 1, pageSize: 50, pageCount: 1, resCount: 1 }, isOk: true };
     const { fetch } = recorder(ok(body));
     const fin = clientFor(fetch);
 
-    expect(await fin.graph.v1.assets.list()).toEqual(body);
+    const reply = await fin.graph.v1.markets.eqtUsa({ syms: "A,NOPE" });
+
+    expect(reply).toEqual(body);
+    expect(reply.NotFound).toEqual(["NOPE"]);
   });
 });
 
@@ -316,13 +296,13 @@ describe("refusals", () => {
 
   it("reports a network failure and a malformed 200 for a named service", async () => {
     const down = new FinClient({ news: { apiKey: "n" }, fetch: async () => { throw new TypeError("offline"); }, retryDelay: noWait, maxRetries: 0 });
-    const network = await rejection(down.news.categories.flat());
+    const network = await rejection(down.news.categories.list());
     expect(network.errorCode).toBe("network");
     expect(network.message).toBe("The FinNews API could not be reached.");
 
     const { fetch } = recorder(new Response("not json", { status: 200 }));
     const garbled = new FinClient({ news: { apiKey: "n" }, fetch });
-    const invalid = await rejection(garbled.news.categories.flat());
+    const invalid = await rejection(garbled.news.categories.list());
     expect(invalid.errorCode).toBe("invalid_response");
   });
 
@@ -341,16 +321,16 @@ describe("paging", () => {
   const paged = (rows: number[], pageNo: number, pageCount: number) =>
     ok({ data: rows.map(row), paging: { pageNo, pageSize: 2, pageCount, resCount: 5 }, code: 200, isOk: true });
 
-  it("walks a page-numbered list page by page, advancing pageNo, and stops after the last page", async () => {
+  it("walks a list page by page, advancing page, and stops after the last page", async () => {
     const { seen, fetch } = recorder(paged([1, 2], 1, 3), paged([3, 4], 2, 3), paged([5], 3, 3));
     const fin = clientFor(fetch);
 
     const pages: number[] = [];
-    for await (const page of fin.news.news.listPages({ pageSize: 2, Symbols: "AAPL" })) pages.push(page.data?.length ?? 0);
+    for await (const page of fin.news.news.listPages({ size: 2, syms: "AAPL" })) pages.push(page.data?.length ?? 0);
 
     expect(pages).toEqual([2, 2, 1]);
-    expect(seen.map((s) => JSON.parse(s.url.searchParams.get("qry")!).pageNo)).toEqual([1, 2, 3]);
-    expect(JSON.parse(seen[2]!.url.searchParams.get("qry")!)).toEqual({ pageNo: 3, pageSize: 2, Symbols: "AAPL" });
+    expect(seen.map((s) => s.url.searchParams.get("page"))).toEqual(["1", "2", "3"]);
+    expect(seen.every((s) => s.url.searchParams.get("syms") === "AAPL" && s.url.searchParams.get("size") === "2")).toBe(true);
   });
 
   it("walks every item, starting from the page the query names", async () => {
@@ -358,7 +338,7 @@ describe("paging", () => {
     const fin = clientFor(fetch);
 
     const ids: number[] = [];
-    for await (const item of fin.news.news.listItems({ pageNo: 2, pageSize: 2 })) ids.push((item as unknown as { Id: number }).Id);
+    for await (const item of fin.news.news.listItems({ page: 2, size: 2 })) ids.push((item as unknown as { Id: number }).Id);
 
     expect(ids).toEqual([3, 4, 5]);
     expect(seen).toHaveLength(2);
@@ -372,7 +352,7 @@ describe("paging", () => {
     const fin = clientFor(fetch);
 
     const pages = [];
-    for await (const page of fin.social.markets.marketListPages()) pages.push(page);
+    for await (const page of fin.social.markets.marketsPages()) pages.push(page);
 
     expect(pages).toHaveLength(1);
     expect(seen).toHaveLength(2);
@@ -381,51 +361,26 @@ describe("paging", () => {
   it("yields nothing for an empty list and does not change the query it was given", async () => {
     const { seen, fetch } = recorder(ok({ data: [], paging: { pageNo: 1, pageCount: 0 }, isOk: true }));
     const fin = clientFor(fetch);
-    const query = { pageSize: 5 };
+    const query = { size: 5 };
 
     const items = [];
-    for await (const item of fin.news.sources.listItems(query)) items.push(item);
+    for await (const item of fin.news.videos.listItems(query)) items.push(item);
 
     expect(items).toEqual([]);
     expect(seen).toHaveLength(1);
-    expect(query).toEqual({ pageSize: 5 });
+    expect(query).toEqual({ size: 5 });
   });
 
-  it("advances offset on FinGraph's limit and offset lists and stops at an empty page", async () => {
-    const list = (rows: number[]) => ok({ data: rows.map(row), code: 200, isOk: true });
-    const { seen, fetch } = recorder(list([1, 2]), list([3]), list([]));
+  it("walks a path-addressed list with its path argument", async () => {
+    const { seen, fetch } = recorder(paged([1, 2], 1, 2), paged([3], 2, 2));
     const fin = clientFor(fetch);
 
     const ids: number[] = [];
-    for await (const item of fin.graph.assets.listItems({ dax: "BIN", limit: 2 })) ids.push((item as unknown as { Id: number }).Id);
+    for await (const item of fin.graph.screens.cryptoItems("top gain", { size: 2 })) ids.push((item as unknown as { Id: number }).Id);
 
     expect(ids).toEqual([1, 2, 3]);
-    expect(seen.map((s) => s.url.searchParams.get("offset"))).toEqual(["0", "2", "3"]);
-    expect(seen.every((s) => s.url.searchParams.get("dax") === "BIN" && s.url.searchParams.get("limit") === "2")).toBe(true);
-  });
-
-  it("stops a /v1 offset list when a page holds fewer rows than its own limit", async () => {
-    const { seen, fetch } = recorder(
-      ok({ offset: 0, limit: 2, data: [row(1), row(2)], count: 2 }),
-      ok({ offset: 2, limit: 2, data: [row(3)], count: 1 }),
-    );
-    const fin = clientFor(fetch);
-
-    const pages = [];
-    for await (const page of fin.graph.v1.tickers.listPages({ offset: 0, limit: 2 })) pages.push(page);
-
-    expect(pages).toHaveLength(2);
-    expect(seen).toHaveLength(2);
-    expect(seen[1]!.url.searchParams.get("offset")).toBe("2");
-  });
-
-  it("starts an offset walk from the offset given", async () => {
-    const { seen, fetch } = recorder(ok({ data: [], isOk: true }));
-    const fin = clientFor(fetch);
-
-    for await (const _page of fin.graph.tickers.listPages({ offset: 40 })) void _page;
-
-    expect(seen[0]!.url.searchParams.get("offset")).toBe("40");
+    expect(seen.map((s) => s.url.pathname)).toEqual(["/api/screens/crypto/top%20gain", "/api/screens/crypto/top%20gain"]);
+    expect(seen.map((s) => s.url.searchParams.get("page"))).toEqual(["1", "2"]);
   });
 
   it("surfaces a refusal in the middle of a walk", async () => {

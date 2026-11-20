@@ -4,26 +4,6 @@
  */
 
 export interface paths {
-    "/api/apcasst/snapshot": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Alpaca US-equity tick snapshot
-         * @description Latest US-equity prices from the Alpaca feed, one entry per symbol, with the time the snapshot was taken.
-         */
-        get: operations["Api_ApcDatController_Snapshot"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/assets": {
         parameters: {
             query?: never;
@@ -33,7 +13,7 @@ export interface paths {
         };
         /**
          * Assets list
-         * @description Lists assets from the asset registry. Filter by exchange, tradability and quote currency; page with limit and offset.
+         * @description Lists assets from the asset registry. Filter by exchange, tradability and quote coin; sort by symbol; 50 rows a page.
          */
         get: operations["Api_AssetsController_List"];
         put?: never;
@@ -53,69 +33,9 @@ export interface paths {
         };
         /**
          * Exchanges
-         * @description Lists the exchange keys with their numeric value and TradingView prefix.
+         * @description Lists the exchanges FinGraph reads, with their name and numeric value.
          */
         get: operations["Api_AssetsController_Exchanges"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/assets/names": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Asset names (all)
-         * @description Returns the symbol-to-name map for both lanes. Where a symbol exists in both, the equity entry is used.
-         */
-        get: operations["Api_AssetsController_NamesAll"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/assets/names/{dax}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Asset names
-         * @description Returns a map from symbol to asset name and identity for one lane: dax (crypto) or eqt (US equity).
-         */
-        get: operations["Api_AssetsController_Names"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/assets/types": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Asset types
-         * @description Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
-         */
-        get: operations["Api_AssetsController_Types"];
         put?: never;
         post?: never;
         delete?: never;
@@ -144,7 +64,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/daxdat/snapshot": {
+    "/api/markets/crypto": {
         parameters: {
             query?: never;
             header?: never;
@@ -152,10 +72,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * DAX price snapshot
-         * @description Latest crypto exchange prices, one entry per symbol, with the time the snapshot was taken.
+         * Markets: Crypto
+         * @description Every coin with its latest Sum, Mav and Osc ratings, price changes, market value, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name. Two coins that share a ticker each have their own symbol.
          */
-        get: operations["Api_DaxDatController_Snapshot"];
+        get: operations["Api_MarketsController_Crypto"];
         put?: never;
         post?: never;
         delete?: never;
@@ -164,7 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/fxstikr/snapshot": {
+    "/api/markets/dax": {
         parameters: {
             query?: never;
             header?: never;
@@ -172,10 +92,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * FXS broker quote snapshot
-         * @description Latest bid and ask for each forex and CFD instrument reported by the broker terminals, keyed by symbol, with the time of each quote.
+         * Markets: Crypto pairs
+         * @description Every crypto pair of an exchange with its price, 24-hour change, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). Pairs carry no Sum, Mav or Osc ratings. 50 rows a page; ask for up to 50 symbols by name.
          */
-        get: operations["Api_FxsTikrController_Snapshot"];
+        get: operations["Api_MarketsController_Dax"];
         put?: never;
         post?: never;
         delete?: never;
@@ -184,7 +104,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/klseprc/snapshot": {
+    "/api/markets/eqtusa": {
         parameters: {
             query?: never;
             header?: never;
@@ -192,10 +112,90 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * KLSE price snapshot
-         * @description Latest Bursa Malaysia (KLSE) prices, one entry per symbol, with the time the snapshot was taken.
+         * Markets: US stocks
+         * @description Every US stock with its latest Sum, Mav and Osc ratings, the analysts' rating, price changes, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
          */
-        get: operations["Api_KlsePrcController_Snapshot"];
+        get: operations["Api_MarketsController_EqtUsa"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/markets/forex": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Forex
+         * @description Every forex pair with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Api_MarketsController_Forex"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/markets/futures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Futures
+         * @description Every futures contract (energy, agricultural, interest-rate and index futures) with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Api_MarketsController_Futures"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/markets/indices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Indices
+         * @description Every stock index with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Api_MarketsController_Indices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/markets/metals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Metals
+         * @description Every metals contract with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Api_MarketsController_Metals"];
         put?: never;
         post?: never;
         delete?: never;
@@ -213,7 +213,7 @@ export interface paths {
         };
         /**
          * Batch OHLCV
-         * @description Reserved: candles for several symbols in one call. Candle data is not available yet and the endpoint answers 501 Not Implemented.
+         * @description Coming soon: candles for several symbols in one call. This endpoint is not available yet and answers 501 Not Implemented until it is built.
          */
         get: operations["Api_OhlcvController_Batch"];
         put?: never;
@@ -233,7 +233,7 @@ export interface paths {
         };
         /**
          * OHLCV candles
-         * @description Reserved: candles for one symbol over a time range. Candle data is not available yet and the endpoint answers 501 Not Implemented.
+         * @description Coming soon: candles for one symbol over a time range. This endpoint is not available yet and answers 501 Not Implemented until it is built.
          */
         get: operations["Api_OhlcvController_View"];
         put?: never;
@@ -253,7 +253,7 @@ export interface paths {
         };
         /**
          * Realtime OHLCV
-         * @description Reserved: the latest candle for one symbol. Candle data is not available yet and the endpoint answers 501 Not Implemented.
+         * @description Coming soon: the latest candle for one symbol. This endpoint is not available yet and answers 501 Not Implemented until it is built.
          */
         get: operations["Api_OhlcvController_Realtime"];
         put?: never;
@@ -264,7 +264,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/sigcry/snapshot": {
+    "/api/record/calls": {
         parameters: {
             query?: never;
             header?: never;
@@ -272,10 +272,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * SigCry Snapshot
-         * @description Shortlist of crypto assets chosen by the technical screener, with their signals.
+         * Track record: closed calls
+         * @description Every call FinGraph has followed to its end, newest first, with entry, exit and result. Filter by market, symbols, side, horizon, confidence, outcome and dates. 50 a page.
          */
-        get: operations["Api_SigCryController_Snapshot"];
+        get: operations["Api_RecordController_Calls"];
         put?: never;
         post?: never;
         delete?: never;
@@ -284,7 +284,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/sigdax/fastprc": {
+    "/api/screens/crypto/{lane}": {
         parameters: {
             query?: never;
             header?: never;
@@ -292,10 +292,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * SigDax FastPrc
-         * @description Crypto pairs on one exchange with the fastest recent price movement, with their signals.
+         * Screens: Crypto
+         * @description FinGraph's ranked shortlists of coins: strongest risers, strongest fallers, moving fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a page.
          */
-        get: operations["Api_SigDaxController_FastPrc"];
+        get: operations["Api_ScreensController_Crypto"];
         put?: never;
         post?: never;
         delete?: never;
@@ -304,7 +304,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/sigdax/fastvol": {
+    "/api/screens/dax/{lane}": {
         parameters: {
             query?: never;
             header?: never;
@@ -312,10 +312,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * SigDax FastVol
-         * @description Crypto pairs on one exchange with the fastest recent rise in trading volume, with their signals.
+         * Screens: Crypto pairs
+         * @description FinGraph's ranked shortlists of crypto pairs: strongest risers, strongest fallers, moving fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a page.
          */
-        get: operations["Api_SigDaxController_FastVol"];
+        get: operations["Api_ScreensController_Dax"];
         put?: never;
         post?: never;
         delete?: never;
@@ -324,7 +324,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/sigdax/topgain": {
+    "/api/screens/eqtusa/{lane}": {
         parameters: {
             query?: never;
             header?: never;
@@ -332,10 +332,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * SigDax TopGain
-         * @description Crypto pairs on one exchange with the largest gains, with their signals.
+         * Screens: US stocks
+         * @description FinGraph's ranked shortlists of US stocks: strongest risers, strongest fallers, moving fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a page.
          */
-        get: operations["Api_SigDaxController_TopGain"];
+        get: operations["Api_ScreensController_EqtUsa"];
         put?: never;
         post?: never;
         delete?: never;
@@ -344,7 +344,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/sigdax/toplose": {
+    "/api/screens/fxs/{lane}": {
         parameters: {
             query?: never;
             header?: never;
@@ -352,110 +352,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * SigDax TopLose
-         * @description Crypto pairs on one exchange with the largest losses, with their signals.
+         * Screens: Forex
+         * @description FinGraph's ranked shortlists of forex pairs: strongest risers, strongest fallers, moving fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a page.
          */
-        get: operations["Api_SigDaxController_TopLose"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sigeqt/snapshot": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * SigEqt Snapshot
-         * @description Shortlist of equities of one asset class chosen by the technical screener, with their signals.
-         */
-        get: operations["Api_SigEqtController_Snapshot"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sigfxs/breakout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * SigFxs Breakout
-         * @description Forex pairs breaking out of their recent range, with their signals. Scores are comparable only within the forex list, not with crypto or equity scores.
-         */
-        get: operations["Api_SigFxsController_Breakout"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sigfxs/fastprc": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * SigFxs FastPrc
-         * @description Forex pairs with the fastest recent price movement, with their signals. Scores are comparable only within the forex list, not with crypto or equity scores.
-         */
-        get: operations["Api_SigFxsController_FastPrc"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sigfxs/topgain": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * SigFxs TopGain
-         * @description Forex pairs with the largest gains, with their signals. Scores are comparable only within the forex list, not with crypto or equity scores.
-         */
-        get: operations["Api_SigFxsController_TopGain"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sigfxs/toplose": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * SigFxs TopLose
-         * @description Forex pairs with the largest losses, with their signals. Scores are comparable only within the forex list, not with crypto or equity scores.
-         */
-        get: operations["Api_SigFxsController_TopLose"];
+        get: operations["Api_ScreensController_Fxs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -484,46 +384,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/signals/recent": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Recent signals
-         * @description Most recently updated Malaysian equity signals, newest first. Optionally filter by market.
-         */
-        get: operations["Api_SignalsController_Recent"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/signals/{symbol}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * View signal
-         * @description One symbol's signal: Malaysian equity lane first, US equity lane if the symbol is not found there.
-         */
-        get: operations["Api_SignalsController_View"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/stats/aggregate": {
         parameters: {
             query?: never;
@@ -544,46 +404,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/stats/movers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Market movers
-         * @description Top gainers or losers by 24-hour price change percentage, optionally for one exchange.
-         */
-        get: operations["Api_StatsController_Movers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/stats/volume": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Volume leaders
-         * @description Top symbols by 24-hour quote volume, optionally for one exchange.
-         */
-        get: operations["Api_StatsController_Volume"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/api/tickers": {
         parameters: {
             query?: never;
@@ -593,7 +413,7 @@ export interface paths {
         };
         /**
          * Tickers list
-         * @description Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency and listing state; page with limit and offset.
+         * @description Lists crypto-pair tickers with last price, 24-hour change and volume. Filter by exchange, quote coin and listing state; sort by symbol, lastprice, chgpct or quotvol; 50 rows a page.
          */
         get: operations["Api_TickersController_List"];
         put?: never;
@@ -613,7 +433,7 @@ export interface paths {
         };
         /**
          * Ticker search
-         * @description Finds tickers whose symbol contains the search text, case-insensitive.
+         * @description Finds crypto-pair tickers whose symbol contains the search text, case-insensitive. 50 rows a page.
          */
         get: operations["Api_TickersController_Search"];
         put?: never;
@@ -664,7 +484,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/tvdusaeqt/snapshot": {
+    "/api/ticks/dax": {
         parameters: {
             query?: never;
             header?: never;
@@ -672,10 +492,50 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * TVD US-equity tick snapshot
-         * @description Latest US-equity prices from the TradingView feed, one entry per symbol, with the time the snapshot was taken.
+         * Ticks: crypto pairs
+         * @description Latest price of every crypto pair, one entry per exchange and symbol, with the time the snapshot was taken.
          */
-        get: operations["Api_TvdDatController_Snapshot"];
+        get: operations["Api_TicksController_Dax"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ticks/eqtusa": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ticks: US stocks
+         * @description Latest price of every US stock, one entry per symbol, as [price, time in Unix seconds], with the time the snapshot was taken.
+         */
+        get: operations["Api_TicksController_EqtUsa"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ticks/fxs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ticks: forex
+         * @description Latest bid and ask of every forex and CFD instrument the data terminals report, one entry per symbol, with the time of each quote and of the snapshot.
+         */
+        get: operations["Api_TicksController_Fxs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -692,8 +552,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List Assets
-         * @description Lists assets from the asset registry. Filter by exchange, tradability and quote currency; page with limit and offset.
+         * Assets list
+         * @description Lists assets from the asset registry. Filter by exchange, tradability and quote coin; sort by symbol; 50 rows a page.
          */
         get: operations["Pub_AssetsController_List"];
         put?: never;
@@ -713,29 +573,9 @@ export interface paths {
         };
         /**
          * Exchanges Assets
-         * @description Lists the exchange keys with their numeric value and TradingView prefix.
+         * @description Lists the exchanges FinGraph reads, with their name and numeric value.
          */
         get: operations["Pub_AssetsController_Exchanges"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/assets/types": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Types Assets
-         * @description Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
-         */
-        get: operations["Pub_AssetsController_Types"];
         put?: never;
         post?: never;
         delete?: never;
@@ -764,6 +604,146 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/markets/crypto": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Crypto
+         * @description Every coin with its latest Sum, Mav and Osc ratings, price changes, market value, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name. Two coins that share a ticker each have their own symbol.
+         */
+        get: operations["Pub_MarketsController_Crypto"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/markets/dax": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Crypto pairs
+         * @description Every crypto pair of an exchange with its price, 24-hour change, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). Pairs carry no Sum, Mav or Osc ratings. 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Pub_MarketsController_Dax"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/markets/eqtusa": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: US stocks
+         * @description Every US stock with its latest Sum, Mav and Osc ratings, the analysts' rating, price changes, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Pub_MarketsController_EqtUsa"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/markets/forex": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Forex
+         * @description Every forex pair with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Pub_MarketsController_Forex"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/markets/futures": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Futures
+         * @description Every futures contract (energy, agricultural, interest-rate and index futures) with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Pub_MarketsController_Futures"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/markets/indices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Indices
+         * @description Every stock index with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Pub_MarketsController_Indices"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/markets/metals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Markets: Metals
+         * @description Every metals contract with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+         */
+        get: operations["Pub_MarketsController_Metals"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/ohlcv/batch": {
         parameters: {
             query?: never;
@@ -773,7 +753,7 @@ export interface paths {
         };
         /**
          * Batch OHLCV
-         * @description Reserved: candles for several symbols in one call. Candle data is not available yet and the endpoint answers 501 Not Implemented.
+         * @description Coming soon: candles for several symbols in one call. This endpoint is not available yet and answers 501 Not Implemented until it is built.
          */
         get: operations["Pub_OhlcvController_Batch"];
         put?: never;
@@ -793,7 +773,7 @@ export interface paths {
         };
         /**
          * Get Ohlcv
-         * @description Reserved: candles for one symbol over a time range. Candle data is not available yet and the endpoint answers 501 Not Implemented.
+         * @description Coming soon: candles for one symbol over a time range. This endpoint is not available yet and answers 501 Not Implemented until it is built.
          */
         get: operations["Pub_OhlcvController_Get"];
         put?: never;
@@ -813,7 +793,7 @@ export interface paths {
         };
         /**
          * Realtime OHLCV
-         * @description Reserved: the latest candle for one symbol. Candle data is not available yet and the endpoint answers 501 Not Implemented.
+         * @description Coming soon: the latest candle for one symbol. This endpoint is not available yet and answers 501 Not Implemented until it is built.
          */
         get: operations["Pub_OhlcvController_Realtime"];
         put?: never;
@@ -853,7 +833,7 @@ export interface paths {
         };
         /**
          * Realtime quote
-         * @description Latest price, 1-day change and volume for a symbol in any market lane (for example BTC, NVDA, EURUSD, a Bursa Malaysia code or an exchange pair). Set market to search one lane only.
+         * @description Latest price, 1-day change and volume for a symbol in any market (for example BTC, NVDA, EURUSD or an exchange pair). Set market to search one market only.
          */
         get: operations["Pub_QuotesController_Realtime"];
         put?: never;
@@ -864,7 +844,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/signals/recent": {
+    "/v1/record/calls": {
         parameters: {
             query?: never;
             header?: never;
@@ -872,10 +852,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Recent signals
-         * @description Most recently updated signals across crypto, US stocks, forex, Malaysia stocks and crypto pairs. Set market to restrict the result to one lane.
+         * Track record: closed calls
+         * @description Every call FinGraph has followed to its end, newest first, with entry, exit and result. Filter by market, symbols, side, horizon, confidence, outcome and dates. 50 a page.
          */
-        get: operations["Pub_SignalsController_Recent"];
+        get: operations["Pub_RecordController_Calls"];
         put?: never;
         post?: never;
         delete?: never;
@@ -884,7 +864,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/signals/{symbol}": {
+    "/v1/screens/crypto/{lane}": {
         parameters: {
             query?: never;
             header?: never;
@@ -892,10 +872,70 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View signal
-         * @description One symbol's signal (for example BTC, NVDA, EURUSD, a Bursa Malaysia code, an exchange pair or a TradingView code), with its short, mid and long term reads. Set market to search one lane only.
+         * Screens: Crypto
+         * @description FinGraph's ranked shortlists of coins: strongest risers, strongest fallers, moving fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a page.
          */
-        get: operations["Pub_SignalsController_Get"];
+        get: operations["Pub_ScreensController_Crypto"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/screens/dax/{lane}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Screens: Crypto pairs
+         * @description FinGraph's ranked shortlists of crypto pairs: strongest risers, strongest fallers, moving fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a page.
+         */
+        get: operations["Pub_ScreensController_Dax"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/screens/eqtusa/{lane}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Screens: US stocks
+         * @description FinGraph's ranked shortlists of US stocks: strongest risers, strongest fallers, moving fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a page.
+         */
+        get: operations["Pub_ScreensController_EqtUsa"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/screens/fxs/{lane}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Screens: Forex
+         * @description FinGraph's ranked shortlists of forex pairs: strongest risers, strongest fallers, moving fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a page.
+         */
+        get: operations["Pub_ScreensController_Fxs"];
         put?: never;
         post?: never;
         delete?: never;
@@ -924,46 +964,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/stats/movers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Market movers
-         * @description Top gainers or losers by 24-hour price change percentage, optionally for one exchange.
-         */
-        get: operations["Pub_StatsController_Movers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/stats/volume": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Volume leaders
-         * @description Top symbols by 24-hour quote volume, optionally for one exchange.
-         */
-        get: operations["Pub_StatsController_Volume"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/tickers": {
         parameters: {
             query?: never;
@@ -972,8 +972,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List Tickers
-         * @description Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency and listing state; page with limit and offset.
+         * Tickers list
+         * @description Lists crypto-pair tickers with last price, 24-hour change and volume. Filter by exchange, quote coin and listing state; sort by symbol, lastprice, chgpct or quotvol; 50 rows a page.
          */
         get: operations["Pub_TickersController_List"];
         put?: never;
@@ -992,8 +992,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Search Tickers
-         * @description Finds tickers whose symbol contains the search text, case-insensitive.
+         * Ticker search
+         * @description Finds crypto-pair tickers whose symbol contains the search text, case-insensitive. 50 rows a page.
          */
         get: operations["Pub_TickersController_Search"];
         put?: never;
@@ -1024,18 +1024,204 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/ticks/dax": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ticks: crypto pairs
+         * @description Latest price of every crypto pair, one entry per exchange and symbol, with the time the snapshot was taken.
+         */
+        get: operations["Pub_TicksController_Dax"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ticks/eqtusa": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ticks: US stocks
+         * @description Latest price of every US stock, one entry per symbol, as [price, time in Unix seconds], with the time the snapshot was taken.
+         */
+        get: operations["Pub_TicksController_EqtUsa"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ticks/fxs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Ticks: forex
+         * @description Latest bid and ask of every forex and CFD instrument the data terminals report, one entry per symbol, with the time of each quote and of the snapshot.
+         */
+        get: operations["Pub_TicksController_Fxs"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** @enum {string} */
-        AType: "FXMAJOR" | "FXMINOR" | "FXEXOTIC" | "FXASIA" | "STOCKUSA" | "STOCKMYS" | "STOCKIND" | "FUMETALS" | "FUINDEX" | "FUAGROS" | "FUENERGY" | "FUINTRATES" | "CRYPTO" | "INDICES" | "BONDS" | "ETFS";
-        /** @enum {string} */
-        Confidence: "None" | "VLow" | "Low" | "Med" | "High" | "VHigh";
-        /** @enum {string} */
-        DAX: "NIL" | "BIN" | "KUC" | "HTX" | "KRK" | "GIO" | "OKX";
+        ApiMktPageOfDtoApiAsset: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoApiAsset"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoApiTicker: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoApiTicker"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoApiTickerLite: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoApiTickerLite"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoMktCfd: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoMktCfd"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoMktCrypto: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoMktCrypto"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoMktEqtUsa: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoMktEqtUsa"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoMktPair: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoMktPair"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoRecordCall: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoRecordCall"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoScrCfd: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoScrCfd"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoScrCrypto: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoScrCrypto"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoScrEqtUsa: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoScrEqtUsa"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiMktPageOfDtoScrPair: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["DtoScrPair"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
         DtoApiAggregate: {
-            Dax?: string | null;
+            Exchange?: string | null;
             /** Format: int32 */
             TickerCount?: number;
             /** Format: double */
@@ -1046,7 +1232,7 @@ export interface components {
         DtoApiAsset: {
             Id?: string | null;
             Symbol?: string | null;
-            Dax?: string | null;
+            Exchange?: string | null;
             Base?: string | null;
             Quot?: string | null;
             Status?: string | null;
@@ -1054,23 +1240,10 @@ export interface components {
             SpotAllowed?: boolean;
             MarginAllowed?: boolean;
         };
-        DtoApiEnumItem: {
-            Key?: string | null;
-            /** Format: int32 */
-            Value?: number;
-        };
         DtoApiExchange: {
             Key?: string | null;
             /** Format: int32 */
             Value?: number;
-            TvPrefix?: string | null;
-        };
-        DtoApiMover: {
-            Symbol?: string | null;
-            Dax?: string | null;
-            LastPrice?: number | null;
-            ChgPct?: number | null;
-            QuotVol?: number | null;
         };
         DtoApiPattern: {
             /** Format: int32 */
@@ -1085,43 +1258,9 @@ export interface components {
             ConfMin?: number | null;
             Enabled?: boolean;
         };
-        DtoApiSignal: {
-            Code?: string | null;
-            Sym?: string | null;
-            Name?: string | null;
-            Market?: string | null;
-            Sector?: string | null;
-            FinalSig?: string | null;
-            FinalTrend?: string | null;
-            FinalTerm?: string | null;
-            /** Format: double */
-            FinalScore?: number | null;
-            /** Format: int64 */
-            Rank?: number;
-            /** Format: date-time */
-            UpdDt?: string | null;
-        };
-        DtoApiSignalUsa: {
-            Ticker?: string | null;
-            TickName?: string | null;
-            InApc?: boolean;
-            /** Format: int32 */
-            RtgCnt?: number | null;
-            /** Format: int32 */
-            ArtCnt?: number | null;
-            /** Format: date-time */
-            ArtUpDt?: string | null;
-            /** Format: date-time */
-            RateUpDt?: string | null;
-        };
-        DtoApiSignalView: {
-            Lane?: string | null;
-            Mys?: components["schemas"]["DtoApiSignal"] | null;
-            Usa?: components["schemas"]["DtoApiSignalUsa"] | null;
-        };
         DtoApiTicker: {
             Symbol?: string | null;
-            Dax?: string | null;
+            Exchange?: string | null;
             Base?: string | null;
             Quot?: string | null;
             LastPrice?: number | null;
@@ -1131,7 +1270,7 @@ export interface components {
         };
         DtoApiTickerDetail: {
             Symbol?: string | null;
-            Dax?: string | null;
+            Exchange?: string | null;
             Base?: string | null;
             Quot?: string | null;
             LastPrice?: number | null;
@@ -1151,7 +1290,7 @@ export interface components {
         };
         DtoApiTickerLite: {
             Symbol?: string | null;
-            Dax?: string | null;
+            Exchange?: string | null;
             Base?: string | null;
             Quot?: string | null;
         };
@@ -1166,15 +1305,6 @@ export interface components {
             /** Format: date-time */
             Ts?: string | null;
         };
-        DtoFinAssetName: {
-            Symbol?: string | null;
-            Name?: string | null;
-            AType?: components["schemas"]["AType"];
-            Exchange?: string | null;
-            Active?: boolean;
-            /** Format: int32 */
-            LiqRank?: number;
-        };
         DtoFxsTickBatch: {
             Ticks?: {
                 [key: string]: components["schemas"]["TckBidAsk"];
@@ -1183,62 +1313,299 @@ export interface components {
             AsofUnixMs?: number;
             IsSnapshot?: boolean;
         };
-        DtoMarkovRegime: {
-            Kind?: components["schemas"]["SigKind"];
-            State?: components["schemas"]["MarkovState"];
-            PBull?: number;
-            PNeutral?: number;
-            PBear?: number;
-            Stickiness?: number;
-            /** Format: int32 */
-            ExpectedDurationBars?: number;
-            MarkovScore?: number;
-            Entropy?: number;
-            ModelReliability?: number;
-            /** Format: int64 */
-            TransitionCount?: number;
-            /** Format: date-time */
-            ModelAsOf?: string;
-            ModelVersion?: string | null;
+        DtoMktCfd: {
+            /** @description Symbol, one per instrument. */
+            Sym?: string | null;
+            /** @description Name of the instrument. */
+            Name?: string | null;
+            /**
+             * Format: double
+             * @description Latest price.
+             */
+            Price?: number | null;
+            /** @description Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB. */
+            SumSig?: string | null;
+            /**
+             * Format: double
+             * @description Sum as a score from -1 to +1.
+             */
+            SumVal?: number | null;
+            /** @description Mav: the moving-average rating, as a signal. */
+            MavSig?: string | null;
+            /**
+             * Format: double
+             * @description Mav as a score from -1 to +1.
+             */
+            MavVal?: number | null;
+            /** @description Osc: the oscillator rating, as a signal. */
+            OscSig?: string | null;
+            /**
+             * Format: double
+             * @description Osc as a score from -1 to +1.
+             */
+            OscVal?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 day, in percent.
+             */
+            Chg1D?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 week, in percent.
+             */
+            Chg1W?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 month, in percent.
+             */
+            Chg1M?: number | null;
+            /**
+             * Format: double
+             * @description Price change since 1 January, in percent.
+             */
+            ChgYTD?: number | null;
+            /** @description FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading. */
+            Signal?: string | null;
+            /** @description FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up). */
+            Trend?: string | null;
+            /** @description FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh. */
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's own reading: its score for the symbol, about -5 to +5.
+             */
+            Score?: number | null;
+            /** @description FinGraph's own reading: S short, M mid or L long term. Empty when it has none. */
+            Term?: string | null;
+            /**
+             * Format: int64
+             * @description FinGraph's rank in this market: 1 is its strongest, 2 the next.
+             */
+            Rank?: number | null;
+            /**
+             * Format: date-time
+             * @description When the row was last updated, UTC.
+             */
+            UpdatedAt?: string | null;
         };
-        DtoPrcSig: {
-            Source?: string | null;
-            Signal?: components["schemas"]["Signal"];
-            Trend?: components["schemas"]["Trend"];
-            Confidence?: components["schemas"]["Confidence"];
-            TAStatus?: components["schemas"]["TAStatus"];
-            TAConfidenceRaw?: number | null;
-            TAScore?: number | null;
-            SignalRaw?: number | null;
-            TrendRaw?: number | null;
-            ShortDeltaPct?: number | null;
-            MediumDeltaPct?: number | null;
-            LongDeltaPct?: number | null;
-            /** Format: int32 */
-            PointCountS?: number;
-            /** Format: int32 */
-            PointCountM?: number;
-            /** Format: int32 */
-            PointCountL?: number;
-            /** Format: int32 */
-            SampleCount?: number;
-            /** Format: int32 */
-            WindowSpanSecs?: number;
-            /** Format: int64 */
-            DataAgeSec?: number;
-            /** Format: date-time */
-            SourceLastAt?: string | null;
-            TAReason?: string | null;
-            Reason?: string | null;
-            /** Format: int64 */
-            SignalVersion?: number;
-            /** Format: int64 */
-            SignalVersionSell?: number;
-            PreviousSignal?: components["schemas"]["Signal"] | null;
-            /** Format: date-time */
-            GreenAt?: string | null;
-            /** Format: int32 */
-            RuleVersion?: number;
+        DtoMktCrypto: {
+            /** @description Symbol, one per instrument. Two coins that share a ticker each get their own symbol. */
+            Sym?: string | null;
+            /** @description Name of the instrument. */
+            Name?: string | null;
+            /**
+             * Format: double
+             * @description Latest price.
+             */
+            Price?: number | null;
+            /**
+             * Format: double
+             * @description Market value in USD.
+             */
+            MktCap?: number | null;
+            /** @description Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB. */
+            SumSig?: string | null;
+            /**
+             * Format: double
+             * @description Sum as a score from -1 to +1.
+             */
+            SumVal?: number | null;
+            /** @description Mav: the moving-average rating, as a signal. */
+            MavSig?: string | null;
+            /**
+             * Format: double
+             * @description Mav as a score from -1 to +1.
+             */
+            MavVal?: number | null;
+            /** @description Osc: the oscillator rating, as a signal. */
+            OscSig?: string | null;
+            /**
+             * Format: double
+             * @description Osc as a score from -1 to +1.
+             */
+            OscVal?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 day, in percent.
+             */
+            Chg1D?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 week, in percent.
+             */
+            Chg1W?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 month, in percent.
+             */
+            Chg1M?: number | null;
+            /**
+             * Format: double
+             * @description Price change since 1 January, in percent.
+             */
+            ChgYTD?: number | null;
+            /**
+             * Format: double
+             * @description Volume traded over the last 24 hours.
+             */
+            Vol24?: number | null;
+            /** @description FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading. */
+            Signal?: string | null;
+            /** @description FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up). */
+            Trend?: string | null;
+            /** @description FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh. */
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's own reading: its score for the symbol, about -5 to +5.
+             */
+            Score?: number | null;
+            /** @description FinGraph's own reading: S short, M mid or L long term. Empty when it has none. */
+            Term?: string | null;
+            /**
+             * Format: int64
+             * @description FinGraph's rank in this market: 1 is its strongest, 2 the next.
+             */
+            Rank?: number | null;
+            /**
+             * Format: date-time
+             * @description When the row was last updated, UTC.
+             */
+            UpdatedAt?: string | null;
+        };
+        DtoMktEqtUsa: {
+            /** @description Symbol, one per instrument. */
+            Sym?: string | null;
+            /** @description Name of the instrument. */
+            Name?: string | null;
+            /** @description Exchange the stock is listed on. */
+            Exchange?: string | null;
+            /** @description Sector of the company. */
+            Sector?: string | null;
+            /**
+             * Format: double
+             * @description Latest price.
+             */
+            Price?: number | null;
+            /** @description Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB. */
+            SumSig?: string | null;
+            /**
+             * Format: double
+             * @description Sum as a score from -1 to +1.
+             */
+            SumVal?: number | null;
+            /** @description Mav: the moving-average rating, as a signal. */
+            MavSig?: string | null;
+            /**
+             * Format: double
+             * @description Mav as a score from -1 to +1.
+             */
+            MavVal?: number | null;
+            /** @description Osc: the oscillator rating, as a signal. */
+            OscSig?: string | null;
+            /**
+             * Format: double
+             * @description Osc as a score from -1 to +1.
+             */
+            OscVal?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 day, in percent.
+             */
+            Chg1D?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 week, in percent.
+             */
+            Chg1W?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 month, in percent.
+             */
+            Chg1M?: number | null;
+            /**
+             * Format: double
+             * @description Price change since 1 January, in percent.
+             */
+            ChgYTD?: number | null;
+            /**
+             * Format: double
+             * @description Shares traded over the last 24 hours.
+             */
+            Vol24?: number | null;
+            /** @description Analysts' consensus rating, as a signal. Empty when no analyst covers the stock. */
+            AnaSig?: string | null;
+            /** @description FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading. */
+            Signal?: string | null;
+            /** @description FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up). */
+            Trend?: string | null;
+            /** @description FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh. */
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's own reading: its score for the symbol, about -5 to +5.
+             */
+            Score?: number | null;
+            /** @description FinGraph's own reading: S short, M mid or L long term. Empty when it has none. */
+            Term?: string | null;
+            /**
+             * Format: int64
+             * @description FinGraph's rank in this market: 1 is its strongest, 2 the next.
+             */
+            Rank?: number | null;
+            /**
+             * Format: date-time
+             * @description When the row was last updated, UTC.
+             */
+            UpdatedAt?: string | null;
+        };
+        DtoMktPair: {
+            /** @description Pair symbol, for example BTCUSDT. */
+            Sym?: string | null;
+            /** @description Exchange name (BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX). */
+            Exchange?: string | null;
+            /** @description Coin being priced, for example BTC. */
+            Base?: string | null;
+            /** @description Coin it is priced in, for example USDT. */
+            Quote?: string | null;
+            /**
+             * Format: double
+             * @description Latest price, in the quote coin.
+             */
+            Price?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 day, in percent.
+             */
+            Chg1D?: number | null;
+            /**
+             * Format: double
+             * @description Volume traded over the last 24 hours, in the quote coin.
+             */
+            Vol24?: number | null;
+            /** @description FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading. */
+            Signal?: string | null;
+            /** @description FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up). */
+            Trend?: string | null;
+            /** @description FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh. */
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's own reading: its score for the symbol, about -5 to +5.
+             */
+            Score?: number | null;
+            /** @description FinGraph's own reading: S short, M mid or L long term. Empty when it has none. */
+            Term?: string | null;
+            /**
+             * Format: int64
+             * @description FinGraph's rank in this market: 1 is its strongest, 2 the next.
+             */
+            Rank?: number | null;
+            /**
+             * Format: date-time
+             * @description When the row was last updated, UTC.
+             */
+            UpdatedAt?: string | null;
         };
         DtoPxTickBatch: {
             Ticks?: {
@@ -1248,599 +1615,358 @@ export interface components {
             AsofUnixMs?: number;
             IsSnapshot?: boolean;
         };
-        DtoSigAI: {
-            Signal?: components["schemas"]["Signal"];
-            Confidence?: components["schemas"]["Confidence"];
-            /** Format: int32 */
-            Score?: number;
-            Reason?: string | null;
-            Provider?: string | null;
-            Model?: string | null;
-            PromptKey?: string | null;
-            /** Format: date-time */
-            At?: string;
-            Px?: number | null;
-            TASig?: components["schemas"]["Signal"] | null;
-            Tvr?: components["schemas"]["Signal"] | null;
+        DtoRecordCall: {
+            /** @description Symbol of the call. */
+            Sym?: string | null;
+            /** @description eqtusa, crypto, dax or fxs. */
+            Market?: string | null;
+            /** @description buy or sell. */
+            Side?: string | null;
+            /** @description How sure FinGraph was when it made the call: None, VLow, Low, Med, High or VHigh. Empty when it did not say. */
+            Confidence?: string | null;
+            /** @description How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+            Horizon?: string | null;
+            /** @description How it ended: TP1, TP2, TP3 or Win (won), SL or Loss (lost), HorizonEnd or Flat (time ran out). */
+            Outcome?: string | null;
+            /**
+             * Format: double
+             * @description Price when the call was made.
+             */
+            Entry?: number;
+            /**
+             * Format: double
+             * @description Price when it closed.
+             */
+            Exit?: number | null;
+            /**
+             * Format: double
+             * @description Result in percent, signed for the side.
+             */
+            ReturnPct?: number | null;
+            /**
+             * Format: date-time
+             * @description When the call was made, UTC.
+             */
+            CalledAt?: string;
+            /**
+             * Format: date-time
+             * @description When the call closed, UTC.
+             */
+            ClosedAt?: string;
         };
-        DtoSigCryMin: {
-            /** Format: int64 */
-            RankFastPrc?: number | null;
-            /** Format: int64 */
-            RankTopGain?: number | null;
-            /** Format: int64 */
-            RankTopLose?: number | null;
-            /** Format: int64 */
-            RankFastVol?: number | null;
-            /** Format: int64 */
-            RankBreakout?: number | null;
-            /** Format: int64 */
-            SignalVersion?: number;
-            /** Format: date-time */
-            GreenAt?: string | null;
-            TAScoreFastPrc?: number | null;
-            TASigFastPrc?: components["schemas"]["Signal"] | null;
-            TATrendFastPrc?: components["schemas"]["Trend"] | null;
-            ConfidenceFastPrc?: components["schemas"]["Confidence"] | null;
-            TAScoreTopGain?: number | null;
-            TASigTopGain?: components["schemas"]["Signal"] | null;
-            TATrendTopGain?: components["schemas"]["Trend"] | null;
-            ConfidenceTopGain?: components["schemas"]["Confidence"] | null;
-            TAScoreTopLose?: number | null;
-            TASigTopLose?: components["schemas"]["Signal"] | null;
-            TATrendTopLose?: components["schemas"]["Trend"] | null;
-            ConfidenceTopLose?: components["schemas"]["Confidence"] | null;
-            TAScoreFastVol?: number | null;
-            TASigFastVol?: components["schemas"]["Signal"] | null;
-            TATrendFastVol?: components["schemas"]["Trend"] | null;
-            ConfidenceFastVol?: components["schemas"]["Confidence"] | null;
-            TAScoreBreakout?: number | null;
-            TASigBreakout?: components["schemas"]["Signal"] | null;
-            TATrendBreakout?: components["schemas"]["Trend"] | null;
-            ConfidenceBreakout?: components["schemas"]["Confidence"] | null;
-            Symbol?: string | null;
+        DtoScrCfd: {
+            /**
+             * Format: int64
+             * @description Place in this screen's shortlist: 1 is the top.
+             */
+            LaneRank?: number;
+            /** @description Symbol, one per instrument. */
+            Sym?: string | null;
+            /** @description Name of the instrument. */
             Name?: string | null;
-            AType?: components["schemas"]["AType"];
-            AType_?: components["schemas"]["AType"];
-            Kind?: components["schemas"]["SigKind"];
-            Kind_?: components["schemas"]["SigKind"];
-            Exchange?: string | null;
-            Category?: string[] | null;
-            SourceId?: string | null;
-            SourceHash?: string | null;
-            /** Format: date-time */
-            UpdDt?: string;
-            /** Format: int64 */
-            UpdMk?: number;
-            /** Format: date-time */
-            DataAsOf?: string;
-            /** Format: int64 */
-            DataMk?: number;
-            /** Format: int64 */
-            DataAgeSec?: number;
-            FamilyAsOf?: {
-                [key: string]: number;
-            } | null;
-            SrcSig?: components["schemas"]["Signal"];
-            SrcSig_?: components["schemas"]["Signal"];
-            SrcScore?: number | null;
-            TvdSumSigStr?: string | null;
-            TvdSumSig?: components["schemas"]["Signal"] | null;
-            TvdMavSigStr?: string | null;
-            TvdMavSig?: components["schemas"]["Signal"] | null;
-            TvdOscSigStr?: string | null;
-            TvdOscSig?: components["schemas"]["Signal"] | null;
-            /** Format: double */
-            TvdSumVal?: number | null;
-            /** Format: double */
-            TvdMavVal?: number | null;
-            /** Format: double */
-            TvdOscVal?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Latest price.
+             */
+            Price?: number | null;
+            /** @description Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB. */
+            SumSig?: string | null;
+            /**
+             * Format: double
+             * @description Sum as a score from -1 to +1.
+             */
+            SumVal?: number | null;
+            /** @description Mav: the moving-average rating, as a signal. */
+            MavSig?: string | null;
+            /**
+             * Format: double
+             * @description Mav as a score from -1 to +1.
+             */
+            MavVal?: number | null;
+            /** @description Osc: the oscillator rating, as a signal. */
+            OscSig?: string | null;
+            /**
+             * Format: double
+             * @description Osc as a score from -1 to +1.
+             */
+            OscVal?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 day, in percent.
+             */
             Chg1D?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change over 1 week, in percent.
+             */
             Chg1W?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change over 1 month, in percent.
+             */
             Chg1M?: number | null;
-            /** Format: double */
-            Chg3M?: number | null;
-            /** Format: double */
-            Chg6M?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change since 1 January, in percent.
+             */
             ChgYTD?: number | null;
-            /** Format: double */
-            ChgY?: number | null;
-            /** Format: double */
-            Chg5Y?: number | null;
-            /** Format: double */
-            ChgAll?: number | null;
-            /** Format: date-time */
-            TvdUpDt?: string | null;
-            TAScore?: number | null;
-            TARankScore?: number | null;
-            TASig?: components["schemas"]["Signal"] | null;
-            TASig_?: components["schemas"]["Signal"] | null;
-            TATrend?: components["schemas"]["Trend"] | null;
-            TATrend_?: components["schemas"]["Trend"] | null;
-            TATrendStatus?: components["schemas"]["TATrendStatus"];
-            TATrendStatus_?: components["schemas"]["TATrendStatus"];
-            FinalTerm?: components["schemas"]["STy"];
-            FinalTerm_?: components["schemas"]["STy"];
-            FinalTRange?: components["schemas"]["TRange"];
-            FinalTRange_?: components["schemas"]["TRange"];
-            TAStatus?: components["schemas"]["TAStatus"];
-            Confidence?: components["schemas"]["Confidence"];
-            Confidence_?: components["schemas"]["Confidence"];
-            /** Format: double */
-            TAConfidenceRaw?: number;
-            AgreementScore?: number | null;
-            /** Format: int64 */
-            Rank?: number;
-            FamTechScore?: number | null;
-            FamTechQual?: number | null;
-            FamMktCapScore?: number | null;
-            FamMktCapQual?: number | null;
-            MarketCap?: number | null;
-            /** Format: int64 */
-            MarketCapRank?: number | null;
-            MarketCapPct?: number | null;
-            ChgPctS?: number | null;
-            ChgPctM?: number | null;
-            ChgPctL?: number | null;
-            Accel?: number | null;
-            MovementScore?: number | null;
-            MovementQuality?: number | null;
-            MovementStatus?: string | null;
-            HasSeriesS?: boolean;
-            HasSeriesM?: boolean;
-            HasSeriesL?: boolean;
-            /** Format: int64 */
-            WindowSpanSecS?: number;
-            /** Format: int64 */
-            WindowSpanSecM?: number;
-            /** Format: int64 */
-            WindowSpanSecL?: number;
-            IsTopMcapCandidate?: boolean;
-            IsBullishCandidate?: boolean;
-            IsBearishCandidate?: boolean;
-            IsPatternCandidate?: boolean;
-            PatternEvidenceTotal?: number;
-            CapResidualS?: number | null;
-            CapResidualM?: number | null;
-            CapResidualL?: number | null;
-            CapQuality?: number;
-            SignedTurnover?: number | null;
-            CorporateActionSuspect?: boolean;
-            KindState?: components["schemas"]["KindState"];
-            KindState_?: components["schemas"]["KindState"];
-            VolumeConfirmation?: number;
-            WeightProfileId?: string | null;
-            /** Format: int32 */
-            WeightProfileVersion?: number;
-            MovementWeight?: number;
-            TechnicalWeight?: number;
-            VolumeWeight?: number;
-            MktCapWeight?: number;
-            TopPositives?: string[] | null;
-            TopNegatives?: string[] | null;
-            DataWarnings?: string[] | null;
-            DataNotes?: string[] | null;
-            FaMetrics?: components["schemas"]["SigFaMetric"][] | null;
-            FaScore?: number | null;
-            FaEvidenceTotal?: number;
-            IsFaCandidate?: boolean;
-            ModelVer?: string | null;
-            SpecVer?: string | null;
-            Markov?: components["schemas"]["DtoMarkovRegime"] | null;
-            PrcSig?: components["schemas"]["DtoPrcSig"] | null;
-            AISig?: components["schemas"]["DtoSigAI"] | null;
-            MarkovScore?: number | null;
-            Id?: string | null;
-            CkSm?: string | null;
-            CrBy?: string | null;
-            /** Format: date-time */
-            CrDt?: string | null;
-            /** Format: int64 */
-            CrMk?: number | null;
-            UpBy?: string | null;
-            /** Format: date-time */
-            UpDt?: string | null;
-            /** Format: int64 */
-            UpMk?: number | null;
+            /** @description FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading. */
+            Signal?: string | null;
+            /** @description FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up). */
+            Trend?: string | null;
+            /** @description FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh. */
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's own reading: its score for the symbol, about -5 to +5.
+             */
+            Score?: number | null;
+            /** @description FinGraph's own reading: S short, M mid or L long term. Empty when it has none. */
+            Term?: string | null;
+            /**
+             * Format: int64
+             * @description FinGraph's rank in this market: 1 is its strongest, 2 the next.
+             */
+            Rank?: number | null;
+            /**
+             * Format: date-time
+             * @description When the row was last updated, UTC.
+             */
+            UpdatedAt?: string | null;
         };
-        DtoSigDaxMin: {
-            /** Format: int64 */
-            RankFastPrc?: number | null;
-            /** Format: int64 */
-            RankTopGain?: number | null;
-            /** Format: int64 */
-            RankTopLose?: number | null;
-            /** Format: int64 */
-            RankFastVol?: number | null;
-            /** Format: int64 */
-            RankBreakout?: number | null;
-            /** Format: int64 */
-            SignalVersion?: number;
-            /** Format: date-time */
-            GreenAt?: string | null;
-            TAScoreFastPrc?: number | null;
-            TASigFastPrc?: components["schemas"]["Signal"] | null;
-            TATrendFastPrc?: components["schemas"]["Trend"] | null;
-            ConfidenceFastPrc?: components["schemas"]["Confidence"] | null;
-            TAScoreTopGain?: number | null;
-            TASigTopGain?: components["schemas"]["Signal"] | null;
-            TATrendTopGain?: components["schemas"]["Trend"] | null;
-            ConfidenceTopGain?: components["schemas"]["Confidence"] | null;
-            TAScoreTopLose?: number | null;
-            TASigTopLose?: components["schemas"]["Signal"] | null;
-            TATrendTopLose?: components["schemas"]["Trend"] | null;
-            ConfidenceTopLose?: components["schemas"]["Confidence"] | null;
-            TAScoreFastVol?: number | null;
-            TASigFastVol?: components["schemas"]["Signal"] | null;
-            TATrendFastVol?: components["schemas"]["Trend"] | null;
-            ConfidenceFastVol?: components["schemas"]["Confidence"] | null;
-            TAScoreBreakout?: number | null;
-            TASigBreakout?: components["schemas"]["Signal"] | null;
-            TATrendBreakout?: components["schemas"]["Trend"] | null;
-            ConfidenceBreakout?: components["schemas"]["Confidence"] | null;
-            Symbol?: string | null;
+        DtoScrCrypto: {
+            /**
+             * Format: int64
+             * @description Place in this screen's shortlist: 1 is the top.
+             */
+            LaneRank?: number;
+            /** @description Symbol, one per instrument. Two coins that share a ticker each get their own symbol. */
+            Sym?: string | null;
+            /** @description Name of the instrument. */
             Name?: string | null;
-            Exchange?: string | null;
-            SourceId?: string | null;
-            SourceHash?: string | null;
-            DAX?: components["schemas"]["DAX"];
-            DAX_?: components["schemas"]["DAX"];
-            Base?: string | null;
-            Quot?: string | null;
-            Kind?: components["schemas"]["SigKind"];
-            Kind_?: components["schemas"]["SigKind"];
-            LastPrc?: number | null;
-            PrcChgPct?: number | null;
-            QuotVol?: number | null;
-            VolRatio?: number | null;
-            VolImpulse?: number | null;
-            TvdSumSigStr?: string | null;
-            TvdSumSig?: components["schemas"]["Signal"] | null;
-            TvdMavSigStr?: string | null;
-            TvdMavSig?: components["schemas"]["Signal"] | null;
-            TvdOscSigStr?: string | null;
-            TvdOscSig?: components["schemas"]["Signal"] | null;
-            /** Format: double */
-            TvdSumVal?: number | null;
-            /** Format: double */
-            TvdMavVal?: number | null;
-            /** Format: double */
-            TvdOscVal?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Latest price.
+             */
+            Price?: number | null;
+            /**
+             * Format: double
+             * @description Market value in USD.
+             */
+            MktCap?: number | null;
+            /** @description Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB. */
+            SumSig?: string | null;
+            /**
+             * Format: double
+             * @description Sum as a score from -1 to +1.
+             */
+            SumVal?: number | null;
+            /** @description Mav: the moving-average rating, as a signal. */
+            MavSig?: string | null;
+            /**
+             * Format: double
+             * @description Mav as a score from -1 to +1.
+             */
+            MavVal?: number | null;
+            /** @description Osc: the oscillator rating, as a signal. */
+            OscSig?: string | null;
+            /**
+             * Format: double
+             * @description Osc as a score from -1 to +1.
+             */
+            OscVal?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 day, in percent.
+             */
             Chg1D?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change over 1 week, in percent.
+             */
             Chg1W?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change over 1 month, in percent.
+             */
             Chg1M?: number | null;
-            /** Format: double */
-            Chg3M?: number | null;
-            /** Format: double */
-            Chg6M?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change since 1 January, in percent.
+             */
             ChgYTD?: number | null;
-            /** Format: double */
-            ChgY?: number | null;
-            /** Format: double */
-            Chg5Y?: number | null;
-            /** Format: double */
-            ChgAll?: number | null;
-            /** Format: date-time */
-            TvdUpDt?: string | null;
-            ChgPctS?: number | null;
-            ChgPctM?: number | null;
-            ChgPctL?: number | null;
-            VolChgPctS?: number | null;
-            VolChgPctM?: number | null;
-            VolChgPctL?: number | null;
-            Accel?: number | null;
-            LiqScore?: number | null;
-            PatternEvidenceTotal?: number;
-            IsPatternCandidate?: boolean;
-            HasSeriesS?: boolean;
-            HasSeriesM?: boolean;
-            HasSeriesL?: boolean;
-            HasVolSeriesS?: boolean;
-            HasVolSeriesM?: boolean;
-            HasVolSeriesL?: boolean;
-            TAScore?: number | null;
-            TARankScore?: number | null;
-            TASig?: components["schemas"]["Signal"] | null;
-            TASig_?: components["schemas"]["Signal"] | null;
-            TATrend?: components["schemas"]["Trend"] | null;
-            TATrend_?: components["schemas"]["Trend"] | null;
-            TATrendStatus?: components["schemas"]["TATrendStatus"];
-            TATrendStatus_?: components["schemas"]["TATrendStatus"];
-            FinalTerm?: components["schemas"]["STy"];
-            FinalTerm_?: components["schemas"]["STy"];
-            FinalTRange?: components["schemas"]["TRange"];
-            FinalTRange_?: components["schemas"]["TRange"];
-            TAStatus?: components["schemas"]["TAStatus"];
-            ScoreSig?: components["schemas"]["Signal"];
-            ScoreSig_?: components["schemas"]["Signal"];
-            ChgPctSSig?: components["schemas"]["Signal"];
-            ChgPctSSig_?: components["schemas"]["Signal"];
-            ChgPctMSig?: components["schemas"]["Signal"];
-            ChgPctMSig_?: components["schemas"]["Signal"];
-            ChgPctLSig?: components["schemas"]["Signal"];
-            ChgPctLSig_?: components["schemas"]["Signal"];
-            VolChgPctSSig?: components["schemas"]["Signal"];
-            VolChgPctSSig_?: components["schemas"]["Signal"];
-            VolChgPctMSig?: components["schemas"]["Signal"];
-            VolChgPctMSig_?: components["schemas"]["Signal"];
-            VolChgPctLSig?: components["schemas"]["Signal"];
-            VolChgPctLSig_?: components["schemas"]["Signal"];
-            AccelSig?: components["schemas"]["Signal"];
-            AccelSig_?: components["schemas"]["Signal"];
-            LiqSig?: components["schemas"]["Signal"];
-            LiqSig_?: components["schemas"]["Signal"];
-            /** Format: int64 */
-            Rank?: number;
-            /** Format: date-time */
-            UpdDt?: string;
-            /** Format: int64 */
-            UpdMk?: number;
-            /** Format: date-time */
-            DataAsOf?: string;
-            /** Format: int64 */
-            DataMk?: number;
-            /** Format: int64 */
-            DataAgeSec?: number;
-            /** Format: int64 */
-            ActualSpanSec?: number;
-            Confidence?: components["schemas"]["Confidence"];
-            Confidence_?: components["schemas"]["Confidence"];
-            /** Format: double */
-            TAConfidenceRaw?: number;
-            Markov?: components["schemas"]["DtoMarkovRegime"] | null;
-            PrcSig?: components["schemas"]["DtoPrcSig"] | null;
-            AISig?: components["schemas"]["DtoSigAI"] | null;
-            MarkovScore?: number | null;
-            AdjustedScore?: number | null;
-            Id?: string | null;
-            CkSm?: string | null;
-            CrBy?: string | null;
-            /** Format: date-time */
-            CrDt?: string | null;
-            /** Format: int64 */
-            CrMk?: number | null;
-            UpBy?: string | null;
-            /** Format: date-time */
-            UpDt?: string | null;
-            /** Format: int64 */
-            UpMk?: number | null;
+            /**
+             * Format: double
+             * @description Volume traded over the last 24 hours.
+             */
+            Vol24?: number | null;
+            /** @description FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading. */
+            Signal?: string | null;
+            /** @description FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up). */
+            Trend?: string | null;
+            /** @description FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh. */
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's own reading: its score for the symbol, about -5 to +5.
+             */
+            Score?: number | null;
+            /** @description FinGraph's own reading: S short, M mid or L long term. Empty when it has none. */
+            Term?: string | null;
+            /**
+             * Format: int64
+             * @description FinGraph's rank in this market: 1 is its strongest, 2 the next.
+             */
+            Rank?: number | null;
+            /**
+             * Format: date-time
+             * @description When the row was last updated, UTC.
+             */
+            UpdatedAt?: string | null;
         };
-        DtoSigEqtMin: {
-            /** Format: int64 */
-            RankFastPrc?: number | null;
-            /** Format: int64 */
-            RankTopGain?: number | null;
-            /** Format: int64 */
-            RankTopLose?: number | null;
-            /** Format: int64 */
-            RankFastVol?: number | null;
-            /** Format: int64 */
-            RankBreakout?: number | null;
-            /** Format: int64 */
-            SignalVersion?: number;
-            /** Format: date-time */
-            GreenAt?: string | null;
-            TAScoreFastPrc?: number | null;
-            TASigFastPrc?: components["schemas"]["Signal"] | null;
-            TATrendFastPrc?: components["schemas"]["Trend"] | null;
-            ConfidenceFastPrc?: components["schemas"]["Confidence"] | null;
-            TAScoreTopGain?: number | null;
-            TASigTopGain?: components["schemas"]["Signal"] | null;
-            TATrendTopGain?: components["schemas"]["Trend"] | null;
-            ConfidenceTopGain?: components["schemas"]["Confidence"] | null;
-            TAScoreTopLose?: number | null;
-            TASigTopLose?: components["schemas"]["Signal"] | null;
-            TATrendTopLose?: components["schemas"]["Trend"] | null;
-            ConfidenceTopLose?: components["schemas"]["Confidence"] | null;
-            TAScoreFastVol?: number | null;
-            TASigFastVol?: components["schemas"]["Signal"] | null;
-            TATrendFastVol?: components["schemas"]["Trend"] | null;
-            ConfidenceFastVol?: components["schemas"]["Confidence"] | null;
-            TAScoreBreakout?: number | null;
-            TASigBreakout?: components["schemas"]["Signal"] | null;
-            TATrendBreakout?: components["schemas"]["Trend"] | null;
-            ConfidenceBreakout?: components["schemas"]["Confidence"] | null;
-            Symbol?: string | null;
+        DtoScrEqtUsa: {
+            /**
+             * Format: int64
+             * @description Place in this screen's shortlist: 1 is the top.
+             */
+            LaneRank?: number;
+            /** @description Symbol, one per instrument. */
+            Sym?: string | null;
+            /** @description Name of the instrument. */
             Name?: string | null;
-            AType?: components["schemas"]["AType"];
-            AType_?: components["schemas"]["AType"];
-            Kind?: components["schemas"]["SigKind"];
-            Kind_?: components["schemas"]["SigKind"];
+            /** @description Exchange the stock is listed on. */
             Exchange?: string | null;
+            /** @description Sector of the company. */
             Sector?: string | null;
-            Industry?: string | null;
-            SourceId?: string | null;
-            SourceHash?: string | null;
-            /** Format: date-time */
-            UpdDt?: string;
-            /** Format: int64 */
-            UpdMk?: number;
-            /** Format: date-time */
-            DataAsOf?: string;
-            /** Format: int64 */
-            DataMk?: number;
-            /** Format: int64 */
-            DataAgeSec?: number;
-            FamilyAsOf?: {
-                [key: string]: number;
-            } | null;
-            SrcSig?: components["schemas"]["Signal"];
-            SrcSig_?: components["schemas"]["Signal"];
-            SrcScore?: number | null;
-            TvdSumSigStr?: string | null;
-            TvdSumSig?: components["schemas"]["Signal"] | null;
-            TvdMavSigStr?: string | null;
-            TvdMavSig?: components["schemas"]["Signal"] | null;
-            TvdOscSigStr?: string | null;
-            TvdOscSig?: components["schemas"]["Signal"] | null;
-            TvdAnaSigStr?: string | null;
-            TvdAnaSig?: components["schemas"]["Signal"] | null;
-            /** Format: double */
-            TvdSumVal?: number | null;
-            /** Format: double */
-            TvdMavVal?: number | null;
-            /** Format: double */
-            TvdOscVal?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Latest price.
+             */
+            Price?: number | null;
+            /** @description Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB. */
+            SumSig?: string | null;
+            /**
+             * Format: double
+             * @description Sum as a score from -1 to +1.
+             */
+            SumVal?: number | null;
+            /** @description Mav: the moving-average rating, as a signal. */
+            MavSig?: string | null;
+            /**
+             * Format: double
+             * @description Mav as a score from -1 to +1.
+             */
+            MavVal?: number | null;
+            /** @description Osc: the oscillator rating, as a signal. */
+            OscSig?: string | null;
+            /**
+             * Format: double
+             * @description Osc as a score from -1 to +1.
+             */
+            OscVal?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 day, in percent.
+             */
             Chg1D?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change over 1 week, in percent.
+             */
             Chg1W?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change over 1 month, in percent.
+             */
             Chg1M?: number | null;
-            /** Format: double */
-            Chg3M?: number | null;
-            /** Format: double */
-            Chg6M?: number | null;
-            /** Format: double */
+            /**
+             * Format: double
+             * @description Price change since 1 January, in percent.
+             */
             ChgYTD?: number | null;
-            /** Format: double */
-            ChgY?: number | null;
-            /** Format: double */
-            Chg5Y?: number | null;
-            /** Format: double */
-            ChgAll?: number | null;
-            /** Format: date-time */
-            TvdUpDt?: string | null;
-            TAScore?: number | null;
-            TARankScore?: number | null;
-            TASig?: components["schemas"]["Signal"] | null;
-            TASig_?: components["schemas"]["Signal"] | null;
-            TATrend?: components["schemas"]["Trend"] | null;
-            TATrend_?: components["schemas"]["Trend"] | null;
-            TATrendStatus?: components["schemas"]["TATrendStatus"];
-            TATrendStatus_?: components["schemas"]["TATrendStatus"];
-            FinalTerm?: components["schemas"]["STy"];
-            FinalTerm_?: components["schemas"]["STy"];
-            FinalTRange?: components["schemas"]["TRange"];
-            FinalTRange_?: components["schemas"]["TRange"];
-            TAStatus?: components["schemas"]["TAStatus"];
-            Confidence?: components["schemas"]["Confidence"];
-            Confidence_?: components["schemas"]["Confidence"];
-            /** Format: double */
-            TAConfidenceRaw?: number;
-            AgreementScore?: number | null;
-            /** Format: int64 */
-            Rank?: number;
-            FamTechScore?: number | null;
-            FamTechQual?: number | null;
-            FamMktCapScore?: number | null;
-            FamMktCapQual?: number | null;
-            MarketCap?: number | null;
-            /** Format: int64 */
-            MarketCapRank?: number | null;
-            MarketCapPct?: number | null;
-            ChgPctS?: number | null;
-            ChgPctM?: number | null;
-            ChgPctL?: number | null;
-            Accel?: number | null;
-            MovementScore?: number | null;
-            MovementQuality?: number | null;
-            MovementStatus?: string | null;
-            HasSeriesS?: boolean;
-            HasSeriesM?: boolean;
-            HasSeriesL?: boolean;
-            /** Format: int64 */
-            WindowSpanSecS?: number;
-            /** Format: int64 */
-            WindowSpanSecM?: number;
-            /** Format: int64 */
-            WindowSpanSecL?: number;
-            IsTopMcapCandidate?: boolean;
-            IsBullishCandidate?: boolean;
-            IsBearishCandidate?: boolean;
-            IsPatternCandidate?: boolean;
-            PatternEvidenceTotal?: number;
-            CapResidualS?: number | null;
-            CapResidualM?: number | null;
-            CapResidualL?: number | null;
-            CapQuality?: number;
-            SignedTurnover?: number | null;
-            CorporateActionSuspect?: boolean;
-            KindState?: components["schemas"]["KindState"];
-            KindState_?: components["schemas"]["KindState"];
-            VolumeConfirmation?: number;
-            WeightProfileId?: string | null;
-            /** Format: int32 */
-            WeightProfileVersion?: number;
-            MovementWeight?: number;
-            TechnicalWeight?: number;
-            VolumeWeight?: number;
-            MktCapWeight?: number;
-            TopPositives?: string[] | null;
-            TopNegatives?: string[] | null;
-            DataWarnings?: string[] | null;
-            DataNotes?: string[] | null;
-            FaMetrics?: components["schemas"]["SigFaMetric"][] | null;
-            FaScore?: number | null;
-            FaEvidenceTotal?: number;
-            IsFaCandidate?: boolean;
-            ModelVer?: string | null;
-            SpecVer?: string | null;
-            Markov?: components["schemas"]["DtoMarkovRegime"] | null;
-            PrcSig?: components["schemas"]["DtoPrcSig"] | null;
-            AISig?: components["schemas"]["DtoSigAI"] | null;
-            MarkovScore?: number | null;
-            Id?: string | null;
-            CkSm?: string | null;
-            CrBy?: string | null;
-            /** Format: date-time */
-            CrDt?: string | null;
-            /** Format: int64 */
-            CrMk?: number | null;
-            UpBy?: string | null;
-            /** Format: date-time */
-            UpDt?: string | null;
-            /** Format: int64 */
-            UpMk?: number | null;
+            /**
+             * Format: double
+             * @description Shares traded over the last 24 hours.
+             */
+            Vol24?: number | null;
+            /** @description Analysts' consensus rating, as a signal. Empty when no analyst covers the stock. */
+            AnaSig?: string | null;
+            /** @description FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading. */
+            Signal?: string | null;
+            /** @description FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up). */
+            Trend?: string | null;
+            /** @description FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh. */
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's own reading: its score for the symbol, about -5 to +5.
+             */
+            Score?: number | null;
+            /** @description FinGraph's own reading: S short, M mid or L long term. Empty when it has none. */
+            Term?: string | null;
+            /**
+             * Format: int64
+             * @description FinGraph's rank in this market: 1 is its strongest, 2 the next.
+             */
+            Rank?: number | null;
+            /**
+             * Format: date-time
+             * @description When the row was last updated, UTC.
+             */
+            UpdatedAt?: string | null;
         };
-        DtoSigFxsLane: {
-            Symbol?: string | null;
-            SVRNAME?: string | null;
-            AType?: components["schemas"]["AType"];
-            AType_?: components["schemas"]["AType"];
-            Kind?: components["schemas"]["SigKind"];
-            Kind_?: components["schemas"]["SigKind"];
-            KindState?: components["schemas"]["KindState"];
-            KindState_?: components["schemas"]["KindState"];
-            TAScore?: number | null;
-            TASig?: components["schemas"]["Signal"] | null;
-            TASig_?: components["schemas"]["Signal"] | null;
-            TATrend?: components["schemas"]["Trend"] | null;
-            TATrend_?: components["schemas"]["Trend"] | null;
-            TAStatus?: components["schemas"]["TAStatus"];
-            Confidence?: components["schemas"]["Confidence"];
-            Confidence_?: components["schemas"]["Confidence"];
-            /** Format: double */
-            TAConfidenceRaw?: number;
-            FinalTerm?: components["schemas"]["STy"];
-            FinalTerm_?: components["schemas"]["STy"];
-            FinalTRange?: components["schemas"]["TRange"];
-            FinalTRange_?: components["schemas"]["TRange"];
-            ChgPctS?: number | null;
-            ChgPctM?: number | null;
-            ChgPctL?: number | null;
-            Accel?: number | null;
-            SelectedReturn?: number | null;
-            WeightProfileId?: string | null;
-            /** Format: int32 */
-            WeightProfileVersion?: number;
-            /** Format: int64 */
-            Rank?: number;
-            /** Format: int64 */
-            BroadRank?: number;
-            /** Format: date-time */
-            DataAsOf?: string;
-            /** Format: int64 */
-            DataAgeSec?: number;
+        DtoScrPair: {
+            /**
+             * Format: int64
+             * @description Place in this screen's shortlist: 1 is the top.
+             */
+            LaneRank?: number;
+            /** @description Pair symbol, for example BTCUSDT. */
+            Sym?: string | null;
+            /** @description Exchange name (BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX). */
+            Exchange?: string | null;
+            /** @description Coin being priced, for example BTC. */
+            Base?: string | null;
+            /** @description Coin it is priced in, for example USDT. */
+            Quote?: string | null;
+            /**
+             * Format: double
+             * @description Latest price, in the quote coin.
+             */
+            Price?: number | null;
+            /**
+             * Format: double
+             * @description Price change over 1 day, in percent.
+             */
+            Chg1D?: number | null;
+            /**
+             * Format: double
+             * @description Volume traded over the last 24 hours, in the quote coin.
+             */
+            Vol24?: number | null;
+            /** @description FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading. */
+            Signal?: string | null;
+            /** @description FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up). */
+            Trend?: string | null;
+            /** @description FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh. */
+            Confidence?: string | null;
+            /**
+             * Format: double
+             * @description FinGraph's own reading: its score for the symbol, about -5 to +5.
+             */
+            Score?: number | null;
+            /** @description FinGraph's own reading: S short, M mid or L long term. Empty when it has none. */
+            Term?: string | null;
+            /**
+             * Format: int64
+             * @description FinGraph's rank in this market: 1 is its strongest, 2 the next.
+             */
+            Rank?: number | null;
+            /**
+             * Format: date-time
+             * @description When the row was last updated, UTC.
+             */
+            UpdatedAt?: string | null;
         };
         DtoTickBatch: {
             Ticks?: {
@@ -1850,8 +1976,6 @@ export interface components {
             AsofUnixMs?: number;
             IsSnapshot?: boolean;
         };
-        /** @enum {string} */
-        FaFamily: "Unknown" | "Quality" | "Growth" | "Valuation" | "Balance" | "CashFlow" | "Risk" | "Liquidity" | "Network" | "Transaction" | "Holder" | "ValuationSupply" | "Social";
         FinApiError: {
             /** @description Machine-readable code, such as invalid_api_key, insufficient_credits or package_not_allowed. */
             error: string;
@@ -1867,18 +1991,14 @@ export interface components {
             tier?: string;
         };
         /** @enum {string} */
-        KindState: "NotApplicable" | "Setup" | "Confirmed";
-        /** @enum {string} */
-        MarkovState: "Unknown" | "Bear" | "Neutral" | "Bull";
-        /** @enum {string} */
         PatDirection: "BULLISH" | "BEARISH" | "NEUTRAL" | "CONTEXT";
         /** @enum {string} */
         PatFamily: "TREND" | "REVERSAL" | "CONTINUATION" | "EVENT" | "VOLUME" | "STRUCTURE" | "WAVE" | "COMPOSITE" | "GAP" | "DATA";
         /** @enum {string} */
         PatTfBias: "INTRADAY" | "SWING" | "MACRO";
         PubV1Aggregate: {
-            /** @description Exchange key, for example BIN. */
-            dax?: string | null;
+            /** @description Exchange name, for example BINANCE. */
+            exchange?: string | null;
             /**
              * Format: int32
              * @description Number of listed tickers on the exchange.
@@ -1900,8 +2020,8 @@ export interface components {
             id?: string | null;
             /** @description Trading symbol, for example BTCUSDT. */
             symbol?: string | null;
-            /** @description Exchange key, for example BIN. */
-            dax?: string | null;
+            /** @description Exchange name, for example BINANCE. */
+            exchange?: string | null;
             /** @description Base currency of the pair, for example BTC. */
             base?: string | null;
             /** @description Quote currency of the pair, for example USDT. */
@@ -1915,37 +2035,14 @@ export interface components {
             /** @description True when margin trading is allowed. */
             margin_allowed?: boolean;
         };
-        PubV1EnumItem: {
-            /** @description Name of the value. */
-            key?: string | null;
-            /**
-             * Format: int32
-             * @description Numeric value.
-             */
-            value?: number;
-        };
-        PubV1ErrorBody: {
-            /** @description What went wrong. */
-            error?: components["schemas"]["PubV1ErrorInfo"] | null;
-        };
-        PubV1ErrorInfo: {
-            /** @description Machine-readable error code, such as bad_request, not_found or not_implemented. */
-            code?: string | null;
-            /** @description Human-readable explanation. */
-            message?: string | null;
-            /** @description The request values the server received, when it echoes them. */
-            requested?: unknown;
-        };
         PubV1Exchange: {
-            /** @description Exchange key, for example BIN. */
+            /** @description Exchange name, for example BINANCE. */
             key?: string | null;
             /**
              * Format: int32
-             * @description Numeric value of the exchange key.
+             * @description Numeric value of the exchange.
              */
             value?: number;
-            /** @description TradingView prefix of the exchange; null when it has none. */
-            tv_prefix?: string | null;
         };
         PubV1ItemOfPubV1Asset: {
             /** @description The returned object. */
@@ -1955,10 +2052,6 @@ export interface components {
             /** @description The returned object. */
             data?: components["schemas"]["PubV1Quote"] | null;
         };
-        PubV1ItemOfPubV1Signal: {
-            /** @description The returned object. */
-            data?: components["schemas"]["PubV1Signal"] | null;
-        };
         PubV1ItemOfPubV1TickerDetail: {
             /** @description The returned object. */
             data?: components["schemas"]["PubV1TickerDetail"] | null;
@@ -1966,15 +2059,6 @@ export interface components {
         PubV1ListOfPubV1Aggregate: {
             /** @description The returned rows. */
             data?: components["schemas"]["PubV1Aggregate"][] | null;
-            /**
-             * Format: int32
-             * @description Number of rows in data.
-             */
-            count?: number;
-        };
-        PubV1ListOfPubV1EnumItem: {
-            /** @description The returned rows. */
-            data?: components["schemas"]["PubV1EnumItem"][] | null;
             /**
              * Format: int32
              * @description Number of rows in data.
@@ -1990,88 +2074,9 @@ export interface components {
              */
             count?: number;
         };
-        PubV1ListOfPubV1Mover: {
-            /** @description The returned rows. */
-            data?: components["schemas"]["PubV1Mover"][] | null;
-            /**
-             * Format: int32
-             * @description Number of rows in data.
-             */
-            count?: number;
-        };
         PubV1ListOfPubV1Pattern: {
             /** @description The returned rows. */
             data?: components["schemas"]["PubV1Pattern"][] | null;
-            /**
-             * Format: int32
-             * @description Number of rows in data.
-             */
-            count?: number;
-        };
-        PubV1ListOfPubV1SignalRow: {
-            /** @description The returned rows. */
-            data?: components["schemas"]["PubV1SignalRow"][] | null;
-            /**
-             * Format: int32
-             * @description Number of rows in data.
-             */
-            count?: number;
-        };
-        PubV1Mover: {
-            /** @description Trading symbol, for example BTCUSDT. */
-            symbol?: string | null;
-            /** @description Exchange key, for example BIN. */
-            dax?: components["schemas"]["DAX"];
-            /** @description Last traded price in the quote currency. */
-            last_price?: number | null;
-            /** @description Price change over the last 24 hours, in percent. */
-            chg_pct?: number | null;
-            /** @description Traded volume over the last 24 hours, in the quote currency. */
-            quot_vol?: number | null;
-        };
-        PubV1Movers: {
-            /** @description The ranking that was applied: gainers or losers. */
-            direction?: string | null;
-            /** @description The returned rows. */
-            data?: components["schemas"]["PubV1Mover"][] | null;
-            /**
-             * Format: int32
-             * @description Number of rows in data.
-             */
-            count?: number;
-        };
-        PubV1PageOfPubV1Asset: {
-            /**
-             * Format: int32
-             * @description Rows skipped before this page.
-             */
-            offset?: number;
-            /**
-             * Format: int32
-             * @description Maximum rows per page that was applied.
-             */
-            limit?: number;
-            /** @description The returned rows. */
-            data?: components["schemas"]["PubV1Asset"][] | null;
-            /**
-             * Format: int32
-             * @description Number of rows in data.
-             */
-            count?: number;
-        };
-        PubV1PageOfPubV1Ticker: {
-            /**
-             * Format: int32
-             * @description Rows skipped before this page.
-             */
-            offset?: number;
-            /**
-             * Format: int32
-             * @description Maximum rows per page that was applied.
-             */
-            limit?: number;
-            /** @description The returned rows. */
-            data?: components["schemas"]["PubV1Ticker"][] | null;
             /**
              * Format: int32
              * @description Number of rows in data.
@@ -2105,7 +2110,7 @@ export interface components {
             enabled?: boolean;
         };
         PubV1Quote: {
-            /** @description Market lane the quote comes from: crypto, stocks, forex, mys or pairs. */
+            /** @description Market the quote comes from: crypto, stocks, forex or pairs. */
             lane?: string | null;
             /** @description Trading symbol. */
             symbol?: string | null;
@@ -2153,127 +2158,11 @@ export interface components {
              */
             ts?: string | null;
         };
-        PubV1Signal: {
-            /** @description Id of the source row the signal was computed from. */
-            source_id?: string | null;
-            /** @description The term (short, mid or long) the final signal is read for. */
-            term?: string | null;
-            /** @description The separate reads for the short, mid and long term. */
-            terms?: components["schemas"]["PubV1Terms"] | null;
-            /** @description TradingView ratings for the instrument. */
-            tv?: components["schemas"]["PubV1TvRead"] | null;
-            /**
-             * Format: double
-             * @description Price change over one day, in percent.
-             */
-            chg_1d?: number | null;
-            /**
-             * Format: double
-             * @description Price change over one week, in percent.
-             */
-            chg_1w?: number | null;
-            /**
-             * Format: double
-             * @description Price change over one month, in percent.
-             */
-            chg_1m?: number | null;
-            /**
-             * Format: date-time
-             * @description Time of the market data the signal was computed from (UTC).
-             */
-            data_as_of?: string | null;
-            /** @description Market lane the signal belongs to: crypto, stocks, forex, mys or pairs. */
-            lane?: string | null;
-            /** @description Trading symbol. */
-            symbol?: string | null;
-            /** @description Instrument name. */
-            name?: string | null;
-            /** @description Exchange of the instrument. */
-            exchange?: string | null;
-            /** @description Data status of the signal; NoData when it could not be computed. */
-            status?: string | null;
-            /** @description Signal label; null when the signal is not valid. */
-            signal?: string | null;
-            /** @description Trend label; null when the signal is not valid. */
-            trend?: string | null;
-            /** @description Confidence label; null when the signal is not valid. */
-            confidence?: string | null;
-            /**
-             * Format: double
-             * @description Technical-analysis score; null when the signal is not valid.
-             */
-            score?: number | null;
-            /**
-             * Format: date-time
-             * @description When the signal was last updated (UTC).
-             */
-            updated_at?: string | null;
-        };
-        PubV1SignalRow: {
-            /** @description Market lane the signal belongs to: crypto, stocks, forex, mys or pairs. */
-            lane?: string | null;
-            /** @description Trading symbol. */
-            symbol?: string | null;
-            /** @description Instrument name. */
-            name?: string | null;
-            /** @description Exchange of the instrument. */
-            exchange?: string | null;
-            /** @description Data status of the signal; NoData when it could not be computed. */
-            status?: string | null;
-            /** @description Signal label; null when the signal is not valid. */
-            signal?: string | null;
-            /** @description Trend label; null when the signal is not valid. */
-            trend?: string | null;
-            /** @description Confidence label; null when the signal is not valid. */
-            confidence?: string | null;
-            /**
-             * Format: double
-             * @description Technical-analysis score; null when the signal is not valid.
-             */
-            score?: number | null;
-            /**
-             * Format: date-time
-             * @description When the signal was last updated (UTC).
-             */
-            updated_at?: string | null;
-        };
-        PubV1TermRead: {
-            /** @description Signal label of this window. */
-            signal?: string | null;
-            /** @description Trend label of this window. */
-            trend?: string | null;
-        };
-        PubV1Terms: {
-            /** @description Short-term read. */
-            short?: components["schemas"]["PubV1TermRead"] | null;
-            /** @description Mid-term read. */
-            mid?: components["schemas"]["PubV1TermRead"] | null;
-            /** @description Long-term read. */
-            long?: components["schemas"]["PubV1TermRead"] | null;
-        };
-        PubV1Ticker: {
-            /** @description Trading symbol, for example BTCUSDT. */
-            symbol?: string | null;
-            /** @description Exchange key, for example BIN. */
-            dax?: components["schemas"]["DAX"];
-            /** @description Base currency of the pair. */
-            base?: string | null;
-            /** @description Quote currency of the pair. */
-            quot?: string | null;
-            /** @description Last traded price in the quote currency. */
-            last_price?: number | null;
-            /** @description Price change over the last 24 hours, in percent. */
-            chg_pct?: number | null;
-            /** @description Traded volume over the last 24 hours, in the quote currency. */
-            quot_vol?: number | null;
-            /** @description True while the pair is listed on the exchange. */
-            in_exchange?: boolean;
-        };
         PubV1TickerDetail: {
             /** @description Trading symbol, for example BTCUSDT. */
             symbol?: string | null;
-            /** @description Exchange key, for example BIN. */
-            dax?: string | null;
+            /** @description Exchange name, for example BINANCE. */
+            exchange?: string | null;
             /** @description Base currency of the pair. */
             base?: string | null;
             /** @description Quote currency of the pair. */
@@ -2309,35 +2198,6 @@ export interface components {
              */
             total_trades?: number;
         };
-        PubV1TickerHit: {
-            /** @description Trading symbol, for example BTCUSDT. */
-            symbol?: string | null;
-            /** @description Exchange key, for example BIN. */
-            dax?: components["schemas"]["DAX"];
-            /** @description Base currency of the pair. */
-            base?: string | null;
-            /** @description Quote currency of the pair. */
-            quot?: string | null;
-        };
-        PubV1TickerSearch: {
-            /** @description The search text that was applied. */
-            q?: string | null;
-            /** @description The returned rows. */
-            data?: components["schemas"]["PubV1TickerHit"][] | null;
-            /**
-             * Format: int32
-             * @description Number of rows in data.
-             */
-            count?: number;
-        };
-        PubV1TvRead: {
-            /** @description TradingView overall rating. */
-            summary?: string | null;
-            /** @description TradingView moving-average rating. */
-            moving_avg?: string | null;
-            /** @description TradingView oscillator rating. */
-            oscillators?: string | null;
-        };
         ResError: {
             Type?: string | null;
             Code?: string | null;
@@ -2356,38 +2216,8 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResListOfDtoApiAsset: {
-            data?: components["schemas"]["DtoApiAsset"][] | null;
-            error?: components["schemas"]["ResError"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResListOfDtoApiEnumItem: {
-            data?: components["schemas"]["DtoApiEnumItem"][] | null;
-            error?: components["schemas"]["ResError"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
         ResListOfDtoApiExchange: {
             data?: components["schemas"]["DtoApiExchange"][] | null;
-            error?: components["schemas"]["ResError"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResListOfDtoApiMover: {
-            data?: components["schemas"]["DtoApiMover"][] | null;
             error?: components["schemas"]["ResError"] | null;
             /** Format: int32 */
             code?: number;
@@ -2406,47 +2236,18 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResListOfDtoApiSignal: {
-            data?: components["schemas"]["DtoApiSignal"][] | null;
-            error?: components["schemas"]["ResError"] | null;
+        ResPage: {
             /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResListOfDtoApiTicker: {
-            data?: components["schemas"]["DtoApiTicker"][] | null;
-            error?: components["schemas"]["ResError"] | null;
+            pageNo?: number;
             /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResListOfDtoApiTickerLite: {
-            data?: components["schemas"]["DtoApiTickerLite"][] | null;
-            error?: components["schemas"]["ResError"] | null;
+            pageSize?: number;
             /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
+            pageCount?: number;
+            /** Format: int64 */
+            resCount?: number;
         };
         ResPonseOfDtoApiAsset: {
             data?: components["schemas"]["DtoApiAsset"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResPonseOfDtoApiSignalView: {
-            data?: components["schemas"]["DtoApiSignalView"] | null;
             /** Format: int32 */
             code?: number;
             isOk?: boolean;
@@ -2499,42 +2300,6 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResPonseOfListOfDtoSigCryMin: {
-            data?: components["schemas"]["DtoSigCryMin"][] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResPonseOfListOfDtoSigDaxMin: {
-            data?: components["schemas"]["DtoSigDaxMin"][] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResPonseOfListOfDtoSigEqtMin: {
-            data?: components["schemas"]["DtoSigEqtMin"][] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResPonseOfListOfDtoSigFxsLane: {
-            data?: components["schemas"]["DtoSigFxsLane"][] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
         ResPonseOfObject: {
             data?: unknown;
             /** Format: int32 */
@@ -2544,47 +2309,6 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResPonseOfSafeDictOfStringAndDtoFinAssetName: {
-            data?: {
-                [key: string]: components["schemas"]["DtoFinAssetName"];
-            } | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        /** @enum {string} */
-        STy: "NONE" | "S" | "M" | "L";
-        /** @enum {string} */
-        SigDir: "Neutral" | "Up" | "Down";
-        SigFaMetric: {
-            Key?: string | null;
-            Family?: components["schemas"]["FaFamily"];
-            /** Format: double */
-            Value?: number | null;
-            /** Format: double */
-            NormScore?: number | null;
-            Direction?: components["schemas"]["SigDir"];
-            /** Format: double */
-            PeerPercentile?: number | null;
-            /** Format: double */
-            Quality?: number;
-            /** Format: int64 */
-            AsOfMk?: number;
-            Note?: string | null;
-        };
-        /** @enum {string} */
-        SigKind: "NONE" | "FastPrc" | "TopGain" | "TopLose" | "FastVol" | "Breakout";
-        /** @enum {string} */
-        Signal: "N" | "NB" | "B" | "SB" | "VSB" | "VSS" | "SS" | "S" | "NS";
-        /** @enum {string} */
-        TAStatus: "Valid" | "NoData" | "Warmup" | "InsufficientHistory" | "BelowCadence" | "Stale" | "MarketClosed";
-        /** @enum {string} */
-        TATrendStatus: "Valid" | "ThinSeries" | "Stale" | "NoData";
-        /** @enum {string} */
-        TRange: "NONE" | "S1_S10" | "S10_S30" | "S30_S60" | "M1_M5" | "M5_M15" | "M15_M60" | "H1_H3" | "H3_H12" | "H12_H24" | "D1_D3" | "D3_D7" | "W1_W4" | "MO1_MO3" | "MO3_MO6" | "MO6_MO12" | "Y1_Y3" | "Y3_Y5";
         TckBidAsk: {
             Bid?: number;
             Ask?: number;
@@ -2596,8 +2320,6 @@ export interface components {
             /** Format: int64 */
             Ts?: number;
         };
-        /** @enum {string} */
-        Trend: "N" | "NU" | "U" | "SU" | "VSU" | "VSD" | "SD" | "D" | "ND";
     };
     responses: never;
     parameters: never;
@@ -2607,75 +2329,21 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    Api_ApcDatController_Snapshot: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoPxTickBatch"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
     Api_AssetsController_List: {
         parameters: {
             query?: {
-                /** @description Exchange key to filter by, for example BIN. Omit to include every exchange. */
-                dax?: components["schemas"]["DAX"];
+                /** @description Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange. */
+                exchange?: string;
                 /** @description When true, only assets the exchange currently allows trading; when false, only the others. Omit for both. */
                 canTrade?: boolean;
-                /** @description Quote currency to filter by, for example USDT. Omit for every quote currency. */
+                /** @description Quote coin to filter by, for example USDT. Omit for every quote coin. */
                 quote?: string;
-                /** @description Maximum number of rows to return, from 1 to 500. Default 100. */
-                limit?: number;
-                /** @description Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-                offset?: number;
+                /** @description Field to sort by: symbol (default); a minus sign in front sorts high to low. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -2689,7 +2357,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiAsset"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoApiAsset"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2746,177 +2414,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ResListOfDtoApiExchange"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_AssetsController_NamesAll: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfSafeDictOfStringAndDtoFinAssetName"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_AssetsController_Names: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Asset lane: dax for crypto assets or eqt for US equities. */
-                dax: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfSafeDictOfStringAndDtoFinAssetName"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_AssetsController_Types: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiEnumItem"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3016,9 +2513,18 @@ export interface operations {
             };
         };
     };
-    Api_DaxDatController_Snapshot: {
+    Api_MarketsController_Crypto: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -3031,7 +2537,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoTickBatch"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCrypto"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3072,9 +2578,22 @@ export interface operations {
             };
         };
     };
-    Api_FxsTikrController_Snapshot: {
+    Api_MarketsController_Dax: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data today, the others answer an empty page. */
+                exchange?: string;
+                /** @description Only pairs priced in this coin, for example USDT. */
+                quote?: string;
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d, vol24, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -3087,7 +2606,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoFxsTickBatch"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktPair"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3128,9 +2647,18 @@ export interface operations {
             };
         };
     };
-    Api_KlsePrcController_Snapshot: {
+    Api_MarketsController_EqtUsa: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -3143,7 +2671,267 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoTickBatch"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktEqtUsa"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_MarketsController_Forex: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCfd"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_MarketsController_Futures: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCfd"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_MarketsController_Indices: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCfd"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_MarketsController_Metals: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCfd"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3372,303 +3160,31 @@ export interface operations {
             };
         };
     };
-    Api_SigCryController_Snapshot: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigCryMin"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SigDaxController_FastPrc: {
-        parameters: {
-            query: {
-                /** @description Exchange key of the crypto exchange whose signals to return, for example BIN. */
-                dax: components["schemas"]["DAX"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigDaxMin"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SigDaxController_FastVol: {
-        parameters: {
-            query: {
-                /** @description Exchange key of the crypto exchange whose signals to return, for example BIN. */
-                dax: components["schemas"]["DAX"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigDaxMin"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SigDaxController_TopGain: {
-        parameters: {
-            query: {
-                /** @description Exchange key of the crypto exchange whose signals to return, for example BIN. */
-                dax: components["schemas"]["DAX"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigDaxMin"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SigDaxController_TopLose: {
-        parameters: {
-            query: {
-                /** @description Exchange key of the crypto exchange whose signals to return, for example BIN. */
-                dax: components["schemas"]["DAX"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigDaxMin"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SigEqtController_Snapshot: {
+    Api_RecordController_Calls: {
         parameters: {
             query?: {
-                /** @description Asset class to return, for example STOCKUSA. Default STOCKUSA. */
-                aType?: components["schemas"]["AType"];
+                /** @description Only this market: eqtusa, crypto, dax or fxs. */
+                market?: string;
+                /** @description Only these symbols, comma-separated, up to 50, any case. */
+                syms?: string;
+                /** @description buy or sell. */
+                side?: string;
+                /** @description How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+                horizon?: string;
+                /** @description How sure FinGraph was: VHigh, High, Med, Low, VLow or None. */
+                conf?: string;
+                /** @description won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL. */
+                outcome?: string;
+                /** @description Closed on or after this day (UTC), such as 2026-11-01. */
+                from?: string;
+                /** @description Closed on or before this day (UTC), such as 2026-11-20. */
+                to?: string;
+                /** @description closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -3682,7 +3198,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigEqtMin"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoRecordCall"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3723,11 +3239,19 @@ export interface operations {
             };
         };
     };
-    Api_SigFxsController_Breakout: {
+    Api_ScreensController_Crypto: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
             header?: never;
-            path?: never;
+            path: {
+                /** @description Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty. */
+                lane: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -3738,7 +3262,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigFxsLane"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoScrCrypto"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3779,11 +3303,21 @@ export interface operations {
             };
         };
     };
-    Api_SigFxsController_FastPrc: {
+    Api_ScreensController_Dax: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE. */
+                exchange?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
             header?: never;
-            path?: never;
+            path: {
+                /** @description Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty. */
+                lane: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -3794,7 +3328,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigFxsLane"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoScrPair"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3835,11 +3369,19 @@ export interface operations {
             };
         };
     };
-    Api_SigFxsController_TopGain: {
+    Api_ScreensController_EqtUsa: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
             header?: never;
-            path?: never;
+            path: {
+                /** @description Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty. */
+                lane: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -3850,7 +3392,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigFxsLane"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoScrEqtUsa"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3891,11 +3433,19 @@ export interface operations {
             };
         };
     };
-    Api_SigFxsController_TopLose: {
+    Api_ScreensController_Fxs: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
             header?: never;
-            path?: never;
+            path: {
+                /** @description Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty. */
+                lane: string;
+            };
             cookie?: never;
         };
         requestBody?: never;
@@ -3906,7 +3456,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSigFxsLane"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoScrCfd"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -4010,126 +3560,6 @@ export interface operations {
             };
         };
     };
-    Api_SignalsController_Recent: {
-        parameters: {
-            query?: {
-                /** @description Maximum number of rows to return, from 1 to 100. Default 25. */
-                limit?: number;
-                /** @description Market code of the signal rows to return. Omit for every market. */
-                market?: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiSignal"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SignalsController_View: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Ticker symbol or code of the instrument, for example BTCUSDT or a Bursa Malaysia code. */
-                symbol: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSignalView"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
     Api_StatsController_Aggregate: {
         parameters: {
             query?: never;
@@ -4186,143 +3616,21 @@ export interface operations {
             };
         };
     };
-    Api_StatsController_Movers: {
-        parameters: {
-            query?: {
-                /** @description Ranking to return: gainers (largest rises, the default) or losers (largest falls). */
-                direction?: string;
-                /** @description Number of rows to return, from 1 to 100. Default 10. */
-                top?: number;
-                /** @description Exchange key to restrict the ranking to, for example BIN. Omit for every exchange. */
-                dax?: components["schemas"]["DAX"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiMover"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_StatsController_Volume: {
-        parameters: {
-            query?: {
-                /** @description Number of rows to return, from 1 to 100. Default 10. */
-                top?: number;
-                /** @description Exchange key to restrict the ranking to, for example BIN. Omit for every exchange. */
-                dax?: components["schemas"]["DAX"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiMover"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
     Api_TickersController_List: {
         parameters: {
             query?: {
-                /** @description Exchange key to filter by, for example BIN. Omit to include every exchange. */
-                dax?: components["schemas"]["DAX"];
-                /** @description Quote currency to filter by, for example USDT. Omit for every quote currency. */
+                /** @description Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange. */
+                exchange?: string;
+                /** @description Quote coin to filter by, for example USDT. Omit for every quote coin. */
                 quote?: string;
                 /** @description When true, only tickers currently listed on the exchange; when false, only the others. Omit for both. */
                 inExchange?: boolean;
-                /** @description Maximum number of rows to return, from 1 to 500. Default 100. */
-                limit?: number;
-                /** @description Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-                offset?: number;
+                /** @description Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high to low. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -4336,7 +3644,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiTicker"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoApiTicker"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -4382,10 +3690,12 @@ export interface operations {
             query?: {
                 /** @description Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol. Required. */
                 q?: string;
-                /** @description Exchange key to filter by, for example BIN. Omit to include every exchange. */
-                dax?: components["schemas"]["DAX"];
-                /** @description Maximum number of rows to return, from 1 to 100. Default 25. */
-                limit?: number;
+                /** @description Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange. */
+                exchange?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -4399,7 +3709,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiTickerLite"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoApiTickerLite"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -4558,7 +3868,63 @@ export interface operations {
             };
         };
     };
-    Api_TvdDatController_Snapshot: {
+    Api_TicksController_Dax: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResPonseOfDtoTickBatch"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_TicksController_EqtUsa: {
         parameters: {
             query?: never;
             header?: never;
@@ -4614,19 +3980,77 @@ export interface operations {
             };
         };
     };
+    Api_TicksController_Fxs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResPonseOfDtoFxsTickBatch"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
     Pub_AssetsController_List: {
         parameters: {
             query?: {
-                /** @description Exchange key to filter by, for example BIN. Omit to include every exchange. */
-                dax?: components["schemas"]["DAX"];
+                /** @description Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange. */
+                exchange?: string;
                 /** @description When true, only assets the exchange currently allows trading; when false, only the others. Omit for both. */
                 canTrade?: boolean;
-                /** @description Quote currency to filter by, for example USDT. Omit for every quote currency. */
+                /** @description Quote coin to filter by, for example USDT. Omit for every quote coin. */
                 quote?: string;
-                /** @description Maximum number of rows to return, from 1 to 500. Default 100. */
-                limit?: number;
-                /** @description Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-                offset?: number;
+                /** @description Field to sort by: symbol (default); a minus sign in front sorts high to low. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -4640,7 +4064,43 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1PageOfPubV1Asset"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoApiAsset"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };
@@ -4663,24 +4123,40 @@ export interface operations {
                     "application/json": components["schemas"]["PubV1ListOfPubV1Exchange"];
                 };
             };
-        };
-    };
-    Pub_AssetsController_Types: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1ListOfPubV1EnumItem"];
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };
@@ -4706,6 +4182,501 @@ export interface operations {
                     "application/json": components["schemas"]["PubV1ItemOfPubV1Asset"];
                 };
             };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_Crypto: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCrypto"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_Dax: {
+        parameters: {
+            query?: {
+                /** @description Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data today, the others answer an empty page. */
+                exchange?: string;
+                /** @description Only pairs priced in this coin, for example USDT. */
+                quote?: string;
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d, vol24, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktPair"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_EqtUsa: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktEqtUsa"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_Forex: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCfd"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_Futures: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCfd"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_Indices: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCfd"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_Metals: {
+        parameters: {
+            query?: {
+                /** @description Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoMktCfd"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
         };
     };
     Pub_OhlcvController_Batch: {
@@ -4728,7 +4699,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1ErrorBody"];
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -4796,7 +4769,45 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1ErrorBody"];
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };
@@ -4819,7 +4830,9 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1ErrorBody"];
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -4926,7 +4939,7 @@ export interface operations {
     Pub_QuotesController_Realtime: {
         parameters: {
             query?: {
-                /** @description Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is rejected with status 400. */
+                /** @description Market to restrict to: crypto, stocks, forex or pairs (exchange crypto pairs). Omit to search every market. An unknown value is rejected with status 400. */
                 market?: string;
             };
             header?: never;
@@ -4985,13 +4998,31 @@ export interface operations {
             };
         };
     };
-    Pub_SignalsController_Recent: {
+    Pub_RecordController_Calls: {
         parameters: {
             query?: {
-                /** @description Maximum number of rows to return, from 1 to 100. Default 25. */
-                limit?: number;
-                /** @description Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is rejected with status 400. */
+                /** @description Only this market: eqtusa, crypto, dax or fxs. */
                 market?: string;
+                /** @description Only these symbols, comma-separated, up to 50, any case. */
+                syms?: string;
+                /** @description buy or sell. */
+                side?: string;
+                /** @description How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+                horizon?: string;
+                /** @description How sure FinGraph was: VHigh, High, Med, Low, VLow or None. */
+                conf?: string;
+                /** @description won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL. */
+                outcome?: string;
+                /** @description Closed on or after this day (UTC), such as 2026-11-01. */
+                from?: string;
+                /** @description Closed on or before this day (UTC), such as 2026-11-20. */
+                to?: string;
+                /** @description closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -5005,7 +5036,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1ListOfPubV1SignalRow"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoRecordCall"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -5046,16 +5077,18 @@ export interface operations {
             };
         };
     };
-    Pub_SignalsController_Get: {
+    Pub_ScreensController_Crypto: {
         parameters: {
             query?: {
-                /** @description Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is rejected with status 400. */
-                market?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path: {
-                /** @description Trading symbol or code of the instrument, for example BTC, NVDA, EURUSD or an exchange pair such as BTCUSDT. */
-                symbol: string;
+                /** @description Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty. */
+                lane: string;
             };
             cookie?: never;
         };
@@ -5067,7 +5100,201 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1ItemOfPubV1Signal"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoScrCrypto"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_ScreensController_Dax: {
+        parameters: {
+            query?: {
+                /** @description Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE. */
+                exchange?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty. */
+                lane: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoScrPair"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_ScreensController_EqtUsa: {
+        parameters: {
+            query?: {
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty. */
+                lane: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoScrEqtUsa"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_ScreensController_Fxs: {
+        parameters: {
+            query?: {
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path: {
+                /** @description Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty. */
+                lane: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiMktPageOfDtoScrCfd"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -5164,143 +5391,21 @@ export interface operations {
             };
         };
     };
-    Pub_StatsController_Movers: {
-        parameters: {
-            query?: {
-                /** @description Ranking to return: gainers (largest rises, the default) or losers (largest falls). */
-                direction?: string;
-                /** @description Number of rows to return, from 1 to 100. Default 10. */
-                top?: number;
-                /** @description Exchange key to restrict the ranking to, for example BIN. Omit for every exchange. */
-                dax?: components["schemas"]["DAX"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PubV1Movers"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_StatsController_Volume: {
-        parameters: {
-            query?: {
-                /** @description Number of rows to return, from 1 to 100. Default 10. */
-                top?: number;
-                /** @description Exchange key to restrict the ranking to, for example BIN. Omit for every exchange. */
-                dax?: components["schemas"]["DAX"];
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PubV1ListOfPubV1Mover"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
     Pub_TickersController_List: {
         parameters: {
             query?: {
-                /** @description Exchange key to filter by, for example BIN. Omit to include every exchange. */
-                dax?: components["schemas"]["DAX"];
-                /** @description Quote currency to filter by, for example USDT. Omit for every quote currency. */
+                /** @description Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange. */
+                exchange?: string;
+                /** @description Quote coin to filter by, for example USDT. Omit for every quote coin. */
                 quote?: string;
                 /** @description When true, only tickers currently listed on the exchange; when false, only the others. Omit for both. */
                 inExchange?: boolean;
-                /** @description Maximum number of rows to return, from 1 to 500. Default 100. */
-                limit?: number;
-                /** @description Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-                offset?: number;
+                /** @description Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high to low. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -5314,7 +5419,43 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1PageOfPubV1Ticker"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoApiTicker"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };
@@ -5324,10 +5465,12 @@ export interface operations {
             query?: {
                 /** @description Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol. Required. */
                 q?: string;
-                /** @description Exchange key to filter by, for example BIN. Omit to include every exchange. */
-                dax?: components["schemas"]["DAX"];
-                /** @description Maximum number of rows to return, from 1 to 100. Default 25. */
-                limit?: number;
+                /** @description Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange. */
+                exchange?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -5341,7 +5484,43 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PubV1TickerSearch"];
+                    "application/json": components["schemas"]["ApiMktPageOfDtoApiTickerLite"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };
@@ -5365,6 +5544,210 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PubV1ItemOfPubV1TickerDetail"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_TicksController_Dax: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResPonseOfDtoTickBatch"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_TicksController_EqtUsa: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResPonseOfDtoPxTickBatch"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_TicksController_Fxs: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResPonseOfDtoFxsTickBatch"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };

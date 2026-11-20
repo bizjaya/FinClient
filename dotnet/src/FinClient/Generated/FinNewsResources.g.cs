@@ -15,66 +15,59 @@ public sealed class CategoriesResource
     internal CategoriesResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// News category article counts. Returns every enabled news category with its stable slug, its parent and its
-    /// current article count. GET /api/categories/counts. Charged 1 credit per call.
+    /// List categories. Returns the news category tree as rows with a Parent slug, and how many articles each category
+    /// got in the last 7 days. GET /api/categories. Charged 0.5 credits per call.
     /// </summary>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiCateCount> CountsAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiCateCount>("GET", FinQuery.Path("api/categories/counts"), null, null, cancellationToken);
-
-    /// <summary>
-    /// List news categories (flat). Returns every enabled news category as a flat list. Each entry has a stable slug,
-    /// its parent id and its name; use the slug, not the id, to refer to a category. GET /api/categories/flat. Charged
-    /// 0.5 credits per call.
-    /// </summary>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiCate> FlatAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiCate>("GET", FinQuery.Path("api/categories/flat"), null, null, cancellationToken);
-
-    /// <summary>
-    /// List news categories (tree). Returns the enabled news categories as a tree: top-level categories with their
-    /// sub-categories nested under Children. GET /api/categories/tree. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiCate> TreeAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiCate>("GET", FinQuery.Path("api/categories/tree"), null, null, cancellationToken);
+    public Task<ResListOfCategoryRef> ListAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResListOfCategoryRef>("GET", FinQuery.Path("api/categories"), null, null, cancellationToken);
 }
 
 /// <summary>
-/// FinNews Entities: the credit-charged /api operations.
+/// FinNews Mood: the credit-charged /api operations.
 /// </summary>
-public sealed class EntitiesResource
+public sealed class MoodResource
 {
     private readonly FinHttpTransport _http;
-    internal EntitiesResource(FinHttpTransport http) => _http = http;
+    internal MoodResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Top industries. Returns the most frequently mentioned topics, used as an industry list, ranked by frequency.
-    /// GET /api/entities/industries. Charged 0.5 credits per call.
+    /// Market mood by category. Returns, for each news category and day, how many articles were filed under it and how
+    /// many read bullish, bearish, neutral or unscored, with a mood from 0 to 100. An article counts in every category
+    /// it is filed under. GET /api/mood. Charged 1 credit per call.
     /// </summary>
-    /// <param name="top">Number of topics to return, ranked by frequency, from 1 to 500. Default 50.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 7.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint. Leave empty for every category.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiIndustryHit> IndustriesAsync(int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiIndustryHit>("GET", FinQuery.Path("api/entities/industries", ("Top", top)), null, null, cancellationToken);
+    public Task<NwsPageOfMoodDay> ListAsync(int? days = null, string? cats = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfMoodDay>("GET", FinQuery.Path("api/mood", ("days", days), ("cats", cats), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Search news entities. Finds tickers and topics whose name starts with the given text, ranked by how often they
-    /// appear in recent news. GET /api/entities/search. Charged 0.5 credits per call.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="q">Text that the entity name must start with. Required; an empty value is rejected.</param>
-    /// <param name="limit">Maximum number of distinct entities to return, from 1 to 100. Default 25.</param>
-    /// <param name="days">Look-back window in days, from 1 to 3650. Default 365.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 7.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint. Leave empty for every category.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiEntityHit> SearchAsync(string? q = null, int? limit = null, int? days = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiEntityHit>("GET", FinQuery.Path("api/entities/search", ("Q", q), ("Limit", limit), ("Days", days)), null, null, cancellationToken);
+    public IAsyncEnumerable<NwsPageOfMoodDay> ListPagesAsync(int? days = null, string? cats = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<NwsPageOfMoodDay, MoodDay>(page ?? 1,
+            (n, ct) => ListAsync(days, cats, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// News entity types. Lists the entity types used by the news data, such as tickers and topics.
-    /// GET /api/entities/types. Charged 0.5 credits per call.
+    /// Reads every row of every page of ListPagesAsync, one at a time.
     /// </summary>
+    /// <param name="days">How many days back, 1 to 90. Default 7.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint. Leave empty for every category.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNwsEnumOption> TypesAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNwsEnumOption>("GET", FinQuery.Path("api/entities/types"), null, null, cancellationToken);
+    public IAsyncEnumerable<MoodDay> ListItemsAsync(int? days = null, string? cats = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<NwsPageOfMoodDay, MoodDay>(ListPagesAsync(days, cats, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -86,137 +79,72 @@ public sealed class NewsResource
     internal NewsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List news articles. Returns a paged, filterable feed of news articles with their sentiment and signal grades.
-    /// GET /api/news. Charged 0.5 credits per call.
+    /// List news. Lists news articles, newest first, with tickers, categories, sentiment, importance and a summary when
+    /// one exists. Filter by ticker, category, publisher, time, text, importance and sentiment; sort by time, rank or
+    /// score; 50 rows a page. GET /api/news. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article carries come back in NotFound.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto.</param>
+    /// <param name="src">Publisher keys, comma-separated, from the sources endpoint.</param>
+    /// <param name="since">Only articles published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="until">Only articles published at or before this time (ISO 8601, UTC).</param>
+    /// <param name="q">Words to find in the headline or text.</param>
+    /// <param name="minScore">Only articles that matter at least this much, 0 to 10.</param>
+    /// <param name="sentiment">Only articles with this reading: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNews> ListAsync(QueApiNewsList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNews>("GET", FinQuery.Path("api/news", ("qry", FinQuery.Json(qry ?? new QueApiNewsList()))), null, null, cancellationToken);
+    public Task<NwsPageOfNewsItem> ListAsync(string? syms = null, string? cats = null, string? src = null, DateTimeOffset? since = null, DateTimeOffset? until = null, string? q = null, double? minScore = null, string? sentiment = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfNewsItem>("GET", FinQuery.Path("api/news", ("syms", syms), ("cats", cats), ("src", src), ("since", since), ("until", until), ("q", q), ("minScore", minScore), ("sentiment", sentiment), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of ListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last page
-    /// the paging block names, or at the first empty page, which it does not yield. The qry you pass is not changed.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article carries come back in NotFound.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto.</param>
+    /// <param name="src">Publisher keys, comma-separated, from the sources endpoint.</param>
+    /// <param name="since">Only articles published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="until">Only articles published at or before this time (ISO 8601, UTC).</param>
+    /// <param name="q">Words to find in the headline or text.</param>
+    /// <param name="minScore">Only articles that matter at least this much, 0 to 10.</param>
+    /// <param name="sentiment">Only articles with this reading: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiNews> ListPagesAsync(QueApiNewsList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiNewsList, ResPagedOfDtoApiNews, DtoApiNews>(qry ?? new QueApiNewsList(),
-            (q, ct) => ListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<NwsPageOfNewsItem> ListPagesAsync(string? syms = null, string? cats = null, string? src = null, DateTimeOffset? since = null, DateTimeOffset? until = null, string? q = null, double? minScore = null, string? sentiment = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<NwsPageOfNewsItem, NewsItem>(page ?? 1,
+            (n, ct) => ListAsync(syms, cats, src, since, until, q, minScore, sentiment, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
     /// Reads every row of every page of ListPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article carries come back in NotFound.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto.</param>
+    /// <param name="src">Publisher keys, comma-separated, from the sources endpoint.</param>
+    /// <param name="since">Only articles published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="until">Only articles published at or before this time (ISO 8601, UTC).</param>
+    /// <param name="q">Words to find in the headline or text.</param>
+    /// <param name="minScore">Only articles that matter at least this much, 0 to 10.</param>
+    /// <param name="sentiment">Only articles with this reading: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiNews> ListItemsAsync(QueApiNewsList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiNews, DtoApiNews>(ListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<NewsItem> ListItemsAsync(string? syms = null, string? cats = null, string? src = null, DateTimeOffset? since = null, DateTimeOffset? until = null, string? q = null, double? minScore = null, string? sentiment = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<NwsPageOfNewsItem, NewsItem>(ListPagesAsync(syms, cats, src, since, until, q, minScore, sentiment, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// News grouped by category. Returns articles grouped by category slug, as an object keyed by category slug. When
-    /// no keys are given, the keys with the most articles in the window are used. Use the slug, not the numeric id, to
-    /// name a category. GET /api/news/group/categories. Charged 1 credit per call.
+    /// View news article. Returns one article with its full text, author, a reading per ticker and up to five related
+    /// articles. GET /api/news/{id}. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="keys">Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on the endpoint. When empty, the keys with the most articles in the window are used.</param>
-    /// <param name="maxKeys">Maximum number of keys (groups) to return, from 1 to 25. Default 10.</param>
-    /// <param name="maxPerKey">Maximum number of articles per key, from 1 to 25. Default 5.</param>
-    /// <param name="sortBy">Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the time the article was collected, Rank by the confidence-adjusted importance score and Score by the raw importance score. Default Newest.</param>
-    /// <param name="hours">Look-back window in hours, from 1 to 8760 (one year). Default 168.</param>
+    /// <param name="id">Article id, as returned in the Id field of the news list.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite> GroupCategoryListAsync(string? keys = null, int? maxKeys = null, int? maxPerKey = null, NewsSortBy? sortBy = null, int? hours = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite>("GET", FinQuery.Path("api/news/group/categories", ("Keys", keys), ("MaxKeys", maxKeys), ("MaxPerKey", maxPerKey), ("SortBy", sortBy), ("Hours", hours)), null, null, cancellationToken);
-
-    /// <summary>
-    /// News grouped by source. Returns articles grouped by source key code, as an object keyed by source key code. When
-    /// no keys are given, the keys with the most articles in the window are used. For the source catalogue itself, use
-    /// the sources endpoints. GET /api/news/group/sources. Charged 1 credit per call.
-    /// </summary>
-    /// <param name="keys">Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on the endpoint. When empty, the keys with the most articles in the window are used.</param>
-    /// <param name="maxKeys">Maximum number of keys (groups) to return, from 1 to 25. Default 10.</param>
-    /// <param name="maxPerKey">Maximum number of articles per key, from 1 to 25. Default 5.</param>
-    /// <param name="sortBy">Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the time the article was collected, Rank by the confidence-adjusted importance score and Score by the raw importance score. Default Newest.</param>
-    /// <param name="hours">Look-back window in hours, from 1 to 8760 (one year). Default 168.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite> GroupSourceListAsync(string? keys = null, int? maxKeys = null, int? maxPerKey = null, NewsSortBy? sortBy = null, int? hours = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite>("GET", FinQuery.Path("api/news/group/sources", ("Keys", keys), ("MaxKeys", maxKeys), ("MaxPerKey", maxPerKey), ("SortBy", sortBy), ("Hours", hours)), null, null, cancellationToken);
-
-    /// <summary>
-    /// News grouped by ticker. Returns articles grouped by ticker, as an object keyed by ticker. When no keys are
-    /// given, the keys with the most articles in the window are used. GET /api/news/group/tickers. Charged 1 credit per
-    /// call.
-    /// </summary>
-    /// <param name="keys">Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on the endpoint. When empty, the keys with the most articles in the window are used.</param>
-    /// <param name="maxKeys">Maximum number of keys (groups) to return, from 1 to 25. Default 10.</param>
-    /// <param name="maxPerKey">Maximum number of articles per key, from 1 to 25. Default 5.</param>
-    /// <param name="sortBy">Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the time the article was collected, Rank by the confidence-adjusted importance score and Score by the raw importance score. Default Newest.</param>
-    /// <param name="hours">Look-back window in hours, from 1 to 8760 (one year). Default 168.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite> GroupTickerListAsync(string? keys = null, int? maxKeys = null, int? maxPerKey = null, NewsSortBy? sortBy = null, int? hours = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite>("GET", FinQuery.Path("api/news/group/tickers", ("Keys", keys), ("MaxKeys", maxKeys), ("MaxPerKey", maxPerKey), ("SortBy", sortBy), ("Hours", hours)), null, null, cancellationToken);
-
-    /// <summary>
-    /// News grouped by topic. Returns articles grouped by topic, as an object keyed by topic. When no keys are given,
-    /// the keys with the most articles in the window are used. GET /api/news/group/topics. Charged 1 credit per call.
-    /// </summary>
-    /// <param name="keys">Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on the endpoint. When empty, the keys with the most articles in the window are used.</param>
-    /// <param name="maxKeys">Maximum number of keys (groups) to return, from 1 to 25. Default 10.</param>
-    /// <param name="maxPerKey">Maximum number of articles per key, from 1 to 25. Default 5.</param>
-    /// <param name="sortBy">Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the time the article was collected, Rank by the confidence-adjusted importance score and Score by the raw importance score. Default Newest.</param>
-    /// <param name="hours">Look-back window in hours, from 1 to 8760 (one year). Default 168.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite> GroupTopicListAsync(string? keys = null, int? maxKeys = null, int? maxPerKey = null, NewsSortBy? sortBy = null, int? hours = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite>("GET", FinQuery.Path("api/news/group/topics", ("Keys", keys), ("MaxKeys", maxKeys), ("MaxPerKey", maxPerKey), ("SortBy", sortBy), ("Hours", hours)), null, null, cancellationToken);
-
-    /// <summary>
-    /// View news article by NewsId. Returns one article's full detail, looked up by its NewsId. The checksum remains
-    /// the main public identifier of an article. GET /api/news/id/{newsId}. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="newsId">Unique id (UUID) of the article.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiNewsDetail> ByIdAsync(string newsId, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiNewsDetail>("GET", FinQuery.Path($"api/news/id/{FinQuery.Segment(newsId)}"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Trending news articles. Returns articles ranked by their confidence-adjusted importance score within the window.
-    /// To rank tickers and topics by how often they are mentioned, use the trending endpoints instead.
-    /// GET /api/news/trending. Charged 1 credit per call.
-    /// </summary>
-    /// <param name="hours">Look-back window in hours, from 1 to 8760. Default 24.</param>
-    /// <param name="top">Number of articles to return, from 1 to 100. Default 20.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNews> TrendingAsync(int? hours = null, int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNews>("GET", FinQuery.Path("api/news/trending", ("Hours", hours), ("Top", top)), null, null, cancellationToken);
-
-    /// <summary>
-    /// View news article. Returns one article's full detail, looked up by its checksum. GET /api/news/{checksum}.
-    /// Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="checksum">Checksum of the article, as returned in the checksum field of news results.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiNewsDetail> ViewAsync(string checksum, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiNewsDetail>("GET", FinQuery.Path($"api/news/{FinQuery.Segment(checksum)}"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Rate news article. Requests an AI rating for one article, reusing the cached rating when one exists, and returns
-    /// the article detail including it. POST /api/news/{checksum}/rating. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="checksum">Checksum of the article, as returned in the checksum field of news results.</param>
-    /// <param name="body">The request body.</param>
-    /// <param name="idempotencyKey">A stable key for retried writes; one is made when you pass none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiNewsDetail> RatingMakeAsync(string checksum, CmdApiRatingMake body, string? idempotencyKey = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiNewsDetail>("POST", FinQuery.Path($"api/news/{FinQuery.Segment(checksum)}/rating"), body, idempotencyKey, cancellationToken);
-
-    /// <summary>
-    /// Similar news articles. Returns articles that share tickers or topics with the given article, published within a
-    /// 7-day window. GET /api/news/{checksum}/similar. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="checksum">Checksum of the article, as returned in the checksum field of news results.</param>
-    /// <param name="limit">Maximum number of similar articles to return, from 1 to 50. Default 10.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNewsLite> SimilarAsync(string checksum, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNewsLite>("GET", FinQuery.Path($"api/news/{FinQuery.Segment(checksum)}/similar", ("Limit", limit)), null, null, cancellationToken);
+    public Task<ResPonseOfNewsDetail> ViewAsync(string id, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfNewsDetail>("GET", FinQuery.Path($"api/news/{FinQuery.Segment(id)}"), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -228,34 +156,42 @@ public sealed class SentimentResource
     internal SentimentResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Sentiment aggregate. Returns sentiment aggregated by news category and day. GET /api/sentiment/aggregate.
-    /// Charged 1 credit per call.
+    /// Sentiment history. Returns, for each ticker and day, how many articles named it and how many read bullish,
+    /// bearish, neutral or unscored, with a mood from 0 to 100 (the bullish share of the scored articles).
+    /// GET /api/sentiment/history. Charged 1 credit per call.
     /// </summary>
-    /// <param name="days">Look-back window in days, from 1 to 90. Default 7.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no articles in the window come back in NotFound.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 30.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSentimentAgg> AggregateAsync(int? days = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSentimentAgg>("GET", FinQuery.Path("api/sentiment/aggregate", ("Days", days)), null, null, cancellationToken);
+    public Task<NwsPageOfSentimentDay> HistoryAsync(string? syms = null, int? days = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfSentimentDay>("GET", FinQuery.Path("api/sentiment/history", ("syms", syms), ("days", days), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Trending sentiment tickers. Returns the tickers with the largest article volume in the recent window, ranked by
-    /// sentiment. GET /api/sentiment/trending. Charged 1 credit per call.
+    /// Reads every page of HistoryAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="hours">Look-back window in hours, from 1 to 168 (one week). Default 24.</param>
-    /// <param name="top">Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no articles in the window come back in NotFound.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 30.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSentimentTrend> TrendingAsync(int? hours = null, int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSentimentTrend>("GET", FinQuery.Path("api/sentiment/trending", ("Hours", hours), ("Top", top)), null, null, cancellationToken);
+    public IAsyncEnumerable<NwsPageOfSentimentDay> HistoryPagesAsync(string? syms = null, int? days = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<NwsPageOfSentimentDay, SentimentDay>(page ?? 1,
+            (n, ct) => HistoryAsync(syms, days, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Ticker sentiment series. Returns the sentiment and signal time series for one ticker symbol.
-    /// GET /api/sentiment/{symbol}. Charged 1 credit per call.
+    /// Reads every row of every page of HistoryPagesAsync, one at a time.
     /// </summary>
-    /// <param name="symbol">Ticker symbol, for example AAPL.</param>
-    /// <param name="days">Look-back window in days, from 1 to 365. Default 30.</param>
-    /// <param name="limit">Maximum number of points to return, from 1 to 1000. Default 200.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no articles in the window come back in NotFound.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 30.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSentimentPoint> BySymbolAsync(string symbol, int? days = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSentimentPoint>("GET", FinQuery.Path($"api/sentiment/{FinQuery.Segment(symbol)}", ("Days", days), ("Limit", limit)), null, null, cancellationToken);
+    public IAsyncEnumerable<SentimentDay> HistoryItemsAsync(string? syms = null, int? days = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<NwsPageOfSentimentDay, SentimentDay>(HistoryPagesAsync(syms, days, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -267,49 +203,12 @@ public sealed class SourcesResource
     internal SourcesResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List news sources. Returns the catalogue of news sources, paged, with optional category, activity and vendor
-    /// filters. GET /api/sources. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSource> ListAsync(QueApiSourceList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSource>("GET", FinQuery.Path("api/sources", ("qry", FinQuery.Json(qry ?? new QueApiSourceList()))), null, null, cancellationToken);
-
-    /// <summary>
-    /// Reads every page of ListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last page
-    /// the paging block names, or at the first empty page, which it does not yield. The qry you pass is not changed.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSource> ListPagesAsync(QueApiSourceList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSourceList, ResPagedOfDtoApiSource, DtoApiSource>(qry ?? new QueApiSourceList(),
-            (q, ct) => ListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
-
-    /// <summary>
-    /// Reads every row of every page of ListPagesAsync, one at a time.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSource> ListItemsAsync(QueApiSourceList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSource, DtoApiSource>(ListPagesAsync(qry, cancellationToken), p => p.Data);
-
-    /// <summary>
-    /// News source categories. Lists the categories a news source can have. GET /api/sources/categories. Charged 0.5
-    /// credits per call.
+    /// List sources. Returns the publishers FinNews collects news from, with their key, name, kind and whether they are
+    /// active. GET /api/sources. Charged 0.5 credits per call.
     /// </summary>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNwsEnumOption> CategoriesAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNwsEnumOption>("GET", FinQuery.Path("api/sources/categories"), null, null, cancellationToken);
-
-    /// <summary>
-    /// View news source. Returns the detail card of one news source, including its latest run status.
-    /// GET /api/sources/{keycode}. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="keycode">Key code of the news source, as returned by the sources list.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSourceDetail> ViewAsync(string keycode, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSourceDetail>("GET", FinQuery.Path($"api/sources/{FinQuery.Segment(keycode)}"), null, null, cancellationToken);
+    public Task<ResListOfSourceRef> ListAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResListOfSourceRef>("GET", FinQuery.Path("api/sources"), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -321,24 +220,15 @@ public sealed class TrendingResource
     internal TrendingResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Trending tickers. Returns tickers ranked by how often they are mentioned within the window. Hours sets the
-    /// window; mentions are not weighted by recency inside it. GET /api/trending/tickers. Charged 1 credit per call.
+    /// Trending tickers. Returns the tickers named in the most articles in the window, with the change in mentions
+    /// against the previous window and how many mentions read bullish or bearish. GET /api/trending. Charged 1 credit
+    /// per call.
     /// </summary>
-    /// <param name="hours">Look-back window in hours, from 1 to 168 (one week). Default 24.</param>
-    /// <param name="top">Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it.</param>
+    /// <param name="window">Window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="size">How many tickers to return, 1 to 50. Default 10.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiTrendItem> TickersAsync(int? hours = null, int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiTrendItem>("GET", FinQuery.Path("api/trending/tickers", ("Hours", hours), ("Top", top)), null, null, cancellationToken);
-
-    /// <summary>
-    /// Trending topics. Returns topics ranked by how often they are mentioned within the window. Hours sets the window;
-    /// mentions are not weighted by recency inside it. GET /api/trending/topics. Charged 1 credit per call.
-    /// </summary>
-    /// <param name="hours">Look-back window in hours, from 1 to 168 (one week). Default 24.</param>
-    /// <param name="top">Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiTrendItem> TopicsAsync(int? hours = null, int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiTrendItem>("GET", FinQuery.Path("api/trending/topics", ("Hours", hours), ("Top", top)), null, null, cancellationToken);
+    public Task<NwsPageOfTrendingTicker> ListAsync(string? window = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfTrendingTicker>("GET", FinQuery.Path("api/trending", ("window", window), ("size", size)), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -350,98 +240,126 @@ public sealed class VideosResource
     internal VideosResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List videos. Returns a paged video feed with optional score, transcript, symbol and category filters.
-    /// GET /api/videos. Charged 0.5 credits per call.
+    /// List videos. Lists finance videos with FinNews's score, a summary when one exists and what each video says about
+    /// the tickers it discusses. Filter by ticker, channel, time and score; sort by time or score; 50 rows a page.
+    /// Transcripts are not served. GET /api/videos. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Only videos that discuss one of these tickers, comma-separated, up to 50, any case.</param>
+    /// <param name="channel">Only videos from this channel, by channel name or key.</param>
+    /// <param name="since">Only videos published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="minScore">Only videos that matter at least this much, 0 to 10.</param>
+    /// <param name="sort">Field to sort by: published (default) or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiVideo> ListAsync(QueApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiVideo>("GET", FinQuery.Path("api/videos", ("qry", FinQuery.Json(qry ?? new QueApiVideoList()))), null, null, cancellationToken);
+    public Task<NwsPageOfVideoItem> ListAsync(string? syms = null, string? channel = null, DateTimeOffset? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfVideoItem>("GET", FinQuery.Path("api/videos", ("syms", syms), ("channel", channel), ("since", since), ("minScore", minScore), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of ListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last page
-    /// the paging block names, or at the first empty page, which it does not yield. The qry you pass is not changed.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Only videos that discuss one of these tickers, comma-separated, up to 50, any case.</param>
+    /// <param name="channel">Only videos from this channel, by channel name or key.</param>
+    /// <param name="since">Only videos published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="minScore">Only videos that matter at least this much, 0 to 10.</param>
+    /// <param name="sort">Field to sort by: published (default) or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiVideo> ListPagesAsync(QueApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiVideoList, ResPagedOfDtoApiVideo, DtoApiVideo>(qry ?? new QueApiVideoList(),
-            (q, ct) => ListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<NwsPageOfVideoItem> ListPagesAsync(string? syms = null, string? channel = null, DateTimeOffset? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<NwsPageOfVideoItem, VideoItem>(page ?? 1,
+            (n, ct) => ListAsync(syms, channel, since, minScore, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
     /// Reads every row of every page of ListPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Only videos that discuss one of these tickers, comma-separated, up to 50, any case.</param>
+    /// <param name="channel">Only videos from this channel, by channel name or key.</param>
+    /// <param name="since">Only videos published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="minScore">Only videos that matter at least this much, 0 to 10.</param>
+    /// <param name="sort">Field to sort by: published (default) or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiVideo> ListItemsAsync(QueApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiVideo, DtoApiVideo>(ListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<VideoItem> ListItemsAsync(string? syms = null, string? channel = null, DateTimeOffset? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<NwsPageOfVideoItem, VideoItem>(ListPagesAsync(syms, channel, since, minScore, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// View video. Returns one video's detail, looked up by its YouTube video id. The transcript is served by a
-    /// separate endpoint. GET /api/videos/{videoId}. Charged 0.5 credits per call.
+    /// View video. Returns one video with its score, summary and what it says about each ticker it discusses. No
+    /// transcript. GET /api/videos/{id}. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="videoId">YouTube video id.</param>
+    /// <param name="id">Video id, as returned in the Id field of the video list.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiVideoDetail> ViewAsync(string videoId, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiVideoDetail>("GET", FinQuery.Path($"api/videos/{FinQuery.Segment(videoId)}"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Rate video. Requests an AI rating for one video, reusing the cached rating when one exists, and returns the
-    /// video detail including it. POST /api/videos/{videoId}/rating. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="videoId">YouTube video id.</param>
-    /// <param name="body">The request body.</param>
-    /// <param name="idempotencyKey">A stable key for retried writes; one is made when you pass none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiVideoDetail> RatingMakeAsync(string videoId, CmdApiRatingMake body, string? idempotencyKey = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiVideoDetail>("POST", FinQuery.Path($"api/videos/{FinQuery.Segment(videoId)}/rating"), body, idempotencyKey, cancellationToken);
-
-    /// <summary>
-    /// View video transcript. Returns the transcript of one video. It is loaded only when requested.
-    /// GET /api/videos/{videoId}/transcript. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="videoId">YouTube video id.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiVideoTranscript> TranscriptAsync(string videoId, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiVideoTranscript>("GET", FinQuery.Path($"api/videos/{FinQuery.Segment(videoId)}/transcript"), null, null, cancellationToken);
+    public Task<ResPonseOfVideoItem> ViewAsync(string id, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfVideoItem>("GET", FinQuery.Path($"api/videos/{FinQuery.Segment(id)}"), null, null, cancellationToken);
 }
 
 /// <summary>
-/// FinNews Entities: the plan-included /v1 operations.
+/// FinNews Categories: the plan-included /v1 operations.
 /// </summary>
-public sealed class V1EntitiesResource
+public sealed class V1CategoriesResource
 {
     private readonly FinHttpTransport _http;
-    internal V1EntitiesResource(FinHttpTransport http) => _http = http;
+    internal V1CategoriesResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Top industries. Returns the most frequently mentioned topics, used as an industry list, ranked by frequency.
-    /// GET /v1/entities/industries. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// List categories. Returns the news category tree as rows with a Parent slug, and how many articles each category
+    /// got in the last 7 days. Needs a Basic plan or above. GET /v1/categories. Included in paid plans, for package
+    /// tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="top">Number of topics to return, ranked by frequency, from 1 to 500. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiIndustryHit> IndustriesAsync(int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiIndustryHit>("GET", FinQuery.Path("v1/entities/industries", ("Top", top)), null, null, cancellationToken);
+    public Task<ResListOfCategoryRef> ListAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResListOfCategoryRef>("GET", FinQuery.Path("v1/categories"), null, null, cancellationToken);
+}
+
+/// <summary>
+/// FinNews Mood: the plan-included /v1 operations.
+/// </summary>
+public sealed class V1MoodResource
+{
+    private readonly FinHttpTransport _http;
+    internal V1MoodResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Search news entities. Finds tickers and topics whose name starts with the given text, ranked by how often they
-    /// appear in recent news. GET /v1/entities/search. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// Market mood by category. Returns, for each news category and day, how many articles were filed under it and how
+    /// many read bullish, bearish, neutral or unscored, with a mood from 0 to 100. An article counts in every category
+    /// it is filed under. Needs a Basic plan or above. GET /v1/mood. Included in paid plans, for package tiers 1, 2, 3,
+    /// 4.
     /// </summary>
-    /// <param name="q">Text that the entity name must start with. Required; an empty value is rejected.</param>
-    /// <param name="limit">Maximum number of distinct entities to return, from 1 to 100. Default 25.</param>
-    /// <param name="days">Look-back window in days, from 1 to 3650. Default 365.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 7.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint. Leave empty for every category.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiEntityHit> SearchAsync(string? q = null, int? limit = null, int? days = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiEntityHit>("GET", FinQuery.Path("v1/entities/search", ("Q", q), ("Limit", limit), ("Days", days)), null, null, cancellationToken);
+    public Task<NwsPageOfMoodDay> ListAsync(int? days = null, string? cats = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfMoodDay>("GET", FinQuery.Path("v1/mood", ("days", days), ("cats", cats), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// News entity types. Lists the entity types used by the news data, such as tickers and topics.
-    /// GET /v1/entities/types. Included in paid plans.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
+    /// <param name="days">How many days back, 1 to 90. Default 7.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint. Leave empty for every category.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNwsEnumOption> TypesAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNwsEnumOption>("GET", FinQuery.Path("v1/entities/types"), null, null, cancellationToken);
+    public IAsyncEnumerable<NwsPageOfMoodDay> ListPagesAsync(int? days = null, string? cats = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<NwsPageOfMoodDay, MoodDay>(page ?? 1,
+            (n, ct) => ListAsync(days, cats, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of ListPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="days">How many days back, 1 to 90. Default 7.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint. Leave empty for every category.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<MoodDay> ListItemsAsync(int? days = null, string? cats = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<NwsPageOfMoodDay, MoodDay>(ListPagesAsync(days, cats, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -453,51 +371,73 @@ public sealed class V1NewsResource
     internal V1NewsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// All news. Returns a paged, filterable feed of news articles with their sentiment and signal grades.
-    /// GET /v1/news/all. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// List news. Lists news articles, newest first, with tickers, categories, sentiment, importance and a summary when
+    /// one exists. Filter by ticker, category, publisher, time, text, importance and sentiment; sort by time, rank or
+    /// score; 50 rows a page. Needs a Basic plan or above. GET /v1/news. Included in paid plans, for package tiers 1,
+    /// 2, 3, 4.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article carries come back in NotFound.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto.</param>
+    /// <param name="src">Publisher keys, comma-separated, from the sources endpoint.</param>
+    /// <param name="since">Only articles published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="until">Only articles published at or before this time (ISO 8601, UTC).</param>
+    /// <param name="q">Words to find in the headline or text.</param>
+    /// <param name="minScore">Only articles that matter at least this much, 0 to 10.</param>
+    /// <param name="sentiment">Only articles with this reading: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNews> AllAsync(QueApiNewsList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNews>("GET", FinQuery.Path("v1/news/all", ("qry", FinQuery.Json(qry ?? new QueApiNewsList()))), null, null, cancellationToken);
+    public Task<NwsPageOfNewsItem> ListAsync(string? syms = null, string? cats = null, string? src = null, DateTimeOffset? since = null, DateTimeOffset? until = null, string? q = null, double? minScore = null, string? sentiment = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfNewsItem>("GET", FinQuery.Path("v1/news", ("syms", syms), ("cats", cats), ("src", src), ("since", since), ("until", until), ("q", q), ("minScore", minScore), ("sentiment", sentiment), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of AllAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last page
-    /// the paging block names, or at the first empty page, which it does not yield. The qry you pass is not changed.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article carries come back in NotFound.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto.</param>
+    /// <param name="src">Publisher keys, comma-separated, from the sources endpoint.</param>
+    /// <param name="since">Only articles published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="until">Only articles published at or before this time (ISO 8601, UTC).</param>
+    /// <param name="q">Words to find in the headline or text.</param>
+    /// <param name="minScore">Only articles that matter at least this much, 0 to 10.</param>
+    /// <param name="sentiment">Only articles with this reading: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiNews> AllPagesAsync(QueApiNewsList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiNewsList, ResPagedOfDtoApiNews, DtoApiNews>(qry ?? new QueApiNewsList(),
-            (q, ct) => AllAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<NwsPageOfNewsItem> ListPagesAsync(string? syms = null, string? cats = null, string? src = null, DateTimeOffset? since = null, DateTimeOffset? until = null, string? q = null, double? minScore = null, string? sentiment = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<NwsPageOfNewsItem, NewsItem>(page ?? 1,
+            (n, ct) => ListAsync(syms, cats, src, since, until, q, minScore, sentiment, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of AllPagesAsync, one at a time.
+    /// Reads every row of every page of ListPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article carries come back in NotFound.</param>
+    /// <param name="cats">Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto.</param>
+    /// <param name="src">Publisher keys, comma-separated, from the sources endpoint.</param>
+    /// <param name="since">Only articles published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="until">Only articles published at or before this time (ISO 8601, UTC).</param>
+    /// <param name="q">Words to find in the headline or text.</param>
+    /// <param name="minScore">Only articles that matter at least this much, 0 to 10.</param>
+    /// <param name="sentiment">Only articles with this reading: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiNews> AllItemsAsync(QueApiNewsList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiNews, DtoApiNews>(AllPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<NewsItem> ListItemsAsync(string? syms = null, string? cats = null, string? src = null, DateTimeOffset? since = null, DateTimeOffset? until = null, string? q = null, double? minScore = null, string? sentiment = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<NwsPageOfNewsItem, NewsItem>(ListPagesAsync(syms, cats, src, since, until, q, minScore, sentiment, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// News by checksum. Returns one article's full detail, looked up by its checksum.
-    /// GET /v1/news/checksum/{checksum}. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// View news article. Returns one article with its full text, author, a reading per ticker and up to five related
+    /// articles. Needs a Basic plan or above. GET /v1/news/{id}. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="checksum">Checksum of the article, as returned in the checksum field of news results.</param>
+    /// <param name="id">Article id, as returned in the Id field of the news list.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiNewsDetail> ByChecksumAsync(string checksum, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiNewsDetail>("GET", FinQuery.Path($"v1/news/checksum/{FinQuery.Segment(checksum)}"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Similar news articles. Returns articles that share tickers or topics with the given article, published within a
-    /// 7-day window. GET /v1/news/similar/{checksum}. Included in paid plans, for package tiers 1, 2, 3, 4.
-    /// </summary>
-    /// <param name="checksum">Checksum of the article, as returned in the checksum field of news results.</param>
-    /// <param name="limit">Maximum number of similar articles to return, from 1 to 50. Default 10.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNewsLite> SimilarAsync(string checksum, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNewsLite>("GET", FinQuery.Path($"v1/news/similar/{FinQuery.Segment(checksum)}", ("Limit", limit)), null, null, cancellationToken);
+    public Task<ResPonseOfNewsDetail> ViewAsync(string id, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfNewsDetail>("GET", FinQuery.Path($"v1/news/{FinQuery.Segment(id)}"), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -509,34 +449,42 @@ public sealed class V1SentimentResource
     internal V1SentimentResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Sentiment aggregate. Returns sentiment aggregated by news category and day. GET /v1/sentiment/aggregate.
-    /// Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// Sentiment history. Returns, for each ticker and day, how many articles named it and how many read bullish,
+    /// bearish, neutral or unscored, with a mood from 0 to 100 (the bullish share of the scored articles). Needs a
+    /// Basic plan or above. GET /v1/sentiment/history. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="days">Look-back window in days, from 1 to 90. Default 7.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no articles in the window come back in NotFound.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 30.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSentimentAgg> AggregateAsync(int? days = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSentimentAgg>("GET", FinQuery.Path("v1/sentiment/aggregate", ("Days", days)), null, null, cancellationToken);
+    public Task<NwsPageOfSentimentDay> HistoryAsync(string? syms = null, int? days = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfSentimentDay>("GET", FinQuery.Path("v1/sentiment/history", ("syms", syms), ("days", days), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Ticker sentiment series. Returns the sentiment and signal time series for one ticker symbol.
-    /// GET /v1/sentiment/ticker/{symbol}. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// Reads every page of HistoryAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="symbol">Ticker symbol, for example AAPL.</param>
-    /// <param name="days">Look-back window in days, from 1 to 365. Default 30.</param>
-    /// <param name="limit">Maximum number of points to return, from 1 to 1000. Default 200.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no articles in the window come back in NotFound.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 30.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSentimentPoint> TickerAsync(string symbol, int? days = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSentimentPoint>("GET", FinQuery.Path($"v1/sentiment/ticker/{FinQuery.Segment(symbol)}", ("Days", days), ("Limit", limit)), null, null, cancellationToken);
+    public IAsyncEnumerable<NwsPageOfSentimentDay> HistoryPagesAsync(string? syms = null, int? days = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<NwsPageOfSentimentDay, SentimentDay>(page ?? 1,
+            (n, ct) => HistoryAsync(syms, days, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Trending sentiment tickers. Returns the tickers with the largest article volume in the recent window, ranked by
-    /// sentiment. GET /v1/sentiment/trending. Included in paid plans.
+    /// Reads every row of every page of HistoryPagesAsync, one at a time.
     /// </summary>
-    /// <param name="hours">Look-back window in hours, from 1 to 168 (one week). Default 24.</param>
-    /// <param name="top">Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it.</param>
+    /// <param name="syms">Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no articles in the window come back in NotFound.</param>
+    /// <param name="days">How many days back, 1 to 90. Default 30.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSentimentTrend> TrendingAsync(int? hours = null, int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSentimentTrend>("GET", FinQuery.Path("v1/sentiment/trending", ("Hours", hours), ("Top", top)), null, null, cancellationToken);
+    public IAsyncEnumerable<SentimentDay> HistoryItemsAsync(string? syms = null, int? days = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<NwsPageOfSentimentDay, SentimentDay>(HistoryPagesAsync(syms, days, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -548,50 +496,12 @@ public sealed class V1SourcesResource
     internal V1SourcesResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List news sources. Returns the catalogue of news sources, paged, with optional category, activity and vendor
-    /// filters. GET /v1/sources. Included in paid plans, for package tiers 1, 2, 3, 4.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSource> ListAsync(QueApiSourceList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSource>("GET", FinQuery.Path("v1/sources", ("qry", FinQuery.Json(qry ?? new QueApiSourceList()))), null, null, cancellationToken);
-
-    /// <summary>
-    /// Reads every page of ListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last page
-    /// the paging block names, or at the first empty page, which it does not yield. The qry you pass is not changed.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSource> ListPagesAsync(QueApiSourceList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSourceList, ResPagedOfDtoApiSource, DtoApiSource>(qry ?? new QueApiSourceList(),
-            (q, ct) => ListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
-
-    /// <summary>
-    /// Reads every row of every page of ListPagesAsync, one at a time.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSource> ListItemsAsync(QueApiSourceList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSource, DtoApiSource>(ListPagesAsync(qry, cancellationToken), p => p.Data);
-
-    /// <summary>
-    /// News source categories. Lists the categories a news source can have. GET /v1/sources/categories. Included in
-    /// paid plans.
+    /// List sources. Returns the publishers FinNews collects news from, with their key, name, kind and whether they are
+    /// active. Needs a Basic plan or above. GET /v1/sources. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiNwsEnumOption> CategoriesAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiNwsEnumOption>("GET", FinQuery.Path("v1/sources/categories"), null, null, cancellationToken);
-
-    /// <summary>
-    /// View news source. Returns the detail card of one news source. The run-status fields are filled only on higher
-    /// package tiers and are null otherwise. GET /v1/sources/{keycode}. Included in paid plans, for package tiers 1, 2,
-    /// 3, 4.
-    /// </summary>
-    /// <param name="keycode">Key code of the news source, as returned by the sources list.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSourceDetail> GetAsync(string keycode, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSourceDetail>("GET", FinQuery.Path($"v1/sources/{FinQuery.Segment(keycode)}"), null, null, cancellationToken);
+    public Task<ResListOfSourceRef> ListAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResListOfSourceRef>("GET", FinQuery.Path("v1/sources"), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -603,25 +513,82 @@ public sealed class V1TrendingResource
     internal V1TrendingResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Trending tickers. Returns tickers ranked by how often they are mentioned within the window. Hours sets the
-    /// window; mentions are not weighted by recency inside it. GET /v1/tickers/trending. Included in paid plans.
+    /// Trending tickers. Returns the tickers named in the most articles in the window, with the change in mentions
+    /// against the previous window and how many mentions read bullish or bearish. Needs a Basic plan or above.
+    /// GET /v1/trending. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="hours">Look-back window in hours, from 1 to 168 (one week). Default 24.</param>
-    /// <param name="top">Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it.</param>
+    /// <param name="window">Window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="size">How many tickers to return, 1 to 50. Default 10.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiTrendItem> TickersTrendingAsync(int? hours = null, int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiTrendItem>("GET", FinQuery.Path("v1/tickers/trending", ("Hours", hours), ("Top", top)), null, null, cancellationToken);
+    public Task<NwsPageOfTrendingTicker> ListAsync(string? window = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfTrendingTicker>("GET", FinQuery.Path("v1/trending", ("window", window), ("size", size)), null, null, cancellationToken);
+}
+
+/// <summary>
+/// FinNews Videos: the plan-included /v1 operations.
+/// </summary>
+public sealed class V1VideosResource
+{
+    private readonly FinHttpTransport _http;
+    internal V1VideosResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Trending topics. Returns topics ranked by how often they are mentioned within the window. Hours sets the window;
-    /// mentions are not weighted by recency inside it. GET /v1/topics. Included in paid plans, for package tiers 1, 2,
-    /// 3, 4.
+    /// List videos. Lists finance videos with FinNews's score, a summary when one exists and what each video says about
+    /// the tickers it discusses. Filter by ticker, channel, time and score; sort by time or score; 50 rows a page.
+    /// Transcripts are not served. Needs a Basic plan or above. GET /v1/videos. Included in paid plans, for package
+    /// tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="hours">Look-back window in hours, from 1 to 168 (one week). Default 24.</param>
-    /// <param name="top">Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it.</param>
+    /// <param name="syms">Only videos that discuss one of these tickers, comma-separated, up to 50, any case.</param>
+    /// <param name="channel">Only videos from this channel, by channel name or key.</param>
+    /// <param name="since">Only videos published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="minScore">Only videos that matter at least this much, 0 to 10.</param>
+    /// <param name="sort">Field to sort by: published (default) or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiTrendItem> TopicsAsync(int? hours = null, int? top = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiTrendItem>("GET", FinQuery.Path("v1/topics", ("Hours", hours), ("Top", top)), null, null, cancellationToken);
+    public Task<NwsPageOfVideoItem> ListAsync(string? syms = null, string? channel = null, DateTimeOffset? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<NwsPageOfVideoItem>("GET", FinQuery.Path("v1/videos", ("syms", syms), ("channel", channel), ("since", since), ("minScore", minScore), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Only videos that discuss one of these tickers, comma-separated, up to 50, any case.</param>
+    /// <param name="channel">Only videos from this channel, by channel name or key.</param>
+    /// <param name="since">Only videos published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="minScore">Only videos that matter at least this much, 0 to 10.</param>
+    /// <param name="sort">Field to sort by: published (default) or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<NwsPageOfVideoItem> ListPagesAsync(string? syms = null, string? channel = null, DateTimeOffset? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<NwsPageOfVideoItem, VideoItem>(page ?? 1,
+            (n, ct) => ListAsync(syms, channel, since, minScore, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of ListPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Only videos that discuss one of these tickers, comma-separated, up to 50, any case.</param>
+    /// <param name="channel">Only videos from this channel, by channel name or key.</param>
+    /// <param name="since">Only videos published at or after this time (ISO 8601, UTC).</param>
+    /// <param name="minScore">Only videos that matter at least this much, 0 to 10.</param>
+    /// <param name="sort">Field to sort by: published (default) or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<VideoItem> ListItemsAsync(string? syms = null, string? channel = null, DateTimeOffset? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<NwsPageOfVideoItem, VideoItem>(ListPagesAsync(syms, channel, since, minScore, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// View video. Returns one video with its score, summary and what it says about each ticker it discusses. No
+    /// transcript. Needs a Basic plan or above. GET /v1/videos/{id}. Included in paid plans, for package tiers 1, 2, 3,
+    /// 4.
+    /// </summary>
+    /// <param name="id">Video id, as returned in the Id field of the video list.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ResPonseOfVideoItem> ViewAsync(string id, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfVideoItem>("GET", FinQuery.Path($"v1/videos/{FinQuery.Segment(id)}"), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -631,17 +598,24 @@ public sealed class FinNewsV1Resource
 {
     internal FinNewsV1Resource(FinHttpTransport http)
     {
-        Entities = new V1EntitiesResource(http);
+        Categories = new V1CategoriesResource(http);
+        Mood = new V1MoodResource(http);
         News = new V1NewsResource(http);
         Sentiment = new V1SentimentResource(http);
         Sources = new V1SourcesResource(http);
         Trending = new V1TrendingResource(http);
+        Videos = new V1VideosResource(http);
     }
 
     /// <summary>
-    /// Entities.
+    /// Categories.
     /// </summary>
-    public V1EntitiesResource Entities { get; }
+    public V1CategoriesResource Categories { get; }
+
+    /// <summary>
+    /// Mood.
+    /// </summary>
+    public V1MoodResource Mood { get; }
 
     /// <summary>
     /// News.
@@ -662,6 +636,11 @@ public sealed class FinNewsV1Resource
     /// Trending.
     /// </summary>
     public V1TrendingResource Trending { get; }
+
+    /// <summary>
+    /// Videos.
+    /// </summary>
+    public V1VideosResource Videos { get; }
 }
 
 /// <summary>
@@ -672,7 +651,7 @@ public sealed class FinNewsResource
     internal FinNewsResource(FinHttpTransport http)
     {
         Categories = new CategoriesResource(http);
-        Entities = new EntitiesResource(http);
+        Mood = new MoodResource(http);
         News = new NewsResource(http);
         Sentiment = new SentimentResource(http);
         Sources = new SourcesResource(http);
@@ -687,9 +666,9 @@ public sealed class FinNewsResource
     public CategoriesResource Categories { get; }
 
     /// <summary>
-    /// Entities.
+    /// Mood.
     /// </summary>
-    public EntitiesResource Entities { get; }
+    public MoodResource Mood { get; }
 
     /// <summary>
     /// News.

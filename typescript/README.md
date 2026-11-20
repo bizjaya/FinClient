@@ -74,8 +74,8 @@ const valid = FinWebhook.verify(secret, timestampHeader, rawBody, signatureHeade
 
 ## FinGraph, FinNews and FinSocial
 
-FinGraph (market data, tickers, signals and statistics), FinNews (news, sentiment, trending, sources and videos) and FinSocial
-(prediction markets, social posts, authors and videos) sit beside FinCopy in the same client. Each has its own API key, sent
+FinGraph (markets, screens, closed calls, tickers, candles and statistics), FinNews (news, sentiment, mood, trending, sources and
+videos) and FinSocial (pulse, posts, videos, prediction markets and creators) sit beside FinCopy in the same client. Each has its own API key, sent
 in the `FinUsrKey` header (FinCopy's stays `X-Api-Key`), and its own address:
 
 ```ts
@@ -104,52 +104,48 @@ Every operation in each service's OpenAPI document is a method. The two surfaces
 
 | Service | `/api` groups | `/v1` groups |
 | --- | --- | --- |
-| `fin.graph` | apcDat, assets, daxDat, fxsTikr, klsePrc, ohlcv, sigCry, sigDax, sigEqt, sigFxs, signals, stats, tickers, tvdDat | assets, ohlcv, quotes, signals, stats, tickers |
-| `fin.news` | categories, entities, news, sentiment, sources, trending, videos | entities, news, sentiment, sources, trending |
-| `fin.social` | markets, social, videos | markets, social, videos |
+| `fin.graph` | assets, markets, ohlcv, record, screens, signals, stats, tickers, ticks | assets, markets, ohlcv, quotes, record, screens, signals, stats, tickers, ticks |
+| `fin.news` | categories, mood, news, sentiment, sources, trending, videos | categories, mood, news, sentiment, sources, trending, videos |
+| `fin.social` | creators, markets, posts, pulse, videos | creators, markets, posts, pulse, videos |
 
-The group is the operation's tag and the method is the action part of its operation id (`Api_NewsController_RatingMake` is
-`fin.news.news.ratingMake()`; `Pub_TickersController_Get` is `fin.graph.v1.tickers.get()`). If two operations of one group on one
+The group is the operation's tag and the method is the action part of its operation id (`Pub_MarketsController_EqtUsa` is
+`fin.graph.v1.markets.eqtUsa()`; `Pub_TickersController_Get` is `fin.graph.v1.tickers.get()`). If two operations of one group on one
 surface would get the same name, the later one in path order is named with its HTTP method in front, then its last path segment;
 no operation needs that today. Each method's documentation comment gives what it does, its route, and its cost in credits
 (`/api`) or the package tiers it is open to (`/v1`).
 
-Arguments run in the order of the request: path parameters (required, positional), the JSON body, the query, then the
-per-request options (`signal`, `idempotencyKey`):
+Arguments run in the order of the request: path parameters (required, positional), the query, then the per-request options
+(`signal`):
 
 ```ts
 const detail = await fin.graph.tickers.view("BTCUSDT");                                    // GET /api/tickers/BTCUSDT
-const some = await fin.graph.v1.tickers.list({ dax: "BIN", quote: "USDT", limit: 20 });     // GET /v1/tickers?dax=BIN&...
-await fin.news.news.ratingMake("<checksum>", { ReqSite: "mysite" }, { idempotencyKey });    // POST with a JSON body
+const some = await fin.graph.v1.tickers.list({ exchange: "BINANCE", quote: "USDT", size: 20 }); // GET /v1/tickers?exchange=BINANCE&...
+const stocks = await fin.graph.markets.eqtUsa({ syms: "NVDA,MSFT", sort: "-chg1d" });          // GET /api/markets/eqtusa?syms=...
+const screen = await fin.graph.screens.eqtUsa("top-gain", { page: 2 });                        // a path argument, then the query
 ```
 
 A method returns the documented 200 reply as it comes (its `data`, `paging` and the rest), typed from the API's document. Query
-fields keep their documented names. One route family is typed loosely: the document names an error body as the reply of
-`/v1/ohlcv/...`, so those methods return `unknown`.
+fields keep their documented names. The `/v1/ohlcv/...` routes are typed loosely, because their document describes a free-form
+reply, so those methods return `unknown`.
 
-### The `qry` object and paging
+### Query values and paging
 
-Most FinNews and FinSocial lists take one query parameter, `qry`, whose value is a JSON object: `pageNo`, `pageSize`, `sortBy`
-(pairs of field and `asc` or `desc`), `srchBy`, and the endpoint's own filter fields. The method takes that object, typed from
-the document, and sends it as JSON:
+Lists take plain query values: `page` (from 1), `size` (1 to 50), `sort` (a field name; a minus sign in front sorts high to low)
+and the filters each endpoint lists. A symbol lookup takes `syms`, up to 50 names, comma-separated and in any case; the names no
+row carries come back in the reply's `NotFound`. Every list carries `paging` with `pageNo`, `pageSize`, `pageCount` and `resCount`:
 
 ```ts
-const page = await fin.news.news.list({
-  pageNo: 1,
-  pageSize: 20,
-  sortBy: [["published", "desc"]],
-  Symbols: "AAPL,MSFT", // a filter field of this endpoint
-});
-console.log(page.paging?.resCount, page.data?.[0]?.Title);
+const page = await fin.news.news.list({ syms: "AAPL,MSFT", sort: "-published", page: 1, size: 20 });
+console.log(page.paging?.resCount, page.data?.[0]?.Title, page.NotFound);
 ```
 
-Every list that pages also has `...Pages()` and `...Items()` async iterators (`listPages`, `listItems`, `postListItems`, ...). They
-advance `pageNo` (for `qry` lists) or `offset` (FinGraph's `limit` and `offset` lists), and stop on an empty page, which they do
-not yield, or when the paging information says it was the last page. They never change the query you pass.
+Every list that pages also has `...Pages()` and `...Items()` async iterators (`listPages`, `listItems`, `postsItems`, ...). They
+advance `page`, and stop after the last page the paging block names or at an empty page, which they do not yield. They never
+change the query you pass.
 
 ```ts
-for await (const article of fin.news.news.listItems({ pageSize: 100, Symbols: "AAPL" })) console.log(article.Title);
-for await (const page of fin.graph.v1.tickers.listPages({ dax: "BIN", limit: 200 })) console.log(page.count);
+for await (const article of fin.news.news.listItems({ syms: "AAPL", size: 50 })) console.log(article.Title);
+for await (const page of fin.graph.v1.markets.eqtUsaPages({ sort: "-vol24" })) console.log(page.paging?.pageNo);
 ```
 
 ### Refusals

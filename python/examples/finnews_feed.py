@@ -5,22 +5,13 @@ from finclient import FinClient, ServiceOptions
 
 fin = FinClient(news=ServiceOptions(api_key=os.environ["FINNEWS_API_KEY"]))
 
-# `qry` is sent as one JSON parameter. Keyword arguments keep the API's own field names.
-page = fin.news.v1.news.all(
-    pageNo=1,
-    pageSize=10,
-    sortBy=[["published", "desc"]],
-    Symbols="AAPL,MSFT",
-    StmGte="Positive",
-)
+# Plain keyword arguments: symbols, a sort (a minus sign sorts high to low), and the page to read.
+page = fin.news.v1.news.list(syms="AAPL,MSFT", sort="-published", page=1, size=10)
 print(page.paging)
 for article in page:
     print(article.get("Title"))
 
 # Every article that matches, page after page.
-for article in fin.news.v1.news.all_items(pageSize=50, Symbols="AAPL"):
+for article in fin.news.v1.news.list_items(syms="AAPL", size=50):
     print(article.get("Title"))
     break
-
-# POST: ask for an AI rating of one article.
-# rating = fin.news.news.rating_make("<checksum>", {"ReqSite": "my-site", "ReqUsno": 1})

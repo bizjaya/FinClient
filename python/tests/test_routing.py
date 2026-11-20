@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime
 
 import pytest
 
 from finclient import FinClient, MissingApiKeyError, ServiceOptions
-from tests.conftest import MakeClient, envelope, host_of, path_of, query_of, reply
+from tests.conftest import MakeClient, envelope, host_of, path_of, query_of
 
 
 def test_each_service_uses_its_base_url_and_key_header(make_client: MakeClient) -> None:
     fin, transport = make_client(envelope([]))
     fin.graph.tickers.list()
-    fin.news.categories.flat()
-    fin.social.markets.pulse_list()
+    fin.news.categories.list()
+    fin.social.pulse.pulse()
     fin.copy.accounts.list()
     graph, news, social, copy = transport.requests
     assert (host_of(graph), graph.headers["FinUsrKey"]) == ("https://x.fingraph.io", "graph-key")
@@ -28,7 +29,7 @@ def test_base_urls_can_be_overridden_per_service(make_client: MakeClient) -> Non
         base_url="https://copy.example.test/",
         news=ServiceOptions(api_key="n", base_url="https://news.example.test"),
     )
-    fin.news.categories.flat()
+    fin.news.categories.list()
     fin.copy.accounts.list()
     assert host_of(transport.requests[0]) == "https://news.example.test"
     assert host_of(transport.requests[1]) == "https://copy.example.test"
@@ -36,11 +37,11 @@ def test_base_urls_can_be_overridden_per_service(make_client: MakeClient) -> Non
 
 def test_api_and_v1_operations_are_kept_apart(make_client: MakeClient) -> None:
     fin, transport = make_client(envelope([]))
-    fin.graph.tickers.list(limit=5)
-    fin.graph.v1.tickers.list(limit=5)
+    fin.graph.tickers.list(size=5)
+    fin.graph.v1.tickers.list(size=5)
     assert path_of(transport.requests[0]) == "/api/tickers"
     assert path_of(transport.requests[1]) == "/v1/tickers"
-    assert query_of(transport.requests[1]) == {"limit": ["5"]}
+    assert query_of(transport.requests[1]) == {"size": ["5"]}
 
 
 def test_path_parameters_are_positional_and_encoded(make_client: MakeClient) -> None:
@@ -53,55 +54,52 @@ def test_path_parameters_are_positional_and_encoded(make_client: MakeClient) -> 
 
 def test_query_parameters_are_snake_case_keywords_with_wire_names(make_client: MakeClient) -> None:
     fin, transport = make_client(envelope([]))
-    fin.graph.tickers.list(dax="BIN", in_exchange=True, limit=10, offset=20)
+    fin.graph.tickers.list(exchange="BINANCE", in_exchange=True, size=10, page=2)
     assert query_of(transport.last) == {
-        "dax": ["BIN"], "inExchange": ["true"], "limit": ["10"], "offset": ["20"]}
+        "exchange": ["BINANCE"], "inExchange": ["true"], "size": ["10"], "page": ["2"]}
 
 
-def test_qry_is_one_json_parameter_from_keywords_or_a_dict(make_client: MakeClient) -> None:
+def test_list_filters_are_plain_query_values_and_no_qry_parameter(make_client: MakeClient) -> None:
     fin, transport = make_client(envelope([], paging={"pageNo": 1, "pageCount": 1}))
-    fin.news.news.list(pageNo=2, pageSize=10, sortBy=[["published", "desc"]], Symbols="AAPL,MSFT")
-    expected = {"pageNo": 2, "pageSize": 10, "sortBy": [["published", "desc"]], "Symbols": "AAPL,MSFT"}
-    assert json.loads(query_of(transport.last)["qry"][0]) == expected
-
-    fin.news.news.list({"pageNo": 2, "pageSize": 10}, Symbols="AAPL", Search=None)
-    assert json.loads(query_of(transport.last)["qry"][0]) == {"pageNo": 2, "pageSize": 10, "Symbols": "AAPL"}
-
-    fin.news.news.list(page_no=3, symbols="TSLA")  # snake_case spellings map to the wire names
-    assert json.loads(query_of(transport.last)["qry"][0]) == {"pageNo": 3, "Symbols": "TSLA"}
+    fin.news.news.list(syms="AAPL,MSFT", sort="-published", page=2, size=10, q=None)
+    assert query_of(transport.last) == {
+        "syms": ["AAPL,MSFT"], "sort": ["-published"], "page": ["2"], "size": ["10"]}
+    fin.social.v1.posts.posts(syms="BTC", stance="bull")
+    assert "qry" not in query_of(transport.last)
 
 
-def test_body_post_sends_json_and_no_idempotency_header(make_client: MakeClient) -> None:
+def test_a_plain_service_sends_a_json_body_and_no_idempotency_header(make_client: MakeClient) -> None:
     fin, transport = make_client(envelope({"Title": "x"}))
-    result = fin.news.news.rating_make("abc", {"ReqSite": "demo", "ReqUsno": 7})
+    result = fin.news.news._service.request("POST", "/api/news/abc/rating", body={"ReqSite": "demo", "ReqUsno": 7})
     request = transport.last
     assert (request.method, path_of(request)) == ("POST", "/api/news/abc/rating")
     assert json.loads(request.body or b"") == {"ReqSite": "demo", "ReqUsno": 7}
     assert request.headers["Content-Type"] == "application/json"
     assert "Idempotency-Key" not in request.headers
-    assert result == {"Title": "x"}
+    assert result["data"] == {"Title": "x"}
 
 
-def test_empty_body_is_sent_as_an_empty_object(make_client: MakeClient) -> None:
-    fin, transport = make_client(envelope({}))
-    fin.news.news.rating_make("abc")
-    assert json.loads(transport.last.body or b"") == {}
+def test_a_date_query_value_is_sent_as_iso_8601(make_client: MakeClient) -> None:
+    fin, transport = make_client(envelope([]))
+    fin.news.news.list(since=datetime(2026, 11, 1, 8, 0, 0))
+    assert query_of(transport.last) == {"since": ["2026-11-01T08:00:00"]}
 
 
 def test_missing_key_raises_at_first_use_before_any_request(make_client: MakeClient) -> None:
     fin, transport = make_client(envelope([]), news=None, graph=None)
     with pytest.raises(MissingApiKeyError) as raised:
-        fin.news.categories.flat()
+        fin.news.categories.list()
     assert "FinNews needs an API key" in str(raised.value)
     assert raised.value.status_code == 0
     assert transport.requests == []
-    fin.social.markets.pulse_list()  # the other parts are unaffected
+    fin.social.pulse.pulse()  # the other parts are unaffected
 
 
-def test_operations_that_need_no_key_work_without_one(make_client: MakeClient) -> None:
-    fin, transport = make_client(reply({"data": [], "count": 0}), graph=None)
-    assert fin.graph.v1.assets.exchanges() == []
-    assert "FinUsrKey" not in transport.last.headers
+def test_a_v1_operation_needs_a_key_too(make_client: MakeClient) -> None:
+    fin, transport = make_client(envelope([]), graph=None)
+    with pytest.raises(MissingApiKeyError):
+        fin.graph.v1.assets.exchanges()
+    assert transport.requests == []
 
 
 def test_client_rejects_bad_options() -> None:

@@ -32,7 +32,7 @@ def test_statuses_map_to_the_exception_hierarchy(
 ) -> None:
     fin, transport = make_client(reply({"error": code, "message": "Nope."}, status=status))
     with pytest.raises(error_class) as raised:
-        fin.news.categories.flat()
+        fin.news.categories.list()
     error = raised.value
     assert isinstance(error, FinApiError)
     assert (error.status_code, error.code, error.message) == (status, code, "Nope.")
@@ -66,14 +66,14 @@ def test_429_waits_for_retry_after_then_succeeds(make_client: MakeClient, sleeps
         reply({"error": "rate_limited", "message": "Slow down."}, status=429, headers={"retry-after": "7"}),
         envelope([{"Slug": "x"}]),
     )
-    assert fin.news.categories.flat() == [{"Slug": "x"}]
+    assert fin.news.categories.list() == [{"Slug": "x"}]
     assert len(transport.requests) == 2
     assert sleeps.waits == [7.0]
 
 
 def test_429_without_retry_after_backs_off_in_whole_seconds(make_client: MakeClient, sleeps: Sleeps) -> None:
     fin, _ = make_client(reply({"error": "rate_limited", "message": "x"}, status=429), envelope([]))
-    fin.news.categories.flat()
+    fin.news.categories.list()
     assert sleeps.waits == [1.0]
 
 
@@ -83,7 +83,7 @@ def test_429_gives_up_after_max_retries_and_exposes_retry_after(make_client: Mak
         max_retries=2,
     )
     with pytest.raises(RateLimitError) as raised:
-        fin.news.categories.flat()
+        fin.news.categories.list()
     assert len(transport.requests) == 3
     assert raised.value.retry_after == 2.0
     assert raised.value.error_code == "rate_limited"
@@ -94,29 +94,29 @@ def test_a_long_retry_after_is_not_slept_through(make_client: MakeClient, sleeps
     fin, transport = make_client(reply({"error": "rate_limited", "message": "x"}, status=429,
                                        headers={"Retry-After": "3600"}))
     with pytest.raises(RateLimitError) as raised:
-        fin.news.categories.flat()
+        fin.news.categories.list()
     assert len(transport.requests) == 1 and sleeps.waits == []
     assert raised.value.retry_after == 3600.0
 
 
 def test_5xx_is_retried_for_a_get(make_client: MakeClient, sleeps: Sleeps) -> None:
     fin, transport = make_client(reply({"message": "bad gateway"}, status=502), reply(None, status=503), envelope([]))
-    assert fin.graph.tickers.list() == []
+    assert fin.graph.tickers.list().items == []
     assert len(transport.requests) == 3
     assert sleeps.waits == [0.25, 0.5]  # 0.25 * 2**n * (0.75 + 0.5 * 0.5)
 
 
-def test_5xx_is_not_retried_for_a_post_without_an_idempotency_key(make_client: MakeClient) -> None:
+def test_5xx_is_not_retried_for_a_post_on_a_plain_service(make_client: MakeClient) -> None:
     fin, transport = make_client(reply({"error": "unavailable", "message": "x"}, status=503))
     with pytest.raises(ServerError):
-        fin.news.news.rating_make("abc")
+        fin.news.news._service.request("POST", "/api/news/abc/rating", body={})
     assert len(transport.requests) == 1
 
 
 def test_a_429_is_retried_even_for_a_post(make_client: MakeClient, sleeps: Sleeps) -> None:
     fin, transport = make_client(reply({"error": "rate_limited", "message": "x"}, status=429,
                                        headers={"Retry-After": "1"}), envelope({"Title": "t"}))
-    assert fin.news.news.rating_make("abc") == {"Title": "t"}
+    assert fin.news.news._service.request("POST", "/api/news/abc/rating", body={})["data"] == {"Title": "t"}
     assert len(transport.requests) == 2
 
 

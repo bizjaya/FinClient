@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/markets/events": {
+    "/api/creators": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,10 +12,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List prediction events
-         * @description Real-world events the prediction markets are grouped under. Filters: Provider, Category.
+         * Creator leaderboard
+         * @description The accounts FinSocial follows, ranked by the engagement on their posts or by how fast their following grows: followers, posts and engagement in the window, and follower growth in percent. It answers once a source is cleared; until then the list is empty.
          */
-        get: operations["Api_MarketsController_EventList"];
+        get: operations["Api_CreatorsController_Creators"];
         put?: never;
         post?: never;
         delete?: never;
@@ -24,7 +24,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/markets/history/{id}": {
+    "/api/markets": {
         parameters: {
             query?: never;
             header?: never;
@@ -32,10 +32,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Prediction market history
-         * @description A market's probability series per outcome, one point per hour (1h) or per day (1d), oldest first.
+         * Prediction markets
+         * @description Prediction markets of Polymarket, Kalshi and Manifold, with the latest probability (the leading outcome in a market with several), its change over 24 hours, volume, liquidity, closing time and status.
          */
-        get: operations["Api_MarketsController_HistoryList"];
+        get: operations["Api_MarketsController_Markets"];
         put?: never;
         post?: never;
         delete?: never;
@@ -44,7 +44,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/markets/list": {
+    "/api/markets/moves": {
         parameters: {
             query?: never;
             header?: never;
@@ -52,30 +52,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List prediction markets
-         * @description Markets of Polymarket, Kalshi and Manifold. Filters: Provider, Category, Status, EventId.
+         * Prediction market moves
+         * @description The biggest probability moves of open prediction markets in a window: the outcome that moved most in each market, its price at the start and now. It answers once a provider is cleared; until then the list is empty.
          */
-        get: operations["Api_MarketsController_MarketList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/markets/pulse": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Prediction pulse
-         * @description The biggest probability moves of open markets over 1 h, 24 h and 7 d.
-         */
-        get: operations["Api_MarketsController_PulseList"];
+        get: operations["Api_MarketsController_Moves"];
         put?: never;
         post?: never;
         delete?: never;
@@ -92,10 +72,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Resolved market archive
-         * @description Resolved markets: the winning probability 30 d, 7 d, 24 h and 1 h before the result, and the result.
+         * Resolved prediction markets
+         * @description Prediction markets that have settled, newest first: the winner and the crowd's probability for the winner 30 days, 7 days, 24 hours and 1 hour before it settled.
          */
-        get: operations["Api_MarketsController_ResolvedList"];
+        get: operations["Api_MarketsController_Resolved"];
         put?: never;
         post?: never;
         delete?: never;
@@ -104,7 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/markets/view/{id}": {
+    "/api/markets/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -112,10 +92,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View prediction market
-         * @description One market with its rules, outcomes, latest probabilities and resolution.
+         * Prediction market
+         * @description One prediction market with its rules, every outcome with its latest price, bid and ask, and each outcome's price history by hour or day.
          */
-        get: operations["Api_MarketsController_MarketView"];
+        get: operations["Api_MarketsController_Market"];
         put?: never;
         post?: never;
         delete?: never;
@@ -124,7 +104,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/social/authors": {
+    "/api/posts": {
         parameters: {
             query?: never;
             header?: never;
@@ -132,10 +112,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List social authors
-         * @description Accounts seen on the platforms, most followed first. Filters: Platform, Text.
+         * Posts
+         * @description Posts from the social sources FinSocial may serve, newest first, with the tickers they name, the way they read (Bullish, Bearish, Neutral or Unscored), the score and the engagement now. The text comes only where the source allows it.
          */
-        get: operations["Api_SocialController_AuthorList"];
+        get: operations["Api_PostsController_Posts"];
         put?: never;
         post?: never;
         delete?: never;
@@ -144,7 +124,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/social/authors/{id}": {
+    "/api/posts/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -152,10 +132,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View social author
-         * @description One account with its reach series (followers, following, posts), oldest first.
+         * Post
+         * @description One post with its engagement readings over time, oldest first.
          */
-        get: operations["Api_SocialController_AuthorView"];
+        get: operations["Api_PostsController_Post"];
         put?: never;
         post?: never;
         delete?: never;
@@ -164,7 +144,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/social/posts": {
+    "/api/pulse": {
         parameters: {
             query?: never;
             header?: never;
@@ -172,10 +152,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List social posts
-         * @description Posts, newest first, with FinSocial's sentiment score, the AI reading where there is one, and the latest engagement counts. Filters: Ticker, AuthorId, Platform, From, To.
+         * Ticker pulse
+         * @description How much each ticker is being talked about on social media in a window: mentions, engagement, attention against its usual level, the mix of bullish, bearish and neutral posts, their mean score and the change in mentions against the window before. Ask for up to 50 tickers by name, or leave syms empty for every ticker, most-talked-about first.
          */
-        get: operations["Api_SocialController_PostList"];
+        get: operations["Api_PulseController_Pulse"];
         put?: never;
         post?: never;
         delete?: never;
@@ -184,7 +164,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/social/posts/{id}": {
+    "/api/pulse/history": {
         parameters: {
             query?: never;
             header?: never;
@@ -192,70 +172,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View social post
-         * @description One post with its engagement series, oldest first.
+         * Ticker pulse history
+         * @description How a ticker's social mentions moved: for each of up to 50 tickers, one row per hour or per day with mentions, engagement, attention against its usual level and the mean sentiment score. Rows come ticker by ticker, in the order asked.
          */
-        get: operations["Api_SocialController_PostView"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/social/sentiment/{symbol}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Social sentiment by ticker
-         * @description Count, mean sentiment score and label counts of the posts that name one ticker in the window. Window 1h, 24h or 7d.
-         */
-        get: operations["Api_SocialController_SentimentView"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/social/trending": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Trending social tickers
-         * @description Tickers ranked by attention: posts in the window against the usual posts for those hours. Window 1h, 24h or 7d.
-         */
-        get: operations["Api_SocialController_TrendingList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/social/watched": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List watched social accounts
-         * @description The accounts and channels FinSocial follows. Only active ones are listed. Filter: Platform.
-         */
-        get: operations["Api_SocialController_WatchList"];
+        get: operations["Api_PulseController_History"];
         put?: never;
         post?: never;
         delete?: never;
@@ -272,10 +192,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List videos
-         * @description Videos with FinSocial scores, signals, summaries and links. Filters: ChannelId, Symbol, MinScore, MaxScore, From, To. Transcripts and video content are never returned.
+         * Videos
+         * @description Videos from the channels FinSocial follows, newest first, one row per video, with FinSocial's own score, signal and summary and what it read about each ticker the video names. Never the transcript or the video itself.
          */
-        get: operations["Api_VideosController_List"];
+        get: operations["Api_VideosController_Videos"];
         put?: never;
         post?: never;
         delete?: never;
@@ -284,7 +204,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/videos/{videoId}": {
+    "/api/videos/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -292,10 +212,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View video
-         * @description One video with its scores, signals, summary and public link. Transcript and video content are never returned.
+         * Video
+         * @description One video with FinSocial's own score, signal and summary and what it read about each ticker the video names. Never the transcript or the video itself.
          */
-        get: operations["Api_VideosController_View"];
+        get: operations["Api_VideosController_Video"];
         put?: never;
         post?: never;
         delete?: never;
@@ -304,7 +224,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/markets/events": {
+    "/v1/creators": {
         parameters: {
             query?: never;
             header?: never;
@@ -312,10 +232,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List prediction events
-         * @description Real-world events the prediction markets are grouped under. Filters: Provider, Category.
+         * Creator leaderboard
+         * @description The accounts FinSocial follows, ranked by the engagement on their posts or by how fast their following grows: followers, posts and engagement in the window, and follower growth in percent. It answers once a source is cleared; until then the list is empty.
          */
-        get: operations["Pub_MarketsController_EventList"];
+        get: operations["Pub_CreatorsController_Creators"];
         put?: never;
         post?: never;
         delete?: never;
@@ -324,7 +244,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/markets/history/{id}": {
+    "/v1/markets": {
         parameters: {
             query?: never;
             header?: never;
@@ -332,10 +252,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Prediction market history
-         * @description A market's probability series per outcome, one point per hour (1h) or per day (1d), oldest first.
+         * Prediction markets
+         * @description Prediction markets of Polymarket, Kalshi and Manifold, with the latest probability (the leading outcome in a market with several), its change over 24 hours, volume, liquidity, closing time and status.
          */
-        get: operations["Pub_MarketsController_HistoryList"];
+        get: operations["Pub_MarketsController_Markets"];
         put?: never;
         post?: never;
         delete?: never;
@@ -344,7 +264,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/markets/list": {
+    "/v1/markets/moves": {
         parameters: {
             query?: never;
             header?: never;
@@ -352,30 +272,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List prediction markets
-         * @description Markets of Polymarket, Kalshi and Manifold. Filters: Provider, Category, Status, EventId.
+         * Prediction market moves
+         * @description The biggest probability moves of open prediction markets in a window: the outcome that moved most in each market, its price at the start and now. It answers once a provider is cleared; until then the list is empty.
          */
-        get: operations["Pub_MarketsController_MarketList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/markets/pulse": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Prediction pulse
-         * @description The biggest probability moves of open markets over 1 h, 24 h and 7 d.
-         */
-        get: operations["Pub_MarketsController_PulseList"];
+        get: operations["Pub_MarketsController_Moves"];
         put?: never;
         post?: never;
         delete?: never;
@@ -392,10 +292,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Resolved market archive
-         * @description Resolved markets: the winning probability 30 d, 7 d, 24 h and 1 h before the result, and the result.
+         * Resolved prediction markets
+         * @description Prediction markets that have settled, newest first: the winner and the crowd's probability for the winner 30 days, 7 days, 24 hours and 1 hour before it settled.
          */
-        get: operations["Pub_MarketsController_ResolvedList"];
+        get: operations["Pub_MarketsController_Resolved"];
         put?: never;
         post?: never;
         delete?: never;
@@ -404,7 +304,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/markets/view/{id}": {
+    "/v1/markets/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -412,10 +312,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View prediction market
-         * @description One market with its rules, outcomes, latest probabilities and resolution.
+         * Prediction market
+         * @description One prediction market with its rules, every outcome with its latest price, bid and ask, and each outcome's price history by hour or day.
          */
-        get: operations["Pub_MarketsController_MarketView"];
+        get: operations["Pub_MarketsController_Market"];
         put?: never;
         post?: never;
         delete?: never;
@@ -424,7 +324,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/social/authors": {
+    "/v1/posts": {
         parameters: {
             query?: never;
             header?: never;
@@ -432,10 +332,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List social authors
-         * @description Accounts seen on the platforms, most followed first. Filters: Platform, Text.
+         * Posts
+         * @description Posts from the social sources FinSocial may serve, newest first, with the tickers they name, the way they read (Bullish, Bearish, Neutral or Unscored), the score and the engagement now. The text comes only where the source allows it.
          */
-        get: operations["Pub_SocialController_AuthorList"];
+        get: operations["Pub_PostsController_Posts"];
         put?: never;
         post?: never;
         delete?: never;
@@ -444,7 +344,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/social/authors/{id}": {
+    "/v1/posts/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -452,10 +352,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View social author
-         * @description One account with its reach series (followers, following, posts), oldest first.
+         * Post
+         * @description One post with its engagement readings over time, oldest first.
          */
-        get: operations["Pub_SocialController_AuthorView"];
+        get: operations["Pub_PostsController_Post"];
         put?: never;
         post?: never;
         delete?: never;
@@ -464,7 +364,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/social/posts": {
+    "/v1/pulse": {
         parameters: {
             query?: never;
             header?: never;
@@ -472,10 +372,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List social posts
-         * @description Posts, newest first, with FinSocial's sentiment score, the AI reading where there is one, and the latest engagement counts. Filters: Ticker, AuthorId, Platform, From, To.
+         * Ticker pulse
+         * @description How much each ticker is being talked about on social media in a window: mentions, engagement, attention against its usual level, the mix of bullish, bearish and neutral posts, their mean score and the change in mentions against the window before. Ask for up to 50 tickers by name, or leave syms empty for every ticker, most-talked-about first.
          */
-        get: operations["Pub_SocialController_PostList"];
+        get: operations["Pub_PulseController_Pulse"];
         put?: never;
         post?: never;
         delete?: never;
@@ -484,7 +384,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/social/posts/{id}": {
+    "/v1/pulse/history": {
         parameters: {
             query?: never;
             header?: never;
@@ -492,70 +392,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View social post
-         * @description One post with its engagement series, oldest first.
+         * Ticker pulse history
+         * @description How a ticker's social mentions moved: for each of up to 50 tickers, one row per hour or per day with mentions, engagement, attention against its usual level and the mean sentiment score. Rows come ticker by ticker, in the order asked.
          */
-        get: operations["Pub_SocialController_PostView"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/social/sentiment/{symbol}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Social sentiment by ticker
-         * @description Count, mean sentiment score and label counts of the posts that name one ticker in the window. Window 1h, 24h or 7d.
-         */
-        get: operations["Pub_SocialController_SentimentView"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/social/trending": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Trending social tickers
-         * @description Tickers ranked by attention: posts in the window against the usual posts for those hours. Window 1h, 24h or 7d.
-         */
-        get: operations["Pub_SocialController_TrendingList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/social/watched": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List watched social accounts
-         * @description The accounts and channels FinSocial follows. Only active ones are listed. Filter: Platform.
-         */
-        get: operations["Pub_SocialController_WatchList"];
+        get: operations["Pub_PulseController_History"];
         put?: never;
         post?: never;
         delete?: never;
@@ -572,10 +412,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List videos
-         * @description Videos with FinSocial scores, signals, summaries and links. Filters: ChannelId, Symbol, MinScore, MaxScore, From, To. Transcripts and video content are never returned.
+         * Videos
+         * @description Videos from the channels FinSocial follows, newest first, one row per video, with FinSocial's own score, signal and summary and what it read about each ticker the video names. Never the transcript or the video itself.
          */
-        get: operations["Pub_VideosController_List"];
+        get: operations["Pub_VideosController_Videos"];
         put?: never;
         post?: never;
         delete?: never;
@@ -584,7 +424,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/videos/{videoId}": {
+    "/v1/videos/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -592,10 +432,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View video
-         * @description One video with its scores, signals, summary and public link. Transcript and video content are never returned.
+         * Video
+         * @description One video with FinSocial's own score, signal and summary and what it read about each ticker the video names. Never the transcript or the video itself.
          */
-        get: operations["Pub_VideosController_View"];
+        get: operations["Pub_VideosController_Video"];
         put?: never;
         post?: never;
         delete?: never;
@@ -608,235 +448,150 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** @enum {string} */
-        Confidence: "None" | "VLow" | "Low" | "Med" | "High" | "VHigh";
-        DtoApiSocAuthor: {
-            Id?: string | null;
-            Platform?: components["schemas"]["SocPlatform"];
+        ApiPageOfCreatorRow: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["CreatorRow"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiPageOfMarketMove: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["MarketMove"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiPageOfMarketRow: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["MarketRow"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiPageOfPostRow: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["PostRow"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiPageOfPulsePoint: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["PulsePoint"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiPageOfPulseRow: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["PulseRow"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiPageOfResolvedRow: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["ResolvedRow"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        ApiPageOfVideoRow: {
+            /** @description Symbols named in syms that no row carries, in upper case. Left out when every symbol was found. */
+            NotFound?: string[] | null;
+            data?: components["schemas"]["VideoRow"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        CreatorRow: {
+            /** @description Handle of the account. */
             Handle?: string | null;
-            DisplayName?: string | null;
-            /** Format: int64 */
-            Followers?: number | null;
-            Verified?: boolean;
-            /** Format: date-time */
-            CreatedAt?: string | null;
-            /** Format: date-time */
-            FirstSeenAt?: string;
-        };
-        DtoApiSocAuthorView: {
-            Author?: components["schemas"]["DtoApiSocAuthor"] | null;
-            Series?: components["schemas"]["DtoApiSocReach"][] | null;
-        };
-        DtoApiSocEng: {
-            /** Format: date-time */
-            TakenAt?: string;
-            /** Format: int64 */
-            Likes?: number | null;
-            /** Format: int64 */
-            Replies?: number | null;
-            /** Format: int64 */
-            Reposts?: number | null;
-            /** Format: int64 */
-            Quotes?: number | null;
-            /** Format: int64 */
-            Views?: number | null;
-        };
-        DtoApiSocEvent: {
-            Id?: string | null;
-            Provider?: components["schemas"]["SocProvider"];
-            Title?: string | null;
-            Category?: string | null;
-            /** Format: date-time */
-            OpensAt?: string | null;
-            /** Format: date-time */
-            ClosesAt?: string | null;
-        };
-        DtoApiSocHistory: {
-            MarketId?: string | null;
-            Granularity?: string | null;
-            Series?: components["schemas"]["DtoApiSocOutcomeSeries"][] | null;
-        };
-        DtoApiSocMarket: {
-            Id?: string | null;
-            Provider?: components["schemas"]["SocProvider"];
-            EventId?: string | null;
-            Question?: string | null;
-            Category?: string | null;
-            Type?: components["schemas"]["SocMarketType"];
-            Money?: components["schemas"]["SocMoney"];
-            Status?: components["schemas"]["SocMarketStatus"];
-            /** Format: date-time */
-            OpensAt?: string | null;
-            /** Format: date-time */
-            ClosesAt?: string | null;
-            /** Format: date-time */
-            SettledAt?: string | null;
-            SourceUrl?: string | null;
-        };
-        DtoApiSocMarketView: {
-            Market?: components["schemas"]["DtoApiSocMarket"] | null;
-            RulesText?: string | null;
-            Outcomes?: components["schemas"]["DtoApiSocOutcome"][] | null;
-            Resolution?: components["schemas"]["DtoApiSocResolution"] | null;
-        };
-        DtoApiSocMove: {
-            MarketId?: string | null;
-            Provider?: components["schemas"]["SocProvider"];
-            Question?: string | null;
-            OutcomeId?: string | null;
-            OutcomeName?: string | null;
-            From?: number;
-            To?: number;
-            Change?: number;
-            SourceUrl?: string | null;
-        };
-        DtoApiSocOutcome: {
-            Id?: string | null;
+            /** @description Display name of the account. */
             Name?: string | null;
-            Price?: number | null;
-            Volume?: number | null;
-            /** Format: date-time */
-            PriceAt?: string | null;
-        };
-        DtoApiSocOutcomeSeries: {
-            OutcomeId?: string | null;
-            Name?: string | null;
-            Points?: components["schemas"]["DtoApiSocPoint"][] | null;
-        };
-        DtoApiSocPoint: {
-            /** Format: date-time */
-            At?: string;
-            Price?: number;
-            Volume?: number | null;
-        };
-        DtoApiSocPost: {
-            Id?: string | null;
-            Platform?: components["schemas"]["SocPlatform"];
-            Kind?: components["schemas"]["SocPostKind"];
-            ParentId?: string | null;
-            AuthorId?: string | null;
-            AuthorHandle?: string | null;
-            Community?: string | null;
-            Text?: string | null;
-            TextWithheld?: boolean;
-            Language?: string | null;
-            /** Format: date-time */
-            PublishedAt?: string | null;
-            Url?: string | null;
-            Instruments?: string[] | null;
-            FinStm?: components["schemas"]["Sentiment"];
-            StmScore?: number | null;
-            StmConf?: components["schemas"]["Confidence"];
-            EngSpeed?: number | null;
-            L3Stance?: components["schemas"]["SocStance"];
-            L3Sarcasm?: boolean | null;
-            L3ClaimDir?: components["schemas"]["SocClaimDir"];
-            L3ClaimHorizon?: string | null;
-            L3Conf?: number | null;
-            Engagement?: components["schemas"]["DtoApiSocEng"] | null;
-        };
-        DtoApiSocPostView: {
-            Post?: components["schemas"]["DtoApiSocPost"] | null;
-            Series?: components["schemas"]["DtoApiSocEng"][] | null;
-        };
-        DtoApiSocPulse: {
-            /** Format: date-time */
-            At?: string;
-            Windows?: components["schemas"]["DtoApiSocPulseWindow"][] | null;
-        };
-        DtoApiSocPulseWindow: {
-            Window?: string | null;
-            Moves?: components["schemas"]["DtoApiSocMove"][] | null;
-        };
-        DtoApiSocReach: {
-            /** Format: date-time */
-            TakenAt?: string;
-            /** Format: int64 */
+            /** @description Platform: HackerNews or Bluesky. */
+            Platform?: string | null;
+            /**
+             * Format: int64
+             * @description Followers now, where the platform counts them.
+             */
             Followers?: number | null;
-            /** Format: int64 */
-            Following?: number | null;
-            /** Format: int64 */
-            Posts?: number | null;
-        };
-        DtoApiSocResolution: {
-            WinningOutcomeId?: string | null;
-            State?: components["schemas"]["SocResolutionState"];
-            /** Format: date-time */
-            SettledAt?: string | null;
-            EvidenceUrl?: string | null;
-        };
-        DtoApiSocResolved: {
-            MarketId?: string | null;
-            Provider?: components["schemas"]["SocProvider"];
-            Question?: string | null;
-            Category?: string | null;
-            State?: components["schemas"]["SocResolutionState"];
-            WinningOutcomeId?: string | null;
-            WinningOutcome?: string | null;
-            /** Format: date-time */
-            SettledAt?: string | null;
-            Before30d?: number | null;
-            Before7d?: number | null;
-            Before24h?: number | null;
-            Before1h?: number | null;
-            SourceUrl?: string | null;
-        };
-        DtoApiSocSentiment: {
-            Instrument?: string | null;
-            Window?: string | null;
-            /** Format: date-time */
-            From?: string;
-            /** Format: date-time */
-            To?: string;
-            /** Format: int32 */
-            Count?: number;
-            MeanScore?: number | null;
-            /** Format: int32 */
-            Positive?: number;
-            /** Format: int32 */
-            Negative?: number;
-            /** Format: int32 */
-            Neutral?: number;
-            /** Format: int32 */
-            Unknown?: number;
-        };
-        DtoApiSocTrend: {
-            Instrument?: string | null;
-            /** Format: int32 */
+            /**
+             * Format: int32
+             * @description Posts of the account in the window.
+             */
             Posts?: number;
-            /** Format: int64 */
+            /**
+             * Format: int64
+             * @description Likes, replies, reposts and quotes on those posts.
+             */
             Engagement?: number;
-            Ratio?: number;
+            /** @description Growth in followers over the window, in percent. Empty when there is no earlier reading. */
+            ReachGrowth?: number | null;
         };
-        DtoApiSocTrending: {
-            Window?: string | null;
-            /** Format: date-time */
-            From?: string;
-            /** Format: date-time */
-            To?: string;
-            Tickers?: components["schemas"]["DtoApiSocTrend"][] | null;
-        };
-        DtoApiSocWatch: {
-            Id?: string | null;
-            Platform?: components["schemas"]["SocPlatform"];
-            Kind?: components["schemas"]["SocWatchKind"];
-            Handle?: string | null;
-            DisplayName?: string | null;
-            Status?: components["schemas"]["SocWatchStatus"];
-        };
-        DtoSocApiVideo: {
-            VideoId?: string | null;
-            ChannelId?: string | null;
-            Channel?: string | null;
-            Title?: string | null;
-            Url?: string | null;
-            ThumbnailUrl?: string | null;
-            /** Format: date-time */
-            PublishedAt?: string;
-            Symbol?: string | null;
-            Score?: number | null;
-            Signal?: components["schemas"]["Signal"] | null;
-            Summary?: string | null;
+        EngagementPoint: {
+            /**
+             * Format: date-time
+             * @description When the counts were read, UTC.
+             */
+            At?: string;
+            /**
+             * Format: int64
+             * @description Likes.
+             */
+            Likes?: number | null;
+            /**
+             * Format: int64
+             * @description Replies.
+             */
+            Replies?: number | null;
+            /**
+             * Format: int64
+             * @description Reposts.
+             */
+            Reposts?: number | null;
+            /**
+             * Format: int64
+             * @description Quotes.
+             */
+            Quotes?: number | null;
+            /**
+             * Format: int64
+             * @description Views, where the platform counts them.
+             */
+            Views?: number | null;
         };
         FinApiError: {
             /** @description Machine-readable code, such as invalid_api_key, insufficient_credits or package_not_allowed. */
@@ -852,364 +607,241 @@ export interface components {
             /** @description On per-category limits: the package tier of the caller. */
             tier?: string;
         };
-        /** @enum {string} */
-        OpCond: "and" | "or" | "all" | "in";
-        QueApiSocAuthorList: {
-            /** @description Return only items of this social platform. Empty means every platform available to you. */
-            Platform?: components["schemas"]["SocPlatform"] | null;
-            /** @description Return only authors whose handle or display name contains this text, ignoring case. Empty means all authors. */
+        MarketDetail: {
+            /** @description The rules the market settles by. */
+            Rules?: string | null;
+            /** @description Every outcome with its latest price, bid and ask. */
+            Outcomes?: components["schemas"]["MarketOutcome"][] | null;
+            /** @description Price history of every outcome (at most 50 outcomes), by hour or day. */
+            History?: components["schemas"]["OutcomeHistory"][] | null;
+            /** @description The market's id. */
+            Id?: string | null;
+            /** @description The question the market asks. */
+            Question?: string | null;
+            /** @description Polymarket, Kalshi or Manifold. */
+            Provider?: string | null;
+            /** @description Category the provider files it under. */
+            Category?: string | null;
+            /** @description Title of the event the market belongs to. */
+            Event?: string | null;
+            /** @description Latest probability, 0 to 1: of Yes, or of the leading outcome in a market with several. */
+            Probability?: number | null;
+            /** @description Change of that probability over the last 24 hours, in points of probability (0.05 is five points). */
+            Chg24h?: number | null;
+            /** @description Volume traded, in the provider's own unit. */
+            Volume?: number | null;
+            /** @description Liquidity, in the provider's own unit. */
+            Liquidity?: number | null;
+            /**
+             * Format: date-time
+             * @description When trading closes, UTC.
+             */
+            Closes?: string | null;
+            /** @description Open, Closed, Resolved or Unknown. */
+            Status?: string | null;
+            /** @description Link to the market. */
+            Url?: string | null;
+        };
+        MarketMove: {
+            /** @description The market's id. */
+            Id?: string | null;
+            /** @description The question the market asks. */
+            Question?: string | null;
+            /** @description Polymarket, Kalshi or Manifold. */
+            Provider?: string | null;
+            /** @description The outcome that moved most in this market. */
+            Outcome?: string | null;
+            /** @description Price at the start of the window, 0 to 1. */
+            From?: number;
+            /** @description Latest price, 0 to 1. */
+            To?: number;
+            /** @description To minus From, in points of probability. */
+            Change?: number;
+            /** @description Link to the market. */
+            Url?: string | null;
+        };
+        MarketOutcome: {
+            /** @description Name of the outcome. */
+            Name?: string | null;
+            /** @description Latest price, 0 to 1. */
+            Price?: number | null;
+            /** @description Best price offered to buy at. */
+            Bid?: number | null;
+            /** @description Best price offered to sell at. */
+            Ask?: number | null;
+        };
+        MarketPoint: {
+            /**
+             * Format: date-time
+             * @description Start of the hour or day, UTC.
+             */
+            At?: string;
+            /** @description Last price taken in that hour or day, 0 to 1. */
+            Price?: number;
+        };
+        MarketRow: {
+            /** @description The market's id. */
+            Id?: string | null;
+            /** @description The question the market asks. */
+            Question?: string | null;
+            /** @description Polymarket, Kalshi or Manifold. */
+            Provider?: string | null;
+            /** @description Category the provider files it under. */
+            Category?: string | null;
+            /** @description Title of the event the market belongs to. */
+            Event?: string | null;
+            /** @description Latest probability, 0 to 1: of Yes, or of the leading outcome in a market with several. */
+            Probability?: number | null;
+            /** @description Change of that probability over the last 24 hours, in points of probability (0.05 is five points). */
+            Chg24h?: number | null;
+            /** @description Volume traded, in the provider's own unit. */
+            Volume?: number | null;
+            /** @description Liquidity, in the provider's own unit. */
+            Liquidity?: number | null;
+            /**
+             * Format: date-time
+             * @description When trading closes, UTC.
+             */
+            Closes?: string | null;
+            /** @description Open, Closed, Resolved or Unknown. */
+            Status?: string | null;
+            /** @description Link to the market. */
+            Url?: string | null;
+        };
+        OutcomeHistory: {
+            /** @description Name of the outcome. */
+            Name?: string | null;
+            /** @description Prices, oldest first. */
+            Points?: components["schemas"]["MarketPoint"][] | null;
+        };
+        PostDetail: {
+            /** @description Engagement readings, oldest first. */
+            Series?: components["schemas"]["EngagementPoint"][] | null;
+            /** @description The post's id. */
+            Id?: string | null;
+            /** @description Platform: HackerNews or Bluesky. */
+            Platform?: string | null;
+            /** @description Post, Comment or Reply. */
+            Kind?: string | null;
+            /** @description Handle of the author. */
+            Author?: string | null;
+            /** @description Link to the post. */
+            Url?: string | null;
+            /**
+             * Format: date-time
+             * @description When it was published, UTC.
+             */
+            Published?: string | null;
+            /** @description Tickers the post names. */
+            Tickers?: string[] | null;
+            /** @description Reading of the text: Bullish, Bearish, Neutral or Unscored. */
+            Stance?: string | null;
+            /** @description Sentiment score from -1 (most bearish) to +1 (most bullish). */
+            Score?: number | null;
+            /**
+             * Format: int64
+             * @description Likes, replies, reposts and quotes now.
+             */
+            Engagement?: number;
+            /** @description The post's text. Empty when the source does not allow it to be shown (TextWithheld is true). */
             Text?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
-            /**
-             * Format: int32
-             * @description One-based page number. Default 1.
-             */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
-            /**
-             * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
-             */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
+            /** @description True when the text is left out because the source does not allow it to be shown. */
+            TextWithheld?: boolean;
         };
-        QueApiSocEventList: {
-            /** @description Return only items of this prediction-market provider. Empty means every provider available to you. */
-            Provider?: components["schemas"]["SocProvider"] | null;
-            /** @description Return only items in this provider category, matched exactly. Empty means all categories. */
-            Category?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
-            /**
-             * Format: int32
-             * @description One-based page number. Default 1.
-             */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
-            /**
-             * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
-             */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
-        };
-        QueApiSocMarketList: {
-            /** @description Return only items of this prediction-market provider. Empty means every provider available to you. */
-            Provider?: components["schemas"]["SocProvider"] | null;
-            /** @description Return only items in this provider category, matched exactly. Empty means all categories. */
-            Category?: string | null;
-            /** @description Return only markets in this lifecycle status. Empty means every status. */
-            Status?: components["schemas"]["SocMarketStatus"] | null;
-            /** @description Return only markets of this event, using the Id returned by the events list. Empty means all events. */
-            EventId?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
-            /**
-             * Format: int32
-             * @description One-based page number. Default 1.
-             */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
-            /**
-             * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
-             */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
-        };
-        QueApiSocPostList: {
-            /** @description Return only posts that mention this ticker symbol, for example BTC. Matching ignores case. Empty means all tickers. */
-            Ticker?: string | null;
-            /** @description Return only posts by this author, using the Id returned by the authors list. Empty means all authors. */
-            AuthorId?: string | null;
-            /** @description Return only items of this social platform. Empty means every platform available to you. */
-            Platform?: components["schemas"]["SocPlatform"] | null;
+        PostRow: {
+            /** @description The post's id. */
+            Id?: string | null;
+            /** @description Platform: HackerNews or Bluesky. */
+            Platform?: string | null;
+            /** @description Post, Comment or Reply. */
+            Kind?: string | null;
+            /** @description Handle of the author. */
+            Author?: string | null;
+            /** @description Link to the post. */
+            Url?: string | null;
             /**
              * Format: date-time
-             * @description Earliest post publication time to include, in UTC (ISO 8601). Empty means no lower limit.
+             * @description When it was published, UTC.
              */
-            From?: string | null;
+            Published?: string | null;
+            /** @description Tickers the post names. */
+            Tickers?: string[] | null;
+            /** @description Reading of the text: Bullish, Bearish, Neutral or Unscored. */
+            Stance?: string | null;
+            /** @description Sentiment score from -1 (most bearish) to +1 (most bullish). */
+            Score?: number | null;
+            /**
+             * Format: int64
+             * @description Likes, replies, reposts and quotes now.
+             */
+            Engagement?: number;
+            /** @description The post's text. Empty when the source does not allow it to be shown (TextWithheld is true). */
+            Text?: string | null;
+            /** @description True when the text is left out because the source does not allow it to be shown. */
+            TextWithheld?: boolean;
+        };
+        PulsePoint: {
+            /** @description Ticker. */
+            Sym?: string | null;
             /**
              * Format: date-time
-             * @description Latest post publication time to include, in UTC (ISO 8601). Empty means no upper limit.
+             * @description Start of the hour or day, UTC.
              */
-            To?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
+            At?: string;
             /**
              * Format: int32
-             * @description One-based page number. Default 1.
+             * @description Posts that named the ticker.
              */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
+            Mentions?: number;
             /**
              * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
+             * @description Likes, replies, reposts and quotes on those posts.
              */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
+            Engagement?: number;
+            /** @description Mentions against the usual mentions of the ticker for those hours: 1 is usual. */
+            Attention?: number;
+            /** @description Mean sentiment score of the scored posts, from -1 to +1. Empty when none is scored. */
+            MeanScore?: number | null;
         };
-        QueApiSocResolvedList: {
-            /** @description Return only items of this prediction-market provider. Empty means every provider available to you. */
-            Provider?: components["schemas"]["SocProvider"] | null;
-            /** @description Return only items in this provider category, matched exactly. Empty means all categories. */
-            Category?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
+        PulseRow: {
+            /** @description Ticker. */
+            Sym?: string | null;
             /**
              * Format: int32
-             * @description One-based page number. Default 1.
+             * @description Posts that named the ticker in the window.
              */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
+            Mentions?: number;
             /**
              * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
+             * @description Likes, replies, reposts and quotes on those posts.
              */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
+            Engagement?: number;
+            /** @description Mentions against the usual mentions of the ticker for those hours, over the last 30 days: 1 is usual, 3 is three times as much. */
+            Attention?: number;
             /**
              * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
+             * @description Posts read as bullish.
              */
-            pageOff?: number;
+            Bullish?: number;
             /**
              * Format: int32
-             * @description Result count used by paging responses.
+             * @description Posts read as bearish.
              */
-            resCount?: number;
-        };
-        QueApiSocWatchList: {
-            /** @description Return only items of this social platform. Empty means every platform available to you. */
-            Platform?: components["schemas"]["SocPlatform"] | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
+            Bearish?: number;
             /**
              * Format: int32
-             * @description One-based page number. Default 1.
+             * @description Posts read as neutral.
              */
-            pageNo?: number;
+            Neutral?: number;
             /**
              * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
+             * @description Posts with no reading yet.
              */
-            pageSize?: number;
-            /**
-             * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
-             */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
-        };
-        QueSocApiVideoList: {
-            /** @description Return only videos of this YouTube channel, by channel identifier. Empty means all channels. */
-            ChannelId?: string | null;
-            /** @description Restrict the score rows returned to this ticker symbol, for example BTC. Matching ignores case. Empty means the scores of every symbol. */
-            Symbol?: string | null;
-            /** @description Keep only score rows with a video score at or above this value. Empty means no lower limit. */
-            MinScore?: number | null;
-            /** @description Keep only score rows with a video score at or below this value. Empty means no upper limit. */
-            MaxScore?: number | null;
-            /**
-             * Format: date-time
-             * @description Earliest video publication time to include, in UTC (ISO 8601). Empty means no lower limit.
-             */
-            From?: string | null;
-            /**
-             * Format: date-time
-             * @description Latest video publication time to include, in UTC (ISO 8601). Empty means no upper limit.
-             */
-            To?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
-            /**
-             * Format: int32
-             * @description One-based page number. Default 1.
-             */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
-            /**
-             * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
-             */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
+            Unscored?: number;
+            /** @description Mean sentiment score of the scored posts, from -1 to +1. Empty when none is scored. */
+            MeanScore?: number | null;
+            /** @description Change in mentions against the window before, in percent. Empty when the window before had none. */
+            Change?: number | null;
         };
         ResPage: {
             /** Format: int32 */
@@ -1221,71 +853,8 @@ export interface components {
             /** Format: int64 */
             resCount?: number;
         };
-        ResPagedOfDtoApiSocAuthor: {
-            data?: components["schemas"]["DtoApiSocAuthor"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSocEvent: {
-            data?: components["schemas"]["DtoApiSocEvent"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSocMarket: {
-            data?: components["schemas"]["DtoApiSocMarket"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSocPost: {
-            data?: components["schemas"]["DtoApiSocPost"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSocResolved: {
-            data?: components["schemas"]["DtoApiSocResolved"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSocWatch: {
-            data?: components["schemas"]["DtoApiSocWatch"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoSocApiVideo: {
-            data?: components["schemas"]["DtoSocApiVideo"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPonseOfDtoApiSocAuthorView: {
-            data?: components["schemas"]["DtoApiSocAuthorView"] | null;
+        ResPonseOfMarketDetail: {
+            data?: components["schemas"]["MarketDetail"] | null;
             /** Format: int32 */
             code?: number;
             isOk?: boolean;
@@ -1293,8 +862,8 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResPonseOfDtoApiSocHistory: {
-            data?: components["schemas"]["DtoApiSocHistory"] | null;
+        ResPonseOfPostDetail: {
+            data?: components["schemas"]["PostDetail"] | null;
             /** Format: int32 */
             code?: number;
             isOk?: boolean;
@@ -1302,8 +871,8 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResPonseOfDtoApiSocMarketView: {
-            data?: components["schemas"]["DtoApiSocMarketView"] | null;
+        ResPonseOfVideoRow: {
+            data?: components["schemas"]["VideoRow"] | null;
             /** Format: int32 */
             code?: number;
             isOk?: boolean;
@@ -1311,77 +880,74 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResPonseOfDtoApiSocPostView: {
-            data?: components["schemas"]["DtoApiSocPostView"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
+        ResolvedRow: {
+            /** @description The market's id. */
+            Id?: string | null;
+            /** @description The question the market asked. */
+            Question?: string | null;
+            /** @description Polymarket, Kalshi or Manifold. */
+            Provider?: string | null;
+            /** @description Category the provider files it under. */
+            Category?: string | null;
+            /** @description Name of the winning outcome. */
+            Winner?: string | null;
+            /**
+             * Format: date-time
+             * @description When it settled, UTC.
+             */
+            SettledAt?: string | null;
+            /** @description The crowd's probability for the winner 30 days before it settled. Empty when there was no price yet. */
+            Before30d?: number | null;
+            /** @description The same 7 days before. */
+            Before7d?: number | null;
+            /** @description The same 24 hours before. */
+            Before24h?: number | null;
+            /** @description The same 1 hour before. */
+            Before1h?: number | null;
+            /** @description Link to the market. */
+            Url?: string | null;
         };
-        ResPonseOfDtoApiSocPulse: {
-            data?: components["schemas"]["DtoApiSocPulse"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
+        VideoCall: {
+            /** @description Ticker. */
+            Sym?: string | null;
+            /** @description Reading of the text: Bullish, Bearish, Neutral or Unscored. */
+            Sentiment?: string | null;
+            /** @description FinSocial's score for the ticker in this video. */
+            Score?: number | null;
         };
-        ResPonseOfDtoApiSocSentiment: {
-            data?: components["schemas"]["DtoApiSocSentiment"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
+        VideoRow: {
+            /** @description The video's id. */
+            Id?: string | null;
+            /** @description Title of the video. */
+            Title?: string | null;
+            /** @description Name of the channel. */
+            Channel?: string | null;
+            /** @description Link to the video. */
+            Url?: string | null;
+            /**
+             * Format: date-time
+             * @description When it was published, UTC.
+             */
+            Published?: string;
+            /**
+             * Format: int32
+             * @description Length in seconds.
+             */
+            DurationSec?: number;
+            /**
+             * Format: int64
+             * @description Views when last read.
+             */
+            Views?: number | null;
+            /** @description FinSocial's score for the video, 0 to 10. Empty when not scored yet. */
+            Score?: number | null;
+            /** @description FinSocial's own signal for the video: VSS, SS, S, NS, N, NB, B, SB or VSB. Empty when not scored yet. */
+            Signal?: string | null;
+            /** @description FinSocial's summary of the video. Empty when it has none yet. */
+            Summary?: string | null;
+            /** @description What was read about each ticker the video names. */
+            Calls?: components["schemas"]["VideoCall"][] | null;
         };
-        ResPonseOfDtoApiSocTrending: {
-            data?: components["schemas"]["DtoApiSocTrending"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        ResPonseOfListOfDtoSocApiVideo: {
-            data?: components["schemas"]["DtoSocApiVideo"][] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        /** @enum {string} */
-        Sentiment: "Neutral" | "Positive" | "Unknown" | "Negative";
-        /** @enum {string} */
-        Signal: "N" | "NB" | "B" | "SB" | "VSB" | "VSS" | "SS" | "S" | "NS";
-        /** @enum {string} */
-        SocClaimDir: "None" | "Up" | "Down";
-        /** @enum {string} */
-        SocMarketStatus: "Open" | "Closed" | "Resolved" | "Unknown";
-        /** @enum {string} */
-        SocMarketType: "Binary" | "Multi" | "Scalar";
-        /** @enum {string} */
-        SocMoney: "Real" | "Play";
-        /** @enum {string} */
-        SocPlatform: "HackerNews" | "YouTube" | "Bluesky";
-        /** @enum {string} */
-        SocPostKind: "Post" | "Comment" | "Reply" | "Video";
-        /** @enum {string} */
-        SocProvider: "Polymarket" | "Kalshi" | "Manifold";
-        /** @enum {string} */
-        SocResolutionState: "Final" | "Disputed" | "Void" | "Refunded" | "Split" | "Pending";
-        /** @enum {string} */
-        SocStance: "None" | "Bullish" | "Bearish" | "Neutral" | "Mixed";
-        /** @enum {string} */
-        SocWatchKind: "Author" | "Channel" | "Community" | "Query";
-        /** @enum {string} */
-        SocWatchStatus: "Proposed" | "Active" | "Paused" | "Dropped";
     };
     responses: never;
     parameters: never;
@@ -1391,11 +957,19 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    Api_MarketsController_EventList: {
+    Api_CreatorsController_Creators: {
         parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the event list, sent as JSON in the qry query parameter. The event filters are Provider and Category. */
-                qry: string;
+            query?: {
+                /** @description Only this platform: HackerNews or Bluesky. */
+                platform?: string;
+                /** @description Length of the window: 24h, 7d or 30d. Default 7d. */
+                window?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -1409,7 +983,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocEvent"];
+                    "application/json": components["schemas"]["ApiPageOfCreatorRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -1450,21 +1024,218 @@ export interface operations {
             };
         };
     };
-    Api_MarketsController_HistoryList: {
+    Api_MarketsController_Markets: {
         parameters: {
             query?: {
-                /** @description Size of one point: 1h for hourly or 1d for daily. Default 1h. Each point is the last price taken in its hour or day. Any other value is rejected with a 400 response. */
-                Granularity?: string;
-                /** @description Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-                From?: string;
-                /** @description Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-                To?: string;
-                /** @description Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first. */
-                Limit?: number;
+                /** @description Only markets whose question contains this text, any case. */
+                q?: string;
+                /** @description Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+                provider?: string;
+                /** @description Only markets the provider files under this category, any case. */
+                category?: string;
+                /** @description Only markets in this state: Open, Closed, Resolved or Unknown. */
+                status?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low), chg24h, closes. A minus sign sorts high to low; markets without a value come last. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiPageOfMarketRow"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_MarketsController_Moves: {
+        parameters: {
+            query?: {
+                /** @description Length of the window: 1h, 24h or 7d. Default 24h. */
+                window?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiPageOfMarketMove"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_MarketsController_Resolved: {
+        parameters: {
+            query?: {
+                /** @description Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+                provider?: string;
+                /** @description Only markets the provider files under this category, any case. */
+                category?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first). */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiPageOfResolvedRow"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_MarketsController_Market: {
+        parameters: {
+            query?: {
+                /** @description Size of one price point in the history: hour or day. Default hour. */
+                granularity?: string;
+                /** @description How many days of history, 1 to 90. Default 7. */
+                days?: number;
             };
             header?: never;
             path: {
-                /** @description Market identifier, as returned in the Id field of the market list. */
+                /** @description The Id of the row, as returned by its list. */
                 id: string;
             };
             cookie?: never;
@@ -1477,7 +1248,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocHistory"];
+                    "application/json": components["schemas"]["ResPonseOfMarketDetail"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -1518,70 +1289,25 @@ export interface operations {
             };
         };
     };
-    Api_MarketsController_MarketList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the market list, sent as JSON in the qry query parameter. The market filters are Provider, Category, Status and EventId. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocMarket"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_MarketsController_PulseList: {
+    Api_PostsController_Posts: {
         parameters: {
             query?: {
-                /** @description Maximum number of moves to return for each window, from 1 to 50. Default 10. */
-                Limit?: number;
+                /** @description Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Only this platform: HackerNews or Bluesky. */
+                platform?: string;
+                /** @description Only posts by this handle, any case. */
+                author?: string;
+                /** @description Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+                since?: string;
+                /** @description Only posts that read this way: Bullish, Bearish, Neutral or Unscored. */
+                stance?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), engagement. Sorting by engagement orders the 3,000 newest matching posts. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -1595,7 +1321,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocPulse"];
+                    "application/json": components["schemas"]["ApiPageOfPostRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -1636,71 +1362,12 @@ export interface operations {
             };
         };
     };
-    Api_MarketsController_ResolvedList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the resolved-market archive, sent as JSON in the qry query parameter. The filters are Provider and Category. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocResolved"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_MarketsController_MarketView: {
+    Api_PostsController_Post: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Market identifier, as returned in the Id field of the market list. */
+                /** @description The Id of the row, as returned by its list. */
                 id: string;
             };
             cookie?: never;
@@ -1713,7 +1380,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocMarketView"];
+                    "application/json": components["schemas"]["ResPonseOfPostDetail"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -1754,136 +1421,19 @@ export interface operations {
             };
         };
     };
-    Api_SocialController_AuthorList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the author list, sent as JSON in the qry query parameter. The author filters are Platform and Text. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocAuthor"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SocialController_AuthorView: {
+    Api_PulseController_Pulse: {
         parameters: {
             query?: {
-                /** @description Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-                From?: string;
-                /** @description Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-                To?: string;
-                /** @description Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Author identifier, as returned in the Id field of the author list. */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocAuthorView"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SocialController_PostList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the post list, sent as JSON in the qry query parameter. The post filters are Ticker, AuthorId, Platform, From and To. */
-                qry: string;
+                /** @description Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Length of the window: 1h, 24h or 7d. Default 24h. */
+                window?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come last. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -1897,7 +1447,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocPost"];
+                    "application/json": components["schemas"]["ApiPageOfPulseRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -1938,21 +1488,24 @@ export interface operations {
             };
         };
     };
-    Api_SocialController_PostView: {
+    Api_PulseController_History: {
         parameters: {
             query?: {
-                /** @description Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-                From?: string;
-                /** @description Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-                To?: string;
-                /** @description Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first. */
-                Limit?: number;
+                /** @description Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Size of one point: hour or day. Default hour. */
+                interval?: string;
+                /** @description How many days back, 1 to 30. Default 7. */
+                days?: number;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest first). Rows always come ticker by ticker, in the order asked. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
-            path: {
-                /** @description Post identifier, as returned in the Id field of the post list. */
-                id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -1963,7 +1516,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocPostView"];
+                    "application/json": components["schemas"]["ApiPageOfPulsePoint"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2004,77 +1557,23 @@ export interface operations {
             };
         };
     };
-    Api_SocialController_SentimentView: {
+    Api_VideosController_Videos: {
         parameters: {
             query?: {
-                /** @description Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response. */
-                Window?: string;
-                /** @description Maximum number of rows to return, from 1 to 100. Default 20. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Ticker symbol to report on, for example BTC. Matching ignores case. */
-                symbol: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocSentiment"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SocialController_TrendingList: {
-        parameters: {
-            query?: {
-                /** @description Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response. */
-                Window?: string;
-                /** @description Maximum number of rows to return, from 1 to 100. Default 20. */
-                Limit?: number;
+                /** @description Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Only videos of this channel: its name (any case) or its channel id. */
+                channel?: string;
+                /** @description Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+                since?: string;
+                /** @description Only videos whose own score is at least this, 0 to 10. */
+                minScore?: number;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), score. A minus sign sorts high to low; videos without a score come last. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -2088,7 +1587,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocTrending"];
+                    "application/json": components["schemas"]["ApiPageOfVideoRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2129,257 +1628,12 @@ export interface operations {
             };
         };
     };
-    Api_SocialController_WatchList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the list of followed accounts, sent as JSON in the qry query parameter. The only filter is Platform. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocWatch"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_VideosController_List: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the video list, sent as JSON in the qry query parameter. The video filters are ChannelId, Symbol, MinScore, MaxScore, From and To. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoSocApiVideo"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_VideosController_View: {
+    Api_VideosController_Video: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description YouTube video identifier, as returned in the VideoId field of the video list. */
-                videoId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSocApiVideo"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_MarketsController_EventList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the event list, sent as JSON in the qry query parameter. The event filters are Provider and Category. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocEvent"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_MarketsController_HistoryList: {
-        parameters: {
-            query?: {
-                /** @description Size of one point: 1h for hourly or 1d for daily. Default 1h. Each point is the last price taken in its hour or day. Any other value is rejected with a 400 response. */
-                Granularity?: string;
-                /** @description Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-                From?: string;
-                /** @description Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-                To?: string;
-                /** @description Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Market identifier, as returned in the Id field of the market list. */
+                /** @description The Id of the video, as returned by the video list. */
                 id: string;
             };
             cookie?: never;
@@ -2392,7 +1646,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocHistory"];
+                    "application/json": components["schemas"]["ResPonseOfVideoRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2433,70 +1687,19 @@ export interface operations {
             };
         };
     };
-    Pub_MarketsController_MarketList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the market list, sent as JSON in the qry query parameter. The market filters are Provider, Category, Status and EventId. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocMarket"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_MarketsController_PulseList: {
+    Pub_CreatorsController_Creators: {
         parameters: {
             query?: {
-                /** @description Maximum number of moves to return for each window, from 1 to 50. Default 10. */
-                Limit?: number;
+                /** @description Only this platform: HackerNews or Bluesky. */
+                platform?: string;
+                /** @description Length of the window: 24h, 7d or 30d. Default 7d. */
+                window?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -2510,7 +1713,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocPulse"];
+                    "application/json": components["schemas"]["ApiPageOfCreatorRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2551,11 +1754,23 @@ export interface operations {
             };
         };
     };
-    Pub_MarketsController_ResolvedList: {
+    Pub_MarketsController_Markets: {
         parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the resolved-market archive, sent as JSON in the qry query parameter. The filters are Provider and Category. */
-                qry: string;
+            query?: {
+                /** @description Only markets whose question contains this text, any case. */
+                q?: string;
+                /** @description Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+                provider?: string;
+                /** @description Only markets the provider files under this category, any case. */
+                category?: string;
+                /** @description Only markets in this state: Open, Closed, Resolved or Unknown. */
+                status?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low), chg24h, closes. A minus sign sorts high to low; markets without a value come last. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -2569,7 +1784,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocResolved"];
+                    "application/json": components["schemas"]["ApiPageOfMarketRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2610,12 +1825,279 @@ export interface operations {
             };
         };
     };
-    Pub_MarketsController_MarketView: {
+    Pub_MarketsController_Moves: {
+        parameters: {
+            query?: {
+                /** @description Length of the window: 1h, 24h or 7d. Default 24h. */
+                window?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiPageOfMarketMove"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_Resolved: {
+        parameters: {
+            query?: {
+                /** @description Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+                provider?: string;
+                /** @description Only markets the provider files under this category, any case. */
+                category?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first). */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiPageOfResolvedRow"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_MarketsController_Market: {
+        parameters: {
+            query?: {
+                /** @description Size of one price point in the history: hour or day. Default hour. */
+                granularity?: string;
+                /** @description How many days of history, 1 to 90. Default 7. */
+                days?: number;
+            };
+            header?: never;
+            path: {
+                /** @description The Id of the row, as returned by its list. */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ResPonseOfMarketDetail"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_PostsController_Posts: {
+        parameters: {
+            query?: {
+                /** @description Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Only this platform: HackerNews or Bluesky. */
+                platform?: string;
+                /** @description Only posts by this handle, any case. */
+                author?: string;
+                /** @description Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+                since?: string;
+                /** @description Only posts that read this way: Bullish, Bearish, Neutral or Unscored. */
+                stance?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), engagement. Sorting by engagement orders the 3,000 newest matching posts. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiPageOfPostRow"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_PostsController_Post: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Market identifier, as returned in the Id field of the market list. */
+                /** @description The Id of the row, as returned by its list. */
                 id: string;
             };
             cookie?: never;
@@ -2628,7 +2110,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocMarketView"];
+                    "application/json": components["schemas"]["ResPonseOfPostDetail"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2669,136 +2151,19 @@ export interface operations {
             };
         };
     };
-    Pub_SocialController_AuthorList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the author list, sent as JSON in the qry query parameter. The author filters are Platform and Text. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocAuthor"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_SocialController_AuthorView: {
+    Pub_PulseController_Pulse: {
         parameters: {
             query?: {
-                /** @description Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-                From?: string;
-                /** @description Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-                To?: string;
-                /** @description Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Author identifier, as returned in the Id field of the author list. */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocAuthorView"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_SocialController_PostList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the post list, sent as JSON in the qry query parameter. The post filters are Ticker, AuthorId, Platform, From and To. */
-                qry: string;
+                /** @description Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Length of the window: 1h, 24h or 7d. Default 24h. */
+                window?: string;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come last. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -2812,7 +2177,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocPost"];
+                    "application/json": components["schemas"]["ApiPageOfPulseRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2853,21 +2218,24 @@ export interface operations {
             };
         };
     };
-    Pub_SocialController_PostView: {
+    Pub_PulseController_History: {
         parameters: {
             query?: {
-                /** @description Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-                From?: string;
-                /** @description Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-                To?: string;
-                /** @description Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first. */
-                Limit?: number;
+                /** @description Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Size of one point: hour or day. Default hour. */
+                interval?: string;
+                /** @description How many days back, 1 to 30. Default 7. */
+                days?: number;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest first). Rows always come ticker by ticker, in the order asked. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
-            path: {
-                /** @description Post identifier, as returned in the Id field of the post list. */
-                id: string;
-            };
+            path?: never;
             cookie?: never;
         };
         requestBody?: never;
@@ -2878,7 +2246,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocPostView"];
+                    "application/json": components["schemas"]["ApiPageOfPulsePoint"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2919,77 +2287,23 @@ export interface operations {
             };
         };
     };
-    Pub_SocialController_SentimentView: {
+    Pub_VideosController_Videos: {
         parameters: {
             query?: {
-                /** @description Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response. */
-                Window?: string;
-                /** @description Maximum number of rows to return, from 1 to 100. Default 20. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Ticker symbol to report on, for example BTC. Matching ignores case. */
-                symbol: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocSentiment"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_SocialController_TrendingList: {
-        parameters: {
-            query?: {
-                /** @description Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response. */
-                Window?: string;
-                /** @description Maximum number of rows to return, from 1 to 100. Default 20. */
-                Limit?: number;
+                /** @description Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound. */
+                syms?: string;
+                /** @description Only videos of this channel: its name (any case) or its channel id. */
+                channel?: string;
+                /** @description Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+                since?: string;
+                /** @description Only videos whose own score is at least this, 0 to 10. */
+                minScore?: number;
+                /** @description Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), score. A minus sign sorts high to low; videos without a score come last. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -3003,7 +2317,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSocTrending"];
+                    "application/json": components["schemas"]["ApiPageOfVideoRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3044,131 +2358,13 @@ export interface operations {
             };
         };
     };
-    Pub_SocialController_WatchList: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the list of followed accounts, sent as JSON in the qry query parameter. The only filter is Platform. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSocWatch"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_VideosController_List: {
-        parameters: {
-            query: {
-                /** @description Paging, sorting and filters for the video list, sent as JSON in the qry query parameter. The video filters are ChannelId, Symbol, MinScore, MaxScore, From and To. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoSocApiVideo"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_VideosController_View: {
+    Pub_VideosController_Video: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description YouTube video identifier, as returned in the VideoId field of the video list. */
-                videoId: string;
+                /** @description The Id of the video, as returned by the video list. */
+                id: string;
             };
             cookie?: never;
         };
@@ -3180,7 +2376,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfListOfDtoSocApiVideo"];
+                    "application/json": components["schemas"]["ResPonseOfVideoRow"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */

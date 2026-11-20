@@ -6,7 +6,7 @@ import random as _random
 import time
 import uuid
 from email.utils import parsedate_to_datetime
-from typing import Any, Callable, Dict, Iterable, List, Mapping, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
 
 from ._encode import encode_body, encode_query
 from ._errors import (
@@ -91,6 +91,7 @@ class Service:
             message=payload.get("message"),
             errors=tuple(str(e) for e in payload.get("errors") or ()),
             chksum=payload.get("chksum"),
+            not_found=tuple(str(s) for s in payload.get("NotFound") or ()),
         )
 
     def request(
@@ -100,14 +101,13 @@ class Service:
         *,
         auth: str = "key",
         query: Optional[Iterable[Tuple[str, Any]]] = None,
-        qry: Optional[Mapping[str, Any]] = None,
         body: Any = None,
         idempotency_key: Optional[str] = None,
     ) -> Any:
         """Send one request and return the decoded JSON reply, retrying where it is safe to."""
         verb = method.upper()
         self._require_key(auth)
-        url = self._url(path, query, qry)
+        url = self._url(path, query)
         headers = self._headers("application/json")
         payload: Optional[bytes] = None
         if body is not None:
@@ -150,7 +150,7 @@ class Service:
         """Open a server-sent event stream. It does not reconnect."""
         self._require_key(auth)
         request = HttpRequest(
-            "GET", self._url(path, None, None), self._headers("text/event-stream"), None, self.timeout)
+            "GET", self._url(path, None), self._headers("text/event-stream"), None, self.timeout)
         try:
             response = self.transport.stream(request)
         except TransportError as error:
@@ -173,8 +173,8 @@ class Service:
             headers[self.key_header] = self.api_key
         return headers
 
-    def _url(self, path: str, query: Optional[Iterable[Tuple[str, Any]]], qry: Optional[Mapping[str, Any]]) -> str:
-        text = encode_query(query, qry)
+    def _url(self, path: str, query: Optional[Iterable[Tuple[str, Any]]]) -> str:
+        text = encode_query(query)
         return f"{self.base_url}/{path.lstrip('/')}" + (f"?{text}" if text else "")
 
     def _backoff(self, retry: int) -> float:

@@ -1,6 +1,6 @@
 # FinClient for Python
 
-One typed Python client for four APIs: **FinCopy** (trading accounts and orders), **FinGraph** (prices, tickers and
+One typed Python client for four APIs: **FinCopy** (trading accounts and orders), **FinGraph** (markets, screens, tickers and
 signals), **FinNews** (news, sentiment and videos) and **FinSocial** (social attention and prediction markets).
 
 - Python 3.10 or newer. No runtime dependencies: HTTP uses the standard library.
@@ -81,35 +81,31 @@ Every operation of these three services is reachable, in two kept-apart surfaces
 | `/api/...` | `fin.graph.<group>.<operation>()` | Credits per call, on any plan. |
 | `/v1/...` | `fin.graph.v1.<group>.<operation>()` | Included in paid plans and gated by package tier. A few are billed per call like `/api`; some currently need no key. |
 
-`<group>` is the operation's tag in snake_case (`tickers`, `news`, `sig_dax`) and `<operation>` the action in snake_case
-(`List` is `list`, `RatingMake` is `rating_make`). Each method's docstring says its route, its billing, and its
-parameters, taken from the API description, so `help(fin.news.v1.news.all)` is the reference.
+`<group>` is the operation's tag in snake_case (`tickers`, `news`, `markets`) and `<operation>` the action in snake_case
+(`List` is `list`, `EqtUsa` is `eqt_usa`). Each method's docstring says its route, its billing, and its
+parameters, taken from the API description, so `help(fin.graph.v1.markets.eqt_usa)` is the reference.
 
 ```python
 fin.graph.tickers.view("BTCUSDT")                       # GET /api/tickers/BTCUSDT   (credits per call)
-fin.graph.v1.tickers.list(dax="BIN", limit=50)          # GET /v1/tickers?dax=BIN&limit=50
-fin.news.news.rating_make("<checksum>", {"ReqSite": "my-site", "ReqUsno": 1})   # POST with a body
-fin.social.v1.social.trending_list(window="24h")
+fin.graph.v1.tickers.list(exchange="BINANCE", size=50)  # GET /v1/tickers?exchange=BINANCE&size=50
+fin.graph.markets.eqt_usa(syms="NVDA,MSFT")             # GET /api/markets/eqtusa?syms=NVDA%2CMSFT
+fin.social.v1.pulse.pulse(syms="BTC,ETH", window="24h")
 ```
 
-Path parameters are positional, other query parameters are keyword arguments in snake_case (`in_exchange=True` sends
-`inExchange=true`), and a request body is the last positional argument.
+Path parameters are positional and query parameters are keyword arguments in snake_case (`in_exchange=True` sends
+`inExchange=true`). Every `/v1` operation needs a key.
 
-### Filters: the `qry` parameter
+### Filters and symbol lookups
 
-List endpoints that filter and page take a single `qry` value, a JSON object with `pageNo`, `pageSize`, `sortBy`,
-`srchBy` and the filter fields of that endpoint. Pass it as keyword arguments, as a dict, or both. Names are the API's own
-(`pageNo`, `Symbols`); snake_case spellings (`page_no`, `symbols`) are accepted too.
+Lists take plain query values: `page` (from 1), `size` (1 to 50), `sort` (a field name; a minus sign in front sorts high to
+low) and the filters each endpoint lists. A symbol lookup takes `syms`, up to 50 names, comma-separated and in any case. A
+list returns a `Page`: `items` are the rows, `paging` is the API's paging block and `not_found` holds the names no row carries.
 
 ```python
-page = fin.news.v1.news.all(
-    pageNo=1, pageSize=20, sortBy=[["published", "desc"]],
-    Symbols="AAPL,MSFT", StmGte="Positive",
-)
+page = fin.news.v1.news.list(syms="AAPL,MSFT", sort="-published", page=1, size=20)
 page.items      # the rows (iterating the page yields them too)
 page.paging     # {"pageNo": 1, "pageSize": 20, "pageCount": 7, "resCount": 131}
-
-fin.news.v1.news.all({"pageSize": 20}, Symbols="AAPL")      # a dict and keywords merge
+page.not_found  # () when every name was found
 ```
 
 ### Paging
@@ -117,19 +113,18 @@ fin.news.v1.news.all({"pageSize": 20}, Symbols="AAPL")      # a dict and keyword
 Every operation that pages has two iterators beside it: `<operation>_pages` and `<operation>_items`.
 
 ```python
-for page in fin.news.v1.news.all_pages(pageSize=50, Symbols="AAPL"):      # one Page per request
+for page in fin.news.v1.news.list_pages(size=50, syms="AAPL"):            # one Page per request
     print(page.paging["pageNo"], len(page))
 
-for article in fin.news.v1.news.all_items(pageSize=50):                   # every row, page after page
+for article in fin.news.v1.news.list_items(size=50):                      # every row, page after page
     print(article["Title"])
 
-for ticker in fin.graph.v1.tickers.list_items(dax="BIN", limit=100):      # limit/offset endpoints
-    print(ticker["Symbol"])
+for stock in fin.graph.v1.markets.eqt_usa_items(sort="-vol24"):
+    print(stock["Sym"])
 ```
 
-`qry` operations advance `pageNo` until the last page (or an empty one). FinGraph's limit/offset lists advance `offset`
-by the rows returned and stop at a short or empty page. FinCopy lists have the same helpers: `accounts.list_items()`,
-`fx.orders_pages()`, and so on. Every page is one billed call.
+The iterators advance `page` until the last page the paging block names (or an empty one). FinCopy lists have the same helpers:
+`accounts.list_items()`, `fx.orders_pages()`, and so on. Every page is one billed call.
 
 ## Errors and retries
 

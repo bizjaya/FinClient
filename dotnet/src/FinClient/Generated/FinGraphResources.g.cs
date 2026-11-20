@@ -7,23 +7,6 @@ using System.Text.Json;
 namespace Fin.Graph;
 
 /// <summary>
-/// FinGraph ApcDat: the credit-charged /api operations.
-/// </summary>
-public sealed class ApcDatResource
-{
-    private readonly FinHttpTransport _http;
-    internal ApcDatResource(FinHttpTransport http) => _http = http;
-
-    /// <summary>
-    /// Alpaca US-equity tick snapshot. Latest US-equity prices from the Alpaca feed, one entry per symbol, with the
-    /// time the snapshot was taken. GET /api/apcasst/snapshot. Charged 1 credit per call.
-    /// </summary>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoPxTickBatch> SnapshotAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoPxTickBatch>("GET", FinQuery.Path("api/apcasst/snapshot"), null, null, cancellationToken);
-}
-
-/// <summary>
 /// FinGraph Assets: the credit-charged /api operations.
 /// </summary>
 public sealed class AssetsResource
@@ -32,77 +15,55 @@ public sealed class AssetsResource
     internal AssetsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Assets list. Lists assets from the asset registry. Filter by exchange, tradability and quote currency; page with
-    /// limit and offset. GET /api/assets. Charged 0.5 credits per call.
+    /// Assets list. Lists assets from the asset registry. Filter by exchange, tradability and quote coin; sort by
+    /// symbol; 50 rows a page. GET /api/assets. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
     /// <param name="canTrade">When true, only assets the exchange currently allows trading; when false, only the others. Omit for both.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
+    /// <param name="sort">Field to sort by: symbol (default); a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiAsset> ListAsync(DAX? dax = null, bool? canTrade = null, string? quote = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiAsset>("GET", FinQuery.Path("api/assets", ("dax", dax), ("canTrade", canTrade), ("quote", quote), ("limit", limit), ("offset", offset)), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoApiAsset> ListAsync(string? exchange = null, bool? canTrade = null, string? quote = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoApiAsset>("GET", FinQuery.Path("api/assets", ("exchange", exchange), ("canTrade", canTrade), ("quote", quote), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of ListAsync, moving offset on by the rows each page returned, from the offset you pass (0 when
-    /// unset). It stops at the first empty page, which it does not yield.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
     /// <param name="canTrade">When true, only assets the exchange currently allows trading; when false, only the others. Omit for both.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
+    /// <param name="sort">Field to sort by: symbol (default); a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResListOfDtoApiAsset> ListPagesAsync(DAX? dax = null, bool? canTrade = null, string? quote = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByOffset<ResListOfDtoApiAsset, DtoApiAsset>(offset ?? 0,
-            (o, ct) => ListAsync(dax, canTrade, quote, limit, o, ct),
-            p => p.Data, null, cancellationToken);
+    public IAsyncEnumerable<ApiMktPageOfDtoApiAsset> ListPagesAsync(string? exchange = null, bool? canTrade = null, string? quote = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoApiAsset, DtoApiAsset>(page ?? 1,
+            (n, ct) => ListAsync(exchange, canTrade, quote, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
     /// Reads every row of every page of ListPagesAsync, one at a time.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
     /// <param name="canTrade">When true, only assets the exchange currently allows trading; when false, only the others. Omit for both.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
+    /// <param name="sort">Field to sort by: symbol (default); a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiAsset> ListItemsAsync(DAX? dax = null, bool? canTrade = null, string? quote = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResListOfDtoApiAsset, DtoApiAsset>(ListPagesAsync(dax, canTrade, quote, limit, offset, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<DtoApiAsset> ListItemsAsync(string? exchange = null, bool? canTrade = null, string? quote = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoApiAsset, DtoApiAsset>(ListPagesAsync(exchange, canTrade, quote, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Exchanges. Lists the exchange keys with their numeric value and TradingView prefix. GET /api/assets/exchanges.
+    /// Exchanges. Lists the exchanges FinGraph reads, with their name and numeric value. GET /api/assets/exchanges.
     /// Charged 0.5 credits per call.
     /// </summary>
     /// <param name="cancellationToken">Cancels the call.</param>
     public Task<ResListOfDtoApiExchange> ExchangesAsync(CancellationToken cancellationToken = default)
         => _http.SendApiAsync<ResListOfDtoApiExchange>("GET", FinQuery.Path("api/assets/exchanges"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Asset names (all). Returns the symbol-to-name map for both lanes. Where a symbol exists in both, the equity
-    /// entry is used. GET /api/assets/names. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfSafeDictOfStringAndDtoFinAssetName> NamesAllAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfSafeDictOfStringAndDtoFinAssetName>("GET", FinQuery.Path("api/assets/names"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Asset names. Returns a map from symbol to asset name and identity for one lane: dax (crypto) or eqt (US equity).
-    /// GET /api/assets/names/{dax}. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="dax">Asset lane: dax for crypto assets or eqt for US equities.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfSafeDictOfStringAndDtoFinAssetName> NamesAsync(string dax, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfSafeDictOfStringAndDtoFinAssetName>("GET", FinQuery.Path($"api/assets/names/{FinQuery.Segment(dax)}"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Asset types. Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
-    /// GET /api/assets/types. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiEnumItem> TypesAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiEnumItem>("GET", FinQuery.Path("api/assets/types"), null, null, cancellationToken);
 
     /// <summary>
     /// Asset detail. Returns one asset from the registry by its id. GET /api/assets/{id}. Charged 0.5 credits per call.
@@ -114,54 +75,285 @@ public sealed class AssetsResource
 }
 
 /// <summary>
-/// FinGraph DaxDat: the credit-charged /api operations.
+/// FinGraph Markets: the credit-charged /api operations.
 /// </summary>
-public sealed class DaxDatResource
+public sealed class MarketsResource
 {
     private readonly FinHttpTransport _http;
-    internal DaxDatResource(FinHttpTransport http) => _http = http;
+    internal MarketsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// DAX price snapshot. Latest crypto exchange prices, one entry per symbol, with the time the snapshot was taken.
-    /// GET /api/daxdat/snapshot. Charged 1 credit per call.
+    /// Markets: Crypto. Every coin with its latest Sum, Mav and Osc ratings, price changes, market value, volume and
+    /// FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols
+    /// by name. Two coins that share a ticker each have their own symbol. GET /api/markets/crypto. Charged 1 credit per
+    /// call.
     /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoTickBatch> SnapshotAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoTickBatch>("GET", FinQuery.Path("api/daxdat/snapshot"), null, null, cancellationToken);
-}
-
-/// <summary>
-/// FinGraph FxsTikr: the credit-charged /api operations.
-/// </summary>
-public sealed class FxsTikrResource
-{
-    private readonly FinHttpTransport _http;
-    internal FxsTikrResource(FinHttpTransport http) => _http = http;
+    public Task<ApiMktPageOfDtoMktCrypto> CryptoAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCrypto>("GET", FinQuery.Path("api/markets/crypto", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// FXS broker quote snapshot. Latest bid and ask for each forex and CFD instrument reported by the broker
-    /// terminals, keyed by symbol, with the time of each quote. GET /api/fxstikr/snapshot. Charged 1 credit per call.
+    /// Reads every page of CryptoAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoFxsTickBatch> SnapshotAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoFxsTickBatch>("GET", FinQuery.Path("api/fxstikr/snapshot"), null, null, cancellationToken);
-}
-
-/// <summary>
-/// FinGraph KlsePrc: the credit-charged /api operations.
-/// </summary>
-public sealed class KlsePrcResource
-{
-    private readonly FinHttpTransport _http;
-    internal KlsePrcResource(FinHttpTransport http) => _http = http;
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCrypto> CryptoPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCrypto, DtoMktCrypto>(page ?? 1,
+            (n, ct) => CryptoAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// KLSE price snapshot. Latest Bursa Malaysia (KLSE) prices, one entry per symbol, with the time the snapshot was
-    /// taken. GET /api/klseprc/snapshot. Charged 1 credit per call.
+    /// Reads every row of every page of CryptoPagesAsync, one at a time.
     /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoTickBatch> SnapshotAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoTickBatch>("GET", FinQuery.Path("api/klseprc/snapshot"), null, null, cancellationToken);
+    public IAsyncEnumerable<DtoMktCrypto> CryptoItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCrypto, DtoMktCrypto>(CryptoPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Crypto pairs. Every crypto pair of an exchange with its price, 24-hour change, volume and FinGraph's
+    /// own reading (signal, trend, confidence, score, term, rank). Pairs carry no Sum, Mav or Osc ratings. 50 rows a
+    /// page; ask for up to 50 symbols by name. GET /api/markets/dax. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data today, the others answer an empty page.</param>
+    /// <param name="quote">Only pairs priced in this coin, for example USDT.</param>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktPair> DaxAsync(string? exchange = null, string? quote = null, string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktPair>("GET", FinQuery.Path("api/markets/dax", ("exchange", exchange), ("quote", quote), ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of DaxAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data today, the others answer an empty page.</param>
+    /// <param name="quote">Only pairs priced in this coin, for example USDT.</param>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktPair> DaxPagesAsync(string? exchange = null, string? quote = null, string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktPair, DtoMktPair>(page ?? 1,
+            (n, ct) => DaxAsync(exchange, quote, syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of DaxPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data today, the others answer an empty page.</param>
+    /// <param name="quote">Only pairs priced in this coin, for example USDT.</param>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktPair> DaxItemsAsync(string? exchange = null, string? quote = null, string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktPair, DtoMktPair>(DaxPagesAsync(exchange, quote, syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: US stocks. Every US stock with its latest Sum, Mav and Osc ratings, the analysts' rating, price
+    /// changes, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask
+    /// for up to 50 symbols by name. GET /api/markets/eqtusa. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktEqtUsa> EqtUsaAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktEqtUsa>("GET", FinQuery.Path("api/markets/eqtusa", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of EqtUsaAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktEqtUsa> EqtUsaPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktEqtUsa, DtoMktEqtUsa>(page ?? 1,
+            (n, ct) => EqtUsaAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of EqtUsaPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktEqtUsa> EqtUsaItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktEqtUsa, DtoMktEqtUsa>(EqtUsaPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Forex. Every forex pair with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+    /// reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+    /// GET /api/markets/forex. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCfd> ForexAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCfd>("GET", FinQuery.Path("api/markets/forex", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of ForexAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCfd> ForexPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCfd, DtoMktCfd>(page ?? 1,
+            (n, ct) => ForexAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of ForexPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCfd> ForexItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCfd, DtoMktCfd>(ForexPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Futures. Every futures contract (energy, agricultural, interest-rate and index futures) with its latest
+    /// Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term,
+    /// rank). 50 rows a page; ask for up to 50 symbols by name. GET /api/markets/futures. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCfd> FuturesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCfd>("GET", FinQuery.Path("api/markets/futures", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of FuturesAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCfd> FuturesPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCfd, DtoMktCfd>(page ?? 1,
+            (n, ct) => FuturesAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of FuturesPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCfd> FuturesItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCfd, DtoMktCfd>(FuturesPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Indices. Every stock index with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+    /// reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+    /// GET /api/markets/indices. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCfd> IndicesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCfd>("GET", FinQuery.Path("api/markets/indices", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of IndicesAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCfd> IndicesPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCfd, DtoMktCfd>(page ?? 1,
+            (n, ct) => IndicesAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of IndicesPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCfd> IndicesItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCfd, DtoMktCfd>(IndicesPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Metals. Every metals contract with its latest Sum, Mav and Osc ratings, price changes and FinGraph's
+    /// own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+    /// GET /api/markets/metals. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCfd> MetalsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCfd>("GET", FinQuery.Path("api/markets/metals", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of MetalsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCfd> MetalsPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCfd, DtoMktCfd>(page ?? 1,
+            (n, ct) => MetalsAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of MetalsPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCfd> MetalsItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCfd, DtoMktCfd>(MetalsPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -173,8 +365,8 @@ public sealed class OhlcvResource
     internal OhlcvResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Batch OHLCV. Reserved: candles for several symbols in one call. Candle data is not available yet and the
-    /// endpoint answers 501 Not Implemented. GET /api/ohlcv/batch. Charged 1 credit per call.
+    /// Batch OHLCV. Coming soon: candles for several symbols in one call. This endpoint is not available yet and
+    /// answers 501 Not Implemented until it is built. GET /api/ohlcv/batch. Charged 1 credit per call.
     /// </summary>
     /// <param name="symbols">Comma-separated trading symbols, for example BTCUSDT,ETHUSDT.</param>
     /// <param name="timeframe">Candle interval, for example 1d. Default 1d.</param>
@@ -183,8 +375,8 @@ public sealed class OhlcvResource
         => _http.SendApiAsync<ResPonseOfObject>("GET", FinQuery.Path("api/ohlcv/batch", ("symbols", symbols), ("timeframe", timeframe)), null, null, cancellationToken);
 
     /// <summary>
-    /// OHLCV candles. Reserved: candles for one symbol over a time range. Candle data is not available yet and the
-    /// endpoint answers 501 Not Implemented. GET /api/ohlcv/{symbol}. Charged 1 credit per call.
+    /// OHLCV candles. Coming soon: candles for one symbol over a time range. This endpoint is not available yet and
+    /// answers 501 Not Implemented until it is built. GET /api/ohlcv/{symbol}. Charged 1 credit per call.
     /// </summary>
     /// <param name="symbol">Trading symbol, for example BTCUSDT.</param>
     /// <param name="timeframe">Candle interval, for example 1d. Default 1d.</param>
@@ -196,8 +388,8 @@ public sealed class OhlcvResource
         => _http.SendApiAsync<ResPonseOfObject>("GET", FinQuery.Path($"api/ohlcv/{FinQuery.Segment(symbol)}", ("timeframe", timeframe), ("from", @from), ("to", @to), ("limit", limit)), null, null, cancellationToken);
 
     /// <summary>
-    /// Realtime OHLCV. Reserved: the latest candle for one symbol. Candle data is not available yet and the endpoint
-    /// answers 501 Not Implemented. GET /api/ohlcv/{symbol}/realtime. Charged 1 credit per call.
+    /// Realtime OHLCV. Coming soon: the latest candle for one symbol. This endpoint is not available yet and answers
+    /// 501 Not Implemented until it is built. GET /api/ohlcv/{symbol}/realtime. Charged 1 credit per call.
     /// </summary>
     /// <param name="symbol">Trading symbol, for example BTCUSDT.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
@@ -206,125 +398,223 @@ public sealed class OhlcvResource
 }
 
 /// <summary>
-/// FinGraph SigCry: the credit-charged /api operations.
+/// FinGraph Record: the credit-charged /api operations.
 /// </summary>
-public sealed class SigCryResource
+public sealed class RecordResource
 {
     private readonly FinHttpTransport _http;
-    internal SigCryResource(FinHttpTransport http) => _http = http;
+    internal RecordResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// SigCry Snapshot. Shortlist of crypto assets chosen by the technical screener, with their signals.
-    /// GET /api/sigcry/snapshot. Charged 1 credit per call.
+    /// Track record: closed calls. Every call FinGraph has followed to its end, newest first, with entry, exit and
+    /// result. Filter by market, symbols, side, horizon, confidence, outcome and dates. 50 a page.
+    /// GET /api/record/calls. Charged 1 credit per call.
     /// </summary>
+    /// <param name="market">Only this market: eqtusa, crypto, dax or fxs.</param>
+    /// <param name="syms">Only these symbols, comma-separated, up to 50, any case.</param>
+    /// <param name="side">buy or sell.</param>
+    /// <param name="horizon">How long the call was followed: 6h, 24h, 72h, 7d or 30d.</param>
+    /// <param name="conf">How sure FinGraph was: VHigh, High, Med, Low, VLow or None.</param>
+    /// <param name="outcome">won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL.</param>
+    /// <param name="from">Closed on or after this day (UTC), such as 2026-11-01.</param>
+    /// <param name="to">Closed on or before this day (UTC), such as 2026-11-20.</param>
+    /// <param name="sort">closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigCryMin> SnapshotAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigCryMin>("GET", FinQuery.Path("api/sigcry/snapshot"), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoRecordCall> CallsAsync(string? market = null, string? syms = null, string? side = null, string? horizon = null, string? conf = null, string? outcome = null, string? @from = null, string? @to = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoRecordCall>("GET", FinQuery.Path("api/record/calls", ("market", market), ("syms", syms), ("side", side), ("horizon", horizon), ("conf", conf), ("outcome", outcome), ("from", @from), ("to", @to), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of CallsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="market">Only this market: eqtusa, crypto, dax or fxs.</param>
+    /// <param name="syms">Only these symbols, comma-separated, up to 50, any case.</param>
+    /// <param name="side">buy or sell.</param>
+    /// <param name="horizon">How long the call was followed: 6h, 24h, 72h, 7d or 30d.</param>
+    /// <param name="conf">How sure FinGraph was: VHigh, High, Med, Low, VLow or None.</param>
+    /// <param name="outcome">won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL.</param>
+    /// <param name="from">Closed on or after this day (UTC), such as 2026-11-01.</param>
+    /// <param name="to">Closed on or before this day (UTC), such as 2026-11-20.</param>
+    /// <param name="sort">closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoRecordCall> CallsPagesAsync(string? market = null, string? syms = null, string? side = null, string? horizon = null, string? conf = null, string? outcome = null, string? @from = null, string? @to = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoRecordCall, DtoRecordCall>(page ?? 1,
+            (n, ct) => CallsAsync(market, syms, side, horizon, conf, outcome, @from, @to, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of CallsPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="market">Only this market: eqtusa, crypto, dax or fxs.</param>
+    /// <param name="syms">Only these symbols, comma-separated, up to 50, any case.</param>
+    /// <param name="side">buy or sell.</param>
+    /// <param name="horizon">How long the call was followed: 6h, 24h, 72h, 7d or 30d.</param>
+    /// <param name="conf">How sure FinGraph was: VHigh, High, Med, Low, VLow or None.</param>
+    /// <param name="outcome">won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL.</param>
+    /// <param name="from">Closed on or after this day (UTC), such as 2026-11-01.</param>
+    /// <param name="to">Closed on or before this day (UTC), such as 2026-11-20.</param>
+    /// <param name="sort">closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoRecordCall> CallsItemsAsync(string? market = null, string? syms = null, string? side = null, string? horizon = null, string? conf = null, string? outcome = null, string? @from = null, string? @to = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoRecordCall, DtoRecordCall>(CallsPagesAsync(market, syms, side, horizon, conf, outcome, @from, @to, sort, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
-/// FinGraph SigDax: the credit-charged /api operations.
+/// FinGraph Screens: the credit-charged /api operations.
 /// </summary>
-public sealed class SigDaxResource
+public sealed class ScreensResource
 {
     private readonly FinHttpTransport _http;
-    internal SigDaxResource(FinHttpTransport http) => _http = http;
+    internal ScreensResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// SigDax FastPrc. Crypto pairs on one exchange with the fastest recent price movement, with their signals.
-    /// GET /api/sigdax/fastprc. Charged 1 credit per call.
+    /// Screens: Crypto. FinGraph's ranked shortlists of coins: strongest risers, strongest fallers, moving fastest in
+    /// price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a
+    /// page. GET /api/screens/crypto/{lane}. Charged 1 credit per call.
     /// </summary>
-    /// <param name="dax">Exchange key of the crypto exchange whose signals to return, for example BIN.</param>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigDaxMin> FastPrcAsync(DAX dax, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigDaxMin>("GET", FinQuery.Path("api/sigdax/fastprc", ("dax", dax)), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoScrCrypto> CryptoAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoScrCrypto>("GET", FinQuery.Path($"api/screens/crypto/{FinQuery.Segment(lane)}", ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// SigDax FastVol. Crypto pairs on one exchange with the fastest recent rise in trading volume, with their signals.
-    /// GET /api/sigdax/fastvol. Charged 1 credit per call.
+    /// Reads every page of CryptoAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="dax">Exchange key of the crypto exchange whose signals to return, for example BIN.</param>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigDaxMin> FastVolAsync(DAX dax, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigDaxMin>("GET", FinQuery.Path("api/sigdax/fastvol", ("dax", dax)), null, null, cancellationToken);
+    public IAsyncEnumerable<ApiMktPageOfDtoScrCrypto> CryptoPagesAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoScrCrypto, DtoScrCrypto>(page ?? 1,
+            (n, ct) => CryptoAsync(lane, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// SigDax TopGain. Crypto pairs on one exchange with the largest gains, with their signals.
-    /// GET /api/sigdax/topgain. Charged 1 credit per call.
+    /// Reads every row of every page of CryptoPagesAsync, one at a time.
     /// </summary>
-    /// <param name="dax">Exchange key of the crypto exchange whose signals to return, for example BIN.</param>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigDaxMin> TopGainAsync(DAX dax, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigDaxMin>("GET", FinQuery.Path("api/sigdax/topgain", ("dax", dax)), null, null, cancellationToken);
+    public IAsyncEnumerable<DtoScrCrypto> CryptoItemsAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoScrCrypto, DtoScrCrypto>(CryptoPagesAsync(lane, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// SigDax TopLose. Crypto pairs on one exchange with the largest losses, with their signals.
-    /// GET /api/sigdax/toplose. Charged 1 credit per call.
+    /// Screens: Crypto pairs. FinGraph's ranked shortlists of crypto pairs: strongest risers, strongest fallers, moving
+    /// fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus
+    /// LaneRank. 50 a page. GET /api/screens/dax/{lane}. Charged 1 credit per call.
     /// </summary>
-    /// <param name="dax">Exchange key of the crypto exchange whose signals to return, for example BIN.</param>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigDaxMin> TopLoseAsync(DAX dax, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigDaxMin>("GET", FinQuery.Path("api/sigdax/toplose", ("dax", dax)), null, null, cancellationToken);
-}
-
-/// <summary>
-/// FinGraph SigEqt: the credit-charged /api operations.
-/// </summary>
-public sealed class SigEqtResource
-{
-    private readonly FinHttpTransport _http;
-    internal SigEqtResource(FinHttpTransport http) => _http = http;
+    public Task<ApiMktPageOfDtoScrPair> DaxAsync(string lane, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoScrPair>("GET", FinQuery.Path($"api/screens/dax/{FinQuery.Segment(lane)}", ("exchange", exchange), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// SigEqt Snapshot. Shortlist of equities of one asset class chosen by the technical screener, with their signals.
-    /// GET /api/sigeqt/snapshot. Charged 1 credit per call.
+    /// Reads every page of DaxAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="aType">Asset class to return, for example STOCKUSA. Default STOCKUSA.</param>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigEqtMin> SnapshotAsync(AType? aType = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigEqtMin>("GET", FinQuery.Path("api/sigeqt/snapshot", ("aType", aType)), null, null, cancellationToken);
-}
-
-/// <summary>
-/// FinGraph SigFxs: the credit-charged /api operations.
-/// </summary>
-public sealed class SigFxsResource
-{
-    private readonly FinHttpTransport _http;
-    internal SigFxsResource(FinHttpTransport http) => _http = http;
+    public IAsyncEnumerable<ApiMktPageOfDtoScrPair> DaxPagesAsync(string lane, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoScrPair, DtoScrPair>(page ?? 1,
+            (n, ct) => DaxAsync(lane, exchange, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// SigFxs Breakout. Forex pairs breaking out of their recent range, with their signals. Scores are comparable only
-    /// within the forex list, not with crypto or equity scores. GET /api/sigfxs/breakout. Charged 1 credit per call.
+    /// Reads every row of every page of DaxPagesAsync, one at a time.
     /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigFxsLane> BreakoutAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigFxsLane>("GET", FinQuery.Path("api/sigfxs/breakout"), null, null, cancellationToken);
+    public IAsyncEnumerable<DtoScrPair> DaxItemsAsync(string lane, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoScrPair, DtoScrPair>(DaxPagesAsync(lane, exchange, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// SigFxs FastPrc. Forex pairs with the fastest recent price movement, with their signals. Scores are comparable
-    /// only within the forex list, not with crypto or equity scores. GET /api/sigfxs/fastprc. Charged 1 credit per
-    /// call.
+    /// Screens: US stocks. FinGraph's ranked shortlists of US stocks: strongest risers, strongest fallers, moving
+    /// fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus
+    /// LaneRank. 50 a page. GET /api/screens/eqtusa/{lane}. Charged 1 credit per call.
     /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigFxsLane> FastPrcAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigFxsLane>("GET", FinQuery.Path("api/sigfxs/fastprc"), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoScrEqtUsa> EqtUsaAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoScrEqtUsa>("GET", FinQuery.Path($"api/screens/eqtusa/{FinQuery.Segment(lane)}", ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// SigFxs TopGain. Forex pairs with the largest gains, with their signals. Scores are comparable only within the
-    /// forex list, not with crypto or equity scores. GET /api/sigfxs/topgain. Charged 1 credit per call.
+    /// Reads every page of EqtUsaAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigFxsLane> TopGainAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigFxsLane>("GET", FinQuery.Path("api/sigfxs/topgain"), null, null, cancellationToken);
+    public IAsyncEnumerable<ApiMktPageOfDtoScrEqtUsa> EqtUsaPagesAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoScrEqtUsa, DtoScrEqtUsa>(page ?? 1,
+            (n, ct) => EqtUsaAsync(lane, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// SigFxs TopLose. Forex pairs with the largest losses, with their signals. Scores are comparable only within the
-    /// forex list, not with crypto or equity scores. GET /api/sigfxs/toplose. Charged 1 credit per call.
+    /// Reads every row of every page of EqtUsaPagesAsync, one at a time.
     /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSigFxsLane> TopLoseAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSigFxsLane>("GET", FinQuery.Path("api/sigfxs/toplose"), null, null, cancellationToken);
+    public IAsyncEnumerable<DtoScrEqtUsa> EqtUsaItemsAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoScrEqtUsa, DtoScrEqtUsa>(EqtUsaPagesAsync(lane, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Screens: Forex. FinGraph's ranked shortlists of forex pairs: strongest risers, strongest fallers, moving fastest
+    /// in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a
+    /// page. GET /api/screens/fxs/{lane}. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoScrCfd> FxsAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoScrCfd>("GET", FinQuery.Path($"api/screens/fxs/{FinQuery.Segment(lane)}", ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of FxsAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoScrCfd> FxsPagesAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoScrCfd, DtoScrCfd>(page ?? 1,
+            (n, ct) => FxsAsync(lane, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of FxsPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoScrCfd> FxsItemsAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoScrCfd, DtoScrCfd>(FxsPagesAsync(lane, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -346,25 +636,6 @@ public sealed class SignalsResource
     /// <param name="cancellationToken">Cancels the call.</param>
     public Task<ResListOfDtoApiPattern> PatternsAsync(string? family = null, string? direction = null, bool? enabled = null, CancellationToken cancellationToken = default)
         => _http.SendApiAsync<ResListOfDtoApiPattern>("GET", FinQuery.Path("api/signals/patterns", ("family", family), ("direction", direction), ("enabled", enabled)), null, null, cancellationToken);
-
-    /// <summary>
-    /// Recent signals. Most recently updated Malaysian equity signals, newest first. Optionally filter by market.
-    /// GET /api/signals/recent. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 100. Default 25.</param>
-    /// <param name="market">Market code of the signal rows to return. Omit for every market.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiSignal> RecentAsync(int? limit = null, string? market = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiSignal>("GET", FinQuery.Path("api/signals/recent", ("limit", limit), ("market", market)), null, null, cancellationToken);
-
-    /// <summary>
-    /// View signal. One symbol's signal: Malaysian equity lane first, US equity lane if the symbol is not found there.
-    /// GET /api/signals/{symbol}. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="symbol">Ticker symbol or code of the instrument, for example BTCUSDT or a Bursa Malaysia code.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSignalView> ViewAsync(string symbol, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSignalView>("GET", FinQuery.Path($"api/signals/{FinQuery.Segment(symbol)}"), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -382,27 +653,6 @@ public sealed class StatsResource
     /// <param name="cancellationToken">Cancels the call.</param>
     public Task<ResListOfDtoApiAggregate> AggregateAsync(CancellationToken cancellationToken = default)
         => _http.SendApiAsync<ResListOfDtoApiAggregate>("GET", FinQuery.Path("api/stats/aggregate"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Market movers. Top gainers or losers by 24-hour price change percentage, optionally for one exchange.
-    /// GET /api/stats/movers. Charged 1 credit per call.
-    /// </summary>
-    /// <param name="direction">Ranking to return: gainers (largest rises, the default) or losers (largest falls).</param>
-    /// <param name="top">Number of rows to return, from 1 to 100. Default 10.</param>
-    /// <param name="dax">Exchange key to restrict the ranking to, for example BIN. Omit for every exchange.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiMover> MoversAsync(string? direction = null, int? top = null, DAX? dax = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiMover>("GET", FinQuery.Path("api/stats/movers", ("direction", direction), ("top", top), ("dax", dax)), null, null, cancellationToken);
-
-    /// <summary>
-    /// Volume leaders. Top symbols by 24-hour quote volume, optionally for one exchange. GET /api/stats/volume. Charged
-    /// 1 credit per call.
-    /// </summary>
-    /// <param name="top">Number of rows to return, from 1 to 100. Default 10.</param>
-    /// <param name="dax">Exchange key to restrict the ranking to, for example BIN. Omit for every exchange.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiMover> VolumeAsync(int? top = null, DAX? dax = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiMover>("GET", FinQuery.Path("api/stats/volume", ("top", top), ("dax", dax)), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -414,55 +664,85 @@ public sealed class TickersResource
     internal TickersResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Tickers list. Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency and
-    /// listing state; page with limit and offset. GET /api/tickers. Charged 0.5 credits per call.
+    /// Tickers list. Lists crypto-pair tickers with last price, 24-hour change and volume. Filter by exchange, quote
+    /// coin and listing state; sort by symbol, lastprice, chgpct or quotvol; 50 rows a page. GET /api/tickers. Charged
+    /// 0.5 credits per call.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
     /// <param name="inExchange">When true, only tickers currently listed on the exchange; when false, only the others. Omit for both.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="sort">Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiTicker> ListAsync(DAX? dax = null, string? quote = null, bool? inExchange = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiTicker>("GET", FinQuery.Path("api/tickers", ("dax", dax), ("quote", quote), ("inExchange", inExchange), ("limit", limit), ("offset", offset)), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoApiTicker> ListAsync(string? exchange = null, string? quote = null, bool? inExchange = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoApiTicker>("GET", FinQuery.Path("api/tickers", ("exchange", exchange), ("quote", quote), ("inExchange", inExchange), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of ListAsync, moving offset on by the rows each page returned, from the offset you pass (0 when
-    /// unset). It stops at the first empty page, which it does not yield.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
     /// <param name="inExchange">When true, only tickers currently listed on the exchange; when false, only the others. Omit for both.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="sort">Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResListOfDtoApiTicker> ListPagesAsync(DAX? dax = null, string? quote = null, bool? inExchange = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByOffset<ResListOfDtoApiTicker, DtoApiTicker>(offset ?? 0,
-            (o, ct) => ListAsync(dax, quote, inExchange, limit, o, ct),
-            p => p.Data, null, cancellationToken);
+    public IAsyncEnumerable<ApiMktPageOfDtoApiTicker> ListPagesAsync(string? exchange = null, string? quote = null, bool? inExchange = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoApiTicker, DtoApiTicker>(page ?? 1,
+            (n, ct) => ListAsync(exchange, quote, inExchange, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
     /// Reads every row of every page of ListPagesAsync, one at a time.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
     /// <param name="inExchange">When true, only tickers currently listed on the exchange; when false, only the others. Omit for both.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="sort">Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiTicker> ListItemsAsync(DAX? dax = null, string? quote = null, bool? inExchange = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResListOfDtoApiTicker, DtoApiTicker>(ListPagesAsync(dax, quote, inExchange, limit, offset, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<DtoApiTicker> ListItemsAsync(string? exchange = null, string? quote = null, bool? inExchange = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoApiTicker, DtoApiTicker>(ListPagesAsync(exchange, quote, inExchange, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Ticker search. Finds tickers whose symbol contains the search text, case-insensitive. GET /api/tickers/search.
-    /// Charged 0.5 credits per call.
+    /// Ticker search. Finds crypto-pair tickers whose symbol contains the search text, case-insensitive. 50 rows a
+    /// page. GET /api/tickers/search. Charged 0.5 credits per call.
     /// </summary>
     /// <param name="q">Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol. Required.</param>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 100. Default 25.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResListOfDtoApiTickerLite> SearchAsync(string? q = null, DAX? dax = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResListOfDtoApiTickerLite>("GET", FinQuery.Path("api/tickers/search", ("q", q), ("dax", dax), ("limit", limit)), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoApiTickerLite> SearchAsync(string? q = null, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoApiTickerLite>("GET", FinQuery.Path("api/tickers/search", ("q", q), ("exchange", exchange), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of SearchAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="q">Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol. Required.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoApiTickerLite> SearchPagesAsync(string? q = null, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoApiTickerLite, DtoApiTickerLite>(page ?? 1,
+            (n, ct) => SearchAsync(q, exchange, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of SearchPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="q">Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol. Required.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoApiTickerLite> SearchItemsAsync(string? q = null, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoApiTickerLite, DtoApiTickerLite>(SearchPagesAsync(q, exchange, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
     /// Ticker detail. Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
@@ -484,20 +764,36 @@ public sealed class TickersResource
 }
 
 /// <summary>
-/// FinGraph TvdDat: the credit-charged /api operations.
+/// FinGraph Ticks: the credit-charged /api operations.
 /// </summary>
-public sealed class TvdDatResource
+public sealed class TicksResource
 {
     private readonly FinHttpTransport _http;
-    internal TvdDatResource(FinHttpTransport http) => _http = http;
+    internal TicksResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// TVD US-equity tick snapshot. Latest US-equity prices from the TradingView feed, one entry per symbol, with the
-    /// time the snapshot was taken. GET /api/tvdusaeqt/snapshot. Charged 1 credit per call.
+    /// Ticks: crypto pairs. Latest price of every crypto pair, one entry per exchange and symbol, with the time the
+    /// snapshot was taken. GET /api/ticks/dax. Charged 1 credit per call.
     /// </summary>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoPxTickBatch> SnapshotAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoPxTickBatch>("GET", FinQuery.Path("api/tvdusaeqt/snapshot"), null, null, cancellationToken);
+    public Task<ResPonseOfDtoTickBatch> DaxAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfDtoTickBatch>("GET", FinQuery.Path("api/ticks/dax"), null, null, cancellationToken);
+
+    /// <summary>
+    /// Ticks: US stocks. Latest price of every US stock, one entry per symbol, as [price, time in Unix seconds], with
+    /// the time the snapshot was taken. GET /api/ticks/eqtusa. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ResPonseOfDtoPxTickBatch> EqtUsaAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfDtoPxTickBatch>("GET", FinQuery.Path("api/ticks/eqtusa"), null, null, cancellationToken);
+
+    /// <summary>
+    /// Ticks: forex. Latest bid and ask of every forex and CFD instrument the data terminals report, one entry per
+    /// symbol, with the time of each quote and of the snapshot. GET /api/ticks/fxs. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ResPonseOfDtoFxsTickBatch> FxsAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfDtoFxsTickBatch>("GET", FinQuery.Path("api/ticks/fxs"), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -509,60 +805,55 @@ public sealed class V1AssetsResource
     internal V1AssetsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List Assets. Lists assets from the asset registry. Filter by exchange, tradability and quote currency; page with
-    /// limit and offset. GET /v1/assets. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// Assets list. Lists assets from the asset registry. Filter by exchange, tradability and quote coin; sort by
+    /// symbol; 50 rows a page. GET /v1/assets. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
     /// <param name="canTrade">When true, only assets the exchange currently allows trading; when false, only the others. Omit for both.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
+    /// <param name="sort">Field to sort by: symbol (default); a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<PubV1PageOfPubV1Asset> ListAsync(DAX? dax = null, bool? canTrade = null, string? quote = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<PubV1PageOfPubV1Asset>("GET", FinQuery.Path("v1/assets", ("dax", dax), ("canTrade", canTrade), ("quote", quote), ("limit", limit), ("offset", offset)), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoApiAsset> ListAsync(string? exchange = null, bool? canTrade = null, string? quote = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoApiAsset>("GET", FinQuery.Path("v1/assets", ("exchange", exchange), ("canTrade", canTrade), ("quote", quote), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of ListAsync, moving offset on by the rows each page returned, from the offset you pass (0 when
-    /// unset). It stops at the first empty page, which it does not yield, or at a page shorter than its own limit.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
     /// <param name="canTrade">When true, only assets the exchange currently allows trading; when false, only the others. Omit for both.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
+    /// <param name="sort">Field to sort by: symbol (default); a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<PubV1PageOfPubV1Asset> ListPagesAsync(DAX? dax = null, bool? canTrade = null, string? quote = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByOffset<PubV1PageOfPubV1Asset, PubV1Asset>(offset ?? 0,
-            (o, ct) => ListAsync(dax, canTrade, quote, limit, o, ct),
-            p => p.Data, p => p.Count < p.Limit, cancellationToken);
+    public IAsyncEnumerable<ApiMktPageOfDtoApiAsset> ListPagesAsync(string? exchange = null, bool? canTrade = null, string? quote = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoApiAsset, DtoApiAsset>(page ?? 1,
+            (n, ct) => ListAsync(exchange, canTrade, quote, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
     /// Reads every row of every page of ListPagesAsync, one at a time.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
     /// <param name="canTrade">When true, only assets the exchange currently allows trading; when false, only the others. Omit for both.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
+    /// <param name="sort">Field to sort by: symbol (default); a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<PubV1Asset> ListItemsAsync(DAX? dax = null, bool? canTrade = null, string? quote = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<PubV1PageOfPubV1Asset, PubV1Asset>(ListPagesAsync(dax, canTrade, quote, limit, offset, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<DtoApiAsset> ListItemsAsync(string? exchange = null, bool? canTrade = null, string? quote = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoApiAsset, DtoApiAsset>(ListPagesAsync(exchange, canTrade, quote, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Exchanges Assets. Lists the exchange keys with their numeric value and TradingView prefix.
+    /// Exchanges Assets. Lists the exchanges FinGraph reads, with their name and numeric value.
     /// GET /v1/assets/exchanges. Included in paid plans.
     /// </summary>
     /// <param name="cancellationToken">Cancels the call.</param>
     public Task<PubV1ListOfPubV1Exchange> ExchangesAsync(CancellationToken cancellationToken = default)
         => _http.SendApiAsync<PubV1ListOfPubV1Exchange>("GET", FinQuery.Path("v1/assets/exchanges"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Types Assets. Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
-    /// GET /v1/assets/types. Included in paid plans.
-    /// </summary>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<PubV1ListOfPubV1EnumItem> TypesAsync(CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<PubV1ListOfPubV1EnumItem>("GET", FinQuery.Path("v1/assets/types"), null, null, cancellationToken);
 
     /// <summary>
     /// Get Assets. Returns one asset from the registry by its id. GET /v1/assets/{id}. Included in paid plans, for
@@ -575,6 +866,290 @@ public sealed class V1AssetsResource
 }
 
 /// <summary>
+/// FinGraph Markets: the plan-included /v1 operations.
+/// </summary>
+public sealed class V1MarketsResource
+{
+    private readonly FinHttpTransport _http;
+    internal V1MarketsResource(FinHttpTransport http) => _http = http;
+
+    /// <summary>
+    /// Markets: Crypto. Every coin with its latest Sum, Mav and Osc ratings, price changes, market value, volume and
+    /// FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols
+    /// by name. Two coins that share a ticker each have their own symbol. GET /v1/markets/crypto. Included in paid
+    /// plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCrypto> CryptoAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCrypto>("GET", FinQuery.Path("v1/markets/crypto", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of CryptoAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCrypto> CryptoPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCrypto, DtoMktCrypto>(page ?? 1,
+            (n, ct) => CryptoAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of CryptoPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCrypto> CryptoItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCrypto, DtoMktCrypto>(CryptoPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Crypto pairs. Every crypto pair of an exchange with its price, 24-hour change, volume and FinGraph's
+    /// own reading (signal, trend, confidence, score, term, rank). Pairs carry no Sum, Mav or Osc ratings. 50 rows a
+    /// page; ask for up to 50 symbols by name. GET /v1/markets/dax. Included in paid plans, for package tiers 1, 2, 3,
+    /// 4.
+    /// </summary>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data today, the others answer an empty page.</param>
+    /// <param name="quote">Only pairs priced in this coin, for example USDT.</param>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktPair> DaxAsync(string? exchange = null, string? quote = null, string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktPair>("GET", FinQuery.Path("v1/markets/dax", ("exchange", exchange), ("quote", quote), ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of DaxAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data today, the others answer an empty page.</param>
+    /// <param name="quote">Only pairs priced in this coin, for example USDT.</param>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktPair> DaxPagesAsync(string? exchange = null, string? quote = null, string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktPair, DtoMktPair>(page ?? 1,
+            (n, ct) => DaxAsync(exchange, quote, syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of DaxPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data today, the others answer an empty page.</param>
+    /// <param name="quote">Only pairs priced in this coin, for example USDT.</param>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktPair> DaxItemsAsync(string? exchange = null, string? quote = null, string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktPair, DtoMktPair>(DaxPagesAsync(exchange, quote, syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: US stocks. Every US stock with its latest Sum, Mav and Osc ratings, the analysts' rating, price
+    /// changes, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask
+    /// for up to 50 symbols by name. GET /v1/markets/eqtusa. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktEqtUsa> EqtUsaAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktEqtUsa>("GET", FinQuery.Path("v1/markets/eqtusa", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of EqtUsaAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktEqtUsa> EqtUsaPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktEqtUsa, DtoMktEqtUsa>(page ?? 1,
+            (n, ct) => EqtUsaAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of EqtUsaPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, vol24, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktEqtUsa> EqtUsaItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktEqtUsa, DtoMktEqtUsa>(EqtUsaPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Forex. Every forex pair with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+    /// reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+    /// GET /v1/markets/forex. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCfd> ForexAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCfd>("GET", FinQuery.Path("v1/markets/forex", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of ForexAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCfd> ForexPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCfd, DtoMktCfd>(page ?? 1,
+            (n, ct) => ForexAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of ForexPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCfd> ForexItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCfd, DtoMktCfd>(ForexPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Futures. Every futures contract (energy, agricultural, interest-rate and index futures) with its latest
+    /// Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term,
+    /// rank). 50 rows a page; ask for up to 50 symbols by name. GET /v1/markets/futures. Included in paid plans, for
+    /// package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCfd> FuturesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCfd>("GET", FinQuery.Path("v1/markets/futures", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of FuturesAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCfd> FuturesPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCfd, DtoMktCfd>(page ?? 1,
+            (n, ct) => FuturesAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of FuturesPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCfd> FuturesItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCfd, DtoMktCfd>(FuturesPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Indices. Every stock index with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+    /// reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+    /// GET /v1/markets/indices. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCfd> IndicesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCfd>("GET", FinQuery.Path("v1/markets/indices", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of IndicesAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCfd> IndicesPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCfd, DtoMktCfd>(page ?? 1,
+            (n, ct) => IndicesAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of IndicesPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCfd> IndicesItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCfd, DtoMktCfd>(IndicesPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Markets: Metals. Every metals contract with its latest Sum, Mav and Osc ratings, price changes and FinGraph's
+    /// own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+    /// GET /v1/markets/metals. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoMktCfd> MetalsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoMktCfd>("GET", FinQuery.Path("v1/markets/metals", ("syms", syms), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of MetalsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoMktCfd> MetalsPagesAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoMktCfd, DtoMktCfd>(page ?? 1,
+            (n, ct) => MetalsAsync(syms, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of MetalsPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="syms">Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols no row carries come back in NotFound.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd, score.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoMktCfd> MetalsItemsAsync(string? syms = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoMktCfd, DtoMktCfd>(MetalsPagesAsync(syms, sort, page, size, cancellationToken), p => p.Data);
+}
+
+/// <summary>
 /// FinGraph Ohlcv: the plan-included /v1 operations.
 /// </summary>
 public sealed class V1OhlcvResource
@@ -583,8 +1158,9 @@ public sealed class V1OhlcvResource
     internal V1OhlcvResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Batch OHLCV. Reserved: candles for several symbols in one call. Candle data is not available yet and the
-    /// endpoint answers 501 Not Implemented. GET /v1/ohlcv/batch. Included in paid plans, for package tiers 2, 3, 4.
+    /// Batch OHLCV. Coming soon: candles for several symbols in one call. This endpoint is not available yet and
+    /// answers 501 Not Implemented until it is built. GET /v1/ohlcv/batch. Included in paid plans, for package tiers 2,
+    /// 3, 4.
     /// </summary>
     /// <param name="symbols">Comma-separated trading symbols, for example BTCUSDT,ETHUSDT.</param>
     /// <param name="timeframe">Candle interval, for example 1d. Default 1d.</param>
@@ -593,8 +1169,9 @@ public sealed class V1OhlcvResource
         => _http.SendApiAsync<JsonElement>("GET", FinQuery.Path("v1/ohlcv/batch", ("symbols", symbols), ("timeframe", timeframe)), null, null, cancellationToken);
 
     /// <summary>
-    /// Get Ohlcv. Reserved: candles for one symbol over a time range. Candle data is not available yet and the endpoint
-    /// answers 501 Not Implemented. GET /v1/ohlcv/{symbol}. Included in paid plans, for package tiers 2, 3, 4.
+    /// Get Ohlcv. Coming soon: candles for one symbol over a time range. This endpoint is not available yet and answers
+    /// 501 Not Implemented until it is built. GET /v1/ohlcv/{symbol}. Included in paid plans, for package tiers 2, 3,
+    /// 4.
     /// </summary>
     /// <param name="symbol">Trading symbol, for example BTCUSDT.</param>
     /// <param name="timeframe">Candle interval, for example 1d. Default 1d.</param>
@@ -606,8 +1183,9 @@ public sealed class V1OhlcvResource
         => _http.SendApiAsync<JsonElement>("GET", FinQuery.Path($"v1/ohlcv/{FinQuery.Segment(symbol)}", ("timeframe", timeframe), ("from", @from), ("to", @to), ("limit", limit)), null, null, cancellationToken);
 
     /// <summary>
-    /// Realtime OHLCV. Reserved: the latest candle for one symbol. Candle data is not available yet and the endpoint
-    /// answers 501 Not Implemented. GET /v1/ohlcv/{symbol}/realtime. Included in paid plans, for package tiers 2, 3, 4.
+    /// Realtime OHLCV. Coming soon: the latest candle for one symbol. This endpoint is not available yet and answers
+    /// 501 Not Implemented until it is built. GET /v1/ohlcv/{symbol}/realtime. Included in paid plans, for package
+    /// tiers 2, 3, 4.
     /// </summary>
     /// <param name="symbol">Trading symbol, for example BTCUSDT.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
@@ -624,15 +1202,235 @@ public sealed class V1QuotesResource
     internal V1QuotesResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// Realtime quote. Latest price, 1-day change and volume for a symbol in any market lane (for example BTC, NVDA,
-    /// EURUSD, a Bursa Malaysia code or an exchange pair). Set market to search one lane only.
-    /// GET /v1/quotes/{symbol}/realtime. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// Realtime quote. Latest price, 1-day change and volume for a symbol in any market (for example BTC, NVDA, EURUSD
+    /// or an exchange pair). Set market to search one market only. GET /v1/quotes/{symbol}/realtime. Included in paid
+    /// plans, for package tiers 1, 2, 3, 4.
     /// </summary>
     /// <param name="symbol">Trading symbol or code of the instrument, for example BTC, NVDA, EURUSD or an exchange pair such as BTCUSDT.</param>
-    /// <param name="market">Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is rejected with status 400.</param>
+    /// <param name="market">Market to restrict to: crypto, stocks, forex or pairs (exchange crypto pairs). Omit to search every market. An unknown value is rejected with status 400.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
     public Task<PubV1ItemOfPubV1Quote> RealtimeAsync(string symbol, string? market = null, CancellationToken cancellationToken = default)
         => _http.SendApiAsync<PubV1ItemOfPubV1Quote>("GET", FinQuery.Path($"v1/quotes/{FinQuery.Segment(symbol)}/realtime", ("market", market)), null, null, cancellationToken);
+}
+
+/// <summary>
+/// FinGraph Record: the plan-included /v1 operations.
+/// </summary>
+public sealed class V1RecordResource
+{
+    private readonly FinHttpTransport _http;
+    internal V1RecordResource(FinHttpTransport http) => _http = http;
+
+    /// <summary>
+    /// Track record: closed calls. Every call FinGraph has followed to its end, newest first, with entry, exit and
+    /// result. Filter by market, symbols, side, horizon, confidence, outcome and dates. 50 a page.
+    /// GET /v1/record/calls. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="market">Only this market: eqtusa, crypto, dax or fxs.</param>
+    /// <param name="syms">Only these symbols, comma-separated, up to 50, any case.</param>
+    /// <param name="side">buy or sell.</param>
+    /// <param name="horizon">How long the call was followed: 6h, 24h, 72h, 7d or 30d.</param>
+    /// <param name="conf">How sure FinGraph was: VHigh, High, Med, Low, VLow or None.</param>
+    /// <param name="outcome">won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL.</param>
+    /// <param name="from">Closed on or after this day (UTC), such as 2026-11-01.</param>
+    /// <param name="to">Closed on or before this day (UTC), such as 2026-11-20.</param>
+    /// <param name="sort">closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoRecordCall> CallsAsync(string? market = null, string? syms = null, string? side = null, string? horizon = null, string? conf = null, string? outcome = null, string? @from = null, string? @to = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoRecordCall>("GET", FinQuery.Path("v1/record/calls", ("market", market), ("syms", syms), ("side", side), ("horizon", horizon), ("conf", conf), ("outcome", outcome), ("from", @from), ("to", @to), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of CallsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="market">Only this market: eqtusa, crypto, dax or fxs.</param>
+    /// <param name="syms">Only these symbols, comma-separated, up to 50, any case.</param>
+    /// <param name="side">buy or sell.</param>
+    /// <param name="horizon">How long the call was followed: 6h, 24h, 72h, 7d or 30d.</param>
+    /// <param name="conf">How sure FinGraph was: VHigh, High, Med, Low, VLow or None.</param>
+    /// <param name="outcome">won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL.</param>
+    /// <param name="from">Closed on or after this day (UTC), such as 2026-11-01.</param>
+    /// <param name="to">Closed on or before this day (UTC), such as 2026-11-20.</param>
+    /// <param name="sort">closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoRecordCall> CallsPagesAsync(string? market = null, string? syms = null, string? side = null, string? horizon = null, string? conf = null, string? outcome = null, string? @from = null, string? @to = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoRecordCall, DtoRecordCall>(page ?? 1,
+            (n, ct) => CallsAsync(market, syms, side, horizon, conf, outcome, @from, @to, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of CallsPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="market">Only this market: eqtusa, crypto, dax or fxs.</param>
+    /// <param name="syms">Only these symbols, comma-separated, up to 50, any case.</param>
+    /// <param name="side">buy or sell.</param>
+    /// <param name="horizon">How long the call was followed: 6h, 24h, 72h, 7d or 30d.</param>
+    /// <param name="conf">How sure FinGraph was: VHigh, High, Med, Low, VLow or None.</param>
+    /// <param name="outcome">won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL.</param>
+    /// <param name="from">Closed on or after this day (UTC), such as 2026-11-01.</param>
+    /// <param name="to">Closed on or before this day (UTC), such as 2026-11-20.</param>
+    /// <param name="sort">closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoRecordCall> CallsItemsAsync(string? market = null, string? syms = null, string? side = null, string? horizon = null, string? conf = null, string? outcome = null, string? @from = null, string? @to = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoRecordCall, DtoRecordCall>(CallsPagesAsync(market, syms, side, horizon, conf, outcome, @from, @to, sort, page, size, cancellationToken), p => p.Data);
+}
+
+/// <summary>
+/// FinGraph Screens: the plan-included /v1 operations.
+/// </summary>
+public sealed class V1ScreensResource
+{
+    private readonly FinHttpTransport _http;
+    internal V1ScreensResource(FinHttpTransport http) => _http = http;
+
+    /// <summary>
+    /// Screens: Crypto. FinGraph's ranked shortlists of coins: strongest risers, strongest fallers, moving fastest in
+    /// price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a
+    /// page. GET /v1/screens/crypto/{lane}. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoScrCrypto> CryptoAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoScrCrypto>("GET", FinQuery.Path($"v1/screens/crypto/{FinQuery.Segment(lane)}", ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of CryptoAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoScrCrypto> CryptoPagesAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoScrCrypto, DtoScrCrypto>(page ?? 1,
+            (n, ct) => CryptoAsync(lane, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of CryptoPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoScrCrypto> CryptoItemsAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoScrCrypto, DtoScrCrypto>(CryptoPagesAsync(lane, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Screens: Crypto pairs. FinGraph's ranked shortlists of crypto pairs: strongest risers, strongest fallers, moving
+    /// fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus
+    /// LaneRank. 50 a page. GET /v1/screens/dax/{lane}. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoScrPair> DaxAsync(string lane, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoScrPair>("GET", FinQuery.Path($"v1/screens/dax/{FinQuery.Segment(lane)}", ("exchange", exchange), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of DaxAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoScrPair> DaxPagesAsync(string lane, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoScrPair, DtoScrPair>(page ?? 1,
+            (n, ct) => DaxAsync(lane, exchange, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of DaxPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="exchange">Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoScrPair> DaxItemsAsync(string lane, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoScrPair, DtoScrPair>(DaxPagesAsync(lane, exchange, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Screens: US stocks. FinGraph's ranked shortlists of US stocks: strongest risers, strongest fallers, moving
+    /// fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus
+    /// LaneRank. 50 a page. GET /v1/screens/eqtusa/{lane}. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoScrEqtUsa> EqtUsaAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoScrEqtUsa>("GET", FinQuery.Path($"v1/screens/eqtusa/{FinQuery.Segment(lane)}", ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of EqtUsaAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoScrEqtUsa> EqtUsaPagesAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoScrEqtUsa, DtoScrEqtUsa>(page ?? 1,
+            (n, ct) => EqtUsaAsync(lane, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of EqtUsaPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoScrEqtUsa> EqtUsaItemsAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoScrEqtUsa, DtoScrEqtUsa>(EqtUsaPagesAsync(lane, page, size, cancellationToken), p => p.Data);
+
+    /// <summary>
+    /// Screens: Forex. FinGraph's ranked shortlists of forex pairs: strongest risers, strongest fallers, moving fastest
+    /// in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a
+    /// page. GET /v1/screens/fxs/{lane}. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiMktPageOfDtoScrCfd> FxsAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoScrCfd>("GET", FinQuery.Path($"v1/screens/fxs/{FinQuery.Segment(lane)}", ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of FxsAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoScrCfd> FxsPagesAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoScrCfd, DtoScrCfd>(page ?? 1,
+            (n, ct) => FxsAsync(lane, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of FxsPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="lane">Which shortlist: fastprc (moving fastest in price now), topgain (strongest risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout (breaking out of its range). Forex has no volume, so its fastvol is empty.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoScrCfd> FxsItemsAsync(string lane, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoScrCfd, DtoScrCfd>(FxsPagesAsync(lane, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -654,28 +1452,6 @@ public sealed class V1SignalsResource
     /// <param name="cancellationToken">Cancels the call.</param>
     public Task<PubV1ListOfPubV1Pattern> PatternsAsync(string? family = null, string? direction = null, bool? enabled = null, CancellationToken cancellationToken = default)
         => _http.SendApiAsync<PubV1ListOfPubV1Pattern>("GET", FinQuery.Path("v1/patterns", ("family", family), ("direction", direction), ("enabled", enabled)), null, null, cancellationToken);
-
-    /// <summary>
-    /// Recent signals. Most recently updated signals across crypto, US stocks, forex, Malaysia stocks and crypto pairs.
-    /// Set market to restrict the result to one lane. GET /v1/signals/recent. Included in paid plans, for package tiers
-    /// 1, 2, 3, 4.
-    /// </summary>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 100. Default 25.</param>
-    /// <param name="market">Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is rejected with status 400.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<PubV1ListOfPubV1SignalRow> RecentAsync(int? limit = null, string? market = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<PubV1ListOfPubV1SignalRow>("GET", FinQuery.Path("v1/signals/recent", ("limit", limit), ("market", market)), null, null, cancellationToken);
-
-    /// <summary>
-    /// View signal. One symbol's signal (for example BTC, NVDA, EURUSD, a Bursa Malaysia code, an exchange pair or a
-    /// TradingView code), with its short, mid and long term reads. Set market to search one lane only.
-    /// GET /v1/signals/{symbol}. Included in paid plans, for package tiers 1, 2, 3, 4.
-    /// </summary>
-    /// <param name="symbol">Trading symbol or code of the instrument, for example BTC, NVDA, EURUSD or an exchange pair such as BTCUSDT.</param>
-    /// <param name="market">Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is rejected with status 400.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<PubV1ItemOfPubV1Signal> GetAsync(string symbol, string? market = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<PubV1ItemOfPubV1Signal>("GET", FinQuery.Path($"v1/signals/{FinQuery.Segment(symbol)}", ("market", market)), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -693,27 +1469,6 @@ public sealed class V1StatsResource
     /// <param name="cancellationToken">Cancels the call.</param>
     public Task<PubV1ListOfPubV1Aggregate> AggregateAsync(CancellationToken cancellationToken = default)
         => _http.SendApiAsync<PubV1ListOfPubV1Aggregate>("GET", FinQuery.Path("v1/stats/aggregate"), null, null, cancellationToken);
-
-    /// <summary>
-    /// Market movers. Top gainers or losers by 24-hour price change percentage, optionally for one exchange.
-    /// GET /v1/stats/movers. Included in paid plans.
-    /// </summary>
-    /// <param name="direction">Ranking to return: gainers (largest rises, the default) or losers (largest falls).</param>
-    /// <param name="top">Number of rows to return, from 1 to 100. Default 10.</param>
-    /// <param name="dax">Exchange key to restrict the ranking to, for example BIN. Omit for every exchange.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<PubV1Movers> MoversAsync(string? direction = null, int? top = null, DAX? dax = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<PubV1Movers>("GET", FinQuery.Path("v1/stats/movers", ("direction", direction), ("top", top), ("dax", dax)), null, null, cancellationToken);
-
-    /// <summary>
-    /// Volume leaders. Top symbols by 24-hour quote volume, optionally for one exchange. GET /v1/stats/volume. Included
-    /// in paid plans.
-    /// </summary>
-    /// <param name="top">Number of rows to return, from 1 to 100. Default 10.</param>
-    /// <param name="dax">Exchange key to restrict the ranking to, for example BIN. Omit for every exchange.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<PubV1ListOfPubV1Mover> VolumeAsync(int? top = null, DAX? dax = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<PubV1ListOfPubV1Mover>("GET", FinQuery.Path("v1/stats/volume", ("top", top), ("dax", dax)), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -725,56 +1480,85 @@ public sealed class V1TickersResource
     internal V1TickersResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List Tickers. Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency and
-    /// listing state; page with limit and offset. GET /v1/tickers. Included in paid plans, for package tiers 1, 2, 3,
-    /// 4.
+    /// Tickers list. Lists crypto-pair tickers with last price, 24-hour change and volume. Filter by exchange, quote
+    /// coin and listing state; sort by symbol, lastprice, chgpct or quotvol; 50 rows a page. GET /v1/tickers. Included
+    /// in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
     /// <param name="inExchange">When true, only tickers currently listed on the exchange; when false, only the others. Omit for both.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="sort">Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<PubV1PageOfPubV1Ticker> ListAsync(DAX? dax = null, string? quote = null, bool? inExchange = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<PubV1PageOfPubV1Ticker>("GET", FinQuery.Path("v1/tickers", ("dax", dax), ("quote", quote), ("inExchange", inExchange), ("limit", limit), ("offset", offset)), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoApiTicker> ListAsync(string? exchange = null, string? quote = null, bool? inExchange = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoApiTicker>("GET", FinQuery.Path("v1/tickers", ("exchange", exchange), ("quote", quote), ("inExchange", inExchange), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of ListAsync, moving offset on by the rows each page returned, from the offset you pass (0 when
-    /// unset). It stops at the first empty page, which it does not yield, or at a page shorter than its own limit.
+    /// Reads every page of ListAsync, advancing page from the one you pass (1 when unset). It stops after the last page
+    /// the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
     /// <param name="inExchange">When true, only tickers currently listed on the exchange; when false, only the others. Omit for both.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="sort">Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<PubV1PageOfPubV1Ticker> ListPagesAsync(DAX? dax = null, string? quote = null, bool? inExchange = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByOffset<PubV1PageOfPubV1Ticker, PubV1Ticker>(offset ?? 0,
-            (o, ct) => ListAsync(dax, quote, inExchange, limit, o, ct),
-            p => p.Data, p => p.Count < p.Limit, cancellationToken);
+    public IAsyncEnumerable<ApiMktPageOfDtoApiTicker> ListPagesAsync(string? exchange = null, string? quote = null, bool? inExchange = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoApiTicker, DtoApiTicker>(page ?? 1,
+            (n, ct) => ListAsync(exchange, quote, inExchange, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
     /// Reads every row of every page of ListPagesAsync, one at a time.
     /// </summary>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
-    /// <param name="quote">Quote currency to filter by, for example USDT. Omit for every quote currency.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="quote">Quote coin to filter by, for example USDT. Omit for every quote coin.</param>
     /// <param name="inExchange">When true, only tickers currently listed on the exchange; when false, only the others. Omit for both.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 500. Default 100.</param>
-    /// <param name="offset">Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0.</param>
+    /// <param name="sort">Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high to low.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<PubV1Ticker> ListItemsAsync(DAX? dax = null, string? quote = null, bool? inExchange = null, int? limit = null, int? offset = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<PubV1PageOfPubV1Ticker, PubV1Ticker>(ListPagesAsync(dax, quote, inExchange, limit, offset, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<DtoApiTicker> ListItemsAsync(string? exchange = null, string? quote = null, bool? inExchange = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoApiTicker, DtoApiTicker>(ListPagesAsync(exchange, quote, inExchange, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Search Tickers. Finds tickers whose symbol contains the search text, case-insensitive. GET /v1/tickers/search.
-    /// Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// Ticker search. Finds crypto-pair tickers whose symbol contains the search text, case-insensitive. 50 rows a
+    /// page. GET /v1/tickers/search. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
     /// <param name="q">Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol. Required.</param>
-    /// <param name="dax">Exchange key to filter by, for example BIN. Omit to include every exchange.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 100. Default 25.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<PubV1TickerSearch> SearchAsync(string? q = null, DAX? dax = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<PubV1TickerSearch>("GET", FinQuery.Path("v1/tickers/search", ("q", q), ("dax", dax), ("limit", limit)), null, null, cancellationToken);
+    public Task<ApiMktPageOfDtoApiTickerLite> SearchAsync(string? q = null, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiMktPageOfDtoApiTickerLite>("GET", FinQuery.Path("v1/tickers/search", ("q", q), ("exchange", exchange), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of SearchAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="q">Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol. Required.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiMktPageOfDtoApiTickerLite> SearchPagesAsync(string? q = null, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiMktPageOfDtoApiTickerLite, DtoApiTickerLite>(page ?? 1,
+            (n, ct) => SearchAsync(q, exchange, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of SearchPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="q">Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol. Required.</param>
+    /// <param name="exchange">Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every exchange.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<DtoApiTickerLite> SearchItemsAsync(string? q = null, string? exchange = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiMktPageOfDtoApiTickerLite, DtoApiTickerLite>(SearchPagesAsync(q, exchange, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
     /// Get Tickers. Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
@@ -787,6 +1571,40 @@ public sealed class V1TickersResource
 }
 
 /// <summary>
+/// FinGraph Ticks: the plan-included /v1 operations.
+/// </summary>
+public sealed class V1TicksResource
+{
+    private readonly FinHttpTransport _http;
+    internal V1TicksResource(FinHttpTransport http) => _http = http;
+
+    /// <summary>
+    /// Ticks: crypto pairs. Latest price of every crypto pair, one entry per exchange and symbol, with the time the
+    /// snapshot was taken. GET /v1/ticks/dax. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ResPonseOfDtoTickBatch> DaxAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfDtoTickBatch>("GET", FinQuery.Path("v1/ticks/dax"), null, null, cancellationToken);
+
+    /// <summary>
+    /// Ticks: US stocks. Latest price of every US stock, one entry per symbol, as [price, time in Unix seconds], with
+    /// the time the snapshot was taken. GET /v1/ticks/eqtusa. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ResPonseOfDtoPxTickBatch> EqtUsaAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfDtoPxTickBatch>("GET", FinQuery.Path("v1/ticks/eqtusa"), null, null, cancellationToken);
+
+    /// <summary>
+    /// Ticks: forex. Latest bid and ask of every forex and CFD instrument the data terminals report, one entry per
+    /// symbol, with the time of each quote and of the snapshot. GET /v1/ticks/fxs. Included in paid plans, for package
+    /// tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ResPonseOfDtoFxsTickBatch> FxsAsync(CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfDtoFxsTickBatch>("GET", FinQuery.Path("v1/ticks/fxs"), null, null, cancellationToken);
+}
+
+/// <summary>
 /// FinGraph's /v1 operations, included in paid plans and gated by package tier.
 /// </summary>
 public sealed class FinGraphV1Resource
@@ -794,17 +1612,26 @@ public sealed class FinGraphV1Resource
     internal FinGraphV1Resource(FinHttpTransport http)
     {
         Assets = new V1AssetsResource(http);
+        Markets = new V1MarketsResource(http);
         Ohlcv = new V1OhlcvResource(http);
         Quotes = new V1QuotesResource(http);
+        Record = new V1RecordResource(http);
+        Screens = new V1ScreensResource(http);
         Signals = new V1SignalsResource(http);
         Stats = new V1StatsResource(http);
         Tickers = new V1TickersResource(http);
+        Ticks = new V1TicksResource(http);
     }
 
     /// <summary>
     /// Assets.
     /// </summary>
     public V1AssetsResource Assets { get; }
+
+    /// <summary>
+    /// Markets.
+    /// </summary>
+    public V1MarketsResource Markets { get; }
 
     /// <summary>
     /// Ohlcv.
@@ -815,6 +1642,16 @@ public sealed class FinGraphV1Resource
     /// Quotes.
     /// </summary>
     public V1QuotesResource Quotes { get; }
+
+    /// <summary>
+    /// Record.
+    /// </summary>
+    public V1RecordResource Record { get; }
+
+    /// <summary>
+    /// Screens.
+    /// </summary>
+    public V1ScreensResource Screens { get; }
 
     /// <summary>
     /// Signals.
@@ -830,6 +1667,11 @@ public sealed class FinGraphV1Resource
     /// Tickers.
     /// </summary>
     public V1TickersResource Tickers { get; }
+
+    /// <summary>
+    /// Ticks.
+    /// </summary>
+    public V1TicksResource Ticks { get; }
 }
 
 /// <summary>
@@ -839,27 +1681,17 @@ public sealed class FinGraphResource
 {
     internal FinGraphResource(FinHttpTransport http)
     {
-        ApcDat = new ApcDatResource(http);
         Assets = new AssetsResource(http);
-        DaxDat = new DaxDatResource(http);
-        FxsTikr = new FxsTikrResource(http);
-        KlsePrc = new KlsePrcResource(http);
+        Markets = new MarketsResource(http);
         Ohlcv = new OhlcvResource(http);
-        SigCry = new SigCryResource(http);
-        SigDax = new SigDaxResource(http);
-        SigEqt = new SigEqtResource(http);
-        SigFxs = new SigFxsResource(http);
+        Record = new RecordResource(http);
+        Screens = new ScreensResource(http);
         Signals = new SignalsResource(http);
         Stats = new StatsResource(http);
         Tickers = new TickersResource(http);
-        TvdDat = new TvdDatResource(http);
+        Ticks = new TicksResource(http);
         V1 = new FinGraphV1Resource(http);
     }
-
-    /// <summary>
-    /// ApcDat.
-    /// </summary>
-    public ApcDatResource ApcDat { get; }
 
     /// <summary>
     /// Assets.
@@ -867,19 +1699,9 @@ public sealed class FinGraphResource
     public AssetsResource Assets { get; }
 
     /// <summary>
-    /// DaxDat.
+    /// Markets.
     /// </summary>
-    public DaxDatResource DaxDat { get; }
-
-    /// <summary>
-    /// FxsTikr.
-    /// </summary>
-    public FxsTikrResource FxsTikr { get; }
-
-    /// <summary>
-    /// KlsePrc.
-    /// </summary>
-    public KlsePrcResource KlsePrc { get; }
+    public MarketsResource Markets { get; }
 
     /// <summary>
     /// Ohlcv.
@@ -887,24 +1709,14 @@ public sealed class FinGraphResource
     public OhlcvResource Ohlcv { get; }
 
     /// <summary>
-    /// SigCry.
+    /// Record.
     /// </summary>
-    public SigCryResource SigCry { get; }
+    public RecordResource Record { get; }
 
     /// <summary>
-    /// SigDax.
+    /// Screens.
     /// </summary>
-    public SigDaxResource SigDax { get; }
-
-    /// <summary>
-    /// SigEqt.
-    /// </summary>
-    public SigEqtResource SigEqt { get; }
-
-    /// <summary>
-    /// SigFxs.
-    /// </summary>
-    public SigFxsResource SigFxs { get; }
+    public ScreensResource Screens { get; }
 
     /// <summary>
     /// Signals.
@@ -922,9 +1734,9 @@ public sealed class FinGraphResource
     public TickersResource Tickers { get; }
 
     /// <summary>
-    /// TvdDat.
+    /// Ticks.
     /// </summary>
-    public TvdDatResource TvdDat { get; }
+    public TicksResource Ticks { get; }
 
     /// <summary>
     /// The /v1 operations: included in paid plans, gated by package tier.

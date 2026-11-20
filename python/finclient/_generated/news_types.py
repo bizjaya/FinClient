@@ -4,262 +4,15 @@ from __future__ import annotations
 from typing import Any, Dict, List, Literal, Optional, TypedDict, Union  # noqa: F401
 
 
-class CmdApiRatingMake(TypedDict, total=False):
-    ReqSite: Optional[str]
-    """Optional. The partner site the rating is requested for, for example finquest. Leave empty when
-    you call for yourself.
-    """
-    ReqUsno: Optional[int]
-    """Optional. The partner site's member number the rating is requested for; it is recorded as who
-    asked. Leave empty when you call for yourself. The call is always charged to the key's owner.
-    """
-
-Confidence = Literal["None", "VLow", "Low", "Med", "High", "VHigh"]
-
-class DtoApiAiRating(TypedDict, total=False):
-    Summ: Optional[str]
-    Grade: Optional["SigDto"]
-    SymRating: Optional[Dict[str, "SigDto"]]
-    PromptKey: Optional[str]
-    Model: Optional[str]
-    RatedAt: str
-    Cached: bool
-
-class DtoApiAiSym(TypedDict, total=False):
-    SymRating: Optional[Dict[str, "SigDto"]]
-    RatedAt: Optional[str]
-    Hits: Optional[Dict[str, int]]
-
-class DtoApiCate(TypedDict, total=False):
-    Id: int
-    ParentId: Optional[int]
+class CategoryRef(TypedDict, total=False):
     Slug: Optional[str]
+    """Category slug."""
     Name: Optional[str]
-    Children: Optional[List["DtoApiCate"]]
-
-class DtoApiCateCount(TypedDict, total=False):
-    Slug: Optional[str]
-    Name: Optional[str]
-    ParentId: Optional[int]
-    ArticleCount: int
-
-class DtoApiEntityHit(TypedDict, total=False):
-    Entity: Optional[str]
-    Count: int
-
-class DtoApiIndustryHit(TypedDict, total=False):
-    Topic: Optional[str]
-    Count: int
-
-class DtoApiNews(TypedDict, total=False):
-    Checksum: Optional[str]
-    NewsId: str
-    Title: Optional[str]
-    Blurb: Optional[str]
-    RankScore: Optional[float]
-    Url: Optional[str]
-    Source: Optional[str]
-    KeyCode: Optional[str]
-    Published: str
-    MainImage: Optional[str]
-    Tickers: Optional[List[str]]
-    Topics: Optional[List[str]]
-    Sentiment: Optional[str]
-    Signal: Optional[str]
-    Categories: Optional[Dict[str, str]]
-    Trend: Optional[str]
-    Term: Optional[str]
-    Range: Optional[str]
-    NewsScore: Optional[float]
-    CateConf: Optional[str]
-    StmConf: Optional[str]
-    TkrConf: Optional[str]
-    SigConf: Optional[str]
-    TrdConf: Optional[str]
-    TrmConf: Optional[str]
-    TrgConf: Optional[str]
-    AiSym: Optional["DtoApiAiSym"]
-
-class DtoApiNewsDetail(TypedDict, total=False):
-    Checksum: Optional[str]
-    NewsId: str
-    Title: Optional[str]
-    Blurb: Optional[str]
-    Text: Optional[str]
-    Url: Optional[str]
-    Author: Optional[str]
-    Source: Optional[str]
-    KeyCode: Optional[str]
-    Published: str
-    Fetched: str
-    MainImage: Optional[str]
-    ExtImages: Optional[List[str]]
-    Tickers: Optional[List[str]]
-    Topics: Optional[List[str]]
-    Sentiment: Optional[str]
-    Signal: Optional[str]
-    Trend: Optional[str]
-    Term: Optional[str]
-    Range: Optional[str]
-    NewsScore: Optional[float]
-    RankScore: Optional[float]
-    NewsStmt: Optional[str]
-    Categories: Optional[Dict[str, str]]
-    CateConf: Optional[str]
-    StmConf: Optional[str]
-    TkrConf: Optional[str]
-    SigConf: Optional[str]
-    TrdConf: Optional[str]
-    TrmConf: Optional[str]
-    TrgConf: Optional[str]
-    AiRating: Optional["DtoApiAiRating"]
-
-class DtoApiNewsLite(TypedDict, total=False):
-    Checksum: Optional[str]
-    Title: Optional[str]
-    Blurb: Optional[str]
-    Url: Optional[str]
-    Source: Optional[str]
-    Published: str
-    Tickers: Optional[List[str]]
-    Topics: Optional[List[str]]
-    Sentiment: Optional[str]
-
-class DtoApiNwsEnumOption(TypedDict, total=False):
-    Value: int
-    Name: Optional[str]
-
-class DtoApiSentimentAgg(TypedDict, total=False):
-    Category: Optional[str]
-    Day: Optional[str]
-    Count: int
-    AvgStm: Optional[float]
-    GradedCount: int
-    AvgSig: Optional[float]
-
-class DtoApiSentimentPoint(TypedDict, total=False):
-    Checksum: Optional[str]
-    Title: Optional[str]
-    Published: str
-    Sentiment: Optional[str]
-    Signal: Optional[str]
-    Trend: Optional[str]
-    Term: Optional[str]
-    Range: Optional[str]
-
-class DtoApiSentimentTrend(TypedDict, total=False):
-    Ticker: Optional[str]
-    Count: int
-    AvgStm: Optional[float]
-    GradedCount: int
-    AvgSig: Optional[float]
-
-class DtoApiSource(TypedDict, total=False):
-    KeyCode: Optional[str]
-    Name: Optional[str]
-    Category: Optional[str]
-    Vendor: Optional[str]
-    Active: bool
-    Schedule: Optional[str]
-
-class DtoApiSourceDetail(TypedDict, total=False):
-    KeyCode: Optional[str]
-    Name: Optional[str]
-    Category: Optional[str]
-    Vendor: Optional[str]
-    SrcFormat: Optional[str]
-    Url: Optional[str]
-    ItemsPath: Optional[str]
-    Active: bool
-    Schedule: Optional[str]
-    HashIdRule: Optional[List[str]]
-    Notes: Optional[str]
-    LastRunAt: Optional[str]
-    LastRunOk: Optional[bool]
-    LastRunMessage: Optional[str]
-    LastFetchedCnt: Optional[int]
-    LastInsertedCnt: Optional[int]
-    LastRunUrl: Optional[str]
-
-class DtoApiTrendItem(TypedDict, total=False):
-    Key: Optional[str]
-    Mentions: int
-    LastSeen: Optional[str]
-    AvgStm: Optional[float]
-    GradedCount: int
-
-class DtoApiVideo(TypedDict, total=False):
-    VideoId: Optional[str]
-    Channel: Optional[str]
-    KeyCode: Optional[str]
-    Title: Optional[str]
-    Url: Optional[str]
-    ThumbUrl: Optional[str]
-    PublishedAt: str
-    DurationSec: int
-    IsShort: bool
-    TrxSrc: Optional[str]
-    TextChars: int
-    FinStm: Optional[str]
-    FinSig: Optional[str]
-    FinTrd: Optional[str]
-    FinTrm: Optional[str]
-    FinTrg: Optional[str]
-    CateConf: Optional[str]
-    StmConf: Optional[str]
-    TkrConf: Optional[str]
-    SigConf: Optional[str]
-    TrdConf: Optional[str]
-    TrmConf: Optional[str]
-    TrgConf: Optional[str]
-    VidScore: Optional[float]
-    VidRankScore: Optional[float]
-    Tickers: Optional[List[str]]
-    Categories: Optional[Dict[str, str]]
-    AiSym: Optional["DtoApiAiSym"]
-
-class DtoApiVideoDetail(TypedDict, total=False):
-    Summ: Optional[str]
-    Symbols: Optional[List["DtoApiVideoSymbol"]]
-    AiRating: Optional["DtoApiAiRating"]
-    VideoId: Optional[str]
-    Channel: Optional[str]
-    KeyCode: Optional[str]
-    Title: Optional[str]
-    Url: Optional[str]
-    ThumbUrl: Optional[str]
-    PublishedAt: str
-    DurationSec: int
-    IsShort: bool
-    TrxSrc: Optional[str]
-    TextChars: int
-    FinStm: Optional[str]
-    FinSig: Optional[str]
-    FinTrd: Optional[str]
-    FinTrm: Optional[str]
-    FinTrg: Optional[str]
-    CateConf: Optional[str]
-    StmConf: Optional[str]
-    TkrConf: Optional[str]
-    SigConf: Optional[str]
-    TrdConf: Optional[str]
-    TrmConf: Optional[str]
-    TrgConf: Optional[str]
-    VidScore: Optional[float]
-    VidRankScore: Optional[float]
-    Tickers: Optional[List[str]]
-    Categories: Optional[Dict[str, str]]
-    AiSym: Optional["DtoApiAiSym"]
-
-class DtoApiVideoSymbol(TypedDict, total=False):
-    Symbol: Optional[str]
-    Hits: int
-
-class DtoApiVideoTranscript(TypedDict, total=False):
-    VideoId: Optional[str]
-    TrxSrc: Optional[str]
-    TextChars: int
-    Text: Optional[str]
+    """Category name."""
+    Parent: Optional[str]
+    """Slug of the parent category; null for a top-level category."""
+    Articles7d: int
+    """Articles filed under the category in the last 7 days."""
 
 class _FinApiErrorRequired(TypedDict):
     error: str
@@ -278,123 +31,162 @@ class FinApiError(_FinApiErrorRequired, total=False):
     tier: str
     """On per-category limits: the package tier of the caller."""
 
-NewsSortBy = Literal["Newest", "Oldest", "Fetched", "Rank", "Score"]
-
-NwsCategory = Literal["NONE", "News", "Social", "Sentiment", "Onchain", "Macro"]
-
-OpCond = Literal["and", "or", "all", "in"]
-
-class QueApiNewsList(TypedDict, total=False):
-    Symbols: Optional[str]
-    """Comma-separated ticker symbols. Returns articles that mention any of them."""
-    Industries: Optional[str]
-    """Comma-separated topics. Returns articles filed under any of them."""
-    Categories: Optional[str]
-    """Comma-separated category slugs, as returned by the news categories endpoints. Returns articles
-    filed under any of them.
-    """
-    KeyCodes: Optional[str]
-    """Comma-separated source key codes. Returns articles from any of those sources."""
-    StmGte: Optional["Sentiment"]
-    """Lowest article sentiment to include. Allowed values: Negative, Neutral, Positive."""
-    StmLte: Optional["Sentiment"]
-    """Highest article sentiment to include. Allowed values: Negative, Neutral, Positive."""
-    PublishedAfter: Optional[str]
-    """Return only articles published at or after this time (ISO 8601, UTC)."""
-    Search: Optional[str]
-    """Text to find in article titles and body text."""
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
-
-class QueApiSourceList(TypedDict, total=False):
-    Category: Optional["NwsCategory"]
-    """Return only sources of this category. An unknown value is rejected."""
-    Active: Optional[bool]
-    """Return only active (true) or inactive (false) sources. Omit for both."""
-    Vendor: Optional[str]
-    """Return only sources from this vendor (exact match)."""
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
-
-class QueApiVideoList(TypedDict, total=False):
-    KeyCode: Optional[str]
-    """Return only videos from the source with this key code."""
-    Length: Optional[str]
-    """Video length filter. Allowed values: all, shorts, long (over two minutes)."""
-    Transcript: Optional[str]
-    """Transcript filter. Allowed values: all, with, without."""
-    Symbol: Optional[str]
-    """Return only videos that mention this ticker symbol, for example AAPL."""
+class MoodDay(TypedDict, total=False):
     Category: Optional[str]
-    """Return only videos filed under this category slug."""
+    """Category slug."""
+    Day: Optional[str]
+    """Day, YYYY-MM-DD (UTC)."""
+    Articles: int
+    """Articles filed under the category that day."""
+    Bullish: int
+    """Articles read as bullish."""
+    Bearish: int
+    """Articles read as bearish."""
+    Neutral: int
+    """Articles read as neutral."""
+    Unscored: int
+    """Articles not yet scored."""
+    Mood: Optional[float]
+    """Bullish share of the scored articles, 0 to 100; null when none are scored."""
+
+class NewsBrief(TypedDict, total=False):
+    Id: Optional[str]
+    """Article id."""
+    Title: Optional[str]
+    """Headline."""
+    Url: Optional[str]
+    """Link to the article at its publisher."""
+    Source: Optional[str]
+    """Publisher name."""
+    Published: str
+    """Publication time, ISO 8601 UTC."""
+
+class NewsCategoryRef(TypedDict, total=False):
+    Slug: Optional[str]
+    """Category slug, as listed by the categories endpoint."""
+    Name: Optional[str]
+    """Category name."""
+
+class NewsDetail(TypedDict, total=False):
+    Id: Optional[str]
+    """Article id."""
+    Title: Optional[str]
+    """Headline."""
+    Blurb: Optional[str]
+    """Short excerpt from the article."""
+    Url: Optional[str]
+    """Link to the article at its publisher."""
+    Source: Optional[str]
+    """Publisher name."""
+    SourceKey: Optional[str]
+    """Publisher key."""
+    Published: str
+    """Publication time, ISO 8601 UTC."""
+    Image: Optional[str]
+    """Main image address, when the article has one."""
+    Tickers: Optional[List[str]]
+    """Ticker symbols the article is about."""
+    Categories: Optional[List["NewsCategoryRef"]]
+    """Categories the article is filed under."""
     Sentiment: Optional[str]
-    """Return only videos with this sentiment, such as Positive, Neutral or Negative."""
-    PublishedAfter: Optional[str]
-    """Return only videos published at or after this time (ISO 8601, UTC)."""
-    Search: Optional[str]
-    """Text to find in video titles."""
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
+    """Reading of the article: Bullish, Bearish, Neutral or Unscored."""
+    SentimentScore: Optional[int]
+    """Sentiment as a number: 1 bullish, -1 bearish, 0 neutral; null when unscored."""
+    Materiality: Optional[float]
+    """How much the article matters, from 0 to 10; null when not yet scored."""
+    Rank: Optional[float]
+    """Importance rank score from 0 to 10, adjusted for how sure the reading is; null when not yet
+    scored.
+    """
+    Summary: Optional[str]
+    """Short summary written by FinNews when one exists."""
+    Text: Optional[str]
+    """Full article text as collected."""
+    Author: Optional[str]
+    """Author, when the publisher names one."""
+    TickerRatings: Optional[List["TickerRating"]]
+    """Reading per ticker, when FinNews has rated the article."""
+    Similar: Optional[List["NewsBrief"]]
+    """Up to five related articles from the last week."""
+
+class NewsItem(TypedDict, total=False):
+    Id: Optional[str]
+    """Article id. Pass it to the article endpoint."""
+    Title: Optional[str]
+    """Headline."""
+    Blurb: Optional[str]
+    """Short excerpt from the article."""
+    Url: Optional[str]
+    """Link to the article at its publisher."""
+    Source: Optional[str]
+    """Publisher name."""
+    SourceKey: Optional[str]
+    """Publisher key, as listed by the sources endpoint and accepted by the src filter."""
+    Published: str
+    """Publication time, ISO 8601 UTC."""
+    Image: Optional[str]
+    """Main image address, when the article has one."""
+    Tickers: Optional[List[str]]
+    """Ticker symbols the article is about."""
+    Categories: Optional[List["NewsCategoryRef"]]
+    """Categories the article is filed under."""
+    Sentiment: Optional[str]
+    """Reading of the article: Bullish, Bearish, Neutral or Unscored."""
+    SentimentScore: Optional[int]
+    """Sentiment as a number: 1 bullish, -1 bearish, 0 neutral; null when unscored."""
+    Materiality: Optional[float]
+    """How much the article matters, from 0 to 10; null when not yet scored."""
+    Rank: Optional[float]
+    """Importance rank score from 0 to 10, adjusted for how sure the reading is; null when not yet
+    scored.
+    """
+    Summary: Optional[str]
+    """Short summary written by FinNews when one exists."""
+
+class NwsPageOfMoodDay(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    data: Optional[List["MoodDay"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class NwsPageOfNewsItem(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    data: Optional[List["NewsItem"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class NwsPageOfSentimentDay(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    data: Optional[List["SentimentDay"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class NwsPageOfTrendingTicker(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    data: Optional[List["TrendingTicker"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class NwsPageOfVideoItem(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    data: Optional[List["VideoItem"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
 
 class ResError(TypedDict, total=False):
     Type: Optional[str]
@@ -404,8 +196,8 @@ class ResError(TypedDict, total=False):
     Lang: Optional[str]
     Errors: Optional[List[str]]
 
-class ResListOfDtoApiCate(TypedDict, total=False):
-    data: Optional[List["DtoApiCate"]]
+class ResListOfCategoryRef(TypedDict, total=False):
+    data: Optional[List["CategoryRef"]]
     error: Optional["ResError"]
     code: int
     isOk: bool
@@ -413,8 +205,8 @@ class ResListOfDtoApiCate(TypedDict, total=False):
     errors: Optional[List[str]]
     chksum: Optional[str]
 
-class ResListOfDtoApiCateCount(TypedDict, total=False):
-    data: Optional[List["DtoApiCateCount"]]
+class ResListOfSourceRef(TypedDict, total=False):
+    data: Optional[List["SourceRef"]]
     error: Optional["ResError"]
     code: int
     isOk: bool
@@ -428,149 +220,104 @@ class ResPage(TypedDict, total=False):
     pageCount: int
     resCount: int
 
-class ResPagedOfDtoApiEntityHit(TypedDict, total=False):
-    data: Optional[List["DtoApiEntityHit"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiIndustryHit(TypedDict, total=False):
-    data: Optional[List["DtoApiIndustryHit"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiNews(TypedDict, total=False):
-    data: Optional[List["DtoApiNews"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiNewsLite(TypedDict, total=False):
-    data: Optional[List["DtoApiNewsLite"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiNwsEnumOption(TypedDict, total=False):
-    data: Optional[List["DtoApiNwsEnumOption"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSentimentAgg(TypedDict, total=False):
-    data: Optional[List["DtoApiSentimentAgg"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSentimentPoint(TypedDict, total=False):
-    data: Optional[List["DtoApiSentimentPoint"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSentimentTrend(TypedDict, total=False):
-    data: Optional[List["DtoApiSentimentTrend"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSource(TypedDict, total=False):
-    data: Optional[List["DtoApiSource"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiTrendItem(TypedDict, total=False):
-    data: Optional[List["DtoApiTrendItem"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiVideo(TypedDict, total=False):
-    data: Optional[List["DtoApiVideo"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPonseOfDtoApiNewsDetail(TypedDict, total=False):
-    data: Optional["DtoApiNewsDetail"]
+class ResPonseOfNewsDetail(TypedDict, total=False):
+    data: Optional["NewsDetail"]
     code: int
     isOk: bool
     message: Optional[str]
     errors: Optional[List[str]]
     chksum: Optional[str]
 
-class ResPonseOfDtoApiSourceDetail(TypedDict, total=False):
-    data: Optional["DtoApiSourceDetail"]
+class ResPonseOfVideoItem(TypedDict, total=False):
+    data: Optional["VideoItem"]
     code: int
     isOk: bool
     message: Optional[str]
     errors: Optional[List[str]]
     chksum: Optional[str]
 
-class ResPonseOfDtoApiVideoDetail(TypedDict, total=False):
-    data: Optional["DtoApiVideoDetail"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
+class SentimentDay(TypedDict, total=False):
+    Sym: Optional[str]
+    """Ticker symbol."""
+    Day: Optional[str]
+    """Day, YYYY-MM-DD (UTC)."""
+    Articles: int
+    """Articles that day naming the ticker."""
+    Bullish: int
+    """Articles read as bullish."""
+    Bearish: int
+    """Articles read as bearish."""
+    Neutral: int
+    """Articles read as neutral."""
+    Unscored: int
+    """Articles not yet scored."""
+    Mood: Optional[float]
+    """Bullish share of the scored articles, 0 to 100; null when none are scored."""
 
-class ResPonseOfDtoApiVideoTranscript(TypedDict, total=False):
-    data: Optional["DtoApiVideoTranscript"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
+class SourceRef(TypedDict, total=False):
+    Key: Optional[str]
+    """Publisher key, accepted by the src filter of the news list."""
+    Name: Optional[str]
+    """Publisher name."""
+    Category: Optional[str]
+    """Kind of publisher, such as Crypto or Stocks; null when not classified."""
+    Active: bool
+    """Whether FinNews is collecting from this publisher now."""
 
-class ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite(TypedDict, total=False):
-    data: Optional[Dict[str, List["DtoApiNewsLite"]]]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
+class TickerRating(TypedDict, total=False):
+    Sym: Optional[str]
+    """Ticker symbol."""
+    Sentiment: Optional[str]
+    """Reading for this ticker: Bullish, Bearish, Neutral or Unscored."""
+    Score: Optional[int]
+    """Signal strength from -10 (very strong sell) to 10 (very strong buy); null when the reading has
+    no signal.
+    """
 
-STy = Literal["NONE", "S", "M", "L"]
+class TrendingTicker(TypedDict, total=False):
+    Sym: Optional[str]
+    """Ticker symbol."""
+    Name: Optional[str]
+    """Company or asset name, when known."""
+    Mentions: int
+    """Articles naming the ticker in the window."""
+    Change: Optional[float]
+    """Percent change in mentions against the previous window of the same length; null when the
+    previous window had none.
+    """
+    Bullish: int
+    """Mentions read as bullish."""
+    Bearish: int
+    """Mentions read as bearish."""
+    Mood: Optional[float]
+    """Bullish share of the scored mentions, 0 to 100; null when none are scored."""
 
-Sentiment = Literal["Neutral", "Positive", "Unknown", "Negative"]
+class VideoCall(TypedDict, total=False):
+    Sym: Optional[str]
+    """Ticker symbol the video discusses."""
+    Sentiment: Optional[str]
+    """Reading for this ticker: Bullish, Bearish, Neutral or Unscored."""
+    Score: Optional[float]
+    """How much the video matters for this ticker, 0 to 10; null when not scored."""
 
-class SigDto(TypedDict, total=False):
-    Stm: "Sentiment"
-    Sig: Optional["Signal"]
-    Trd: Optional["Trend"]
-    Trm: "STy"
-    Trg: "TRange"
-    Conf: "Confidence"
-    Why: Optional[str]
-
-Signal = Literal["N", "NB", "B", "SB", "VSB", "VSS", "SS", "S", "NS"]
-
-TRange = Literal["NONE", "S1_S10", "S10_S30", "S30_S60", "M1_M5", "M5_M15", "M15_M60", "H1_H3", "H3_H12", "H12_H24", "D1_D3", "D3_D7", "W1_W4", "MO1_MO3", "MO3_MO6", "MO6_MO12", "Y1_Y3", "Y3_Y5"]
-
-Trend = Literal["N", "NU", "U", "SU", "VSU", "VSD", "SD", "D", "ND"]
+class VideoItem(TypedDict, total=False):
+    Id: Optional[str]
+    """Video id. Pass it to the video endpoint."""
+    Title: Optional[str]
+    """Video title."""
+    Channel: Optional[str]
+    """Channel name."""
+    Url: Optional[str]
+    """Link to the video."""
+    Published: str
+    """Publication time, ISO 8601 UTC."""
+    DurationSec: int
+    """Length in seconds."""
+    Views: Optional[int]
+    """View count, when known."""
+    Score: Optional[float]
+    """How much the video matters, 0 to 10; null when not yet scored."""
+    Summary: Optional[str]
+    """Short summary written by FinNews when one exists."""
+    Calls: Optional[List["VideoCall"]]
+    """What the video says about each ticker it discusses."""
