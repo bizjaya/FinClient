@@ -1,5 +1,6 @@
 [build-system]
-requires = ["hatchling>=1.27"]
+# Hatchling 1.28 and later write Metadata-Version 2.5, which twine and the PyPI upload check do not accept yet.
+requires = ["hatchling==1.27.0"]
 build-backend = "hatchling.build"
 
 [project]
