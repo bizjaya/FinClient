@@ -27,11 +27,43 @@ export interface FinPage<T> {
   chksum: string | null;
 }
 
+/** How one Fin service is reached: its name in messages, its key header, its key and its address. */
+export interface FinServiceConfig {
+  /** The service's name in error messages, such as "FinGraph". */
+  label: string;
+  /** The request header that carries the API key. */
+  keyHeader: string;
+  /** The API key, when there is one. */
+  apiKey?: string;
+  /** Absolute API root. */
+  baseUrl: string;
+  /**
+   * When a key is required: "construct" refuses a transport built without one, "use" lets it be built and fails the
+   * first request instead, and "never" sends requests without a key (a caller's own fetch authenticates them).
+   */
+  requireKey: "construct" | "use" | "never";
+  /** What to tell the caller to set when the key is missing, such as "the graph block's apiKey". */
+  keyHint?: string;
+}
+
+/** The query string, JSON `qry` object and JSON body of one request to FinGraph, FinNews or FinSocial. */
+export interface FinCallInput {
+  /** Named query fields. Missing and null values are left out; dates are sent as ISO 8601. */
+  query?: Readonly<Record<string, unknown>>;
+  /** A query object sent as one JSON-encoded `qry` parameter. */
+  qry?: object;
+  /** A JSON body. */
+  body?: unknown;
+}
+
+interface Reply { status: number; ok: boolean; raw: string; serverWait: number | null }
+
 const retryableStatuses = new Set([429, 502, 503, 504]);
 const writeMethods = new Set(["POST", "PUT", "PATCH", "DELETE"]);
 
 /** Shared authenticated transport. Resource methods provide the route and generated data type. */
 export class FinHttpTransport {
+  private readonly service: FinServiceConfig;
   private readonly apiKey: string;
   private readonly baseUrl: string;
   private readonly credentials: "omit" | "same-origin" | "include";
@@ -41,10 +73,21 @@ export class FinHttpTransport {
   private readonly delay: (milliseconds: number, signal?: AbortSignal) => Promise<void>;
   private readonly random: () => number;
 
-  constructor(options: FinClientOptions) {
-    this.apiKey = options.apiKey?.trim() ?? "";
-    if (!this.apiKey && !options.fetch) throw new TypeError("apiKey is required unless a custom fetch authenticates the member session.");
-    this.baseUrl = (options.baseUrl ?? "https://api.fincopy.io").replace(/\/+$/, "");
+  /** Creates the transport for FinCopy, or for another service when its configuration is given. */
+  constructor(options: FinClientOptions, service?: FinServiceConfig) {
+    this.service = service ?? {
+      label: "FinCopy",
+      keyHeader: "X-Api-Key",
+      apiKey: options.apiKey,
+      baseUrl: options.baseUrl ?? "https://api.fincopy.io",
+      requireKey: options.fetch ? "never" : "construct",
+      keyHint: "the apiKey option",
+    };
+    this.apiKey = this.service.apiKey?.trim() ?? "";
+    if (!this.apiKey && this.service.requireKey === "construct") {
+      throw new TypeError("apiKey is required unless a custom fetch authenticates the member session.");
+    }
+    this.baseUrl = this.service.baseUrl.replace(/\/+$/, "");
     const base = new URL(this.baseUrl);
     if (!/^https?:$/.test(base.protocol) || base.search || base.hash) {
       throw new TypeError("baseUrl must be an absolute HTTP or HTTPS URL without a query or fragment.");
@@ -74,9 +117,62 @@ export class FinHttpTransport {
   }
 
   private async sendEnvelope<T>(method: string, path: string, body?: unknown, requestOptions: FinRequestOptions = {}): Promise<FinEnvelope<T>> {
+    const label = this.service.label;
+    const reply = await this.exchange(method, path, body, requestOptions);
+    const { status, raw, serverWait } = reply;
+    let envelope: FinEnvelope<T> | null = null;
+    try { envelope = raw ? JSON.parse(raw) as FinEnvelope<T> : null; } catch { /* mapped to a typed API error below */ }
+    if (!reply.ok || !envelope || envelope.isOk !== true) {
+      const fallback = `The ${label} API request failed with HTTP ${status}.`;
+      const message = typeof envelope?.message === "string" && envelope.message ? envelope.message : fallback;
+      const errorCode = status === 429 ? "rate_limited" : reply.ok ? "invalid_response" : null;
+      throw new FinApiError(status, message, envelope?.code ?? null, errorsOf(envelope?.errors),
+        { errorCode, retryAfterMs: serverWait });
+    }
+    if (!Object.prototype.hasOwnProperty.call(envelope, "data") || envelope.data === null) {
+      throw new FinApiError(status, `The ${label} API returned an empty response.`, envelope.code ?? null,
+        errorsOf(envelope.errors), { errorCode: "empty_response" });
+    }
+    return envelope;
+  }
+
+  /**
+   * Sends one request to FinGraph, FinNews or FinSocial and returns the parsed JSON reply as it came, typed as the
+   * operation's documented 200 response. Refusals (401, 402, 403, 429 and the rest) become a {@link FinApiError}.
+   */
+  async call<T>(method: string, path: string, input: FinCallInput = {}, requestOptions: FinRequestOptions = {}): Promise<T> {
+    const label = this.service.label;
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(input.query ?? {})) {
+      if (value === undefined || value === null) continue;
+      params.append(key, value instanceof Date ? value.toISOString() : String(value));
+    }
+    if (input.qry !== undefined) params.append("qry", JSON.stringify(input.qry, (_key, value) => (value === null ? undefined : value)));
+    const suffix = params.toString();
+    const reply = await this.exchange(method, suffix ? `${path}?${suffix}` : path, input.body, requestOptions);
+    const { status, raw, serverWait } = reply;
+    let parsed: unknown;
+    try { parsed = raw ? JSON.parse(raw) : undefined; } catch { parsed = undefined; }
+    const object = parsed !== null && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as Record<string, unknown> : null;
+    if (!reply.ok) throw refusal(label, status, object, serverWait);
+    if (!object) {
+      throw new FinApiError(status, `The ${label} API returned an ${raw ? "invalid" : "empty"} response.`, null, [],
+        { errorCode: raw ? "invalid_response" : "empty_response" });
+    }
+    // The /api routes wrap their data in an envelope that can say it failed even on HTTP 200.
+    if (object.isOk === false) throw refusal(label, status, object, serverWait);
+    return object as T;
+  }
+
+  /** Sends one request with the retry rules shared by every service and returns the last reply. */
+  private async exchange(method: string, path: string, body: unknown, requestOptions: FinRequestOptions): Promise<Reply> {
+    const label = this.service.label;
     const verb = method.toUpperCase();
     const writes = writeMethods.has(verb);
-    // Unset fields are left out rather than sent as null; FinCopy reads a missing field and a null one the same way.
+    if (!this.apiKey && this.service.requireKey !== "never") {
+      throw new TypeError(`${label} needs an API key. Set ${this.service.keyHint ?? "its apiKey"} when you create the FinClient.`);
+    }
+    // Unset fields are left out rather than sent as null; the API reads a missing field and a null one the same way.
     const bodyText = body === undefined ? undefined : JSON.stringify(body, (_key, value) => (value === null ? undefined : value));
     const idempotencyKey = writes ? idempotencyKeyOf(requestOptions.idempotencyKey) : undefined;
     const url = new URL(path.replace(/^\//, ""), `${this.baseUrl}/`);
@@ -88,12 +184,12 @@ export class FinHttpTransport {
       requestOptions.signal?.addEventListener("abort", onAbort, { once: true });
       if (requestOptions.signal?.aborted) onAbort();
       let timedOut = false;
-      const timer = setTimeout(() => { timedOut = true; controller.abort(new Error("FinCopy request timed out.")); }, this.timeoutMs);
+      const timer = setTimeout(() => { timedOut = true; controller.abort(new Error(`${label} request timed out.`)); }, this.timeoutMs);
       let response: Response;
       let raw: string;
       try {
         const headers = new Headers({ Accept: "application/json" });
-        if (this.apiKey) headers.set("X-Api-Key", this.apiKey);
+        if (this.apiKey) headers.set(this.service.keyHeader, this.apiKey);
         if (bodyText !== undefined) headers.set("Content-Type", "application/json");
         if (idempotencyKey !== undefined) headers.set("Idempotency-Key", idempotencyKey);
         response = await this.fetcher(url, {
@@ -109,8 +205,8 @@ export class FinHttpTransport {
         if (requestOptions.signal?.aborted) throw error;
         if (retry >= this.maxRetries) {
           throw timedOut
-            ? new FinApiError(0, "The FinCopy API did not answer in time.", null, [], { errorCode: "timeout", cause: error })
-            : new FinApiError(0, "The FinCopy API could not be reached.", null, [], { errorCode: "network", cause: error });
+            ? new FinApiError(0, `The ${label} API did not answer in time.`, null, [], { errorCode: "timeout", cause: error })
+            : new FinApiError(0, `The ${label} API could not be reached.`, null, [], { errorCode: "network", cause: error });
         }
         await this.pause(this.backoff(retry), requestOptions.signal);
         continue;
@@ -126,28 +222,14 @@ export class FinHttpTransport {
           continue;
         }
       }
-
-      let envelope: FinEnvelope<T> | null = null;
-      try { envelope = raw ? JSON.parse(raw) as FinEnvelope<T> : null; } catch { /* mapped to a typed API error below */ }
-      if (!response.ok || !envelope || envelope.isOk !== true) {
-        const fallback = `The FinCopy API request failed with HTTP ${response.status}.`;
-        const message = typeof envelope?.message === "string" && envelope.message ? envelope.message : fallback;
-        const errorCode = response.status === 429 ? "rate_limited" : response.ok ? "invalid_response" : null;
-        throw new FinApiError(response.status, message, envelope?.code ?? null, errorsOf(envelope?.errors),
-          { errorCode, retryAfterMs: serverWait });
-      }
-      if (!Object.prototype.hasOwnProperty.call(envelope, "data") || envelope.data === null) {
-        throw new FinApiError(response.status, "The FinCopy API returned an empty response.", envelope.code ?? null,
-          errorsOf(envelope.errors), { errorCode: "empty_response" });
-      }
-      return envelope;
+      return { status: response.status, ok: response.ok, raw, serverWait };
     }
   }
 
   async requestPage<T>(method: string, path: string, requestOptions: FinRequestOptions = {}): Promise<FinPage<T>> {
     const envelope = await this.sendEnvelope<T[]>(method, path, undefined, requestOptions);
     if (!Array.isArray(envelope.data)) {
-      throw new FinApiError(200, "The FinCopy API returned an invalid page.", envelope.code ?? null, envelope.errors ?? []);
+      throw new FinApiError(200, `The ${this.service.label} API returned an invalid page.`, envelope.code ?? null, envelope.errors ?? []);
     }
     return {
       items: envelope.data,
@@ -164,7 +246,7 @@ export class FinHttpTransport {
   async *requestEvents(path: string, requestOptions: FinRequestOptions = {}): AsyncGenerator<FinStreamEvent, void, undefined> {
     const url = new URL(path.replace(/^\//, ""), `${this.baseUrl}/`);
     const headers = new Headers({ Accept: "text/event-stream" });
-    if (this.apiKey) headers.set("X-Api-Key", this.apiKey);
+    if (this.apiKey) headers.set(this.service.keyHeader, this.apiKey);
     let response: Response;
     try {
       response = await this.fetcher(url, {
@@ -282,4 +364,22 @@ function newIdempotencyKey(): string {
   bytes[8] = (bytes[8]! & 0x3f) | 0x80;
   const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+}
+
+/** Reads a refusal from either reply shape: FinApiError (`{ error, message, lane, limit, catag, tier }`), the /v1 error body (`{ error: { code, message } }`) or the /api envelope. */
+function refusal(label: string, status: number, body: Record<string, unknown> | null, retryAfterMs: number | null): FinApiError {
+  const text = (value: unknown): string | null => (typeof value === "string" && value ? value : typeof value === "number" ? String(value) : null);
+  const nested = body?.error !== null && typeof body?.error === "object" ? body.error as Record<string, unknown> : null;
+  const error = text(body?.error) ?? text(nested?.code) ?? text(nested?.Code);
+  const message = text(body?.message) ?? text(nested?.message) ?? text(nested?.Message) ?? `The ${label} API request failed with HTTP ${status}.`;
+  const code = typeof body?.code === "number" ? body.code : null;
+  return new FinApiError(status, message, code, errorsOf(body?.errors), {
+    errorCode: status === 429 ? "rate_limited" : null,
+    retryAfterMs,
+    error,
+    lane: text(body?.lane),
+    limit: body?.limit,
+    catag: text(body?.catag),
+    tier: text(body?.tier),
+  });
 }
