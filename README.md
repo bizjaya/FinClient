@@ -1,8 +1,9 @@
 # FinClient
 
-FinClient provides .NET and TypeScript clients for the FinCopy public API at `https://api.fincopy.io`. Since version 0.2.0
-it uses the `/v1/fxs` trading routes and identifies accounts by their numeric ACNO, which changed the 0.1 API; see
-[CHANGELOG.md](./CHANGELOG.md) before upgrading.
+FinClient provides .NET and TypeScript clients for the Fin APIs: FinCopy (`https://api.fincopy.io`), FinGraph, FinNews and
+FinSocial. The FinCopy sections come first; [FinGraph, FinNews and FinSocial](#fingraph-finnews-and-finsocial) follow them. Since
+version 0.2.0 FinCopy uses the `/v1/fxs` trading routes and identifies accounts by their numeric ACNO, which changed the 0.1 API;
+see [CHANGELOG.md](./CHANGELOG.md) before upgrading.
 
 ## .NET
 
@@ -33,6 +34,24 @@ for (const account of page.items) console.log(account.Fleet?.Account?.ACNO);
 
 // await fin.copy.orders.make(52014125, { SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.01 });
 ```
+
+## Python
+
+```python
+import os
+from finclient import FinClient, ServiceOptions
+
+fin = FinClient(
+    api_key=os.environ["FINCOPY_API_KEY"],
+    news=ServiceOptions(api_key=os.environ["FINNEWS_API_KEY"]),
+)
+for account in fin.copy.accounts.list_items():
+    print(account["Fleet"]["Account"]["ACNO"])
+print(fin.news.v1.news.all(pageSize=10).items)
+```
+
+Install with `pip install finclient` (Python 3.10 or newer, no dependencies). The Python package also reaches FinGraph,
+FinNews and FinSocial; see [python/README.md](./python/README.md).
 
 ## API key or member session
 
@@ -87,5 +106,76 @@ breaks (a network error); open it again in a loop and wait a few seconds between
 To verify a webhook in TypeScript, import `FinWebhook` from `@bizjaya/finclient/webhook` (Node.js only). In .NET, use
 `Fin.FinWebhook`.
 
-For routes and authentication details, see the [FinCopy API documentation](https://fincopy.io/docs). Source:
+## FinGraph, FinNews and FinSocial
+
+Beside FinCopy, the same client reaches FinGraph (market data, tickers, signals and statistics), FinNews (news, sentiment,
+trending, sources and videos) and FinSocial (prediction markets, social posts, authors and videos). Install the package
+(`dotnet add package FinClient` or `npm install @bizjaya/finclient`). Each service has its own API key, sent in the
+`FinUsrKey` header (FinCopy's stays `X-Api-Key`), and its own address (`https://x.fingraph.io`, `https://x.finnews.io`,
+`https://x.finsocial.io`). Give the client a block for each service you use; the top-level key is optional when a block is
+given, and a service whose key is missing throws a clear error when you first call it.
+
+```csharp
+using var fin = new FinClient(new FinClientOptions
+{
+    Graph = new FinServiceOptions(Environment.GetEnvironmentVariable("FINGRAPH_API_KEY")!),
+    News = new FinServiceOptions(Environment.GetEnvironmentVariable("FINNEWS_API_KEY")!),
+    Social = new FinServiceOptions(Environment.GetEnvironmentVariable("FINSOCIAL_API_KEY")!),
+});
+```
+
+```ts
+const fin = new FinClient({
+  graph: { apiKey: process.env.FINGRAPH_API_KEY! },
+  news: { apiKey: process.env.FINNEWS_API_KEY! },
+  social: { apiKey: process.env.FINSOCIAL_API_KEY! },
+});
+```
+
+### Two surfaces
+
+Every operation in each service's OpenAPI document is a method, and the two surfaces are kept apart because they are billed
+differently:
+
+| | `/api` operations | `/v1` operations |
+| --- | --- | --- |
+| Billing | Charged in credits per call, on any plan. | Included in paid plans, gated by package tier. |
+| TypeScript | `fin.graph.tickers.list()` | `fin.graph.v1.tickers.list()` |
+| .NET | `fin.Graph.Tickers.ListAsync()` | `fin.Graph.V1.Tickers.ListAsync()` |
+
+The group is the operation's tag (`tickers`, `news`, `markets`, ...) and the method is the action part of its operation id
+(`Api_NewsController_RatingMake` is `fin.news.news.ratingMake()` and `fin.News.News.RatingMakeAsync()`). Path parameters are
+required positional arguments, then come the body, the query and the per-request options (an abort signal or cancellation
+token, an idempotency key for writes). A method returns the documented 200 reply, typed from the API's document. Refusals
+(`401` `invalid_api_key`, `402` `insufficient_credits`, `403` `package_not_allowed`, `429` rate limited) throw `FinApiError` /
+`FinApiException` with the API's error code, message and the limit fields (`lane`, `limit`, `catag`, `tier`); a `429` is retried
+after `Retry-After`. The full naming and argument rules are in the [TypeScript](./typescript/README.md) and
+[.NET](./dotnet/README.md) READMEs.
+
+### Filtering and paging
+
+Most FinNews and FinSocial lists take one query parameter, `qry`, a JSON object with `pageNo`, `pageSize`, `sortBy`, `srchBy` and
+the endpoint's own filter fields. The method takes it as a typed object and sends it as JSON. Lists that page also have
+iterators over pages and over items that advance `pageNo` (or `offset`, for FinGraph's `limit` and `offset` lists) and stop
+on an empty page or the last page.
+
+```csharp
+var page = await fin.News.News.ListAsync(new QueApiNewsList
+{
+    PageNo = 1, PageSize = 20, SortBy = [["published", "desc"]], Symbols = "AAPL,MSFT",
+});
+await foreach (var article in fin.News.News.ListItemsAsync(new QueApiNewsList { Symbols = "AAPL" }))
+    Console.WriteLine(article.Title);
+```
+
+```ts
+const page = await fin.news.news.list({ pageNo: 1, pageSize: 20, sortBy: [["published", "desc"]], Symbols: "AAPL,MSFT" });
+for await (const article of fin.news.news.listItems({ Symbols: "AAPL" })) console.log(article.Title);
+```
+
+Other operations take their named query fields directly: `fin.graph.tickers.list({ dax: "BIN", quote: "USDT", limit: 20 })`.
+A runnable example for each service is in `typescript/examples` and `dotnet/examples`, reading its key from an environment
+variable (`FINGRAPH_API_KEY`, `FINNEWS_API_KEY`, `FINSOCIAL_API_KEY`).
+
+For FinCopy's routes and authentication details, see the [FinCopy API documentation](https://fincopy.io/docs). Source:
 [GitHub](https://github.com/bizjaya/FinClient).

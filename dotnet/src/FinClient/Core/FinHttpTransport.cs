@@ -9,6 +9,31 @@ using Fin.Copy;
 
 namespace Fin;
 
+/// <summary>How one Fin service is reached: its name in messages, its key header, its key and its address.</summary>
+internal sealed class FinServiceConfig
+{
+    public FinServiceConfig(string label, string keyHeader, string? apiKey, Uri baseUri, bool keyRequiredAtUse, string keyHint)
+    {
+        Label = label;
+        KeyHeader = keyHeader;
+        ApiKey = apiKey?.Trim() ?? "";
+        BaseUri = baseUri;
+        KeyRequiredAtUse = keyRequiredAtUse;
+        KeyHint = keyHint;
+    }
+
+    /// <summary>The service's name in error messages, such as "FinGraph".</summary>
+    public string Label { get; }
+    /// <summary>The request header that carries the API key.</summary>
+    public string KeyHeader { get; }
+    public string ApiKey { get; }
+    public Uri BaseUri { get; }
+    /// <summary>When true a missing key fails the first call; otherwise requests go out without one (a member session authenticates them).</summary>
+    public bool KeyRequiredAtUse { get; }
+    /// <summary>What to tell the caller to set when the key is missing.</summary>
+    public string KeyHint { get; }
+}
+
 internal sealed class FinHttpTransport
 {
     /// <summary>A server Retry-After longer than this is not waited out: the call fails and reports it.</summary>
@@ -21,14 +46,28 @@ internal sealed class FinHttpTransport
     private static readonly Random Jitter = new();
     private readonly HttpClient _http;
     private readonly FinClientOptions _options;
+    private readonly FinServiceConfig _service;
     private readonly Uri _baseUri;
 
+    /// <summary>Creates the transport for FinCopy.</summary>
     public FinHttpTransport(HttpClient http, FinClientOptions options, bool allowSession = false)
     {
         _http = http ?? throw new ArgumentNullException(nameof(http));
         if (options is null) throw new ArgumentNullException(nameof(options));
         _options = options.Snapshot();
         _baseUri = _options.ValidatedBaseUri(requireApiKey: !allowSession);
+        // With a service block given FinCopy's key may be absent: using FinCopy then fails at its first call.
+        _service = new FinServiceConfig("FinCopy", "X-Api-Key", _options.ApiKey, _baseUri,
+            keyRequiredAtUse: !allowSession, keyHint: "FinClientOptions.ApiKey");
+    }
+
+    /// <summary>Creates the transport for FinGraph, FinNews or FinSocial: the shared timeout and retry settings, that service's key and address.</summary>
+    public FinHttpTransport(HttpClient http, FinClientOptions shared, FinServiceConfig service)
+    {
+        _http = http ?? throw new ArgumentNullException(nameof(http));
+        _options = (shared ?? throw new ArgumentNullException(nameof(shared))).Snapshot();
+        _service = service ?? throw new ArgumentNullException(nameof(service));
+        _baseUri = service.BaseUri;
     }
 
     /// <summary>Waits between attempts. Replaceable so tests run without real delays.</summary>
@@ -101,8 +140,8 @@ internal sealed class FinHttpTransport
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(_baseUri, path.TrimStart('/')));
         request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
-        if (!string.IsNullOrWhiteSpace(_options.ApiKey))
-            request.Headers.TryAddWithoutValidation("X-Api-Key", _options.ApiKey);
+        if (!string.IsNullOrWhiteSpace(_service.ApiKey))
+            request.Headers.TryAddWithoutValidation(_service.KeyHeader, _service.ApiKey);
         try
         {
             return await _http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
@@ -136,9 +175,61 @@ internal sealed class FinHttpTransport
         }
     }
 
+    /// <summary>
+    /// Sends one request to FinGraph, FinNews or FinSocial and returns the reply read as the operation's documented 200
+    /// response. Refusals (401, 402, 403, 429 and the rest) become a <see cref="FinApiException"/>.
+    /// </summary>
+    public async Task<T> SendApiAsync<T>(string method, string pathAndQuery, object? body, string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        var reply = await ExchangeAsync(method, pathAndQuery, body, idempotencyKey, cancellationToken).ConfigureAwait(false);
+        if (!reply.Ok) throw Refusal(reply.Status, reply.Raw, reply.RetryAfter);
+        if (string.IsNullOrWhiteSpace(reply.Raw))
+            throw new FinApiException(reply.Status, $"The {_service.Label} API returned an empty response.", errorCode: "empty_response");
+        try
+        {
+            using (var document = JsonDocument.Parse(reply.Raw))
+            {
+                // The /api routes wrap their data in an envelope that can say it failed even on HTTP 200.
+                if (document.RootElement.ValueKind == JsonValueKind.Object
+                    && document.RootElement.TryGetProperty("isOk", out var ok) && ok.ValueKind == JsonValueKind.False)
+                    throw Refusal(reply.Status, reply.Raw, reply.RetryAfter);
+            }
+            var value = JsonSerializer.Deserialize<T>(reply.Raw, ReadOptions);
+            if (value is null)
+                throw new FinApiException(reply.Status, $"The {_service.Label} API returned an empty response.", errorCode: "empty_response");
+            return value;
+        }
+        catch (JsonException ex)
+        {
+            throw new FinApiException(reply.Status, $"The {_service.Label} API returned an invalid response.", innerException: ex,
+                errorCode: "invalid_response");
+        }
+    }
+
     private async Task<Reply> SendTextAsync(string method, string path, object? body, string? idempotencyKey,
         CancellationToken cancellationToken)
     {
+        var reply = await ExchangeAsync(method, path, body, idempotencyKey, cancellationToken).ConfigureAwait(false);
+        var status = reply.Status;
+        var raw = reply.Raw;
+        if (reply.Retryable) throw ToException(status, raw, reply.RetryAfter);
+        if (!TryInspect(raw, out var isOk, out var hasData))
+        {
+            throw new FinApiException(status,
+                reply.Ok ? $"The {_service.Label} API returned an invalid response." : SafeFallbackMessage(reply.StatusCode),
+                errorCode: reply.Ok ? "invalid_response" : null);
+        }
+        if (!reply.Ok || !isOk) throw ToException(status, raw, null);
+        return new Reply(status, raw, hasData);
+    }
+
+    /// <summary>Sends one request with the retry rules shared by every service and returns the last reply.</summary>
+    private async Task<Exchange> ExchangeAsync(string method, string path, object? body, string? idempotencyKey,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(_service.ApiKey) && _service.KeyRequiredAtUse)
+            throw new InvalidOperationException($"{_service.Label} needs an API key. Set {_service.KeyHint} when you create the FinClient.");
         var httpMethod = method.ToUpperInvariant() switch
         {
             "GET" => HttpMethod.Get,
@@ -156,6 +247,7 @@ internal sealed class FinHttpTransport
 
         for (var retry = 0; ; retry++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             HttpResponseMessage response;
             string raw;
             try
@@ -163,8 +255,8 @@ internal sealed class FinHttpTransport
                 using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
                 timeout.CancelAfter(_options.Timeout);
                 using var request = new HttpRequestMessage(httpMethod, requestUri);
-                if (!string.IsNullOrWhiteSpace(_options.ApiKey))
-                    request.Headers.TryAddWithoutValidation("X-Api-Key", _options.ApiKey);
+                if (!string.IsNullOrWhiteSpace(_service.ApiKey))
+                    request.Headers.TryAddWithoutValidation(_service.KeyHeader, _service.ApiKey);
                 if (requestKey is not null) request.Headers.TryAddWithoutValidation("Idempotency-Key", requestKey);
                 if (requestJson is not null) request.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
                 response = await _http.SendAsync(request, HttpCompletionOption.ResponseContentRead, timeout.Token).ConfigureAwait(false);
@@ -182,7 +274,7 @@ internal sealed class FinHttpTransport
                     continue;
                 }
                 throw new FinApiException(0,
-                    $"The FinCopy API did not answer within {_options.Timeout.TotalSeconds.ToString("0.###", CultureInfo.InvariantCulture)} seconds.",
+                    $"The {_service.Label} API did not answer within {_options.Timeout.TotalSeconds.ToString("0.###", CultureInfo.InvariantCulture)} seconds.",
                     innerException: ex, errorCode: "timeout");
             }
             catch (HttpRequestException ex)
@@ -192,34 +284,44 @@ internal sealed class FinHttpTransport
                     await Delay(Backoff(retry), cancellationToken).ConfigureAwait(false);
                     continue;
                 }
-                throw new FinApiException(0, "The FinCopy API could not be reached.", innerException: ex, errorCode: "network");
+                throw new FinApiException(0, $"The {_service.Label} API could not be reached.", innerException: ex, errorCode: "network");
             }
 
             using (response)
             {
                 var status = (int)response.StatusCode;
+                var serverWait = RetryAfterOf(response.Headers.RetryAfter);
                 if (IsRetryable(response.StatusCode))
                 {
-                    var serverWait = RetryAfterOf(response.Headers.RetryAfter);
                     if (retry < _options.MaxRetries && (serverWait is null || serverWait <= MaxServerRetryAfter))
                     {
                         var wait = serverWait ?? (status == 429 ? RateLimitBackoff(retry) : Backoff(retry));
                         if (wait > TimeSpan.Zero) await Delay(wait, cancellationToken).ConfigureAwait(false);
                         continue;
                     }
-                    throw ToException(status, raw, serverWait);
+                    return new Exchange(response.StatusCode, raw, serverWait, retryable: true);
                 }
-
-                if (!TryInspect(raw, out var isOk, out var hasData))
-                {
-                    throw new FinApiException(status,
-                        response.IsSuccessStatusCode ? "The FinCopy API returned an invalid response." : SafeFallbackMessage(response.StatusCode),
-                        errorCode: response.IsSuccessStatusCode ? "invalid_response" : null);
-                }
-                if (!response.IsSuccessStatusCode || !isOk) throw ToException(status, raw, null);
-                return new Reply(status, raw, hasData);
+                return new Exchange(response.StatusCode, raw, serverWait, retryable: false);
             }
         }
+    }
+
+    private readonly struct Exchange
+    {
+        public Exchange(HttpStatusCode statusCode, string raw, TimeSpan? retryAfter, bool retryable)
+        {
+            StatusCode = statusCode;
+            Raw = raw;
+            RetryAfter = retryAfter;
+            Retryable = retryable;
+        }
+        public HttpStatusCode StatusCode { get; }
+        public int Status => (int)StatusCode;
+        public bool Ok => (int)StatusCode is >= 200 and < 300;
+        public string Raw { get; }
+        public TimeSpan? RetryAfter { get; }
+        /// <summary>A retryable status that ran out of retries (or whose Retry-After was too long to wait out).</summary>
+        public bool Retryable { get; }
     }
 
     private readonly struct Reply
@@ -289,7 +391,7 @@ internal sealed class FinHttpTransport
         catch (JsonException) { return false; }
     }
 
-    private static FinApiException ToException(int statusCode, string raw, TimeSpan? retryAfter)
+    private FinApiException ToException(int statusCode, string raw, TimeSpan? retryAfter)
     {
         int? code = null;
         string? message = null;
@@ -317,6 +419,53 @@ internal sealed class FinHttpTransport
             ? errors.EnumerateArray().Select(x => x.ValueKind == JsonValueKind.String ? x.GetString() ?? "" : x.GetRawText()).ToList()
             : Array.Empty<string>();
 
-    private static string SafeFallbackMessage(HttpStatusCode status) =>
-        $"The FinCopy API request failed with HTTP {(int)status} ({status.ToString().ToUpperInvariant()}).";
+    private string SafeFallbackMessage(HttpStatusCode status) =>
+        $"The {_service.Label} API request failed with HTTP {(int)status} ({status.ToString().ToUpperInvariant()}).";
+
+    /// <summary>
+    /// Reads a refusal from any of the three reply shapes: FinApiError (<c>{ error, message, lane, limit, catag, tier }</c>),
+    /// the /v1 error body (<c>{ error: { code, message } }</c>) and the /api envelope (<c>{ isOk, code, message, errors }</c>).
+    /// </summary>
+    private FinApiException Refusal(int statusCode, string raw, TimeSpan? retryAfter)
+    {
+        int? code = null;
+        string? message = null, error = null, lane = null, catag = null, tier = null;
+        JsonElement? limit = null;
+        IReadOnlyList<string>? errors = null;
+        try
+        {
+            using var document = JsonDocument.Parse(raw);
+            var root = document.RootElement;
+            if (root.ValueKind == JsonValueKind.Object)
+            {
+                if (root.TryGetProperty("code", out var codeElement) && codeElement.ValueKind == JsonValueKind.Number
+                    && codeElement.TryGetInt32(out var parsedCode)) code = parsedCode;
+                message = Text(root, "message");
+                if (root.TryGetProperty("errors", out var errorsElement)) errors = ErrorStrings(errorsElement);
+                if (root.TryGetProperty("error", out var errorElement))
+                {
+                    if (errorElement.ValueKind == JsonValueKind.Object)
+                    {
+                        error = Text(errorElement, "code") ?? Text(errorElement, "Code");
+                        message ??= Text(errorElement, "message") ?? Text(errorElement, "Message");
+                    }
+                    else error = errorElement.ValueKind == JsonValueKind.String ? errorElement.GetString() : null;
+                }
+                lane = Text(root, "lane");
+                catag = Text(root, "catag");
+                tier = Text(root, "tier");
+                if (root.TryGetProperty("limit", out var limitElement) && limitElement.ValueKind != JsonValueKind.Null)
+                    limit = limitElement.Clone();
+            }
+        }
+        catch (JsonException) { }
+        return new FinApiException(statusCode, message ?? SafeFallbackMessage((HttpStatusCode)statusCode), code, errors,
+            errorCode: statusCode == 429 ? "rate_limited" : null, retryAfter: retryAfter,
+            error: error, lane: lane, limit: limit, catag: catag, tier: tier);
+    }
+
+    private static string? Text(JsonElement element, string name) =>
+        element.TryGetProperty(name, out var value)
+            ? value.ValueKind switch { JsonValueKind.String => value.GetString(), JsonValueKind.Number => value.GetRawText(), _ => null }
+            : null;
 }

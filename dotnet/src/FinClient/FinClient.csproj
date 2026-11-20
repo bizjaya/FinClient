@@ -8,12 +8,12 @@
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageId>FinClient</PackageId>
-    <Version>0.10.0</Version>
+    <Version>0.11.0</Version>
     <Authors>BizJaya TechLab S/B</Authors>
     <Company>BizJaya TechLab S/B</Company>
     <Copyright>Copyright (c) 2026 BizJaya TechLab S/B</Copyright>
-    <Description>Official .NET SDK for the FinCopy public API: hosted MetaTrader accounts, trading, the change feed and webhooks.</Description>
-    <PackageTags>fincopy;metatrader;mt4;mt5;trading;copy-trading;forex;sdk</PackageTags>
+    <Description>Official .NET SDK for the Fin APIs (FinCopy, FinGraph, FinNews, FinSocial): hosted MetaTrader accounts and trading, market data and signals, news and sentiment, social and prediction-market data.</Description>
+    <PackageTags>fincopy;fingraph;finnews;finsocial;metatrader;mt4;mt5;trading;copy-trading;forex;market-data;news;sentiment;sdk</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://fincopy.io/docs</PackageProjectUrl>
     <RepositoryUrl>https://github.com/bizjaya/FinClient</RepositoryUrl>
