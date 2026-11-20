@@ -72,8 +72,8 @@ attempts. Cancelling the token ends it on every target framework.
 
 ## FinGraph, FinNews and FinSocial
 
-FinGraph (market data, tickers, signals and statistics), FinNews (news, sentiment, trending, sources and videos) and FinSocial
-(prediction markets, social posts, authors and videos) sit beside FinCopy in the same client. Each has its own API key, sent
+FinGraph (markets, screens, closed calls, tickers, candles and statistics), FinNews (news, sentiment, mood, trending, sources and
+videos) and FinSocial (pulse, posts, videos, prediction markets and creators) sit beside FinCopy in the same client. Each has its own API key, sent
 in the `FinUsrKey` header (FinCopy's stays `X-Api-Key`), and its own address:
 
 ```csharp
@@ -107,56 +107,50 @@ Every operation in each service's OpenAPI document is a method. The two surfaces
 
 | Service | `/api` groups | `/v1` groups |
 | --- | --- | --- |
-| `fin.Graph` | ApcDat, Assets, DaxDat, FxsTikr, KlsePrc, Ohlcv, SigCry, SigDax, SigEqt, SigFxs, Signals, Stats, Tickers, TvdDat | Assets, Ohlcv, Quotes, Signals, Stats, Tickers |
-| `fin.News` | Categories, Entities, News, Sentiment, Sources, Trending, Videos | Entities, News, Sentiment, Sources, Trending |
-| `fin.Social` | Markets, Social, Videos | Markets, Social, Videos |
+| `fin.Graph` | Assets, Markets, Ohlcv, Record, Screens, Signals, Stats, Tickers, Ticks | Assets, Markets, Ohlcv, Quotes, Record, Screens, Signals, Stats, Tickers, Ticks |
+| `fin.News` | Categories, Mood, News, Sentiment, Sources, Trending, Videos | Categories, Mood, News, Sentiment, Sources, Trending, Videos |
+| `fin.Social` | Creators, Markets, Posts, Pulse, Videos | Creators, Markets, Posts, Pulse, Videos |
 
-The group is the operation's tag and the method is the action part of its operation id plus `Async` (`Api_NewsController_RatingMake`
-is `fin.News.News.RatingMakeAsync()`; `Pub_TickersController_Get` is `fin.Graph.V1.Tickers.GetAsync()`). If two operations of one
+The group is the operation's tag and the method is the action part of its operation id plus `Async` (`Pub_MarketsController_EqtUsa`
+is `fin.Graph.V1.Markets.EqtUsaAsync()`; `Pub_TickersController_Get` is `fin.Graph.V1.Tickers.GetAsync()`). If two operations of one
 group on one surface would get the same name, the later one in path order is named with its HTTP method in front, then its last
 path segment; no operation needs that today. Each method's XML documentation gives what it does, its route, and its cost in
 credits (`/api`) or the package tiers it is open to (`/v1`).
 
-Arguments run in the order of the request: path parameters (required, positional), the body, required query values, then the
-rest of the query as optional named arguments, an `idempotencyKey` for writes, and the `CancellationToken`:
+Arguments run in the order of the request: path parameters (required, positional), required query values, then the rest of the
+query as optional named arguments, and the `CancellationToken`:
 
 ```csharp
 var detail = await fin.Graph.Tickers.ViewAsync("BTCUSDT");                                                // GET /api/tickers/BTCUSDT
-var some = await fin.Graph.V1.Tickers.ListAsync(dax: DAX.BIN, quote: "USDT", limit: 20);                  // GET /v1/tickers?dax=BIN&...
-await fin.News.News.RatingMakeAsync("<checksum>", new CmdApiRatingMake { ReqSite = "mysite" }, requestKey); // POST with a JSON body
+var some = await fin.Graph.V1.Tickers.ListAsync(exchange: "BINANCE", quote: "USDT", size: 20);            // GET /v1/tickers?exchange=BINANCE&...
+var stocks = await fin.Graph.Markets.EqtUsaAsync(syms: "NVDA,MSFT", sort: "-chg1d");                      // GET /api/markets/eqtusa?syms=...
+var screen = await fin.Graph.Screens.EqtUsaAsync("top-gain", page: 2);                                    // a path argument, then the query
 ```
 
 A method returns the documented 200 reply as it comes (its `Data`, `Paging` and the rest), as the generated type for that
-service's namespace. One route family is typed loosely: the document names an error body as the reply of `/v1/ohlcv/...`, so
+service's namespace. The `/v1/ohlcv/...` routes are typed loosely, because their document describes a free-form reply, so
 those methods return a `JsonElement`.
 
-### The `qry` object and paging
+### Query values and paging
 
-Most FinNews and FinSocial lists take one query parameter, `qry`, whose value is a JSON object: `PageNo`, `PageSize`, `SortBy`
-(pairs of field and `asc` or `desc`), `SrchBy`, and the endpoint's own filter fields. The method takes that object as a
-generated class (`QueApiNewsList`, `QueApiSocPostList`, ...) and sends it as JSON, leaving out what you did not set:
+Lists take plain query values: `page` (from 1), `size` (1 to 50), `sort` (a field name; a minus sign in front sorts high to low)
+and the filters each endpoint lists. A symbol lookup takes `syms`, up to 50 names, comma-separated and in any case; the names no
+row carries come back in the reply's `NotFound`. Every list carries `Paging` with `PageNo`, `PageSize`, `PageCount` and `ResCount`:
 
 ```csharp
-var page = await fin.News.News.ListAsync(new QueApiNewsList
-{
-    PageNo = 1,
-    PageSize = 20,
-    SortBy = [["published", "desc"]],
-    Symbols = "AAPL,MSFT", // a filter field of this endpoint
-});
+var page = await fin.News.News.ListAsync(syms: "AAPL,MSFT", sort: "-published", page: 1, size: 20);
 Console.WriteLine($"{page.Paging?.ResCount} {page.Data?.FirstOrDefault()?.Title}");
 ```
 
 Every list that pages also has `...PagesAsync()` and `...ItemsAsync()` methods that return `IAsyncEnumerable` (`ListPagesAsync`,
-`ListItemsAsync`, `PostListItemsAsync`, ...). They advance `PageNo` (for `qry` lists) or `offset` (FinGraph's `limit` and `offset`
-lists), and stop on an empty page, which they do not yield, or when the paging information says it was the last page. They never
-change the query you pass.
+`ListItemsAsync`, `PostsItemsAsync`, ...). They advance `page`, and stop after the last page the paging block names or at an
+empty page, which they do not yield.
 
 ```csharp
-await foreach (var article in fin.News.News.ListItemsAsync(new QueApiNewsList { PageSize = 100, Symbols = "AAPL" }))
+await foreach (var article in fin.News.News.ListItemsAsync(syms: "AAPL", size: 50))
     Console.WriteLine(article.Title);
-await foreach (var page in fin.Graph.V1.Tickers.ListPagesAsync(dax: DAX.BIN, limit: 200))
-    Console.WriteLine(page.Count);
+await foreach (var page in fin.Graph.V1.Markets.EqtUsaPagesAsync(sort: "-vol24"))
+    Console.WriteLine(page.Paging?.PageNo);
 ```
 
 ### Refusals

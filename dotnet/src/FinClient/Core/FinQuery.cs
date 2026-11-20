@@ -25,9 +25,6 @@ internal static class FinQuery
         return pairs.Count == 0 ? path : path + "?" + string.Join("&", pairs);
     }
 
-    /// <summary>A query object as the one JSON value of a <c>qry</c> parameter. Unset (null) members are left out.</summary>
-    internal static string Json(object qry) => JsonSerializer.Serialize(qry, qry.GetType(), FinHttpTransport.WriteOptions);
-
     private static string? Text(object? value) => value switch
     {
         null => null,

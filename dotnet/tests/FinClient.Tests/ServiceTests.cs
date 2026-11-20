@@ -22,9 +22,9 @@ public sealed class ServiceTests
         var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"data\":[],\"code\":200,\"isOk\":true}"));
         using var fin = NewClient(AllServices(), handler);
 
-        await fin.Graph.Assets.TypesAsync();
-        await fin.News.Categories.FlatAsync();
-        await fin.Social.Videos.ListAsync();
+        await fin.Graph.Assets.ExchangesAsync();
+        await fin.News.Categories.ListAsync();
+        await fin.Social.Videos.VideosAsync();
 
         Assert.Equal(["https://x.fingraph.io", "https://x.finnews.io", "https://x.finsocial.io"],
             handler.Requests.Select(r => r.RequestUri!.GetLeftPart(UriPartial.Authority)));
@@ -41,10 +41,10 @@ public sealed class ServiceTests
             Graph = new FinServiceOptions("g") { BaseUrl = "https://graph.example.test/" }
         }, handler);
 
-        await fin.Graph.Assets.TypesAsync();
+        await fin.Graph.Assets.ExchangesAsync();
         await fin.Copy.Accounts.ListAsync();
 
-        Assert.Equal("https://graph.example.test/api/assets/types", handler.Requests[0].RequestUri!.AbsoluteUri);
+        Assert.Equal("https://graph.example.test/api/assets/exchanges", handler.Requests[0].RequestUri!.AbsoluteUri);
         Assert.Equal("g", handler.Requests[0].Headers.GetValues("FinUsrKey").Single());
         Assert.Equal("https://api.fincopy.io", handler.Requests[1].RequestUri!.GetLeftPart(UriPartial.Authority));
         Assert.Equal("copy-key", handler.Requests[1].Headers.GetValues("X-Api-Key").Single());
@@ -57,7 +57,7 @@ public sealed class ServiceTests
         var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"data\":[],\"code\":200,\"isOk\":true}"));
         using var fin = NewClient(new FinClientOptions { Graph = new FinServiceOptions("g") }, handler);
 
-        await fin.Graph.Assets.TypesAsync();
+        await fin.Graph.Assets.ExchangesAsync();
         var error = await Assert.ThrowsAsync<InvalidOperationException>(() => fin.Copy.Accounts.ListAsync());
 
         Assert.Contains("FinCopy needs an API key", error.Message);
@@ -76,14 +76,14 @@ public sealed class ServiceTests
         var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"data\":[],\"code\":200,\"isOk\":true}"));
         using var fin = NewClient(new FinClientOptions("copy-key") { News = new FinServiceOptions("n") }, handler);
 
-        var graph = await Assert.ThrowsAsync<InvalidOperationException>(() => fin.Graph.Assets.TypesAsync());
-        var social = await Assert.ThrowsAsync<InvalidOperationException>(() => fin.Social.Markets.PulseListAsync());
+        var graph = await Assert.ThrowsAsync<InvalidOperationException>(() => fin.Graph.Assets.ExchangesAsync());
+        var social = await Assert.ThrowsAsync<InvalidOperationException>(() => fin.Social.Pulse.PulseAsync());
 
         Assert.Contains("FinGraph needs an API key", graph.Message);
         Assert.Contains("FinClientOptions.Graph.ApiKey", graph.Message);
         Assert.Contains("FinSocial needs an API key", social.Message);
         Assert.Empty(handler.Requests);
-        await fin.News.Categories.FlatAsync();
+        await fin.News.Categories.ListAsync();
     }
 
     [Fact]
@@ -92,7 +92,7 @@ public sealed class ServiceTests
         var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{}"));
         using var fin = NewClient(new FinClientOptions { Graph = new FinServiceOptions("  ") }, handler);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => fin.Graph.Assets.TypesAsync());
+        await Assert.ThrowsAsync<InvalidOperationException>(() => fin.Graph.Assets.ExchangesAsync());
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public sealed class ServiceTests
             : Json(HttpStatusCode.OK, "{\"data\":[],\"isOk\":true}"));
         using var fin = NewClient(new FinClientOptions { News = new FinServiceOptions("n"), MaxRetries = 2 }, handler);
 
-        await fin.News.Categories.FlatAsync();
+        await fin.News.Categories.ListAsync();
 
         Assert.Equal(3, calls);
     }
@@ -138,12 +138,12 @@ public sealed class ServiceTests
 
         await fin.Graph.Tickers.ListAsync();
         await fin.Graph.V1.Tickers.ListAsync();
-        await fin.News.Sources.CategoriesAsync();
-        await fin.News.V1.Sources.CategoriesAsync();
-        await fin.Social.Markets.PulseListAsync();
-        await fin.Social.V1.Markets.PulseListAsync();
+        await fin.News.Sources.ListAsync();
+        await fin.News.V1.Sources.ListAsync();
+        await fin.Social.Pulse.PulseAsync();
+        await fin.Social.V1.Pulse.PulseAsync();
 
-        Assert.Equal(["/api/tickers", "/v1/tickers", "/api/sources/categories", "/v1/sources/categories", "/api/markets/pulse", "/v1/markets/pulse"],
+        Assert.Equal(["/api/tickers", "/v1/tickers", "/api/sources", "/v1/sources", "/api/pulse", "/v1/pulse"],
             handler.Requests.Select(r => r.RequestUri!.AbsolutePath));
         Assert.All(handler.Requests, r => Assert.Equal(HttpMethod.Get, r.Method));
     }
@@ -151,15 +151,16 @@ public sealed class ServiceTests
     [Fact]
     public async Task PathArgumentsGoInThePathEncoded()
     {
-        var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"data\":{},\"code\":200,\"isOk\":true}"));
+        var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"isOk\":true}"));
         using var fin = NewClient(AllServices(), handler);
 
         await fin.Graph.Tickers.ViewAsync("BTC/USDT");
         await fin.Graph.V1.Assets.GetAsync("a b");
         await fin.News.News.ViewAsync("abc123");
-        await fin.Social.Markets.HistoryListAsync("m-1", limit: 5);
+        await fin.Social.Markets.MarketAsync("m-1", days: 5);
+        await fin.Graph.Screens.EqtUsaAsync("top gain", page: 2);
 
-        Assert.Equal(["/api/tickers/BTC%2FUSDT", "/v1/assets/a%20b", "/api/news/abc123", "/api/markets/history/m-1?Limit=5"],
+        Assert.Equal(["/api/tickers/BTC%2FUSDT", "/v1/assets/a%20b", "/api/news/abc123", "/api/markets/m-1?days=5", "/api/screens/eqtusa/top%20gain?page=2"],
             handler.Requests.Select(r => r.RequestUri!.PathAndQuery));
     }
 
@@ -179,107 +180,61 @@ public sealed class ServiceTests
         var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"isOk\":true}"));
         using var fin = NewClient(AllServices(), handler);
 
-        await fin.Graph.Assets.ListAsync(dax: DAX.BIN, canTrade: false, limit: 25);
+        await fin.Graph.Assets.ListAsync(exchange: "BINANCE", canTrade: false, size: 25);
         await fin.Graph.Ohlcv.ViewAsync("BTCUSDT", timeframe: "1d", from: "2026-11-01T00:00:00Z", limit: 10);
-        await fin.Social.Markets.HistoryListAsync("m-1", from: new DateTimeOffset(2026, 11, 1, 8, 0, 0, TimeSpan.FromHours(8)));
-        await fin.Graph.SigDax.TopGainAsync(DAX.BIN);
+        await fin.News.News.ListAsync(since: new DateTimeOffset(2026, 11, 1, 8, 0, 0, TimeSpan.FromHours(8)));
+        await fin.Graph.Markets.EqtUsaAsync(syms: "NVDA,MSFT", sort: "-chg1d");
 
-        Assert.Equal("?dax=BIN&canTrade=false&limit=25", handler.Requests[0].RequestUri!.Query);
+        Assert.Equal("?exchange=BINANCE&canTrade=false&size=25", handler.Requests[0].RequestUri!.Query);
         Assert.Equal("?timeframe=1d&from=2026-11-01T00%3A00%3A00Z&limit=10", handler.Requests[1].RequestUri!.Query);
-        Assert.Equal("?From=2026-11-01T00%3A00%3A00.0000000%2B00%3A00", handler.Requests[2].RequestUri!.Query);
-        Assert.Equal("?dax=BIN", handler.Requests[3].RequestUri!.Query);
+        Assert.Equal("?since=2026-11-01T00%3A00%3A00.0000000%2B00%3A00", handler.Requests[2].RequestUri!.Query);
+        Assert.Equal("/api/markets/eqtusa", handler.Requests[3].RequestUri!.AbsolutePath);
+        Assert.Equal("NVDA,MSFT", Query(handler.Requests[3], "syms"));
+        Assert.Equal("-chg1d", Query(handler.Requests[3], "sort"));
     }
 
     [Fact]
-    public async Task TheQryObjectIsOneJsonValueWithUnsetMembersLeftOut()
+    public async Task ListFiltersAreSentAsPlainQueryValuesAndNoQryParameter()
     {
         var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"data\":[],\"paging\":{\"pageNo\":1,\"pageCount\":1},\"isOk\":true}"));
         using var fin = NewClient(AllServices(), handler);
 
-        await fin.News.News.ListAsync(new QueApiNewsList
-        {
-            PageNo = 2, PageSize = 10, SortBy = [["published", "desc"]], Symbols = "AAPL,MSFT"
-        });
-        await fin.Social.V1.Social.PostListAsync(new QueApiSocPostList { Ticker = "BTC", Platform = SocPlatform.YouTube });
-        await fin.News.V1.News.AllAsync();
+        await fin.News.News.ListAsync(syms: "AAPL,MSFT", sort: "-published", page: 2, size: 10);
+        await fin.Social.V1.Posts.PostsAsync(syms: "BTC", stance: "bull");
 
         Assert.Equal("/api/news", handler.Requests[0].RequestUri!.AbsolutePath);
-        var qry = QryOf(handler.Requests[0]);
-        Assert.Equal(4, qry.EnumerateObject().Count());
-        Assert.Equal(2, qry.GetProperty("pageNo").GetInt32());
-        Assert.Equal(10, qry.GetProperty("pageSize").GetInt32());
-        Assert.Equal("desc", qry.GetProperty("sortBy")[0][1].GetString());
-        Assert.Equal("AAPL,MSFT", qry.GetProperty("Symbols").GetString());
-        var posts = QryOf(handler.Requests[1]);
-        Assert.Equal("BTC", posts.GetProperty("Ticker").GetString());
-        Assert.Equal("YouTube", posts.GetProperty("Platform").GetString());
-        Assert.Equal(2, posts.EnumerateObject().Count());
-        Assert.Equal("/v1/news/all", handler.Requests[2].RequestUri!.AbsolutePath);
-        Assert.Equal("{}", QryOf(handler.Requests[2]).GetRawText());
-    }
-
-    [Fact]
-    public async Task ABodyWriteSendsJsonAndAnIdempotencyKeyThatSurvivesARetry()
-    {
-        var calls = 0;
-        var handler = new Recorder(_ => ++calls == 1
-            ? new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
-            : Json(HttpStatusCode.OK, "{\"data\":{\"Title\":\"x\"},\"code\":200,\"isOk\":true}"));
-        using var fin = NewClient(AllServices(), handler);
-
-        var reply = await fin.News.News.RatingMakeAsync("abc123", new CmdApiRatingMake { ReqSite = "finquest", ReqUsno = 77 }, "rate-1");
-
-        Assert.Equal("x", reply.Data!.Title);
-        Assert.Equal(2, handler.Requests.Count);
-        for (var i = 0; i < 2; i++)
-        {
-            Assert.Equal(HttpMethod.Post, handler.Requests[i].Method);
-            Assert.Equal("/api/news/abc123/rating", handler.Requests[i].RequestUri!.AbsolutePath);
-            Assert.Equal("rate-1", handler.Requests[i].Headers.GetValues("Idempotency-Key").Single());
-            Assert.Equal("news-key", handler.Requests[i].Headers.GetValues("FinUsrKey").Single());
-            using var body = JsonDocument.Parse(handler.Bodies[i]!);
-            Assert.Equal("finquest", body.RootElement.GetProperty("ReqSite").GetString());
-            Assert.Equal(77, body.RootElement.GetProperty("ReqUsno").GetInt64());
-        }
-    }
-
-    [Fact]
-    public async Task AWriteMakesAnIdempotencyKeyWhenNoneIsGivenAndAReadSendsNone()
-    {
-        var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"data\":{},\"isOk\":true}"));
-        using var fin = NewClient(AllServices(), handler);
-
-        await fin.News.Videos.RatingMakeAsync("v1", new CmdApiRatingMake());
-        await fin.News.Videos.ViewAsync("v1");
-
-        Assert.Equal(32, handler.Requests[0].Headers.GetValues("Idempotency-Key").Single().Length);
-        Assert.False(handler.Requests[1].Headers.Contains("Idempotency-Key"));
+        Assert.Equal("?syms=AAPL%2CMSFT&sort=-published&page=2&size=10", handler.Requests[0].RequestUri!.Query);
+        Assert.Equal("/v1/posts", handler.Requests[1].RequestUri!.AbsolutePath);
+        Assert.Null(Query(handler.Requests[1], "qry"));
+        Assert.Equal("bull", Query(handler.Requests[1], "stance"));
     }
 
     [Fact]
     public async Task TheWholeDocumentedReplyIsReturnedNotJustItsData()
     {
         var handler = new Recorder(_ => Json(HttpStatusCode.OK,
-            "{\"data\":[{\"Checksum\":\"c1\"}],\"paging\":{\"pageNo\":1,\"pageSize\":10,\"pageCount\":1,\"resCount\":1},\"code\":200,\"isOk\":true,\"errors\":[]}"));
+            "{\"data\":[{\"Id\":\"c1\"}],\"paging\":{\"pageNo\":1,\"pageSize\":10,\"pageCount\":1,\"resCount\":1},\"code\":200,\"isOk\":true,\"errors\":[]}"));
         using var fin = NewClient(AllServices(), handler);
 
         var reply = await fin.News.News.ListAsync();
 
-        Assert.Equal("c1", reply.Data!.Single().Checksum);
+        Assert.Equal("c1", reply.Data!.Single().Id);
         Assert.Equal(1, reply.Paging!.ResCount);
         Assert.True(reply.IsOk);
     }
 
     [Fact]
-    public async Task AV1ReplyComesBackAsItIs()
+    public async Task AV1ReplyComesBackAsItIsWithTheSymbolsALookupDidNotFind()
     {
-        var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"offset\":0,\"limit\":100,\"data\":[{\"Id\":\"a\"}],\"count\":1}"));
+        var handler = new Recorder(_ => Json(HttpStatusCode.OK,
+            "{\"data\":[{\"Sym\":\"A\"}],\"NotFound\":[\"NOPE\"],\"paging\":{\"pageNo\":1,\"pageSize\":50,\"pageCount\":1,\"resCount\":1},\"isOk\":true}"));
         using var fin = NewClient(AllServices(), handler);
 
-        var reply = await fin.Graph.V1.Assets.ListAsync();
+        var reply = await fin.Graph.V1.Markets.EqtUsaAsync(syms: "A,NOPE");
 
-        Assert.Equal(1, reply.Count);
-        Assert.Equal(100, reply.Limit);
+        Assert.Equal("A", reply.Data!.Single().Sym);
+        Assert.Equal(["NOPE"], reply.NotFound);
+        Assert.Equal(1, reply.Paging!.ResCount);
     }
 
     [Fact]
@@ -413,7 +368,7 @@ public sealed class ServiceTests
         var down = new Recorder((_, _) => throw new HttpRequestException("offline"));
         using (var fin = NewClient(new FinClientOptions { News = new FinServiceOptions("n"), MaxRetries = 0 }, down))
         {
-            var error = await Assert.ThrowsAsync<FinApiException>(() => fin.News.Categories.FlatAsync());
+            var error = await Assert.ThrowsAsync<FinApiException>(() => fin.News.Categories.ListAsync());
             Assert.Equal("network", error.ErrorCode);
             Assert.Equal("The FinNews API could not be reached.", error.Message);
         }
@@ -421,7 +376,7 @@ public sealed class ServiceTests
         var garbled = new Recorder(_ => Json(HttpStatusCode.OK, "not json"));
         using (var fin = NewClient(new FinClientOptions { News = new FinServiceOptions("n") }, garbled))
         {
-            var error = await Assert.ThrowsAsync<FinApiException>(() => fin.News.Categories.FlatAsync());
+            var error = await Assert.ThrowsAsync<FinApiException>(() => fin.News.Categories.ListAsync());
             Assert.Equal("invalid_response", error.ErrorCode);
         }
     }
@@ -440,7 +395,7 @@ public sealed class ServiceTests
     // ---- paging
 
     private static string Paged(int pageNo, int pageCount, params int[] ids) =>
-        "{\"data\":[" + string.Join(",", ids.Select(i => "{\"Checksum\":\"c" + i + "\"}")) + "],\"paging\":{\"pageNo\":" + pageNo
+        "{\"data\":[" + string.Join(",", ids.Select(i => "{\"Id\":\"c" + i + "\"}")) + "],\"paging\":{\"pageNo\":" + pageNo
         + ",\"pageSize\":2,\"pageCount\":" + pageCount + ",\"resCount\":5},\"code\":200,\"isOk\":true}";
 
     [Fact]
@@ -451,14 +406,12 @@ public sealed class ServiceTests
         using var fin = NewClient(AllServices(), handler);
 
         var counts = new List<int>();
-        await foreach (var page in fin.News.News.ListPagesAsync(new QueApiNewsList { PageSize = 2, Symbols = "AAPL" }))
+        await foreach (var page in fin.News.News.ListPagesAsync(size: 2, syms: "AAPL"))
             counts.Add(page.Data!.Count);
 
         Assert.Equal([2, 2, 1], counts);
-        Assert.Equal([1, 2, 3], handler.Requests.Select(r => QryOf(r).GetProperty("pageNo").GetInt32()));
-        var last = QryOf(handler.Requests[2]);
-        Assert.Equal(2, last.GetProperty("pageSize").GetInt32());
-        Assert.Equal("AAPL", last.GetProperty("Symbols").GetString());
+        Assert.Equal(["1", "2", "3"], handler.Requests.Select(r => Query(r, "page")));
+        Assert.All(handler.Requests, r => { Assert.Equal("2", Query(r, "size")); Assert.Equal("AAPL", Query(r, "syms")); });
     }
 
     [Fact]
@@ -469,7 +422,7 @@ public sealed class ServiceTests
         using var fin = NewClient(AllServices(), handler);
 
         var ids = new List<string?>();
-        await foreach (var item in fin.News.News.ListItemsAsync(new QueApiNewsList { PageNo = 2, PageSize = 2 })) ids.Add(item.Checksum);
+        await foreach (var item in fin.News.News.ListItemsAsync(page: 2, size: 2)) ids.Add(item.Id);
 
         Assert.Equal(["c3", "c4", "c5"], ids);
         Assert.Equal(2, handler.Requests.Count);
@@ -483,70 +436,39 @@ public sealed class ServiceTests
         using var fin = NewClient(AllServices(), handler);
 
         var pages = 0;
-        await foreach (var _ in fin.Social.Markets.MarketListPagesAsync()) pages++;
+        await foreach (var _ in fin.Social.Markets.MarketsPagesAsync()) pages++;
 
         Assert.Equal(1, pages);
         Assert.Equal(2, handler.Requests.Count);
     }
 
     [Fact]
-    public async Task AnEmptyListYieldsNothingAndTheQueryTheCallerGaveIsNotChanged()
+    public async Task AnEmptyListYieldsNothingAfterOneCall()
     {
         var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"data\":[],\"paging\":{\"pageNo\":1,\"pageCount\":0},\"isOk\":true}"));
         using var fin = NewClient(AllServices(), handler);
-        var query = new QueApiSourceList { PageSize = 5 };
 
         var count = 0;
-        await foreach (var _ in fin.News.Sources.ListItemsAsync(query)) count++;
+        await foreach (var _ in fin.News.Videos.ListItemsAsync(size: 5)) count++;
 
         Assert.Equal(0, count);
         Assert.Single(handler.Requests);
-        Assert.Null(query.PageNo);
-        Assert.Equal(5, query.PageSize);
+        Assert.Equal("5", Query(handler.Requests[0], "size"));
     }
 
     [Fact]
-    public async Task FinGraphsLimitAndOffsetListsAdvanceOffsetAndStopAtAnEmptyPage()
+    public async Task APathAddressedListIsWalkedWithItsPathArgument()
     {
-        string List(params int[] ids) => "{\"data\":[" + string.Join(",", ids.Select(i => "{\"Symbol\":\"S" + i + "\"}")) + "],\"code\":200,\"isOk\":true}";
-        var replies = new Queue<string>([List(1, 2), List(3), List()]);
+        var replies = new Queue<string>([Paged(1, 2, 1, 2), Paged(2, 2, 3)]);
         var handler = new Recorder(_ => Json(HttpStatusCode.OK, replies.Dequeue()));
         using var fin = NewClient(AllServices(), handler);
 
-        var symbols = new List<string?>();
-        await foreach (var ticker in fin.Graph.Tickers.ListItemsAsync(dax: DAX.BIN, limit: 2)) symbols.Add(ticker.Symbol);
+        var count = 0;
+        await foreach (var _ in fin.Graph.Screens.CryptoItemsAsync("top gain", size: 2)) count++;
 
-        Assert.Equal(["S1", "S2", "S3"], symbols);
-        Assert.Equal(["0", "2", "3"], handler.Requests.Select(r => Query(r, "offset")));
-        Assert.All(handler.Requests, r => { Assert.Equal("BIN", Query(r, "dax")); Assert.Equal("2", Query(r, "limit")); });
-    }
-
-    [Fact]
-    public async Task AV1OffsetListStopsWhenAPageHoldsFewerRowsThanItsOwnLimit()
-    {
-        var replies = new Queue<string>([
-            "{\"offset\":0,\"limit\":2,\"data\":[{},{}],\"count\":2}",
-            "{\"offset\":2,\"limit\":2,\"data\":[{}],\"count\":1}"]);
-        var handler = new Recorder(_ => Json(HttpStatusCode.OK, replies.Dequeue()));
-        using var fin = NewClient(AllServices(), handler);
-
-        var pages = 0;
-        await foreach (var _ in fin.Graph.V1.Tickers.ListPagesAsync(offset: 0, limit: 2)) pages++;
-
-        Assert.Equal(2, pages);
-        Assert.Equal(2, handler.Requests.Count);
-        Assert.Equal("2", Query(handler.Requests[1], "offset"));
-    }
-
-    [Fact]
-    public async Task AnOffsetWalkStartsFromTheOffsetGiven()
-    {
-        var handler = new Recorder(_ => Json(HttpStatusCode.OK, "{\"data\":[],\"isOk\":true}"));
-        using var fin = NewClient(AllServices(), handler);
-
-        await foreach (var _ in fin.Graph.Tickers.ListPagesAsync(offset: 40)) { }
-
-        Assert.Equal("40", Query(handler.Requests[0], "offset"));
+        Assert.Equal(3, count);
+        Assert.All(handler.Requests, r => Assert.Equal("/api/screens/crypto/top%20gain", r.RequestUri!.AbsolutePath));
+        Assert.Equal(["1", "2"], handler.Requests.Select(r => Query(r, "page")));
     }
 
     [Fact]
@@ -597,12 +519,6 @@ public sealed class ServiceTests
         News = new FinServiceOptions("news-key"),
         Social = new FinServiceOptions("social-key"),
     };
-
-    private static JsonElement QryOf(HttpRequestMessage request)
-    {
-        var text = Query(request, "qry")!;
-        return JsonDocument.Parse(text).RootElement;
-    }
 
     private static string? Query(HttpRequestMessage request, string name)
     {

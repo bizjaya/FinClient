@@ -29,107 +29,470 @@ namespace Fin.Graph
     
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum AType
+    public partial class ApiMktPageOfDtoApiAsset
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"FXMAJOR")]
-        FXMAJOR = 0,
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"FXMINOR")]
-        FXMINOR = 1,
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoApiAsset>? Data { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"FXEXOTIC")]
-        FXEXOTIC = 2,
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"FXASIA")]
-        FXASIA = 3,
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"STOCKUSA")]
-        STOCKUSA = 4,
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"STOCKMYS")]
-        STOCKMYS = 5,
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"STOCKIND")]
-        STOCKIND = 6,
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"FUMETALS")]
-        FUMETALS = 7,
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"FUINDEX")]
-        FUINDEX = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"FUAGROS")]
-        FUAGROS = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"FUENERGY")]
-        FUENERGY = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"FUINTRATES")]
-        FUINTRATES = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CRYPTO")]
-        CRYPTO = 12,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"INDICES")]
-        INDICES = 13,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"BONDS")]
-        BONDS = 14,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ETFS")]
-        ETFS = 15,
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Confidence
+    public partial class ApiMktPageOfDtoApiTicker
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"VLow")]
-        VLow = 1,
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoApiTicker>? Data { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Low")]
-        Low = 2,
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Med")]
-        Med = 3,
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"High")]
-        High = 4,
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"VHigh")]
-        VHigh = 5,
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum DAX
+    public partial class ApiMktPageOfDtoApiTickerLite
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"NIL")]
-        NIL = 0,
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"BIN")]
-        BIN = 1,
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoApiTickerLite>? Data { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"KUC")]
-        KUC = 2,
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"HTX")]
-        HTX = 3,
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"KRK")]
-        KRK = 4,
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"GIO")]
-        GIO = 5,
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"OKX")]
-        OKX = 6,
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoMktCfd
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoMktCfd>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoMktCrypto
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoMktCrypto>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoMktEqtUsa
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoMktEqtUsa>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoMktPair
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoMktPair>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoRecordCall
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoRecordCall>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoScrCfd
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoScrCfd>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoScrCrypto
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoScrCrypto>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoScrEqtUsa
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoScrEqtUsa>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiMktPageOfDtoScrPair
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoScrPair>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
@@ -137,8 +500,8 @@ namespace Fin.Graph
     public partial class DtoApiAggregate
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Dax")]
-        public string? Dax { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
+        public string? Exchange { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("TickerCount")]
         public int? TickerCount { get; set; } = default!;
@@ -170,8 +533,8 @@ namespace Fin.Graph
         [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
         public string? Symbol { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Dax")]
-        public string? Dax { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
+        public string? Exchange { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Base")]
         public string? Base { get; set; } = default!;
@@ -203,27 +566,6 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiEnumItem
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Key")]
-        public string? Key { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Value")]
-        public int? Value { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoApiExchange
     {
 
@@ -232,39 +574,6 @@ namespace Fin.Graph
 
         [System.Text.Json.Serialization.JsonPropertyName("Value")]
         public int? Value { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvPrefix")]
-        public string? TvPrefix { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiMover
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Dax")]
-        public string? Dax { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastPrice")]
-        public double? LastPrice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPct")]
-        public double? ChgPct { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("QuotVol")]
-        public double? QuotVol { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -320,122 +629,14 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSignal
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Code")]
-        public string? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
-        public string? Sym { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Market")]
-        public string? Market { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Sector")]
-        public string? Sector { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalSig")]
-        public string? FinalSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTrend")]
-        public string? FinalTrend { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm")]
-        public string? FinalTerm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalScore")]
-        public double? FinalScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
-        public long? Rank { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpdDt")]
-        public System.DateTimeOffset? UpdDt { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSignalUsa
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Ticker")]
-        public string? Ticker { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TickName")]
-        public string? TickName { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("InApc")]
-        public bool? InApc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RtgCnt")]
-        public int? RtgCnt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ArtCnt")]
-        public int? ArtCnt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ArtUpDt")]
-        public System.DateTimeOffset? ArtUpDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RateUpDt")]
-        public System.DateTimeOffset? RateUpDt { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSignalView
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Lane")]
-        public string? Lane { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Mys")]
-        public DtoApiSignal? Mys { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Usa")]
-        public DtoApiSignalUsa? Usa { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoApiTicker
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
         public string? Symbol { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Dax")]
-        public string? Dax { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
+        public string? Exchange { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Base")]
         public string? Base { get; set; } = default!;
@@ -473,8 +674,8 @@ namespace Fin.Graph
         [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
         public string? Symbol { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Dax")]
-        public string? Dax { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
+        public string? Exchange { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Base")]
         public string? Base { get; set; } = default!;
@@ -536,8 +737,8 @@ namespace Fin.Graph
         [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
         public string? Symbol { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Dax")]
-        public string? Dax { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
+        public string? Exchange { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Base")]
         public string? Base { get; set; } = default!;
@@ -596,40 +797,6 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoFinAssetName
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AType")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AType>))]
-        public AType? AType { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
-        public string? Exchange { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Active")]
-        public bool? Active { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LiqRank")]
-        public int? LiqRank { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoFxsTickBatch
     {
 
@@ -654,49 +821,128 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoMarkovRegime
+    public partial class DtoMktCfd
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind { get; set; } = default!;
+        /// <summary>
+        /// Symbol, one per instrument.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("State")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<MarkovState>))]
-        public MarkovState? State { get; set; } = default!;
+        /// <summary>
+        /// Name of the instrument.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("PBull")]
-        public double? PBull { get; set; } = default!;
+        /// <summary>
+        /// Latest price.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("PNeutral")]
-        public double? PNeutral { get; set; } = default!;
+        /// <summary>
+        /// Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumSig")]
+        public string? SumSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("PBear")]
-        public double? PBear { get; set; } = default!;
+        /// <summary>
+        /// Sum as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumVal")]
+        public double? SumVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Stickiness")]
-        public double? Stickiness { get; set; } = default!;
+        /// <summary>
+        /// Mav: the moving-average rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavSig")]
+        public string? MavSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ExpectedDurationBars")]
-        public int? ExpectedDurationBars { get; set; } = default!;
+        /// <summary>
+        /// Mav as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavVal")]
+        public double? MavVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("MarkovScore")]
-        public double? MarkovScore { get; set; } = default!;
+        /// <summary>
+        /// Osc: the oscillator rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscSig")]
+        public string? OscSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Entropy")]
-        public double? Entropy { get; set; } = default!;
+        /// <summary>
+        /// Osc as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscVal")]
+        public double? OscVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ModelReliability")]
-        public double? ModelReliability { get; set; } = default!;
+        /// <summary>
+        /// Price change over 1 day, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
+        public double? Chg1D { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TransitionCount")]
-        public long? TransitionCount { get; set; } = default!;
+        /// <summary>
+        /// Price change over 1 week, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1W")]
+        public double? Chg1W { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ModelAsOf")]
-        public System.DateTimeOffset? ModelAsOf { get; set; } = default!;
+        /// <summary>
+        /// Price change over 1 month, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1M")]
+        public double? Chg1M { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ModelVersion")]
-        public string? ModelVersion { get; set; } = default!;
+        /// <summary>
+        /// Price change since 1 January, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ChgYTD")]
+        public double? ChgYTD { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
+        public string? Signal { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
+        public string? Trend { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
+        public string? Confidence { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: its score for the symbol, about -5 to +5.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: S short, M mid or L long term. Empty when it has none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Term")]
+        public string? Term { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's rank in this market: 1 is its strongest, 2 the next.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
+        public long? Rank { get; set; } = default!;
+
+        /// <summary>
+        /// When the row was last updated, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UpdatedAt")]
+        public System.DateTimeOffset? UpdatedAt { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -710,91 +956,398 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoPrcSig
+    public partial class DtoMktCrypto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Source")]
-        public string? Source { get; set; } = default!;
+        /// <summary>
+        /// Symbol, one per instrument. Two coins that share a ticker each get their own symbol.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
+        /// <summary>
+        /// Name of the instrument.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// Latest price.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
+
+        /// <summary>
+        /// Market value in USD.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MktCap")]
+        public double? MktCap { get; set; } = default!;
+
+        /// <summary>
+        /// Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumSig")]
+        public string? SumSig { get; set; } = default!;
+
+        /// <summary>
+        /// Sum as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumVal")]
+        public double? SumVal { get; set; } = default!;
+
+        /// <summary>
+        /// Mav: the moving-average rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavSig")]
+        public string? MavSig { get; set; } = default!;
+
+        /// <summary>
+        /// Mav as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavVal")]
+        public double? MavVal { get; set; } = default!;
+
+        /// <summary>
+        /// Osc: the oscillator rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscSig")]
+        public string? OscSig { get; set; } = default!;
+
+        /// <summary>
+        /// Osc as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscVal")]
+        public double? OscVal { get; set; } = default!;
+
+        /// <summary>
+        /// Price change over 1 day, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
+        public double? Chg1D { get; set; } = default!;
+
+        /// <summary>
+        /// Price change over 1 week, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1W")]
+        public double? Chg1W { get; set; } = default!;
+
+        /// <summary>
+        /// Price change over 1 month, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1M")]
+        public double? Chg1M { get; set; } = default!;
+
+        /// <summary>
+        /// Price change since 1 January, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ChgYTD")]
+        public double? ChgYTD { get; set; } = default!;
+
+        /// <summary>
+        /// Volume traded over the last 24 hours.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Vol24")]
+        public double? Vol24 { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Signal")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? Signal { get; set; } = default!;
+        public string? Signal { get; set; } = default!;
 
+        /// <summary>
+        /// FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up).
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Trend")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? Trend { get; set; } = default!;
+        public string? Trend { get; set; } = default!;
 
+        /// <summary>
+        /// FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence { get; set; } = default!;
+        public string? Confidence { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TAStatus")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TAStatus>))]
-        public TAStatus? TAStatus { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: its score for the symbol, about -5 to +5.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TAConfidenceRaw")]
-        public double? TAConfidenceRaw { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: S short, M mid or L long term. Empty when it has none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Term")]
+        public string? Term { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TAScore")]
-        public double? TAScore { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's rank in this market: 1 is its strongest, 2 the next.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
+        public long? Rank { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SignalRaw")]
-        public double? SignalRaw { get; set; } = default!;
+        /// <summary>
+        /// When the row was last updated, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UpdatedAt")]
+        public System.DateTimeOffset? UpdatedAt { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TrendRaw")]
-        public double? TrendRaw { get; set; } = default!;
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ShortDeltaPct")]
-        public double? ShortDeltaPct { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
-        [System.Text.Json.Serialization.JsonPropertyName("MediumDeltaPct")]
-        public double? MediumDeltaPct { get; set; } = default!;
+    }
 
-        [System.Text.Json.Serialization.JsonPropertyName("LongDeltaPct")]
-        public double? LongDeltaPct { get; set; } = default!;
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoMktEqtUsa
+    {
 
-        [System.Text.Json.Serialization.JsonPropertyName("PointCountS")]
-        public int? PointCountS { get; set; } = default!;
+        /// <summary>
+        /// Symbol, one per instrument.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("PointCountM")]
-        public int? PointCountM { get; set; } = default!;
+        /// <summary>
+        /// Name of the instrument.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("PointCountL")]
-        public int? PointCountL { get; set; } = default!;
+        /// <summary>
+        /// Exchange the stock is listed on.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
+        public string? Exchange { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SampleCount")]
-        public int? SampleCount { get; set; } = default!;
+        /// <summary>
+        /// Sector of the company.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sector")]
+        public string? Sector { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("WindowSpanSecs")]
-        public int? WindowSpanSecs { get; set; } = default!;
+        /// <summary>
+        /// Latest price.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DataAgeSec")]
-        public long? DataAgeSec { get; set; } = default!;
+        /// <summary>
+        /// Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumSig")]
+        public string? SumSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SourceLastAt")]
-        public System.DateTimeOffset? SourceLastAt { get; set; } = default!;
+        /// <summary>
+        /// Sum as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumVal")]
+        public double? SumVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TAReason")]
-        public string? TAReason { get; set; } = default!;
+        /// <summary>
+        /// Mav: the moving-average rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavSig")]
+        public string? MavSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Reason")]
-        public string? Reason { get; set; } = default!;
+        /// <summary>
+        /// Mav as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavVal")]
+        public double? MavVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SignalVersion")]
-        public long? SignalVersion { get; set; } = default!;
+        /// <summary>
+        /// Osc: the oscillator rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscSig")]
+        public string? OscSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SignalVersionSell")]
-        public long? SignalVersionSell { get; set; } = default!;
+        /// <summary>
+        /// Osc as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscVal")]
+        public double? OscVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("PreviousSignal")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? PreviousSignal { get; set; } = default!;
+        /// <summary>
+        /// Price change over 1 day, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
+        public double? Chg1D { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("GreenAt")]
-        public System.DateTimeOffset? GreenAt { get; set; } = default!;
+        /// <summary>
+        /// Price change over 1 week, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1W")]
+        public double? Chg1W { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("RuleVersion")]
-        public int? RuleVersion { get; set; } = default!;
+        /// <summary>
+        /// Price change over 1 month, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1M")]
+        public double? Chg1M { get; set; } = default!;
+
+        /// <summary>
+        /// Price change since 1 January, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ChgYTD")]
+        public double? ChgYTD { get; set; } = default!;
+
+        /// <summary>
+        /// Shares traded over the last 24 hours.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Vol24")]
+        public double? Vol24 { get; set; } = default!;
+
+        /// <summary>
+        /// Analysts' consensus rating, as a signal. Empty when no analyst covers the stock.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AnaSig")]
+        public string? AnaSig { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
+        public string? Signal { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
+        public string? Trend { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
+        public string? Confidence { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: its score for the symbol, about -5 to +5.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: S short, M mid or L long term. Empty when it has none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Term")]
+        public string? Term { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's rank in this market: 1 is its strongest, 2 the next.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
+        public long? Rank { get; set; } = default!;
+
+        /// <summary>
+        /// When the row was last updated, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UpdatedAt")]
+        public System.DateTimeOffset? UpdatedAt { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoMktPair
+    {
+
+        /// <summary>
+        /// Pair symbol, for example BTCUSDT.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
+
+        /// <summary>
+        /// Exchange name (BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
+        public string? Exchange { get; set; } = default!;
+
+        /// <summary>
+        /// Coin being priced, for example BTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Base")]
+        public string? Base { get; set; } = default!;
+
+        /// <summary>
+        /// Coin it is priced in, for example USDT.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Quote")]
+        public string? Quote { get; set; } = default!;
+
+        /// <summary>
+        /// Latest price, in the quote coin.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
+
+        /// <summary>
+        /// Price change over 1 day, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
+        public double? Chg1D { get; set; } = default!;
+
+        /// <summary>
+        /// Volume traded over the last 24 hours, in the quote coin.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Vol24")]
+        public double? Vol24 { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
+        public string? Signal { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
+        public string? Trend { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
+        public string? Confidence { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: its score for the symbol, about -5 to +5.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: S short, M mid or L long term. Empty when it has none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Term")]
+        public string? Term { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's rank in this market: 1 is its strongest, 2 the next.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
+        public long? Rank { get; set; } = default!;
+
+        /// <summary>
+        /// When the row was last updated, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UpdatedAt")]
+        public System.DateTimeOffset? UpdatedAt { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -832,534 +1385,215 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoSigAI
+    public partial class DtoRecordCall
     {
 
+        /// <summary>
+        /// Symbol of the call.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
+
+        /// <summary>
+        /// eqtusa, crypto, dax or fxs.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Market")]
+        public string? Market { get; set; } = default!;
+
+        /// <summary>
+        /// buy or sell.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        /// <summary>
+        /// How sure FinGraph was when it made the call: None, VLow, Low, Med, High or VHigh. Empty when it did not say.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
+        public string? Confidence { get; set; } = default!;
+
+        /// <summary>
+        /// How long the call was followed: 6h, 24h, 72h, 7d or 30d.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Horizon")]
+        public string? Horizon { get; set; } = default!;
+
+        /// <summary>
+        /// How it ended: TP1, TP2, TP3 or Win (won), SL or Loss (lost), HorizonEnd or Flat (time ran out).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Outcome")]
+        public string? Outcome { get; set; } = default!;
+
+        /// <summary>
+        /// Price when the call was made.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Entry")]
+        public double? Entry { get; set; } = default!;
+
+        /// <summary>
+        /// Price when it closed.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Exit")]
+        public double? Exit { get; set; } = default!;
+
+        /// <summary>
+        /// Result in percent, signed for the side.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ReturnPct")]
+        public double? ReturnPct { get; set; } = default!;
+
+        /// <summary>
+        /// When the call was made, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("CalledAt")]
+        public System.DateTimeOffset? CalledAt { get; set; } = default!;
+
+        /// <summary>
+        /// When the call closed, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ClosedAt")]
+        public System.DateTimeOffset? ClosedAt { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoScrCfd
+    {
+
+        /// <summary>
+        /// Place in this screen's shortlist: 1 is the top.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LaneRank")]
+        public long? LaneRank { get; set; } = default!;
+
+        /// <summary>
+        /// Symbol, one per instrument.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
+
+        /// <summary>
+        /// Name of the instrument.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// Latest price.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
+
+        /// <summary>
+        /// Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumSig")]
+        public string? SumSig { get; set; } = default!;
+
+        /// <summary>
+        /// Sum as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumVal")]
+        public double? SumVal { get; set; } = default!;
+
+        /// <summary>
+        /// Mav: the moving-average rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavSig")]
+        public string? MavSig { get; set; } = default!;
+
+        /// <summary>
+        /// Mav as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavVal")]
+        public double? MavVal { get; set; } = default!;
+
+        /// <summary>
+        /// Osc: the oscillator rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscSig")]
+        public string? OscSig { get; set; } = default!;
+
+        /// <summary>
+        /// Osc as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscVal")]
+        public double? OscVal { get; set; } = default!;
+
+        /// <summary>
+        /// Price change over 1 day, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
+        public double? Chg1D { get; set; } = default!;
+
+        /// <summary>
+        /// Price change over 1 week, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1W")]
+        public double? Chg1W { get; set; } = default!;
+
+        /// <summary>
+        /// Price change over 1 month, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1M")]
+        public double? Chg1M { get; set; } = default!;
+
+        /// <summary>
+        /// Price change since 1 January, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ChgYTD")]
+        public double? ChgYTD { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Signal")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? Signal { get; set; } = default!;
+        public string? Signal { get; set; } = default!;
 
+        /// <summary>
+        /// FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
+        public string? Trend { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence { get; set; } = default!;
+        public string? Confidence { get; set; } = default!;
 
+        /// <summary>
+        /// FinGraph's own reading: its score for the symbol, about -5 to +5.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Score")]
-        public int? Score { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Reason")]
-        public string? Reason { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
-        public string? Provider { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Model")]
-        public string? Model { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PromptKey")]
-        public string? PromptKey { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("At")]
-        public System.DateTimeOffset? At { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Px")]
-        public double? Px { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Tvr")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? Tvr { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoSigCryMin
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankFastPrc")]
-        public long? RankFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankTopGain")]
-        public long? RankTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankTopLose")]
-        public long? RankTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankFastVol")]
-        public long? RankFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankBreakout")]
-        public long? RankBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SignalVersion")]
-        public long? SignalVersion { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("GreenAt")]
-        public System.DateTimeOffset? GreenAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreFastPrc")]
-        public double? TAScoreFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreTopGain")]
-        public double? TAScoreTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreTopLose")]
-        public double? TAScoreTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreFastVol")]
-        public double? TAScoreFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreBreakout")]
-        public double? TAScoreBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AType")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AType>))]
-        public AType? AType { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AType_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AType>))]
-        public AType? AType_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Kind_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
-        public string? Exchange { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public System.Collections.Generic.ICollection<string>? Category { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SourceId")]
-        public string? SourceId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SourceHash")]
-        public string? SourceHash { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpdDt")]
-        public System.DateTimeOffset? UpdDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpdMk")]
-        public long? UpdMk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataAsOf")]
-        public System.DateTimeOffset? DataAsOf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataMk")]
-        public long? DataMk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataAgeSec")]
-        public long? DataAgeSec { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FamilyAsOf")]
-        public System.Collections.Generic.IDictionary<string, long>? FamilyAsOf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SrcSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? SrcSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SrcSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? SrcSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SrcScore")]
-        public double? SrcScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumSigStr")]
-        public string? TvdSumSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdSumSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavSigStr")]
-        public string? TvdMavSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdMavSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscSigStr")]
-        public string? TvdOscSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdOscSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumVal")]
-        public double? TvdSumVal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavVal")]
-        public double? TvdMavVal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscVal")]
-        public double? TvdOscVal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
-        public double? Chg1D { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Chg1W")]
-        public double? Chg1W { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Chg1M")]
-        public double? Chg1M { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Chg3M")]
-        public double? Chg3M { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Chg6M")]
-        public double? Chg6M { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgYTD")]
-        public double? ChgYTD { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgY")]
-        public double? ChgY { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Chg5Y")]
-        public double? Chg5Y { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgAll")]
-        public double? ChgAll { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdUpDt")]
-        public System.DateTimeOffset? TvdUpDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScore")]
-        public double? TAScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TARankScore")]
-        public double? TARankScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrend")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrend { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrend_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrend_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendStatus")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TATrendStatus>))]
-        public TATrendStatus? TATrendStatus { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendStatus_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TATrendStatus>))]
-        public TATrendStatus? TATrendStatus_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? FinalTerm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? FinalTerm_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTRange")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? FinalTRange { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTRange_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? FinalTRange_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAStatus")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TAStatus>))]
-        public TAStatus? TAStatus { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Confidence_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAConfidenceRaw")]
-        public double? TAConfidenceRaw { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AgreementScore")]
-        public double? AgreementScore { get; set; } = default!;
-
+        public double? Score { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's own reading: S short, M mid or L long term. Empty when it has none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Term")]
+        public string? Term { get; set; } = default!;
+
+        /// <summary>
+        /// FinGraph's rank in this market: 1 is its strongest, 2 the next.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Rank")]
         public long? Rank { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("FamTechScore")]
-        public double? FamTechScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FamTechQual")]
-        public double? FamTechQual { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FamMktCapScore")]
-        public double? FamMktCapScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FamMktCapQual")]
-        public double? FamMktCapQual { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketCap")]
-        public double? MarketCap { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketCapRank")]
-        public long? MarketCapRank { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketCapPct")]
-        public double? MarketCapPct { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctS")]
-        public double? ChgPctS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctM")]
-        public double? ChgPctM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctL")]
-        public double? ChgPctL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Accel")]
-        public double? Accel { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MovementScore")]
-        public double? MovementScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MovementQuality")]
-        public double? MovementQuality { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MovementStatus")]
-        public string? MovementStatus { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesS")]
-        public bool? HasSeriesS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesM")]
-        public bool? HasSeriesM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesL")]
-        public bool? HasSeriesL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WindowSpanSecS")]
-        public long? WindowSpanSecS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WindowSpanSecM")]
-        public long? WindowSpanSecM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WindowSpanSecL")]
-        public long? WindowSpanSecL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsTopMcapCandidate")]
-        public bool? IsTopMcapCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsBullishCandidate")]
-        public bool? IsBullishCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsBearishCandidate")]
-        public bool? IsBearishCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsPatternCandidate")]
-        public bool? IsPatternCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PatternEvidenceTotal")]
-        public double? PatternEvidenceTotal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CapResidualS")]
-        public double? CapResidualS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CapResidualM")]
-        public double? CapResidualM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CapResidualL")]
-        public double? CapResidualL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CapQuality")]
-        public double? CapQuality { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SignedTurnover")]
-        public double? SignedTurnover { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CorporateActionSuspect")]
-        public bool? CorporateActionSuspect { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("KindState")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<KindState>))]
-        public KindState? KindState { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("KindState_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<KindState>))]
-        public KindState? KindState_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolumeConfirmation")]
-        public double? VolumeConfirmation { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WeightProfileId")]
-        public string? WeightProfileId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WeightProfileVersion")]
-        public int? WeightProfileVersion { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MovementWeight")]
-        public double? MovementWeight { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TechnicalWeight")]
-        public double? TechnicalWeight { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolumeWeight")]
-        public double? VolumeWeight { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MktCapWeight")]
-        public double? MktCapWeight { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TopPositives")]
-        public System.Collections.Generic.ICollection<string>? TopPositives { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TopNegatives")]
-        public System.Collections.Generic.ICollection<string>? TopNegatives { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataWarnings")]
-        public System.Collections.Generic.ICollection<string>? DataWarnings { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataNotes")]
-        public System.Collections.Generic.ICollection<string>? DataNotes { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FaMetrics")]
-        public System.Collections.Generic.ICollection<SigFaMetric>? FaMetrics { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FaScore")]
-        public double? FaScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FaEvidenceTotal")]
-        public double? FaEvidenceTotal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsFaCandidate")]
-        public bool? IsFaCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ModelVer")]
-        public string? ModelVer { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SpecVer")]
-        public string? SpecVer { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Markov")]
-        public DtoMarkovRegime? Markov { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PrcSig")]
-        public DtoPrcSig? PrcSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AISig")]
-        public DtoSigAI? AISig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarkovScore")]
-        public double? MarkovScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CkSm")]
-        public string? CkSm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrBy")]
-        public string? CrBy { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrDt")]
-        public System.DateTimeOffset? CrDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrMk")]
-        public long? CrMk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpBy")]
-        public string? UpBy { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpDt")]
-        public System.DateTimeOffset? UpDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpMk")]
-        public long? UpMk { get; set; } = default!;
+        /// <summary>
+        /// When the row was last updated, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UpdatedAt")]
+        public System.DateTimeOffset? UpdatedAt { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1373,457 +1607,146 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoSigDaxMin
+    public partial class DtoScrCrypto
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("RankFastPrc")]
-        public long? RankFastPrc { get; set; } = default!;
+        /// <summary>
+        /// Place in this screen's shortlist: 1 is the top.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LaneRank")]
+        public long? LaneRank { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("RankTopGain")]
-        public long? RankTopGain { get; set; } = default!;
+        /// <summary>
+        /// Symbol, one per instrument. Two coins that share a ticker each get their own symbol.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("RankTopLose")]
-        public long? RankTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankFastVol")]
-        public long? RankFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankBreakout")]
-        public long? RankBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SignalVersion")]
-        public long? SignalVersion { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("GreenAt")]
-        public System.DateTimeOffset? GreenAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreFastPrc")]
-        public double? TAScoreFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreTopGain")]
-        public double? TAScoreTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreTopLose")]
-        public double? TAScoreTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreFastVol")]
-        public double? TAScoreFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreBreakout")]
-        public double? TAScoreBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
+        /// <summary>
+        /// Name of the instrument.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string? Name { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
-        public string? Exchange { get; set; } = default!;
+        /// <summary>
+        /// Latest price.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SourceId")]
-        public string? SourceId { get; set; } = default!;
+        /// <summary>
+        /// Market value in USD.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MktCap")]
+        public double? MktCap { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SourceHash")]
-        public string? SourceHash { get; set; } = default!;
+        /// <summary>
+        /// Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumSig")]
+        public string? SumSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DAX")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DAX>))]
-        public DAX? DAX { get; set; } = default!;
+        /// <summary>
+        /// Sum as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumVal")]
+        public double? SumVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DAX_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DAX>))]
-        public DAX? DAX_ { get; set; } = default!;
+        /// <summary>
+        /// Mav: the moving-average rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavSig")]
+        public string? MavSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Base")]
-        public string? Base { get; set; } = default!;
+        /// <summary>
+        /// Mav as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavVal")]
+        public double? MavVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Quot")]
-        public string? Quot { get; set; } = default!;
+        /// <summary>
+        /// Osc: the oscillator rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscSig")]
+        public string? OscSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind { get; set; } = default!;
+        /// <summary>
+        /// Osc as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscVal")]
+        public double? OscVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Kind_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastPrc")]
-        public double? LastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PrcChgPct")]
-        public double? PrcChgPct { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("QuotVol")]
-        public double? QuotVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolRatio")]
-        public double? VolRatio { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolImpulse")]
-        public double? VolImpulse { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumSigStr")]
-        public string? TvdSumSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdSumSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavSigStr")]
-        public string? TvdMavSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdMavSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscSigStr")]
-        public string? TvdOscSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdOscSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumVal")]
-        public double? TvdSumVal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavVal")]
-        public double? TvdMavVal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscVal")]
-        public double? TvdOscVal { get; set; } = default!;
-
+        /// <summary>
+        /// Price change over 1 day, in percent.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
         public double? Chg1D { get; set; } = default!;
 
+        /// <summary>
+        /// Price change over 1 week, in percent.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Chg1W")]
         public double? Chg1W { get; set; } = default!;
 
+        /// <summary>
+        /// Price change over 1 month, in percent.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Chg1M")]
         public double? Chg1M { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Chg3M")]
-        public double? Chg3M { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Chg6M")]
-        public double? Chg6M { get; set; } = default!;
-
+        /// <summary>
+        /// Price change since 1 January, in percent.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("ChgYTD")]
         public double? ChgYTD { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ChgY")]
-        public double? ChgY { get; set; } = default!;
+        /// <summary>
+        /// Volume traded over the last 24 hours.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Vol24")]
+        public double? Vol24 { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Chg5Y")]
-        public double? Chg5Y { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
+        public string? Signal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ChgAll")]
-        public double? ChgAll { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
+        public string? Trend { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TvdUpDt")]
-        public System.DateTimeOffset? TvdUpDt { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
+        public string? Confidence { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctS")]
-        public double? ChgPctS { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: its score for the symbol, about -5 to +5.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctM")]
-        public double? ChgPctM { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: S short, M mid or L long term. Empty when it has none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Term")]
+        public string? Term { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctL")]
-        public double? ChgPctL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctS")]
-        public double? VolChgPctS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctM")]
-        public double? VolChgPctM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctL")]
-        public double? VolChgPctL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Accel")]
-        public double? Accel { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LiqScore")]
-        public double? LiqScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PatternEvidenceTotal")]
-        public double? PatternEvidenceTotal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsPatternCandidate")]
-        public bool? IsPatternCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesS")]
-        public bool? HasSeriesS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesM")]
-        public bool? HasSeriesM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesL")]
-        public bool? HasSeriesL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasVolSeriesS")]
-        public bool? HasVolSeriesS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasVolSeriesM")]
-        public bool? HasVolSeriesM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasVolSeriesL")]
-        public bool? HasVolSeriesL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScore")]
-        public double? TAScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TARankScore")]
-        public double? TARankScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrend")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrend { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrend_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrend_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendStatus")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TATrendStatus>))]
-        public TATrendStatus? TATrendStatus { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendStatus_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TATrendStatus>))]
-        public TATrendStatus? TATrendStatus_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? FinalTerm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? FinalTerm_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTRange")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? FinalTRange { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTRange_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? FinalTRange_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAStatus")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TAStatus>))]
-        public TAStatus? TAStatus { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ScoreSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? ScoreSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ScoreSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? ScoreSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctSSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? ChgPctSSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctSSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? ChgPctSSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctMSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? ChgPctMSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctMSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? ChgPctMSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctLSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? ChgPctLSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctLSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? ChgPctLSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctSSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? VolChgPctSSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctSSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? VolChgPctSSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctMSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? VolChgPctMSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctMSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? VolChgPctMSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctLSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? VolChgPctLSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolChgPctLSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? VolChgPctLSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AccelSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? AccelSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AccelSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? AccelSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LiqSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? LiqSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LiqSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? LiqSig_ { get; set; } = default!;
-
+        /// <summary>
+        /// FinGraph's rank in this market: 1 is its strongest, 2 the next.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Rank")]
         public long? Rank { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("UpdDt")]
-        public System.DateTimeOffset? UpdDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpdMk")]
-        public long? UpdMk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataAsOf")]
-        public System.DateTimeOffset? DataAsOf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataMk")]
-        public long? DataMk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataAgeSec")]
-        public long? DataAgeSec { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ActualSpanSec")]
-        public long? ActualSpanSec { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Confidence_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAConfidenceRaw")]
-        public double? TAConfidenceRaw { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Markov")]
-        public DtoMarkovRegime? Markov { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PrcSig")]
-        public DtoPrcSig? PrcSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AISig")]
-        public DtoSigAI? AISig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarkovScore")]
-        public double? MarkovScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdjustedScore")]
-        public double? AdjustedScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CkSm")]
-        public string? CkSm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrBy")]
-        public string? CrBy { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrDt")]
-        public System.DateTimeOffset? CrDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrMk")]
-        public long? CrMk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpBy")]
-        public string? UpBy { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpDt")]
-        public System.DateTimeOffset? UpDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpMk")]
-        public long? UpMk { get; set; } = default!;
+        /// <summary>
+        /// When the row was last updated, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UpdatedAt")]
+        public System.DateTimeOffset? UpdatedAt { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1837,492 +1760,158 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoSigEqtMin
+    public partial class DtoScrEqtUsa
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("RankFastPrc")]
-        public long? RankFastPrc { get; set; } = default!;
+        /// <summary>
+        /// Place in this screen's shortlist: 1 is the top.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LaneRank")]
+        public long? LaneRank { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("RankTopGain")]
-        public long? RankTopGain { get; set; } = default!;
+        /// <summary>
+        /// Symbol, one per instrument.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("RankTopLose")]
-        public long? RankTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankFastVol")]
-        public long? RankFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankBreakout")]
-        public long? RankBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SignalVersion")]
-        public long? SignalVersion { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("GreenAt")]
-        public System.DateTimeOffset? GreenAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreFastPrc")]
-        public double? TAScoreFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceFastPrc")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceFastPrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreTopGain")]
-        public double? TAScoreTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceTopGain")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceTopGain { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreTopLose")]
-        public double? TAScoreTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceTopLose")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceTopLose { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreFastVol")]
-        public double? TAScoreFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceFastVol")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceFastVol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAScoreBreakout")]
-        public double? TAScoreBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASigBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASigBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrendBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceBreakout")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? ConfidenceBreakout { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
+        /// <summary>
+        /// Name of the instrument.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string? Name { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AType")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AType>))]
-        public AType? AType { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AType_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AType>))]
-        public AType? AType_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Kind_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind_ { get; set; } = default!;
-
+        /// <summary>
+        /// Exchange the stock is listed on.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
         public string? Exchange { get; set; } = default!;
 
+        /// <summary>
+        /// Sector of the company.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Sector")]
         public string? Sector { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Industry")]
-        public string? Industry { get; set; } = default!;
+        /// <summary>
+        /// Latest price.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SourceId")]
-        public string? SourceId { get; set; } = default!;
+        /// <summary>
+        /// Sum: the overall technical rating, as a signal: VSS, SS, S, NS, N, NB, B, SB or VSB.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumSig")]
+        public string? SumSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SourceHash")]
-        public string? SourceHash { get; set; } = default!;
+        /// <summary>
+        /// Sum as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SumVal")]
+        public double? SumVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("UpdDt")]
-        public System.DateTimeOffset? UpdDt { get; set; } = default!;
+        /// <summary>
+        /// Mav: the moving-average rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavSig")]
+        public string? MavSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("UpdMk")]
-        public long? UpdMk { get; set; } = default!;
+        /// <summary>
+        /// Mav as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("MavVal")]
+        public double? MavVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DataAsOf")]
-        public System.DateTimeOffset? DataAsOf { get; set; } = default!;
+        /// <summary>
+        /// Osc: the oscillator rating, as a signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscSig")]
+        public string? OscSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DataMk")]
-        public long? DataMk { get; set; } = default!;
+        /// <summary>
+        /// Osc as a score from -1 to +1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OscVal")]
+        public double? OscVal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DataAgeSec")]
-        public long? DataAgeSec { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FamilyAsOf")]
-        public System.Collections.Generic.IDictionary<string, long>? FamilyAsOf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SrcSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? SrcSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SrcSig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? SrcSig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SrcScore")]
-        public double? SrcScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumSigStr")]
-        public string? TvdSumSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdSumSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavSigStr")]
-        public string? TvdMavSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdMavSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscSigStr")]
-        public string? TvdOscSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdOscSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdAnaSigStr")]
-        public string? TvdAnaSigStr { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdAnaSig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TvdAnaSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdSumVal")]
-        public double? TvdSumVal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdMavVal")]
-        public double? TvdMavVal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TvdOscVal")]
-        public double? TvdOscVal { get; set; } = default!;
-
+        /// <summary>
+        /// Price change over 1 day, in percent.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
         public double? Chg1D { get; set; } = default!;
 
+        /// <summary>
+        /// Price change over 1 week, in percent.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Chg1W")]
         public double? Chg1W { get; set; } = default!;
 
+        /// <summary>
+        /// Price change over 1 month, in percent.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Chg1M")]
         public double? Chg1M { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Chg3M")]
-        public double? Chg3M { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Chg6M")]
-        public double? Chg6M { get; set; } = default!;
-
+        /// <summary>
+        /// Price change since 1 January, in percent.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("ChgYTD")]
         public double? ChgYTD { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ChgY")]
-        public double? ChgY { get; set; } = default!;
+        /// <summary>
+        /// Shares traded over the last 24 hours.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Vol24")]
+        public double? Vol24 { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Chg5Y")]
-        public double? Chg5Y { get; set; } = default!;
+        /// <summary>
+        /// Analysts' consensus rating, as a signal. Empty when no analyst covers the stock.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AnaSig")]
+        public string? AnaSig { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("ChgAll")]
-        public double? ChgAll { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
+        public string? Signal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TvdUpDt")]
-        public System.DateTimeOffset? TvdUpDt { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
+        public string? Trend { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TAScore")]
-        public double? TAScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TARankScore")]
-        public double? TARankScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TASig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrend")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrend { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrend_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrend_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendStatus")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TATrendStatus>))]
-        public TATrendStatus? TATrendStatus { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrendStatus_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TATrendStatus>))]
-        public TATrendStatus? TATrendStatus_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? FinalTerm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? FinalTerm_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTRange")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? FinalTRange { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTRange_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? FinalTRange_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAStatus")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TAStatus>))]
-        public TAStatus? TAStatus { get; set; } = default!;
-
+        /// <summary>
+        /// FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence { get; set; } = default!;
+        public string? Confidence { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Confidence_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence_ { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: its score for the symbol, about -5 to +5.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TAConfidenceRaw")]
-        public double? TAConfidenceRaw { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: S short, M mid or L long term. Empty when it has none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Term")]
+        public string? Term { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AgreementScore")]
-        public double? AgreementScore { get; set; } = default!;
-
+        /// <summary>
+        /// FinGraph's rank in this market: 1 is its strongest, 2 the next.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Rank")]
         public long? Rank { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("FamTechScore")]
-        public double? FamTechScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FamTechQual")]
-        public double? FamTechQual { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FamMktCapScore")]
-        public double? FamMktCapScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FamMktCapQual")]
-        public double? FamMktCapQual { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketCap")]
-        public double? MarketCap { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketCapRank")]
-        public long? MarketCapRank { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketCapPct")]
-        public double? MarketCapPct { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctS")]
-        public double? ChgPctS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctM")]
-        public double? ChgPctM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctL")]
-        public double? ChgPctL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Accel")]
-        public double? Accel { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MovementScore")]
-        public double? MovementScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MovementQuality")]
-        public double? MovementQuality { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MovementStatus")]
-        public string? MovementStatus { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesS")]
-        public bool? HasSeriesS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesM")]
-        public bool? HasSeriesM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HasSeriesL")]
-        public bool? HasSeriesL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WindowSpanSecS")]
-        public long? WindowSpanSecS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WindowSpanSecM")]
-        public long? WindowSpanSecM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WindowSpanSecL")]
-        public long? WindowSpanSecL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsTopMcapCandidate")]
-        public bool? IsTopMcapCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsBullishCandidate")]
-        public bool? IsBullishCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsBearishCandidate")]
-        public bool? IsBearishCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsPatternCandidate")]
-        public bool? IsPatternCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PatternEvidenceTotal")]
-        public double? PatternEvidenceTotal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CapResidualS")]
-        public double? CapResidualS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CapResidualM")]
-        public double? CapResidualM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CapResidualL")]
-        public double? CapResidualL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CapQuality")]
-        public double? CapQuality { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SignedTurnover")]
-        public double? SignedTurnover { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CorporateActionSuspect")]
-        public bool? CorporateActionSuspect { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("KindState")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<KindState>))]
-        public KindState? KindState { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("KindState_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<KindState>))]
-        public KindState? KindState_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolumeConfirmation")]
-        public double? VolumeConfirmation { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WeightProfileId")]
-        public string? WeightProfileId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WeightProfileVersion")]
-        public int? WeightProfileVersion { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MovementWeight")]
-        public double? MovementWeight { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TechnicalWeight")]
-        public double? TechnicalWeight { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VolumeWeight")]
-        public double? VolumeWeight { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MktCapWeight")]
-        public double? MktCapWeight { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TopPositives")]
-        public System.Collections.Generic.ICollection<string>? TopPositives { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TopNegatives")]
-        public System.Collections.Generic.ICollection<string>? TopNegatives { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataWarnings")]
-        public System.Collections.Generic.ICollection<string>? DataWarnings { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataNotes")]
-        public System.Collections.Generic.ICollection<string>? DataNotes { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FaMetrics")]
-        public System.Collections.Generic.ICollection<SigFaMetric>? FaMetrics { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FaScore")]
-        public double? FaScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FaEvidenceTotal")]
-        public double? FaEvidenceTotal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsFaCandidate")]
-        public bool? IsFaCandidate { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ModelVer")]
-        public string? ModelVer { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SpecVer")]
-        public string? SpecVer { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Markov")]
-        public DtoMarkovRegime? Markov { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PrcSig")]
-        public DtoPrcSig? PrcSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AISig")]
-        public DtoSigAI? AISig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarkovScore")]
-        public double? MarkovScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CkSm")]
-        public string? CkSm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrBy")]
-        public string? CrBy { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrDt")]
-        public System.DateTimeOffset? CrDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CrMk")]
-        public long? CrMk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpBy")]
-        public string? UpBy { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpDt")]
-        public System.DateTimeOffset? UpDt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("UpMk")]
-        public long? UpMk { get; set; } = default!;
+        /// <summary>
+        /// When the row was last updated, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UpdatedAt")]
+        public System.DateTimeOffset? UpdatedAt { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2336,121 +1925,98 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoSigFxsLane
+    public partial class DtoScrPair
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
+        /// <summary>
+        /// Place in this screen's shortlist: 1 is the top.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LaneRank")]
+        public long? LaneRank { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SVRNAME")]
-        public string? SVRNAME { get; set; } = default!;
+        /// <summary>
+        /// Pair symbol, for example BTCUSDT.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AType")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AType>))]
-        public AType? AType { get; set; } = default!;
+        /// <summary>
+        /// Exchange name (BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Exchange")]
+        public string? Exchange { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AType_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AType>))]
-        public AType? AType_ { get; set; } = default!;
+        /// <summary>
+        /// Coin being priced, for example BTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Base")]
+        public string? Base { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind { get; set; } = default!;
+        /// <summary>
+        /// Coin it is priced in, for example USDT.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Quote")]
+        public string? Quote { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Kind_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigKind>))]
-        public SigKind? Kind_ { get; set; } = default!;
+        /// <summary>
+        /// Latest price, in the quote coin.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("KindState")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<KindState>))]
-        public KindState? KindState { get; set; } = default!;
+        /// <summary>
+        /// Price change over 1 day, in percent.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg1D")]
+        public double? Chg1D { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("KindState_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<KindState>))]
-        public KindState? KindState_ { get; set; } = default!;
+        /// <summary>
+        /// Volume traded over the last 24 hours, in the quote coin.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Vol24")]
+        public double? Vol24 { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TAScore")]
-        public double? TAScore { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: signal from VSS (very strong sell) to VSB (very strong buy). Empty when it has no reading.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
+        public string? Signal { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TASig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: trend from VSD (very strong down) to VSU (very strong up).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
+        public string? Trend { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TASig_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? TASig_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrend")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrend { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TATrend_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? TATrend_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TAStatus")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TAStatus>))]
-        public TAStatus? TAStatus { get; set; } = default!;
-
+        /// <summary>
+        /// FinGraph's own reading: how sure it is, None, VLow, Low, Med, High or VHigh.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence { get; set; } = default!;
+        public string? Confidence { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Confidence_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Confidence_ { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: its score for the symbol, about -5 to +5.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("TAConfidenceRaw")]
-        public double? TAConfidenceRaw { get; set; } = default!;
+        /// <summary>
+        /// FinGraph's own reading: S short, M mid or L long term. Empty when it has none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Term")]
+        public string? Term { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? FinalTerm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTerm_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? FinalTerm_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTRange")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? FinalTRange { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinalTRange_")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? FinalTRange_ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctS")]
-        public double? ChgPctS { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctM")]
-        public double? ChgPctM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChgPctL")]
-        public double? ChgPctL { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Accel")]
-        public double? Accel { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SelectedReturn")]
-        public double? SelectedReturn { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WeightProfileId")]
-        public string? WeightProfileId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WeightProfileVersion")]
-        public int? WeightProfileVersion { get; set; } = default!;
-
+        /// <summary>
+        /// FinGraph's rank in this market: 1 is its strongest, 2 the next.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Rank")]
         public long? Rank { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("BroadRank")]
-        public long? BroadRank { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataAsOf")]
-        public System.DateTimeOffset? DataAsOf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DataAgeSec")]
-        public long? DataAgeSec { get; set; } = default!;
+        /// <summary>
+        /// When the row was last updated, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UpdatedAt")]
+        public System.DateTimeOffset? UpdatedAt { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2484,51 +2050,6 @@ namespace Fin.Graph
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum FaFamily
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Quality")]
-        Quality = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Growth")]
-        Growth = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Valuation")]
-        Valuation = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Balance")]
-        Balance = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"CashFlow")]
-        CashFlow = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Risk")]
-        Risk = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Liquidity")]
-        Liquidity = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Network")]
-        Network = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Transaction")]
-        Transaction = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Holder")]
-        Holder = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ValuationSupply")]
-        ValuationSupply = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Social")]
-        Social = 12,
 
     }
 
@@ -2580,39 +2101,6 @@ namespace Fin.Graph
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum KindState
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NotApplicable")]
-        NotApplicable = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Setup")]
-        Setup = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Confirmed")]
-        Confirmed = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum MarkovState
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Bear")]
-        Bear = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Neutral")]
-        Neutral = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Bull")]
-        Bull = 3,
 
     }
 
@@ -2690,10 +2178,10 @@ namespace Fin.Graph
     {
 
         /// <summary>
-        /// Exchange key, for example BIN.
+        /// Exchange name, for example BINANCE.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("dax")]
-        public string? Dax { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("exchange")]
+        public string? Exchange { get; set; } = default!;
 
         /// <summary>
         /// Number of listed tickers on the exchange.
@@ -2741,10 +2229,10 @@ namespace Fin.Graph
         public string? Symbol { get; set; } = default!;
 
         /// <summary>
-        /// Exchange key, for example BIN.
+        /// Exchange name, for example BINANCE.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("dax")]
-        public string? Dax { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("exchange")]
+        public string? Exchange { get; set; } = default!;
 
         /// <summary>
         /// Base currency of the pair, for example BTC.
@@ -2794,107 +2282,20 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1EnumItem
-    {
-
-        /// <summary>
-        /// Name of the value.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("key")]
-        public string? Key { get; set; } = default!;
-
-        /// <summary>
-        /// Numeric value.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("value")]
-        public int? Value { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1ErrorBody
-    {
-
-        /// <summary>
-        /// What went wrong.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("error")]
-        public PubV1ErrorInfo? Error { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1ErrorInfo
-    {
-
-        /// <summary>
-        /// Machine-readable error code, such as bad_request, not_found or not_implemented.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public string? Code { get; set; } = default!;
-
-        /// <summary>
-        /// Human-readable explanation.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        /// <summary>
-        /// The request values the server received, when it echoes them.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("requested")]
-        public object? Requested { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class PubV1Exchange
     {
 
         /// <summary>
-        /// Exchange key, for example BIN.
+        /// Exchange name, for example BINANCE.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("key")]
         public string? Key { get; set; } = default!;
 
         /// <summary>
-        /// Numeric value of the exchange key.
+        /// Numeric value of the exchange.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         public int? Value { get; set; } = default!;
-
-        /// <summary>
-        /// TradingView prefix of the exchange; null when it has none.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("tv_prefix")]
-        public string? Tv_prefix { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2937,27 +2338,6 @@ namespace Fin.Graph
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("data")]
         public PubV1Quote? Data { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1ItemOfPubV1Signal
-    {
-
-        /// <summary>
-        /// The returned object.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public PubV1Signal? Data { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -3019,33 +2399,6 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1ListOfPubV1EnumItem
-    {
-
-        /// <summary>
-        /// The returned rows.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<PubV1EnumItem>? Data { get; set; } = default!;
-
-        /// <summary>
-        /// Number of rows in data.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class PubV1ListOfPubV1Exchange
     {
 
@@ -3073,33 +2426,6 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1ListOfPubV1Mover
-    {
-
-        /// <summary>
-        /// The returned rows.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<PubV1Mover>? Data { get; set; } = default!;
-
-        /// <summary>
-        /// Number of rows in data.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class PubV1ListOfPubV1Pattern
     {
 
@@ -3108,190 +2434,6 @@ namespace Fin.Graph
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("data")]
         public System.Collections.Generic.ICollection<PubV1Pattern>? Data { get; set; } = default!;
-
-        /// <summary>
-        /// Number of rows in data.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1ListOfPubV1SignalRow
-    {
-
-        /// <summary>
-        /// The returned rows.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<PubV1SignalRow>? Data { get; set; } = default!;
-
-        /// <summary>
-        /// Number of rows in data.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1Mover
-    {
-
-        /// <summary>
-        /// Trading symbol, for example BTCUSDT.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        /// <summary>
-        /// Exchange key, for example BIN.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("dax")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DAX>))]
-        public DAX? Dax { get; set; } = default!;
-
-        /// <summary>
-        /// Last traded price in the quote currency.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("last_price")]
-        public double? Last_price { get; set; } = default!;
-
-        /// <summary>
-        /// Price change over the last 24 hours, in percent.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("chg_pct")]
-        public double? Chg_pct { get; set; } = default!;
-
-        /// <summary>
-        /// Traded volume over the last 24 hours, in the quote currency.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("quot_vol")]
-        public double? Quot_vol { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1Movers
-    {
-
-        /// <summary>
-        /// The ranking that was applied: gainers or losers.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("direction")]
-        public string? Direction { get; set; } = default!;
-
-        /// <summary>
-        /// The returned rows.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<PubV1Mover>? Data { get; set; } = default!;
-
-        /// <summary>
-        /// Number of rows in data.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1PageOfPubV1Asset
-    {
-
-        /// <summary>
-        /// Rows skipped before this page.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("offset")]
-        public int? Offset { get; set; } = default!;
-
-        /// <summary>
-        /// Maximum rows per page that was applied.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("limit")]
-        public int? Limit { get; set; } = default!;
-
-        /// <summary>
-        /// The returned rows.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<PubV1Asset>? Data { get; set; } = default!;
-
-        /// <summary>
-        /// Number of rows in data.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1PageOfPubV1Ticker
-    {
-
-        /// <summary>
-        /// Rows skipped before this page.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("offset")]
-        public int? Offset { get; set; } = default!;
-
-        /// <summary>
-        /// Maximum rows per page that was applied.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("limit")]
-        public int? Limit { get; set; } = default!;
-
-        /// <summary>
-        /// The returned rows.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<PubV1Ticker>? Data { get; set; } = default!;
 
         /// <summary>
         /// Number of rows in data.
@@ -3387,7 +2529,7 @@ namespace Fin.Graph
     {
 
         /// <summary>
-        /// Market lane the quote comes from: crypto, stocks, forex, mys or pairs.
+        /// Market the quote comes from: crypto, stocks, forex or pairs.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("lane")]
         public string? Lane { get; set; } = default!;
@@ -3476,328 +2618,6 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1Signal
-    {
-
-        /// <summary>
-        /// Id of the source row the signal was computed from.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("source_id")]
-        public string? Source_id { get; set; } = default!;
-
-        /// <summary>
-        /// The term (short, mid or long) the final signal is read for.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("term")]
-        public string? Term { get; set; } = default!;
-
-        /// <summary>
-        /// The separate reads for the short, mid and long term.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("terms")]
-        public PubV1Terms? Terms { get; set; } = default!;
-
-        /// <summary>
-        /// TradingView ratings for the instrument.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("tv")]
-        public PubV1TvRead? Tv { get; set; } = default!;
-
-        /// <summary>
-        /// Price change over one day, in percent.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("chg_1d")]
-        public double? Chg_1d { get; set; } = default!;
-
-        /// <summary>
-        /// Price change over one week, in percent.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("chg_1w")]
-        public double? Chg_1w { get; set; } = default!;
-
-        /// <summary>
-        /// Price change over one month, in percent.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("chg_1m")]
-        public double? Chg_1m { get; set; } = default!;
-
-        /// <summary>
-        /// Time of the market data the signal was computed from (UTC).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data_as_of")]
-        public System.DateTimeOffset? Data_as_of { get; set; } = default!;
-
-        /// <summary>
-        /// Market lane the signal belongs to: crypto, stocks, forex, mys or pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("lane")]
-        public string? Lane { get; set; } = default!;
-
-        /// <summary>
-        /// Trading symbol.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        /// <summary>
-        /// Instrument name.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string? Name { get; set; } = default!;
-
-        /// <summary>
-        /// Exchange of the instrument.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("exchange")]
-        public string? Exchange { get; set; } = default!;
-
-        /// <summary>
-        /// Data status of the signal; NoData when it could not be computed.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string? Status { get; set; } = default!;
-
-        /// <summary>
-        /// Signal label; null when the signal is not valid.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("signal")]
-        public string? Signal { get; set; } = default!;
-
-        /// <summary>
-        /// Trend label; null when the signal is not valid.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("trend")]
-        public string? Trend { get; set; } = default!;
-
-        /// <summary>
-        /// Confidence label; null when the signal is not valid.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("confidence")]
-        public string? Confidence { get; set; } = default!;
-
-        /// <summary>
-        /// Technical-analysis score; null when the signal is not valid.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("score")]
-        public double? Score { get; set; } = default!;
-
-        /// <summary>
-        /// When the signal was last updated (UTC).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("updated_at")]
-        public System.DateTimeOffset? Updated_at { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1SignalRow
-    {
-
-        /// <summary>
-        /// Market lane the signal belongs to: crypto, stocks, forex, mys or pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("lane")]
-        public string? Lane { get; set; } = default!;
-
-        /// <summary>
-        /// Trading symbol.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        /// <summary>
-        /// Instrument name.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string? Name { get; set; } = default!;
-
-        /// <summary>
-        /// Exchange of the instrument.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("exchange")]
-        public string? Exchange { get; set; } = default!;
-
-        /// <summary>
-        /// Data status of the signal; NoData when it could not be computed.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("status")]
-        public string? Status { get; set; } = default!;
-
-        /// <summary>
-        /// Signal label; null when the signal is not valid.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("signal")]
-        public string? Signal { get; set; } = default!;
-
-        /// <summary>
-        /// Trend label; null when the signal is not valid.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("trend")]
-        public string? Trend { get; set; } = default!;
-
-        /// <summary>
-        /// Confidence label; null when the signal is not valid.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("confidence")]
-        public string? Confidence { get; set; } = default!;
-
-        /// <summary>
-        /// Technical-analysis score; null when the signal is not valid.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("score")]
-        public double? Score { get; set; } = default!;
-
-        /// <summary>
-        /// When the signal was last updated (UTC).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("updated_at")]
-        public System.DateTimeOffset? Updated_at { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1TermRead
-    {
-
-        /// <summary>
-        /// Signal label of this window.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("signal")]
-        public string? Signal { get; set; } = default!;
-
-        /// <summary>
-        /// Trend label of this window.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("trend")]
-        public string? Trend { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1Terms
-    {
-
-        /// <summary>
-        /// Short-term read.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("short")]
-        public PubV1TermRead? Short { get; set; } = default!;
-
-        /// <summary>
-        /// Mid-term read.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("mid")]
-        public PubV1TermRead? Mid { get; set; } = default!;
-
-        /// <summary>
-        /// Long-term read.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("long")]
-        public PubV1TermRead? Long { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1Ticker
-    {
-
-        /// <summary>
-        /// Trading symbol, for example BTCUSDT.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        /// <summary>
-        /// Exchange key, for example BIN.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("dax")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DAX>))]
-        public DAX? Dax { get; set; } = default!;
-
-        /// <summary>
-        /// Base currency of the pair.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("base")]
-        public string? Base { get; set; } = default!;
-
-        /// <summary>
-        /// Quote currency of the pair.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("quot")]
-        public string? Quot { get; set; } = default!;
-
-        /// <summary>
-        /// Last traded price in the quote currency.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("last_price")]
-        public double? Last_price { get; set; } = default!;
-
-        /// <summary>
-        /// Price change over the last 24 hours, in percent.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("chg_pct")]
-        public double? Chg_pct { get; set; } = default!;
-
-        /// <summary>
-        /// Traded volume over the last 24 hours, in the quote currency.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("quot_vol")]
-        public double? Quot_vol { get; set; } = default!;
-
-        /// <summary>
-        /// True while the pair is listed on the exchange.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("in_exchange")]
-        public bool? In_exchange { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class PubV1TickerDetail
     {
 
@@ -3808,10 +2628,10 @@ namespace Fin.Graph
         public string? Symbol { get; set; } = default!;
 
         /// <summary>
-        /// Exchange key, for example BIN.
+        /// Exchange name, for example BINANCE.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("dax")]
-        public string? Dax { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("exchange")]
+        public string? Exchange { get; set; } = default!;
 
         /// <summary>
         /// Base currency of the pair.
@@ -3909,112 +2729,6 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1TickerHit
-    {
-
-        /// <summary>
-        /// Trading symbol, for example BTCUSDT.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        /// <summary>
-        /// Exchange key, for example BIN.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("dax")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DAX>))]
-        public DAX? Dax { get; set; } = default!;
-
-        /// <summary>
-        /// Base currency of the pair.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("base")]
-        public string? Base { get; set; } = default!;
-
-        /// <summary>
-        /// Quote currency of the pair.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("quot")]
-        public string? Quot { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1TickerSearch
-    {
-
-        /// <summary>
-        /// The search text that was applied.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("q")]
-        public string? Q { get; set; } = default!;
-
-        /// <summary>
-        /// The returned rows.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<PubV1TickerHit>? Data { get; set; } = default!;
-
-        /// <summary>
-        /// Number of rows in data.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class PubV1TvRead
-    {
-
-        /// <summary>
-        /// TradingView overall rating.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("summary")]
-        public string? Summary { get; set; } = default!;
-
-        /// <summary>
-        /// TradingView moving-average rating.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("moving_avg")]
-        public string? Moving_avg { get; set; } = default!;
-
-        /// <summary>
-        /// TradingView oscillator rating.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("oscillators")]
-        public string? Oscillators { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ResError
     {
 
@@ -4084,119 +2798,11 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResListOfDtoApiAsset
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiAsset>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("error")]
-        public ResError? Error { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResListOfDtoApiEnumItem
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiEnumItem>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("error")]
-        public ResError? Error { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ResListOfDtoApiExchange
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
         public System.Collections.Generic.ICollection<DtoApiExchange>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("error")]
-        public ResError? Error { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResListOfDtoApiMover
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiMover>? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("error")]
         public ResError? Error { get; set; } = default!;
@@ -4264,101 +2870,20 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResListOfDtoApiSignal
+    public partial class ResPage
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSignal>? Data { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
+        public int? PageNo { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("error")]
-        public ResError? Error { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
+        public int? PageSize { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("pageCount")]
+        public int? PageCount { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResListOfDtoApiTicker
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiTicker>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("error")]
-        public ResError? Error { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResListOfDtoApiTickerLite
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiTickerLite>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("error")]
-        public ResError? Error { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
+        public long? ResCount { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -4377,39 +2902,6 @@ namespace Fin.Graph
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
         public DtoApiAsset? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSignalView
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSignalView? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -4603,138 +3095,6 @@ namespace Fin.Graph
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfListOfDtoSigCryMin
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoSigCryMin>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfListOfDtoSigDaxMin
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoSigDaxMin>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfListOfDtoSigEqtMin
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoSigEqtMin>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfListOfDtoSigFxsLane
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoSigFxsLane>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ResPonseOfObject
     {
 
@@ -4764,278 +3124,6 @@ namespace Fin.Graph
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfSafeDictOfStringAndDtoFinAssetName
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.IDictionary<string, DtoFinAssetName>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum STy
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
-        NONE = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"S")]
-        S = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"M")]
-        M = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"L")]
-        L = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SigDir
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Neutral")]
-        Neutral = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Up")]
-        Up = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Down")]
-        Down = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SigFaMetric
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Key")]
-        public string? Key { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Family")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FaFamily>))]
-        public FaFamily? Family { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Value")]
-        public double? Value { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("NormScore")]
-        public double? NormScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Direction")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SigDir>))]
-        public SigDir? Direction { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PeerPercentile")]
-        public double? PeerPercentile { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Quality")]
-        public double? Quality { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AsOfMk")]
-        public long? AsOfMk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Note")]
-        public string? Note { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SigKind
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
-        NONE = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"FastPrc")]
-        FastPrc = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"TopGain")]
-        TopGain = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"TopLose")]
-        TopLose = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"FastVol")]
-        FastVol = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Breakout")]
-        Breakout = 5,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Signal
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"N")]
-        N = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NB")]
-        NB = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"B")]
-        B = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SB")]
-        SB = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSB")]
-        VSB = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSS")]
-        VSS = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SS")]
-        SS = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"S")]
-        S = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NS")]
-        NS = 8,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum TAStatus
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Valid")]
-        Valid = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NoData")]
-        NoData = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Warmup")]
-        Warmup = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"InsufficientHistory")]
-        InsufficientHistory = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"BelowCadence")]
-        BelowCadence = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Stale")]
-        Stale = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"MarketClosed")]
-        MarketClosed = 6,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum TATrendStatus
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Valid")]
-        Valid = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ThinSeries")]
-        ThinSeries = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Stale")]
-        Stale = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NoData")]
-        NoData = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum TRange
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
-        NONE = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"S1_S10")]
-        S1_S10 = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"S10_S30")]
-        S10_S30 = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"S30_S60")]
-        S30_S60 = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"M1_M5")]
-        M1_M5 = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"M5_M15")]
-        M5_M15 = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"M15_M60")]
-        M15_M60 = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"H1_H3")]
-        H1_H3 = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"H3_H12")]
-        H3_H12 = 8,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"H12_H24")]
-        H12_H24 = 9,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"D1_D3")]
-        D1_D3 = 10,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"D3_D7")]
-        D3_D7 = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"W1_W4")]
-        W1_W4 = 12,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"MO1_MO3")]
-        MO1_MO3 = 13,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"MO3_MO6")]
-        MO3_MO6 = 14,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"MO6_MO12")]
-        MO6_MO12 = 15,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Y1_Y3")]
-        Y1_Y3 = 16,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Y3_Y5")]
-        Y3_Y5 = 17,
 
     }
 
@@ -5081,39 +3169,6 @@ namespace Fin.Graph
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Trend
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"N")]
-        N = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NU")]
-        NU = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"U")]
-        U = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SU")]
-        SU = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSU")]
-        VSU = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSD")]
-        VSD = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SD")]
-        SD = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"D")]
-        D = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ND")]
-        ND = 8,
 
     }
 

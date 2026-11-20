@@ -29,959 +29,32 @@ namespace Fin.News
     
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdApiRatingMake
+    public partial class CategoryRef
     {
 
         /// <summary>
-        /// Optional. The partner site the rating is requested for, for example finquest. Leave empty when you call for yourself.
+        /// Category slug.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("ReqSite")]
-        public string? ReqSite { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Slug")]
+        public string? Slug { get; set; } = default!;
 
         /// <summary>
-        /// Optional. The partner site's member number the rating is requested for; it is recorded as who asked. Leave empty when you call for yourself. The call is always charged to the key's owner.
+        /// Category name.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("ReqUsno")]
-        public long? ReqUsno { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Confidence
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VLow")]
-        VLow = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Low")]
-        Low = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Med")]
-        Med = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"High")]
-        High = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VHigh")]
-        VHigh = 5,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiAiRating
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Summ")]
-        public string? Summ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Grade")]
-        public SigDto? Grade { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SymRating")]
-        public System.Collections.Generic.IDictionary<string, SigDto>? SymRating { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PromptKey")]
-        public string? PromptKey { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Model")]
-        public string? Model { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RatedAt")]
-        public System.DateTimeOffset? RatedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Cached")]
-        public bool? Cached { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiAiSym
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("SymRating")]
-        public System.Collections.Generic.IDictionary<string, SigDto>? SymRating { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RatedAt")]
-        public System.DateTimeOffset? RatedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Hits")]
-        public System.Collections.Generic.IDictionary<string, int>? Hits { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiCate
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public long? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ParentId")]
-        public long? ParentId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Slug")]
-        public string? Slug { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string? Name { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Children")]
-        public System.Collections.Generic.ICollection<DtoApiCate>? Children { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiCateCount
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Slug")]
-        public string? Slug { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ParentId")]
-        public long? ParentId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ArticleCount")]
-        public long? ArticleCount { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiEntityHit
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Entity")]
-        public string? Entity { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiIndustryHit
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Topic")]
-        public string? Topic { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Count")]
-        public int? Count { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiNews
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Checksum")]
-        public string? Checksum { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("NewsId")]
-        public System.Guid? NewsId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Blurb")]
-        public string? Blurb { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankScore")]
-        public double? RankScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Url")]
-        public string? Url { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Source")]
-        public string? Source { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("KeyCode")]
-        public string? KeyCode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Published")]
-        public System.DateTimeOffset? Published { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MainImage")]
-        public string? MainImage { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
-        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Topics")]
-        public System.Collections.Generic.ICollection<string>? Topics { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
-        public string? Sentiment { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
-        public string? Signal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Categories")]
-        public System.Collections.Generic.IDictionary<string, string>? Categories { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
-        public string? Trend { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Term")]
-        public string? Term { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Range")]
-        public string? Range { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("NewsScore")]
-        public double? NewsScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CateConf")]
-        public string? CateConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StmConf")]
-        public string? StmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TkrConf")]
-        public string? TkrConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SigConf")]
-        public string? SigConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrdConf")]
-        public string? TrdConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrmConf")]
-        public string? TrmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrgConf")]
-        public string? TrgConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AiSym")]
-        public DtoApiAiSym? AiSym { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiNewsDetail
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Checksum")]
-        public string? Checksum { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("NewsId")]
-        public System.Guid? NewsId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Blurb")]
-        public string? Blurb { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Text")]
-        public string? Text { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Url")]
-        public string? Url { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Author")]
-        public string? Author { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Source")]
-        public string? Source { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("KeyCode")]
-        public string? KeyCode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Published")]
-        public System.DateTimeOffset? Published { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Fetched")]
-        public System.DateTimeOffset? Fetched { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MainImage")]
-        public string? MainImage { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ExtImages")]
-        public System.Collections.Generic.ICollection<string>? ExtImages { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
-        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Topics")]
-        public System.Collections.Generic.ICollection<string>? Topics { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
-        public string? Sentiment { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
-        public string? Signal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
-        public string? Trend { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Term")]
-        public string? Term { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Range")]
-        public string? Range { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("NewsScore")]
-        public double? NewsScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RankScore")]
-        public double? RankScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("NewsStmt")]
-        public string? NewsStmt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Categories")]
-        public System.Collections.Generic.IDictionary<string, string>? Categories { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CateConf")]
-        public string? CateConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StmConf")]
-        public string? StmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TkrConf")]
-        public string? TkrConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SigConf")]
-        public string? SigConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrdConf")]
-        public string? TrdConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrmConf")]
-        public string? TrmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrgConf")]
-        public string? TrgConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AiRating")]
-        public DtoApiAiRating? AiRating { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiNewsLite
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Checksum")]
-        public string? Checksum { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Blurb")]
-        public string? Blurb { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Url")]
-        public string? Url { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Source")]
-        public string? Source { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Published")]
-        public System.DateTimeOffset? Published { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
-        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Topics")]
-        public System.Collections.Generic.ICollection<string>? Topics { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
-        public string? Sentiment { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiNwsEnumOption
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Value")]
-        public int? Value { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSentimentAgg
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Day")]
-        public string? Day { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Count")]
-        public int? Count { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AvgStm")]
-        public double? AvgStm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("GradedCount")]
-        public int? GradedCount { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AvgSig")]
-        public double? AvgSig { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSentimentPoint
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Checksum")]
-        public string? Checksum { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Published")]
-        public System.DateTimeOffset? Published { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
-        public string? Sentiment { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
-        public string? Signal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trend")]
-        public string? Trend { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Term")]
-        public string? Term { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Range")]
-        public string? Range { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSentimentTrend
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Ticker")]
-        public string? Ticker { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Count")]
-        public int? Count { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AvgStm")]
-        public double? AvgStm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("GradedCount")]
-        public int? GradedCount { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AvgSig")]
-        public double? AvgSig { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSource
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("KeyCode")]
-        public string? KeyCode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Vendor")]
-        public string? Vendor { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Active")]
-        public bool? Active { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Schedule")]
-        public string? Schedule { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSourceDetail
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("KeyCode")]
-        public string? KeyCode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Vendor")]
-        public string? Vendor { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SrcFormat")]
-        public string? SrcFormat { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Url")]
-        public string? Url { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ItemsPath")]
-        public string? ItemsPath { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Active")]
-        public bool? Active { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Schedule")]
-        public string? Schedule { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("HashIdRule")]
-        public System.Collections.Generic.ICollection<string>? HashIdRule { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Notes")]
-        public string? Notes { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastRunAt")]
-        public System.DateTimeOffset? LastRunAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastRunOk")]
-        public bool? LastRunOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastRunMessage")]
-        public string? LastRunMessage { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastFetchedCnt")]
-        public int? LastFetchedCnt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastInsertedCnt")]
-        public int? LastInsertedCnt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastRunUrl")]
-        public string? LastRunUrl { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiTrendItem
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Key")]
-        public string? Key { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Mentions")]
-        public int? Mentions { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastSeen")]
-        public System.DateTimeOffset? LastSeen { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AvgStm")]
-        public double? AvgStm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("GradedCount")]
-        public int? GradedCount { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiVideo
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("VideoId")]
-        public string? VideoId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Channel")]
-        public string? Channel { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("KeyCode")]
-        public string? KeyCode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Url")]
-        public string? Url { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ThumbUrl")]
-        public string? ThumbUrl { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PublishedAt")]
-        public System.DateTimeOffset? PublishedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DurationSec")]
-        public int? DurationSec { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsShort")]
-        public bool? IsShort { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrxSrc")]
-        public string? TrxSrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TextChars")]
-        public int? TextChars { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinStm")]
-        public string? FinStm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinSig")]
-        public string? FinSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinTrd")]
-        public string? FinTrd { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinTrm")]
-        public string? FinTrm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinTrg")]
-        public string? FinTrg { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CateConf")]
-        public string? CateConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StmConf")]
-        public string? StmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TkrConf")]
-        public string? TkrConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SigConf")]
-        public string? SigConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrdConf")]
-        public string? TrdConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrmConf")]
-        public string? TrmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrgConf")]
-        public string? TrgConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VidScore")]
-        public double? VidScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VidRankScore")]
-        public double? VidRankScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
-        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Categories")]
-        public System.Collections.Generic.IDictionary<string, string>? Categories { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AiSym")]
-        public DtoApiAiSym? AiSym { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiVideoDetail
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Summ")]
-        public string? Summ { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbols")]
-        public System.Collections.Generic.ICollection<DtoApiVideoSymbol>? Symbols { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AiRating")]
-        public DtoApiAiRating? AiRating { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VideoId")]
-        public string? VideoId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Channel")]
-        public string? Channel { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("KeyCode")]
-        public string? KeyCode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Url")]
-        public string? Url { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ThumbUrl")]
-        public string? ThumbUrl { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PublishedAt")]
-        public System.DateTimeOffset? PublishedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DurationSec")]
-        public int? DurationSec { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("IsShort")]
-        public bool? IsShort { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrxSrc")]
-        public string? TrxSrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TextChars")]
-        public int? TextChars { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinStm")]
-        public string? FinStm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinSig")]
-        public string? FinSig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinTrd")]
-        public string? FinTrd { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinTrm")]
-        public string? FinTrm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinTrg")]
-        public string? FinTrg { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CateConf")]
-        public string? CateConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StmConf")]
-        public string? StmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TkrConf")]
-        public string? TkrConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SigConf")]
-        public string? SigConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrdConf")]
-        public string? TrdConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrmConf")]
-        public string? TrmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrgConf")]
-        public string? TrgConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VidScore")]
-        public double? VidScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("VidRankScore")]
-        public double? VidRankScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
-        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Categories")]
-        public System.Collections.Generic.IDictionary<string, string>? Categories { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AiSym")]
-        public DtoApiAiSym? AiSym { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiVideoSymbol
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Hits")]
-        public int? Hits { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiVideoTranscript
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("VideoId")]
-        public string? VideoId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrxSrc")]
-        public string? TrxSrc { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TextChars")]
-        public int? TextChars { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Text")]
-        public string? Text { get; set; } = default!;
+        /// <summary>
+        /// Slug of the parent category; null for a top-level category.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Parent")]
+        public string? Parent { get; set; } = default!;
+
+        /// <summary>
+        /// Articles filed under the category in the last 7 days.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Articles7d")]
+        public int? Articles7d { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1046,419 +119,542 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum NewsSortBy
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Newest")]
-        Newest = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Oldest")]
-        Oldest = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Fetched")]
-        Fetched = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Rank")]
-        Rank = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Score")]
-        Score = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum NwsCategory
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
-        NONE = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"News")]
-        News = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Social")]
-        Social = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Sentiment")]
-        Sentiment = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Onchain")]
-        Onchain = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Macro")]
-        Macro = 5,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OpCond
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"and")]
-        And = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"or")]
-        Or = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"all")]
-        All = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"in")]
-        In = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiNewsList
+    public partial class MoodDay
     {
 
         /// <summary>
-        /// Comma-separated ticker symbols. Returns articles that mention any of them.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Symbols")]
-        public string? Symbols { get; set; } = default!;
-
-        /// <summary>
-        /// Comma-separated topics. Returns articles filed under any of them.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Industries")]
-        public string? Industries { get; set; } = default!;
-
-        /// <summary>
-        /// Comma-separated category slugs, as returned by the news categories endpoints. Returns articles filed under any of them.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Categories")]
-        public string? Categories { get; set; } = default!;
-
-        /// <summary>
-        /// Comma-separated source key codes. Returns articles from any of those sources.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("KeyCodes")]
-        public string? KeyCodes { get; set; } = default!;
-
-        /// <summary>
-        /// Lowest article sentiment to include. Allowed values: Negative, Neutral, Positive.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("StmGte")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Sentiment>))]
-        public Sentiment? StmGte { get; set; } = default!;
-
-        /// <summary>
-        /// Highest article sentiment to include. Allowed values: Negative, Neutral, Positive.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("StmLte")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Sentiment>))]
-        public Sentiment? StmLte { get; set; } = default!;
-
-        /// <summary>
-        /// Return only articles published at or after this time (ISO 8601, UTC).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("PublishedAfter")]
-        public System.DateTimeOffset? PublishedAfter { get; set; } = default!;
-
-        /// <summary>
-        /// Text to find in article titles and body text.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Search")]
-        public string? Search { get; set; } = default!;
-
-        /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
-
-        /// <summary>
-        /// One-based page number. Default 1.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
-
-        /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
-
-        /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
-
-        /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
-
-        /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
-
-        /// <summary>
-        /// Optional field names to include in each returned row.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
-
-        /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
-
-        /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiSourceList
-    {
-
-        /// <summary>
-        /// Return only sources of this category. An unknown value is rejected.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<NwsCategory>))]
-        public NwsCategory? Category { get; set; } = default!;
-
-        /// <summary>
-        /// Return only active (true) or inactive (false) sources. Omit for both.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Active")]
-        public bool? Active { get; set; } = default!;
-
-        /// <summary>
-        /// Return only sources from this vendor (exact match).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Vendor")]
-        public string? Vendor { get; set; } = default!;
-
-        /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
-
-        /// <summary>
-        /// One-based page number. Default 1.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
-
-        /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
-
-        /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
-
-        /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
-
-        /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
-
-        /// <summary>
-        /// Optional field names to include in each returned row.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
-
-        /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
-
-        /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiVideoList
-    {
-
-        /// <summary>
-        /// Return only videos from the source with this key code.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("KeyCode")]
-        public string? KeyCode { get; set; } = default!;
-
-        /// <summary>
-        /// Video length filter. Allowed values: all, shorts, long (over two minutes).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Length")]
-        public string? Length { get; set; } = default!;
-
-        /// <summary>
-        /// Transcript filter. Allowed values: all, with, without.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Transcript")]
-        public string? Transcript { get; set; } = default!;
-
-        /// <summary>
-        /// Return only videos that mention this ticker symbol, for example AAPL.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        /// <summary>
-        /// Return only videos filed under this category slug.
+        /// Category slug.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Category")]
         public string? Category { get; set; } = default!;
 
         /// <summary>
-        /// Return only videos with this sentiment, such as Positive, Neutral or Negative.
+        /// Day, YYYY-MM-DD (UTC).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Day")]
+        public string? Day { get; set; } = default!;
+
+        /// <summary>
+        /// Articles filed under the category that day.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Articles")]
+        public int? Articles { get; set; } = default!;
+
+        /// <summary>
+        /// Articles read as bullish.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Bullish")]
+        public int? Bullish { get; set; } = default!;
+
+        /// <summary>
+        /// Articles read as bearish.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Bearish")]
+        public int? Bearish { get; set; } = default!;
+
+        /// <summary>
+        /// Articles read as neutral.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Neutral")]
+        public int? Neutral { get; set; } = default!;
+
+        /// <summary>
+        /// Articles not yet scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Unscored")]
+        public int? Unscored { get; set; } = default!;
+
+        /// <summary>
+        /// Bullish share of the scored articles, 0 to 100; null when none are scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Mood")]
+        public double? Mood { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NewsBrief
+    {
+
+        /// <summary>
+        /// Article id.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        /// <summary>
+        /// Headline.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Title")]
+        public string? Title { get; set; } = default!;
+
+        /// <summary>
+        /// Link to the article at its publisher.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
+
+        /// <summary>
+        /// Publisher name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Source")]
+        public string? Source { get; set; } = default!;
+
+        /// <summary>
+        /// Publication time, ISO 8601 UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Published")]
+        public System.DateTimeOffset? Published { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NewsCategoryRef
+    {
+
+        /// <summary>
+        /// Category slug, as listed by the categories endpoint.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Slug")]
+        public string? Slug { get; set; } = default!;
+
+        /// <summary>
+        /// Category name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NewsDetail
+    {
+
+        /// <summary>
+        /// Article id.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        /// <summary>
+        /// Headline.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Title")]
+        public string? Title { get; set; } = default!;
+
+        /// <summary>
+        /// Short excerpt from the article.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Blurb")]
+        public string? Blurb { get; set; } = default!;
+
+        /// <summary>
+        /// Link to the article at its publisher.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
+
+        /// <summary>
+        /// Publisher name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Source")]
+        public string? Source { get; set; } = default!;
+
+        /// <summary>
+        /// Publisher key.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SourceKey")]
+        public string? SourceKey { get; set; } = default!;
+
+        /// <summary>
+        /// Publication time, ISO 8601 UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Published")]
+        public System.DateTimeOffset? Published { get; set; } = default!;
+
+        /// <summary>
+        /// Main image address, when the article has one.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Image")]
+        public string? Image { get; set; } = default!;
+
+        /// <summary>
+        /// Ticker symbols the article is about.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
+        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
+
+        /// <summary>
+        /// Categories the article is filed under.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Categories")]
+        public System.Collections.Generic.ICollection<NewsCategoryRef>? Categories { get; set; } = default!;
+
+        /// <summary>
+        /// Reading of the article: Bullish, Bearish, Neutral or Unscored.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
         public string? Sentiment { get; set; } = default!;
 
         /// <summary>
-        /// Return only videos published at or after this time (ISO 8601, UTC).
+        /// Sentiment as a number: 1 bullish, -1 bearish, 0 neutral; null when unscored.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("PublishedAfter")]
-        public System.DateTimeOffset? PublishedAfter { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("SentimentScore")]
+        public int? SentimentScore { get; set; } = default!;
 
         /// <summary>
-        /// Text to find in video titles.
+        /// How much the article matters, from 0 to 10; null when not yet scored.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Search")]
-        public string? Search { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Materiality")]
+        public double? Materiality { get; set; } = default!;
 
         /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
+        /// Importance rank score from 0 to 10, adjusted for how sure the reading is; null when not yet scored.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
+        public double? Rank { get; set; } = default!;
 
         /// <summary>
-        /// One-based page number. Default 1.
+        /// Short summary written by FinNews when one exists.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Summary")]
+        public string? Summary { get; set; } = default!;
 
         /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
+        /// Full article text as collected.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Text")]
+        public string? Text { get; set; } = default!;
 
         /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
+        /// Author, when the publisher names one.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Author")]
+        public string? Author { get; set; } = default!;
 
         /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
+        /// Reading per ticker, when FinNews has rated the article.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("TickerRatings")]
+        public System.Collections.Generic.ICollection<TickerRating>? TickerRatings { get; set; } = default!;
 
         /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
+        /// Up to five related articles from the last week.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Similar")]
+        public System.Collections.Generic.ICollection<NewsBrief>? Similar { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NewsItem
+    {
 
         /// <summary>
-        /// Optional field names to include in each returned row.
+        /// Article id. Pass it to the article endpoint.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
 
         /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
+        /// Headline.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Title")]
+        public string? Title { get; set; } = default!;
 
         /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
+        /// Short excerpt from the article.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Blurb")]
+        public string? Blurb { get; set; } = default!;
 
         /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
+        /// Link to the article at its publisher.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
 
         /// <summary>
-        /// Result count used by paging responses.
+        /// Publisher name.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Source")]
+        public string? Source { get; set; } = default!;
+
+        /// <summary>
+        /// Publisher key, as listed by the sources endpoint and accepted by the src filter.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SourceKey")]
+        public string? SourceKey { get; set; } = default!;
+
+        /// <summary>
+        /// Publication time, ISO 8601 UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Published")]
+        public System.DateTimeOffset? Published { get; set; } = default!;
+
+        /// <summary>
+        /// Main image address, when the article has one.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Image")]
+        public string? Image { get; set; } = default!;
+
+        /// <summary>
+        /// Ticker symbols the article is about.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
+        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
+
+        /// <summary>
+        /// Categories the article is filed under.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Categories")]
+        public System.Collections.Generic.ICollection<NewsCategoryRef>? Categories { get; set; } = default!;
+
+        /// <summary>
+        /// Reading of the article: Bullish, Bearish, Neutral or Unscored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
+        public string? Sentiment { get; set; } = default!;
+
+        /// <summary>
+        /// Sentiment as a number: 1 bullish, -1 bearish, 0 neutral; null when unscored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SentimentScore")]
+        public int? SentimentScore { get; set; } = default!;
+
+        /// <summary>
+        /// How much the article matters, from 0 to 10; null when not yet scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Materiality")]
+        public double? Materiality { get; set; } = default!;
+
+        /// <summary>
+        /// Importance rank score from 0 to 10, adjusted for how sure the reading is; null when not yet scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Rank")]
+        public double? Rank { get; set; } = default!;
+
+        /// <summary>
+        /// Short summary written by FinNews when one exists.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Summary")]
+        public string? Summary { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NwsPageOfMoodDay
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<MoodDay>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NwsPageOfNewsItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<NewsItem>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NwsPageOfSentimentDay
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<SentimentDay>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NwsPageOfTrendingTicker
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<TrendingTicker>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class NwsPageOfVideoItem
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<VideoItem>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1505,11 +701,11 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResListOfDtoApiCate
+    public partial class ResListOfCategoryRef
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiCate>? Data { get; set; } = default!;
+        public System.Collections.Generic.ICollection<CategoryRef>? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("error")]
         public ResError? Error { get; set; } = default!;
@@ -1541,11 +737,11 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResListOfDtoApiCateCount
+    public partial class ResListOfSourceRef
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiCateCount>? Data { get; set; } = default!;
+        public System.Collections.Generic.ICollection<SourceRef>? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("error")]
         public ResError? Error { get; set; } = default!;
@@ -1604,374 +800,11 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiEntityHit
+    public partial class ResPonseOfNewsDetail
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiEntityHit>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiIndustryHit
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiIndustryHit>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiNews
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiNews>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiNewsLite
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiNewsLite>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiNwsEnumOption
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiNwsEnumOption>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSentimentAgg
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSentimentAgg>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSentimentPoint
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSentimentPoint>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSentimentTrend
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSentimentTrend>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSource
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSource>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiTrendItem
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiTrendItem>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiVideo
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiVideo>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiNewsDetail
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiNewsDetail? Data { get; set; } = default!;
+        public NewsDetail? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -2000,11 +833,11 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSourceDetail
+    public partial class ResPonseOfVideoItem
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSourceDetail? Data { get; set; } = default!;
+        public VideoItem? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -2033,26 +866,56 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiVideoDetail
+    public partial class SentimentDay
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiVideoDetail? Data { get; set; } = default!;
+        /// <summary>
+        /// Ticker symbol.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
+        /// <summary>
+        /// Day, YYYY-MM-DD (UTC).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Day")]
+        public string? Day { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
+        /// <summary>
+        /// Articles that day naming the ticker.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Articles")]
+        public int? Articles { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
+        /// <summary>
+        /// Articles read as bullish.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Bullish")]
+        public int? Bullish { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+        /// <summary>
+        /// Articles read as bearish.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Bearish")]
+        public int? Bearish { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
+        /// <summary>
+        /// Articles read as neutral.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Neutral")]
+        public int? Neutral { get; set; } = default!;
+
+        /// <summary>
+        /// Articles not yet scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Unscored")]
+        public int? Unscored { get; set; } = default!;
+
+        /// <summary>
+        /// Bullish share of the scored articles, 0 to 100; null when none are scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Mood")]
+        public double? Mood { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2066,26 +929,32 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiVideoTranscript
+    public partial class SourceRef
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiVideoTranscript? Data { get; set; } = default!;
+        /// <summary>
+        /// Publisher key, accepted by the src filter of the news list.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Key")]
+        public string? Key { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
+        /// <summary>
+        /// Publisher name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
+        /// <summary>
+        /// Kind of publisher, such as Crypto or Stocks; null when not classified.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Category")]
+        public string? Category { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
+        /// <summary>
+        /// Whether FinNews is collecting from this publisher now.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Active")]
+        public bool? Active { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2099,26 +968,26 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite
+    public partial class TickerRating
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<DtoApiNewsLite>>? Data { get; set; } = default!;
+        /// <summary>
+        /// Ticker symbol.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
+        /// <summary>
+        /// Reading for this ticker: Bullish, Bearish, Neutral or Unscored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
+        public string? Sentiment { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
+        /// <summary>
+        /// Signal strength from -10 (very strong sell) to 10 (very strong buy); null when the reading has no signal.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public int? Score { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2132,71 +1001,50 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum STy
+    public partial class TrendingTicker
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
-        NONE = 0,
+        /// <summary>
+        /// Ticker symbol.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"S")]
-        S = 1,
+        /// <summary>
+        /// Company or asset name, when known.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"M")]
-        M = 2,
+        /// <summary>
+        /// Articles naming the ticker in the window.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Mentions")]
+        public int? Mentions { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"L")]
-        L = 3,
+        /// <summary>
+        /// Percent change in mentions against the previous window of the same length; null when the previous window had none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Change")]
+        public double? Change { get; set; } = default!;
 
-    }
+        /// <summary>
+        /// Mentions read as bullish.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Bullish")]
+        public int? Bullish { get; set; } = default!;
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Sentiment
-    {
+        /// <summary>
+        /// Mentions read as bearish.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Bearish")]
+        public int? Bearish { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Neutral")]
-        Neutral = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Positive")]
-        Positive = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Negative")]
-        Negative = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SigDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Stm")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Sentiment>))]
-        public Sentiment? Stm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Sig")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? Sig { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trd")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
-        public Trend? Trd { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trm")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<STy>))]
-        public STy? Trm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trg")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TRange>))]
-        public TRange? Trg { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Conf")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? Conf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Why")]
-        public string? Why { get; set; } = default!;
+        /// <summary>
+        /// Bullish share of the scored mentions, 0 to 100; null when none are scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Mood")]
+        public double? Mood { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2210,128 +1058,110 @@ namespace Fin.News
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Signal
+    public partial class VideoCall
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"N")]
-        N = 0,
+        /// <summary>
+        /// Ticker symbol the video discusses.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"NB")]
-        NB = 1,
+        /// <summary>
+        /// Reading for this ticker: Bullish, Bearish, Neutral or Unscored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
+        public string? Sentiment { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"B")]
-        B = 2,
+        /// <summary>
+        /// How much the video matters for this ticker, 0 to 10; null when not scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"SB")]
-        SB = 3,
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"VSB")]
-        VSB = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSS")]
-        VSS = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SS")]
-        SS = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"S")]
-        S = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NS")]
-        NS = 8,
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum TRange
+    public partial class VideoItem
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
-        NONE = 0,
+        /// <summary>
+        /// Video id. Pass it to the video endpoint.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"S1_S10")]
-        S1_S10 = 1,
+        /// <summary>
+        /// Video title.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Title")]
+        public string? Title { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"S10_S30")]
-        S10_S30 = 2,
+        /// <summary>
+        /// Channel name.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Channel")]
+        public string? Channel { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"S30_S60")]
-        S30_S60 = 3,
+        /// <summary>
+        /// Link to the video.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"M1_M5")]
-        M1_M5 = 4,
+        /// <summary>
+        /// Publication time, ISO 8601 UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Published")]
+        public System.DateTimeOffset? Published { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"M5_M15")]
-        M5_M15 = 5,
+        /// <summary>
+        /// Length in seconds.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DurationSec")]
+        public int? DurationSec { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"M15_M60")]
-        M15_M60 = 6,
+        /// <summary>
+        /// View count, when known.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Views")]
+        public long? Views { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"H1_H3")]
-        H1_H3 = 7,
+        /// <summary>
+        /// How much the video matters, 0 to 10; null when not yet scored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"H3_H12")]
-        H3_H12 = 8,
+        /// <summary>
+        /// Short summary written by FinNews when one exists.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Summary")]
+        public string? Summary { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"H12_H24")]
-        H12_H24 = 9,
+        /// <summary>
+        /// What the video says about each ticker it discusses.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Calls")]
+        public System.Collections.Generic.ICollection<VideoCall>? Calls { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"D1_D3")]
-        D1_D3 = 10,
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"D3_D7")]
-        D3_D7 = 11,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"W1_W4")]
-        W1_W4 = 12,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"MO1_MO3")]
-        MO1_MO3 = 13,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"MO3_MO6")]
-        MO3_MO6 = 14,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"MO6_MO12")]
-        MO6_MO12 = 15,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Y1_Y3")]
-        Y1_Y3 = 16,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Y3_Y5")]
-        Y3_Y5 = 17,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Trend
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"N")]
-        N = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NU")]
-        NU = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"U")]
-        U = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SU")]
-        SU = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSU")]
-        VSU = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSD")]
-        VSD = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SD")]
-        SD = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"D")]
-        D = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"ND")]
-        ND = 8,
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 

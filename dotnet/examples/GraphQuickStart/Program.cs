@@ -14,18 +14,19 @@ using var fin = new FinClient(new FinClientOptions { Graph = new FinServiceOptio
 var exchanges = await fin.Graph.V1.Assets.ExchangesAsync();
 Console.WriteLine($"Exchanges: {exchanges.Data?.Count ?? 0}");
 
-// An /api call: charged in credits per call, on any plan. The query fields are named arguments.
-var tickers = await fin.Graph.Tickers.ListAsync(dax: DAX.BIN, quote: "USDT", limit: 5);
-foreach (var ticker in tickers.Data ?? [])
-    Console.WriteLine($"{ticker.Symbol} {ticker.LastPrice}");
+// US stocks by name: up to 50 symbols, sorted by one-day change, highest first. Names no row carries come back in NotFound.
+var stocks = await fin.Graph.Markets.EqtUsaAsync(syms: "NVDA,MSFT,BCDA", sort: "-chg1d");
+foreach (var stock in stocks.Data ?? [])
+    Console.WriteLine($"{stock.Sym} {stock.Price} {stock.Signal}");
+Console.WriteLine($"Not found: {string.Join(", ", stocks.NotFound ?? [])}");
 
 // Path arguments are positional.
 var detail = await fin.Graph.Tickers.ViewAsync("BTCUSDT");
 Console.WriteLine(detail.Data?.Symbol);
 
-// A list that pages by limit and offset: the iterator moves offset on until a page comes back empty.
+// A list pages with page and size: the iterator moves page on until the last page the paging block names.
 var shown = 0;
-await foreach (var asset in fin.Graph.Assets.ListItemsAsync(dax: DAX.BIN, limit: 100))
+await foreach (var asset in fin.Graph.Assets.ListItemsAsync(exchange: "BINANCE", size: 50))
 {
     Console.WriteLine(asset.Symbol);
     if (++shown >= 250) break;

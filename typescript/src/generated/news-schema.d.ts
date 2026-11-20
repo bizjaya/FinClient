@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/api/categories/counts": {
+    "/api/categories": {
         parameters: {
             query?: never;
             header?: never;
@@ -12,10 +12,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * News category article counts
-         * @description Returns every enabled news category with its stable slug, its parent and its current article count.
+         * List categories
+         * @description Returns the news category tree as rows with a Parent slug, and how many articles each category got in the last 7 days.
          */
-        get: operations["Api_CategoriesController_Counts"];
+        get: operations["Api_Categories_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -24,7 +24,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/categories/flat": {
+    "/api/mood": {
         parameters: {
             query?: never;
             header?: never;
@@ -32,90 +32,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List news categories (flat)
-         * @description Returns every enabled news category as a flat list. Each entry has a stable slug, its parent id and its name; use the slug, not the id, to refer to a category.
+         * Market mood by category
+         * @description Returns, for each news category and day, how many articles were filed under it and how many read bullish, bearish, neutral or unscored, with a mood from 0 to 100. An article counts in every category it is filed under.
          */
-        get: operations["Api_CategoriesController_Flat"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/categories/tree": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List news categories (tree)
-         * @description Returns the enabled news categories as a tree: top-level categories with their sub-categories nested under Children.
-         */
-        get: operations["Api_CategoriesController_Tree"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/entities/industries": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Top industries
-         * @description Returns the most frequently mentioned topics, used as an industry list, ranked by frequency.
-         */
-        get: operations["Api_EntitiesController_Industries"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/entities/search": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Search news entities
-         * @description Finds tickers and topics whose name starts with the given text, ranked by how often they appear in recent news.
-         */
-        get: operations["Api_EntitiesController_Search"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/entities/types": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * News entity types
-         * @description Lists the entity types used by the news data, such as tickers and topics.
-         */
-        get: operations["Api_EntitiesController_Types"];
+        get: operations["Api_Mood_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -132,10 +52,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List news articles
-         * @description Returns a paged, filterable feed of news articles with their sentiment and signal grades.
+         * List news
+         * @description Lists news articles, newest first, with tickers, categories, sentiment, importance and a summary when one exists. Filter by ticker, category, publisher, time, text, importance and sentiment; sort by time, rank or score; 50 rows a page.
          */
-        get: operations["Api_NewsController_List"];
+        get: operations["Api_News_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -144,127 +64,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/news/group/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * News grouped by category
-         * @description Returns articles grouped by category slug, as an object keyed by category slug. When no keys are given, the keys with the most articles in the window are used. Use the slug, not the numeric id, to name a category.
-         */
-        get: operations["Api_NewsController_GroupCategoryList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/news/group/sources": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * News grouped by source
-         * @description Returns articles grouped by source key code, as an object keyed by source key code. When no keys are given, the keys with the most articles in the window are used. For the source catalogue itself, use the sources endpoints.
-         */
-        get: operations["Api_NewsController_GroupSourceList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/news/group/tickers": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * News grouped by ticker
-         * @description Returns articles grouped by ticker, as an object keyed by ticker. When no keys are given, the keys with the most articles in the window are used.
-         */
-        get: operations["Api_NewsController_GroupTickerList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/news/group/topics": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * News grouped by topic
-         * @description Returns articles grouped by topic, as an object keyed by topic. When no keys are given, the keys with the most articles in the window are used.
-         */
-        get: operations["Api_NewsController_GroupTopicList"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/news/id/{newsId}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * View news article by NewsId
-         * @description Returns one article's full detail, looked up by its NewsId. The checksum remains the main public identifier of an article.
-         */
-        get: operations["Api_NewsController_ById"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/news/trending": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Trending news articles
-         * @description Returns articles ranked by their confidence-adjusted importance score within the window. To rank tickers and topics by how often they are mentioned, use the trending endpoints instead.
-         */
-        get: operations["Api_NewsController_Trending"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/news/{checksum}": {
+    "/api/news/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -273,9 +73,9 @@ export interface paths {
         };
         /**
          * View news article
-         * @description Returns one article's full detail, looked up by its checksum.
+         * @description Returns one article with its full text, author, a reading per ticker and up to five related articles.
          */
-        get: operations["Api_NewsController_View"];
+        get: operations["Api_News_View"];
         put?: never;
         post?: never;
         delete?: never;
@@ -284,27 +84,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/news/{checksum}/rating": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Rate news article
-         * @description Requests an AI rating for one article, reusing the cached rating when one exists, and returns the article detail including it.
-         */
-        post: operations["Api_NewsController_RatingMake"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/news/{checksum}/similar": {
+    "/api/sentiment/history": {
         parameters: {
             query?: never;
             header?: never;
@@ -312,70 +92,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Similar news articles
-         * @description Returns articles that share tickers or topics with the given article, published within a 7-day window.
+         * Sentiment history
+         * @description Returns, for each ticker and day, how many articles named it and how many read bullish, bearish, neutral or unscored, with a mood from 0 to 100 (the bullish share of the scored articles).
          */
-        get: operations["Api_NewsController_Similar"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sentiment/aggregate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Sentiment aggregate
-         * @description Returns sentiment aggregated by news category and day.
-         */
-        get: operations["Api_SentimentController_Aggregate"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sentiment/trending": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Trending sentiment tickers
-         * @description Returns the tickers with the largest article volume in the recent window, ranked by sentiment.
-         */
-        get: operations["Api_SentimentController_Trending"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sentiment/{symbol}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Ticker sentiment series
-         * @description Returns the sentiment and signal time series for one ticker symbol.
-         */
-        get: operations["Api_SentimentController_BySymbol"];
+        get: operations["Api_Sentiment_History"];
         put?: never;
         post?: never;
         delete?: never;
@@ -392,10 +112,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List news sources
-         * @description Returns the catalogue of news sources, paged, with optional category, activity and vendor filters.
+         * List sources
+         * @description Returns the publishers FinNews collects news from, with their key, name, kind and whether they are active.
          */
-        get: operations["Api_SourcesController_List"];
+        get: operations["Api_Sources_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -404,47 +124,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/sources/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * News source categories
-         * @description Lists the categories a news source can have.
-         */
-        get: operations["Api_SourcesController_Categories"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/sources/{keycode}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * View news source
-         * @description Returns the detail card of one news source, including its latest run status.
-         */
-        get: operations["Api_SourcesController_View"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/trending/tickers": {
+    "/api/trending": {
         parameters: {
             query?: never;
             header?: never;
@@ -453,29 +133,9 @@ export interface paths {
         };
         /**
          * Trending tickers
-         * @description Returns tickers ranked by how often they are mentioned within the window. Hours sets the window; mentions are not weighted by recency inside it.
+         * @description Returns the tickers named in the most articles in the window, with the change in mentions against the previous window and how many mentions read bullish or bearish.
          */
-        get: operations["Api_TrendingController_Tickers"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/trending/topics": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Trending topics
-         * @description Returns topics ranked by how often they are mentioned within the window. Hours sets the window; mentions are not weighted by recency inside it.
-         */
-        get: operations["Api_TrendingController_Topics"];
+        get: operations["Api_Trending_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -493,9 +153,9 @@ export interface paths {
         };
         /**
          * List videos
-         * @description Returns a paged video feed with optional score, transcript, symbol and category filters.
+         * @description Lists finance videos with FinNews's score, a summary when one exists and what each video says about the tickers it discusses. Filter by ticker, channel, time and score; sort by time or score; 50 rows a page. Transcripts are not served.
          */
-        get: operations["Api_VideosController_List"];
+        get: operations["Api_Videos_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -504,7 +164,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/videos/{videoId}": {
+    "/api/videos/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -513,9 +173,9 @@ export interface paths {
         };
         /**
          * View video
-         * @description Returns one video's detail, looked up by its YouTube video id. The transcript is served by a separate endpoint.
+         * @description Returns one video with its score, summary and what it says about each ticker it discusses. No transcript.
          */
-        get: operations["Api_VideosController_View"];
+        get: operations["Api_Videos_View"];
         put?: never;
         post?: never;
         delete?: never;
@@ -524,27 +184,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/videos/{videoId}/rating": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Rate video
-         * @description Requests an AI rating for one video, reusing the cached rating when one exists, and returns the video detail including it.
-         */
-        post: operations["Api_VideosController_RatingMake"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/videos/{videoId}/transcript": {
+    "/v1/categories": {
         parameters: {
             query?: never;
             header?: never;
@@ -552,10 +192,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * View video transcript
-         * @description Returns the transcript of one video. It is loaded only when requested.
+         * List categories
+         * @description Returns the news category tree as rows with a Parent slug, and how many articles each category got in the last 7 days. Needs a Basic plan or above.
          */
-        get: operations["Api_VideosController_Transcript"];
+        get: operations["Pub_Categories_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -564,7 +204,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/entities/industries": {
+    "/v1/mood": {
         parameters: {
             query?: never;
             header?: never;
@@ -572,10 +212,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Top industries
-         * @description Returns the most frequently mentioned topics, used as an industry list, ranked by frequency.
+         * Market mood by category
+         * @description Returns, for each news category and day, how many articles were filed under it and how many read bullish, bearish, neutral or unscored, with a mood from 0 to 100. An article counts in every category it is filed under. Needs a Basic plan or above.
          */
-        get: operations["Pub_EntitiesController_Industries"];
+        get: operations["Pub_Mood_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -584,7 +224,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/entities/search": {
+    "/v1/news": {
         parameters: {
             query?: never;
             header?: never;
@@ -592,10 +232,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Search news entities
-         * @description Finds tickers and topics whose name starts with the given text, ranked by how often they appear in recent news.
+         * List news
+         * @description Lists news articles, newest first, with tickers, categories, sentiment, importance and a summary when one exists. Filter by ticker, category, publisher, time, text, importance and sentiment; sort by time, rank or score; 50 rows a page. Needs a Basic plan or above.
          */
-        get: operations["Pub_EntitiesController_Search"];
+        get: operations["Pub_News_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -604,7 +244,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/entities/types": {
+    "/v1/news/{id}": {
         parameters: {
             query?: never;
             header?: never;
@@ -612,10 +252,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * News entity types
-         * @description Lists the entity types used by the news data, such as tickers and topics.
+         * View news article
+         * @description Returns one article with its full text, author, a reading per ticker and up to five related articles. Needs a Basic plan or above.
          */
-        get: operations["Pub_EntitiesController_Types"];
+        get: operations["Pub_News_View"];
         put?: never;
         post?: never;
         delete?: never;
@@ -624,7 +264,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/news/all": {
+    "/v1/sentiment/history": {
         parameters: {
             query?: never;
             header?: never;
@@ -632,110 +272,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * All news
-         * @description Returns a paged, filterable feed of news articles with their sentiment and signal grades.
+         * Sentiment history
+         * @description Returns, for each ticker and day, how many articles named it and how many read bullish, bearish, neutral or unscored, with a mood from 0 to 100 (the bullish share of the scored articles). Needs a Basic plan or above.
          */
-        get: operations["Pub_NewsController_All"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/news/checksum/{checksum}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * News by checksum
-         * @description Returns one article's full detail, looked up by its checksum.
-         */
-        get: operations["Pub_NewsController_ByChecksum"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/news/similar/{checksum}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Similar news articles
-         * @description Returns articles that share tickers or topics with the given article, published within a 7-day window.
-         */
-        get: operations["Pub_NewsController_Similar"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/sentiment/aggregate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Sentiment aggregate
-         * @description Returns sentiment aggregated by news category and day.
-         */
-        get: operations["Pub_SentimentController_Aggregate"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/sentiment/ticker/{symbol}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Ticker sentiment series
-         * @description Returns the sentiment and signal time series for one ticker symbol.
-         */
-        get: operations["Pub_SentimentController_Ticker"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/sentiment/trending": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Trending sentiment tickers
-         * @description Returns the tickers with the largest article volume in the recent window, ranked by sentiment.
-         */
-        get: operations["Pub_SentimentController_Trending"];
+        get: operations["Pub_Sentiment_History"];
         put?: never;
         post?: never;
         delete?: never;
@@ -752,10 +292,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * List news sources
-         * @description Returns the catalogue of news sources, paged, with optional category, activity and vendor filters.
+         * List sources
+         * @description Returns the publishers FinNews collects news from, with their key, name, kind and whether they are active. Needs a Basic plan or above.
          */
-        get: operations["Pub_SourcesController_List"];
+        get: operations["Pub_Sources_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -764,47 +304,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/sources/categories": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * News source categories
-         * @description Lists the categories a news source can have.
-         */
-        get: operations["Pub_SourcesController_Categories"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/sources/{keycode}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * View news source
-         * @description Returns the detail card of one news source. The run-status fields are filled only on higher package tiers and are null otherwise.
-         */
-        get: operations["Pub_SourcesController_Get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/tickers/trending": {
+    "/v1/trending": {
         parameters: {
             query?: never;
             header?: never;
@@ -813,9 +313,9 @@ export interface paths {
         };
         /**
          * Trending tickers
-         * @description Returns tickers ranked by how often they are mentioned within the window. Hours sets the window; mentions are not weighted by recency inside it.
+         * @description Returns the tickers named in the most articles in the window, with the change in mentions against the previous window and how many mentions read bullish or bearish. Needs a Basic plan or above.
          */
-        get: operations["Pub_TrendingController_TickersTrending"];
+        get: operations["Pub_Trending_List"];
         put?: never;
         post?: never;
         delete?: never;
@@ -824,7 +324,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/topics": {
+    "/v1/videos": {
         parameters: {
             query?: never;
             header?: never;
@@ -832,10 +332,30 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Trending topics
-         * @description Returns topics ranked by how often they are mentioned within the window. Hours sets the window; mentions are not weighted by recency inside it.
+         * List videos
+         * @description Lists finance videos with FinNews's score, a summary when one exists and what each video says about the tickers it discusses. Filter by ticker, channel, time and score; sort by time or score; 50 rows a page. Transcripts are not served. Needs a Basic plan or above.
          */
-        get: operations["Pub_TrendingController_Topics"];
+        get: operations["Pub_Videos_List"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/videos/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * View video
+         * @description Returns one video with its score, summary and what it says about each ticker it discusses. No transcript. Needs a Basic plan or above.
+         */
+        get: operations["Pub_Videos_View"];
         put?: never;
         post?: never;
         delete?: never;
@@ -848,314 +368,18 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        CmdApiRatingMake: {
-            /** @description Optional. The partner site the rating is requested for, for example finquest. Leave empty when you call for yourself. */
-            ReqSite?: string | null;
+        CategoryRef: {
+            /** @description Category slug. */
+            Slug?: string | null;
+            /** @description Category name. */
+            Name?: string | null;
+            /** @description Slug of the parent category; null for a top-level category. */
+            Parent?: string | null;
             /**
-             * Format: int64
-             * @description Optional. The partner site's member number the rating is requested for; it is recorded as who asked. Leave empty when you call for yourself. The call is always charged to the key's owner.
+             * Format: int32
+             * @description Articles filed under the category in the last 7 days.
              */
-            ReqUsno?: number | null;
-        };
-        /** @enum {string} */
-        Confidence: "None" | "VLow" | "Low" | "Med" | "High" | "VHigh";
-        DtoApiAiRating: {
-            Summ?: string | null;
-            Grade?: components["schemas"]["SigDto"] | null;
-            SymRating?: {
-                [key: string]: components["schemas"]["SigDto"];
-            } | null;
-            PromptKey?: string | null;
-            Model?: string | null;
-            /** Format: date-time */
-            RatedAt?: string;
-            Cached?: boolean;
-        };
-        DtoApiAiSym: {
-            SymRating?: {
-                [key: string]: components["schemas"]["SigDto"];
-            } | null;
-            /** Format: date-time */
-            RatedAt?: string | null;
-            Hits?: {
-                [key: string]: number;
-            } | null;
-        };
-        DtoApiCate: {
-            /** Format: int64 */
-            Id?: number;
-            /** Format: int64 */
-            ParentId?: number | null;
-            Slug?: string | null;
-            Name?: string | null;
-            Children?: components["schemas"]["DtoApiCate"][] | null;
-        };
-        DtoApiCateCount: {
-            Slug?: string | null;
-            Name?: string | null;
-            /** Format: int64 */
-            ParentId?: number | null;
-            /** Format: int64 */
-            ArticleCount?: number;
-        };
-        DtoApiEntityHit: {
-            Entity?: string | null;
-            /** Format: int32 */
-            Count?: number;
-        };
-        DtoApiIndustryHit: {
-            Topic?: string | null;
-            /** Format: int32 */
-            Count?: number;
-        };
-        DtoApiNews: {
-            Checksum?: string | null;
-            /** Format: uuid */
-            NewsId?: string;
-            Title?: string | null;
-            Blurb?: string | null;
-            RankScore?: number | null;
-            Url?: string | null;
-            Source?: string | null;
-            KeyCode?: string | null;
-            /** Format: date-time */
-            Published?: string;
-            MainImage?: string | null;
-            Tickers?: string[] | null;
-            Topics?: string[] | null;
-            Sentiment?: string | null;
-            Signal?: string | null;
-            Categories?: {
-                [key: string]: string;
-            } | null;
-            Trend?: string | null;
-            Term?: string | null;
-            Range?: string | null;
-            NewsScore?: number | null;
-            CateConf?: string | null;
-            StmConf?: string | null;
-            TkrConf?: string | null;
-            SigConf?: string | null;
-            TrdConf?: string | null;
-            TrmConf?: string | null;
-            TrgConf?: string | null;
-            AiSym?: components["schemas"]["DtoApiAiSym"] | null;
-        };
-        DtoApiNewsDetail: {
-            Checksum?: string | null;
-            /** Format: uuid */
-            NewsId?: string;
-            Title?: string | null;
-            Blurb?: string | null;
-            Text?: string | null;
-            Url?: string | null;
-            Author?: string | null;
-            Source?: string | null;
-            KeyCode?: string | null;
-            /** Format: date-time */
-            Published?: string;
-            /** Format: date-time */
-            Fetched?: string;
-            MainImage?: string | null;
-            ExtImages?: string[] | null;
-            Tickers?: string[] | null;
-            Topics?: string[] | null;
-            Sentiment?: string | null;
-            Signal?: string | null;
-            Trend?: string | null;
-            Term?: string | null;
-            Range?: string | null;
-            NewsScore?: number | null;
-            RankScore?: number | null;
-            NewsStmt?: string | null;
-            Categories?: {
-                [key: string]: string;
-            } | null;
-            CateConf?: string | null;
-            StmConf?: string | null;
-            TkrConf?: string | null;
-            SigConf?: string | null;
-            TrdConf?: string | null;
-            TrmConf?: string | null;
-            TrgConf?: string | null;
-            AiRating?: components["schemas"]["DtoApiAiRating"] | null;
-        };
-        DtoApiNewsLite: {
-            Checksum?: string | null;
-            Title?: string | null;
-            Blurb?: string | null;
-            Url?: string | null;
-            Source?: string | null;
-            /** Format: date-time */
-            Published?: string;
-            Tickers?: string[] | null;
-            Topics?: string[] | null;
-            Sentiment?: string | null;
-        };
-        DtoApiNwsEnumOption: {
-            /** Format: int32 */
-            Value?: number;
-            Name?: string | null;
-        };
-        DtoApiSentimentAgg: {
-            Category?: string | null;
-            Day?: string | null;
-            /** Format: int32 */
-            Count?: number;
-            /** Format: double */
-            AvgStm?: number | null;
-            /** Format: int32 */
-            GradedCount?: number;
-            /** Format: double */
-            AvgSig?: number | null;
-        };
-        DtoApiSentimentPoint: {
-            Checksum?: string | null;
-            Title?: string | null;
-            /** Format: date-time */
-            Published?: string;
-            Sentiment?: string | null;
-            Signal?: string | null;
-            Trend?: string | null;
-            Term?: string | null;
-            Range?: string | null;
-        };
-        DtoApiSentimentTrend: {
-            Ticker?: string | null;
-            /** Format: int32 */
-            Count?: number;
-            /** Format: double */
-            AvgStm?: number | null;
-            /** Format: int32 */
-            GradedCount?: number;
-            /** Format: double */
-            AvgSig?: number | null;
-        };
-        DtoApiSource: {
-            KeyCode?: string | null;
-            Name?: string | null;
-            Category?: string | null;
-            Vendor?: string | null;
-            Active?: boolean;
-            Schedule?: string | null;
-        };
-        DtoApiSourceDetail: {
-            KeyCode?: string | null;
-            Name?: string | null;
-            Category?: string | null;
-            Vendor?: string | null;
-            SrcFormat?: string | null;
-            Url?: string | null;
-            ItemsPath?: string | null;
-            Active?: boolean;
-            Schedule?: string | null;
-            HashIdRule?: string[] | null;
-            Notes?: string | null;
-            /** Format: date-time */
-            LastRunAt?: string | null;
-            LastRunOk?: boolean | null;
-            LastRunMessage?: string | null;
-            /** Format: int32 */
-            LastFetchedCnt?: number | null;
-            /** Format: int32 */
-            LastInsertedCnt?: number | null;
-            LastRunUrl?: string | null;
-        };
-        DtoApiTrendItem: {
-            Key?: string | null;
-            /** Format: int32 */
-            Mentions?: number;
-            /** Format: date-time */
-            LastSeen?: string | null;
-            /** Format: double */
-            AvgStm?: number | null;
-            /** Format: int32 */
-            GradedCount?: number;
-        };
-        DtoApiVideo: {
-            VideoId?: string | null;
-            Channel?: string | null;
-            KeyCode?: string | null;
-            Title?: string | null;
-            Url?: string | null;
-            ThumbUrl?: string | null;
-            /** Format: date-time */
-            PublishedAt?: string;
-            /** Format: int32 */
-            DurationSec?: number;
-            IsShort?: boolean;
-            TrxSrc?: string | null;
-            /** Format: int32 */
-            TextChars?: number;
-            FinStm?: string | null;
-            FinSig?: string | null;
-            FinTrd?: string | null;
-            FinTrm?: string | null;
-            FinTrg?: string | null;
-            CateConf?: string | null;
-            StmConf?: string | null;
-            TkrConf?: string | null;
-            SigConf?: string | null;
-            TrdConf?: string | null;
-            TrmConf?: string | null;
-            TrgConf?: string | null;
-            VidScore?: number | null;
-            VidRankScore?: number | null;
-            Tickers?: string[] | null;
-            Categories?: {
-                [key: string]: string;
-            } | null;
-            AiSym?: components["schemas"]["DtoApiAiSym"] | null;
-        };
-        DtoApiVideoDetail: {
-            Summ?: string | null;
-            Symbols?: components["schemas"]["DtoApiVideoSymbol"][] | null;
-            AiRating?: components["schemas"]["DtoApiAiRating"] | null;
-            VideoId?: string | null;
-            Channel?: string | null;
-            KeyCode?: string | null;
-            Title?: string | null;
-            Url?: string | null;
-            ThumbUrl?: string | null;
-            /** Format: date-time */
-            PublishedAt?: string;
-            /** Format: int32 */
-            DurationSec?: number;
-            IsShort?: boolean;
-            TrxSrc?: string | null;
-            /** Format: int32 */
-            TextChars?: number;
-            FinStm?: string | null;
-            FinSig?: string | null;
-            FinTrd?: string | null;
-            FinTrm?: string | null;
-            FinTrg?: string | null;
-            CateConf?: string | null;
-            StmConf?: string | null;
-            TkrConf?: string | null;
-            SigConf?: string | null;
-            TrdConf?: string | null;
-            TrmConf?: string | null;
-            TrgConf?: string | null;
-            VidScore?: number | null;
-            VidRankScore?: number | null;
-            Tickers?: string[] | null;
-            Categories?: {
-                [key: string]: string;
-            } | null;
-            AiSym?: components["schemas"]["DtoApiAiSym"] | null;
-        };
-        DtoApiVideoSymbol: {
-            Symbol?: string | null;
-            /** Format: int32 */
-            Hits?: number;
-        };
-        DtoApiVideoTranscript: {
-            VideoId?: string | null;
-            TrxSrc?: string | null;
-            /** Format: int32 */
-            TextChars?: number;
-            Text?: string | null;
+            Articles7d?: number;
         };
         FinApiError: {
             /** @description Machine-readable code, such as invalid_api_key, insufficient_credits or package_not_allowed. */
@@ -1171,184 +395,193 @@ export interface components {
             /** @description On per-category limits: the package tier of the caller. */
             tier?: string;
         };
-        /** @enum {string} */
-        NewsSortBy: "Newest" | "Oldest" | "Fetched" | "Rank" | "Score";
-        /** @enum {string} */
-        NwsCategory: "NONE" | "News" | "Social" | "Sentiment" | "Onchain" | "Macro";
-        /** @enum {string} */
-        OpCond: "and" | "or" | "all" | "in";
-        QueApiNewsList: {
-            /** @description Comma-separated ticker symbols. Returns articles that mention any of them. */
-            Symbols?: string | null;
-            /** @description Comma-separated topics. Returns articles filed under any of them. */
-            Industries?: string | null;
-            /** @description Comma-separated category slugs, as returned by the news categories endpoints. Returns articles filed under any of them. */
-            Categories?: string | null;
-            /** @description Comma-separated source key codes. Returns articles from any of those sources. */
-            KeyCodes?: string | null;
-            /** @description Lowest article sentiment to include. Allowed values: Negative, Neutral, Positive. */
-            StmGte?: components["schemas"]["Sentiment"] | null;
-            /** @description Highest article sentiment to include. Allowed values: Negative, Neutral, Positive. */
-            StmLte?: components["schemas"]["Sentiment"] | null;
+        MoodDay: {
+            /** @description Category slug. */
+            Category?: string | null;
+            /** @description Day, YYYY-MM-DD (UTC). */
+            Day?: string | null;
+            /**
+             * Format: int32
+             * @description Articles filed under the category that day.
+             */
+            Articles?: number;
+            /**
+             * Format: int32
+             * @description Articles read as bullish.
+             */
+            Bullish?: number;
+            /**
+             * Format: int32
+             * @description Articles read as bearish.
+             */
+            Bearish?: number;
+            /**
+             * Format: int32
+             * @description Articles read as neutral.
+             */
+            Neutral?: number;
+            /**
+             * Format: int32
+             * @description Articles not yet scored.
+             */
+            Unscored?: number;
+            /** @description Bullish share of the scored articles, 0 to 100; null when none are scored. */
+            Mood?: number | null;
+        };
+        NewsBrief: {
+            /** @description Article id. */
+            Id?: string | null;
+            /** @description Headline. */
+            Title?: string | null;
+            /** @description Link to the article at its publisher. */
+            Url?: string | null;
+            /** @description Publisher name. */
+            Source?: string | null;
             /**
              * Format: date-time
-             * @description Return only articles published at or after this time (ISO 8601, UTC).
+             * @description Publication time, ISO 8601 UTC.
              */
-            PublishedAfter?: string | null;
-            /** @description Text to find in article titles and body text. */
-            Search?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
-            /**
-             * Format: int32
-             * @description One-based page number. Default 1.
-             */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
-            /**
-             * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
-             */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
+            Published?: string;
         };
-        QueApiSourceList: {
-            /** @description Return only sources of this category. An unknown value is rejected. */
-            Category?: components["schemas"]["NwsCategory"] | null;
-            /** @description Return only active (true) or inactive (false) sources. Omit for both. */
-            Active?: boolean | null;
-            /** @description Return only sources from this vendor (exact match). */
-            Vendor?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
-            /**
-             * Format: int32
-             * @description One-based page number. Default 1.
-             */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
-            /**
-             * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
-             */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
+        NewsCategoryRef: {
+            /** @description Category slug, as listed by the categories endpoint. */
+            Slug?: string | null;
+            /** @description Category name. */
+            Name?: string | null;
         };
-        QueApiVideoList: {
-            /** @description Return only videos from the source with this key code. */
-            KeyCode?: string | null;
-            /** @description Video length filter. Allowed values: all, shorts, long (over two minutes). */
-            Length?: string | null;
-            /** @description Transcript filter. Allowed values: all, with, without. */
-            Transcript?: string | null;
-            /** @description Return only videos that mention this ticker symbol, for example AAPL. */
-            Symbol?: string | null;
-            /** @description Return only videos filed under this category slug. */
-            Category?: string | null;
-            /** @description Return only videos with this sentiment, such as Positive, Neutral or Negative. */
+        NewsDetail: {
+            /** @description Article id. */
+            Id?: string | null;
+            /** @description Headline. */
+            Title?: string | null;
+            /** @description Short excerpt from the article. */
+            Blurb?: string | null;
+            /** @description Link to the article at its publisher. */
+            Url?: string | null;
+            /** @description Publisher name. */
+            Source?: string | null;
+            /** @description Publisher key. */
+            SourceKey?: string | null;
+            /**
+             * Format: date-time
+             * @description Publication time, ISO 8601 UTC.
+             */
+            Published?: string;
+            /** @description Main image address, when the article has one. */
+            Image?: string | null;
+            /** @description Ticker symbols the article is about. */
+            Tickers?: string[] | null;
+            /** @description Categories the article is filed under. */
+            Categories?: components["schemas"]["NewsCategoryRef"][] | null;
+            /** @description Reading of the article: Bullish, Bearish, Neutral or Unscored. */
             Sentiment?: string | null;
             /**
+             * Format: int32
+             * @description Sentiment as a number: 1 bullish, -1 bearish, 0 neutral; null when unscored.
+             */
+            SentimentScore?: number | null;
+            /** @description How much the article matters, from 0 to 10; null when not yet scored. */
+            Materiality?: number | null;
+            /** @description Importance rank score from 0 to 10, adjusted for how sure the reading is; null when not yet scored. */
+            Rank?: number | null;
+            /** @description Short summary written by FinNews when one exists. */
+            Summary?: string | null;
+            /** @description Full article text as collected. */
+            Text?: string | null;
+            /** @description Author, when the publisher names one. */
+            Author?: string | null;
+            /** @description Reading per ticker, when FinNews has rated the article. */
+            TickerRatings?: components["schemas"]["TickerRating"][] | null;
+            /** @description Up to five related articles from the last week. */
+            Similar?: components["schemas"]["NewsBrief"][] | null;
+        };
+        NewsItem: {
+            /** @description Article id. Pass it to the article endpoint. */
+            Id?: string | null;
+            /** @description Headline. */
+            Title?: string | null;
+            /** @description Short excerpt from the article. */
+            Blurb?: string | null;
+            /** @description Link to the article at its publisher. */
+            Url?: string | null;
+            /** @description Publisher name. */
+            Source?: string | null;
+            /** @description Publisher key, as listed by the sources endpoint and accepted by the src filter. */
+            SourceKey?: string | null;
+            /**
              * Format: date-time
-             * @description Return only videos published at or after this time (ISO 8601, UTC).
+             * @description Publication time, ISO 8601 UTC.
              */
-            PublishedAfter?: string | null;
-            /** @description Text to find in video titles. */
-            Search?: string | null;
-            /** @description How the search triplets in srchBy combine: and, or, all or in. */
-            cond?: components["schemas"]["OpCond"];
+            Published?: string;
+            /** @description Main image address, when the article has one. */
+            Image?: string | null;
+            /** @description Ticker symbols the article is about. */
+            Tickers?: string[] | null;
+            /** @description Categories the article is filed under. */
+            Categories?: components["schemas"]["NewsCategoryRef"][] | null;
+            /** @description Reading of the article: Bullish, Bearish, Neutral or Unscored. */
+            Sentiment?: string | null;
             /**
              * Format: int32
-             * @description One-based page number. Default 1.
+             * @description Sentiment as a number: 1 bullish, -1 bearish, 0 neutral; null when unscored.
              */
-            pageNo?: number;
-            /**
-             * Format: int32
-             * @description Rows per page, from 1 to 100. Default 100.
-             */
-            pageSize?: number;
-            /**
-             * Format: int64
-             * @description Optional client counter that is echoed back with the paging result.
-             */
-            draw?: number | null;
-            /** @description Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]. */
-            sortBy?: string[][] | null;
-            /** @description Search triplets. Each is a field name, a comparison operator and a value, combined using cond. */
-            srchBy?: string[][] | null;
-            /** @description Optional field names to include in each returned row. */
-            include?: string[] | null;
-            /** @description Raw filter document. Prefer the typed filters of the endpoint. */
-            srch?: {
-                [key: string]: unknown;
-            } | null;
-            /** @description Raw sort document. Prefer sortBy pairs. */
-            sort?: {
-                [key: string]: unknown;
-            } | null;
-            /**
-             * Format: int32
-             * @description Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-             */
-            pageOff?: number;
-            /**
-             * Format: int32
-             * @description Result count used by paging responses.
-             */
-            resCount?: number;
+            SentimentScore?: number | null;
+            /** @description How much the article matters, from 0 to 10; null when not yet scored. */
+            Materiality?: number | null;
+            /** @description Importance rank score from 0 to 10, adjusted for how sure the reading is; null when not yet scored. */
+            Rank?: number | null;
+            /** @description Short summary written by FinNews when one exists. */
+            Summary?: string | null;
+        };
+        NwsPageOfMoodDay: {
+            NotFound?: string[] | null;
+            data?: components["schemas"]["MoodDay"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        NwsPageOfNewsItem: {
+            NotFound?: string[] | null;
+            data?: components["schemas"]["NewsItem"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        NwsPageOfSentimentDay: {
+            NotFound?: string[] | null;
+            data?: components["schemas"]["SentimentDay"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        NwsPageOfTrendingTicker: {
+            NotFound?: string[] | null;
+            data?: components["schemas"]["TrendingTicker"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        NwsPageOfVideoItem: {
+            NotFound?: string[] | null;
+            data?: components["schemas"]["VideoItem"][] | null;
+            paging?: components["schemas"]["ResPage"] | null;
+            /** Format: int32 */
+            code?: number;
+            isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
         };
         ResError: {
             Type?: string | null;
@@ -1358,8 +591,8 @@ export interface components {
             Lang?: string | null;
             Errors?: string[] | null;
         };
-        ResListOfDtoApiCate: {
-            data?: components["schemas"]["DtoApiCate"][] | null;
+        ResListOfCategoryRef: {
+            data?: components["schemas"]["CategoryRef"][] | null;
             error?: components["schemas"]["ResError"] | null;
             /** Format: int32 */
             code?: number;
@@ -1368,8 +601,8 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResListOfDtoApiCateCount: {
-            data?: components["schemas"]["DtoApiCateCount"][] | null;
+        ResListOfSourceRef: {
+            data?: components["schemas"]["SourceRef"][] | null;
             error?: components["schemas"]["ResError"] | null;
             /** Format: int32 */
             code?: number;
@@ -1388,107 +621,8 @@ export interface components {
             /** Format: int64 */
             resCount?: number;
         };
-        ResPagedOfDtoApiEntityHit: {
-            data?: components["schemas"]["DtoApiEntityHit"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiIndustryHit: {
-            data?: components["schemas"]["DtoApiIndustryHit"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiNews: {
-            data?: components["schemas"]["DtoApiNews"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiNewsLite: {
-            data?: components["schemas"]["DtoApiNewsLite"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiNwsEnumOption: {
-            data?: components["schemas"]["DtoApiNwsEnumOption"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSentimentAgg: {
-            data?: components["schemas"]["DtoApiSentimentAgg"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSentimentPoint: {
-            data?: components["schemas"]["DtoApiSentimentPoint"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSentimentTrend: {
-            data?: components["schemas"]["DtoApiSentimentTrend"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiSource: {
-            data?: components["schemas"]["DtoApiSource"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiTrendItem: {
-            data?: components["schemas"]["DtoApiTrendItem"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPagedOfDtoApiVideo: {
-            data?: components["schemas"]["DtoApiVideo"][] | null;
-            paging?: components["schemas"]["ResPage"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-        };
-        ResPonseOfDtoApiNewsDetail: {
-            data?: components["schemas"]["DtoApiNewsDetail"] | null;
+        ResPonseOfNewsDetail: {
+            data?: components["schemas"]["NewsDetail"] | null;
             /** Format: int32 */
             code?: number;
             isOk?: boolean;
@@ -1496,8 +630,8 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResPonseOfDtoApiSourceDetail: {
-            data?: components["schemas"]["DtoApiSourceDetail"] | null;
+        ResPonseOfVideoItem: {
+            data?: components["schemas"]["VideoItem"] | null;
             /** Format: int32 */
             code?: number;
             isOk?: boolean;
@@ -1505,54 +639,124 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        ResPonseOfDtoApiVideoDetail: {
-            data?: components["schemas"]["DtoApiVideoDetail"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
+        SentimentDay: {
+            /** @description Ticker symbol. */
+            Sym?: string | null;
+            /** @description Day, YYYY-MM-DD (UTC). */
+            Day?: string | null;
+            /**
+             * Format: int32
+             * @description Articles that day naming the ticker.
+             */
+            Articles?: number;
+            /**
+             * Format: int32
+             * @description Articles read as bullish.
+             */
+            Bullish?: number;
+            /**
+             * Format: int32
+             * @description Articles read as bearish.
+             */
+            Bearish?: number;
+            /**
+             * Format: int32
+             * @description Articles read as neutral.
+             */
+            Neutral?: number;
+            /**
+             * Format: int32
+             * @description Articles not yet scored.
+             */
+            Unscored?: number;
+            /** @description Bullish share of the scored articles, 0 to 100; null when none are scored. */
+            Mood?: number | null;
         };
-        ResPonseOfDtoApiVideoTranscript: {
-            data?: components["schemas"]["DtoApiVideoTranscript"] | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
+        SourceRef: {
+            /** @description Publisher key, accepted by the src filter of the news list. */
+            Key?: string | null;
+            /** @description Publisher name. */
+            Name?: string | null;
+            /** @description Kind of publisher, such as Crypto or Stocks; null when not classified. */
+            Category?: string | null;
+            /** @description Whether FinNews is collecting from this publisher now. */
+            Active?: boolean;
         };
-        ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite: {
-            data?: {
-                [key: string]: components["schemas"]["DtoApiNewsLite"][];
-            } | null;
-            /** Format: int32 */
-            code?: number;
-            isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
+        TickerRating: {
+            /** @description Ticker symbol. */
+            Sym?: string | null;
+            /** @description Reading for this ticker: Bullish, Bearish, Neutral or Unscored. */
+            Sentiment?: string | null;
+            /**
+             * Format: int32
+             * @description Signal strength from -10 (very strong sell) to 10 (very strong buy); null when the reading has no signal.
+             */
+            Score?: number | null;
         };
-        /** @enum {string} */
-        STy: "NONE" | "S" | "M" | "L";
-        /** @enum {string} */
-        Sentiment: "Neutral" | "Positive" | "Unknown" | "Negative";
-        SigDto: {
-            Stm?: components["schemas"]["Sentiment"];
-            Sig?: components["schemas"]["Signal"] | null;
-            Trd?: components["schemas"]["Trend"] | null;
-            Trm?: components["schemas"]["STy"];
-            Trg?: components["schemas"]["TRange"];
-            Conf?: components["schemas"]["Confidence"];
-            Why?: string | null;
+        TrendingTicker: {
+            /** @description Ticker symbol. */
+            Sym?: string | null;
+            /** @description Company or asset name, when known. */
+            Name?: string | null;
+            /**
+             * Format: int32
+             * @description Articles naming the ticker in the window.
+             */
+            Mentions?: number;
+            /** @description Percent change in mentions against the previous window of the same length; null when the previous window had none. */
+            Change?: number | null;
+            /**
+             * Format: int32
+             * @description Mentions read as bullish.
+             */
+            Bullish?: number;
+            /**
+             * Format: int32
+             * @description Mentions read as bearish.
+             */
+            Bearish?: number;
+            /** @description Bullish share of the scored mentions, 0 to 100; null when none are scored. */
+            Mood?: number | null;
         };
-        /** @enum {string} */
-        Signal: "N" | "NB" | "B" | "SB" | "VSB" | "VSS" | "SS" | "S" | "NS";
-        /** @enum {string} */
-        TRange: "NONE" | "S1_S10" | "S10_S30" | "S30_S60" | "M1_M5" | "M5_M15" | "M15_M60" | "H1_H3" | "H3_H12" | "H12_H24" | "D1_D3" | "D3_D7" | "W1_W4" | "MO1_MO3" | "MO3_MO6" | "MO6_MO12" | "Y1_Y3" | "Y3_Y5";
-        /** @enum {string} */
-        Trend: "N" | "NU" | "U" | "SU" | "VSU" | "VSD" | "SD" | "D" | "ND";
+        VideoCall: {
+            /** @description Ticker symbol the video discusses. */
+            Sym?: string | null;
+            /** @description Reading for this ticker: Bullish, Bearish, Neutral or Unscored. */
+            Sentiment?: string | null;
+            /** @description How much the video matters for this ticker, 0 to 10; null when not scored. */
+            Score?: number | null;
+        };
+        VideoItem: {
+            /** @description Video id. Pass it to the video endpoint. */
+            Id?: string | null;
+            /** @description Video title. */
+            Title?: string | null;
+            /** @description Channel name. */
+            Channel?: string | null;
+            /** @description Link to the video. */
+            Url?: string | null;
+            /**
+             * Format: date-time
+             * @description Publication time, ISO 8601 UTC.
+             */
+            Published?: string;
+            /**
+             * Format: int32
+             * @description Length in seconds.
+             */
+            DurationSec?: number;
+            /**
+             * Format: int64
+             * @description View count, when known.
+             */
+            Views?: number | null;
+            /** @description How much the video matters, 0 to 10; null when not yet scored. */
+            Score?: number | null;
+            /** @description Short summary written by FinNews when one exists. */
+            Summary?: string | null;
+            /** @description What the video says about each ticker it discusses. */
+            Calls?: components["schemas"]["VideoCall"][] | null;
+        };
     };
     responses: never;
     parameters: never;
@@ -1562,7 +766,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    Api_CategoriesController_Counts: {
+    Api_Categories_List: {
         parameters: {
             query?: never;
             header?: never;
@@ -1577,7 +781,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiCateCount"];
+                    "application/json": components["schemas"]["ResListOfCategoryRef"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -1618,123 +822,17 @@ export interface operations {
             };
         };
     };
-    Api_CategoriesController_Flat: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiCate"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_CategoriesController_Tree: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResListOfDtoApiCate"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_EntitiesController_Industries: {
+    Api_Mood_List: {
         parameters: {
             query?: {
-                /** @description Number of topics to return, ranked by frequency, from 1 to 500. Default 50. */
-                Top?: number;
+                /** @description How many days back, 1 to 90. Default 7. */
+                days?: number;
+                /** @description Category slugs, comma-separated, from the categories endpoint. Leave empty for every category. */
+                cats?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -1748,7 +846,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiIndustryHit"];
+                    "application/json": components["schemas"]["NwsPageOfMoodDay"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -1789,15 +887,31 @@ export interface operations {
             };
         };
     };
-    Api_EntitiesController_Search: {
+    Api_News_List: {
         parameters: {
             query?: {
-                /** @description Text that the entity name must start with. Required; an empty value is rejected. */
-                Q?: string;
-                /** @description Maximum number of distinct entities to return, from 1 to 100. Default 25. */
-                Limit?: number;
-                /** @description Look-back window in days, from 1 to 3650. Default 365. */
-                Days?: number;
+                /** @description Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article carries come back in NotFound. */
+                syms?: string;
+                /** @description Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto. */
+                cats?: string;
+                /** @description Publisher keys, comma-separated, from the sources endpoint. */
+                src?: string;
+                /** @description Only articles published at or after this time (ISO 8601, UTC). */
+                since?: string;
+                /** @description Only articles published at or before this time (ISO 8601, UTC). */
+                until?: string;
+                /** @description Words to find in the headline or text. */
+                q?: string;
+                /** @description Only articles that matter at least this much, 0 to 10. */
+                minScore?: number;
+                /** @description Only articles with this reading: Bullish, Bearish, Neutral or Unscored. */
+                sentiment?: string;
+                /** @description Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -1811,7 +925,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiEntityHit"];
+                    "application/json": components["schemas"]["NwsPageOfNewsItem"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -1852,396 +966,13 @@ export interface operations {
             };
         };
     };
-    Api_EntitiesController_Types: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNwsEnumOption"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_NewsController_List: {
-        parameters: {
-            query: {
-                /** @description Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the filter fields of this endpoint. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNews"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_NewsController_GroupCategoryList: {
-        parameters: {
-            query?: {
-                /** @description Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on the endpoint. When empty, the keys with the most articles in the window are used. */
-                Keys?: string;
-                /** @description Maximum number of keys (groups) to return, from 1 to 25. Default 10. */
-                MaxKeys?: number;
-                /** @description Maximum number of articles per key, from 1 to 25. Default 5. */
-                MaxPerKey?: number;
-                /** @description Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the time the article was collected, Rank by the confidence-adjusted importance score and Score by the raw importance score. Default Newest. */
-                SortBy?: components["schemas"]["NewsSortBy"];
-                /** @description Look-back window in hours, from 1 to 8760 (one year). Default 168. */
-                Hours?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_NewsController_GroupSourceList: {
-        parameters: {
-            query?: {
-                /** @description Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on the endpoint. When empty, the keys with the most articles in the window are used. */
-                Keys?: string;
-                /** @description Maximum number of keys (groups) to return, from 1 to 25. Default 10. */
-                MaxKeys?: number;
-                /** @description Maximum number of articles per key, from 1 to 25. Default 5. */
-                MaxPerKey?: number;
-                /** @description Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the time the article was collected, Rank by the confidence-adjusted importance score and Score by the raw importance score. Default Newest. */
-                SortBy?: components["schemas"]["NewsSortBy"];
-                /** @description Look-back window in hours, from 1 to 8760 (one year). Default 168. */
-                Hours?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_NewsController_GroupTickerList: {
-        parameters: {
-            query?: {
-                /** @description Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on the endpoint. When empty, the keys with the most articles in the window are used. */
-                Keys?: string;
-                /** @description Maximum number of keys (groups) to return, from 1 to 25. Default 10. */
-                MaxKeys?: number;
-                /** @description Maximum number of articles per key, from 1 to 25. Default 5. */
-                MaxPerKey?: number;
-                /** @description Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the time the article was collected, Rank by the confidence-adjusted importance score and Score by the raw importance score. Default Newest. */
-                SortBy?: components["schemas"]["NewsSortBy"];
-                /** @description Look-back window in hours, from 1 to 8760 (one year). Default 168. */
-                Hours?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_NewsController_GroupTopicList: {
-        parameters: {
-            query?: {
-                /** @description Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on the endpoint. When empty, the keys with the most articles in the window are used. */
-                Keys?: string;
-                /** @description Maximum number of keys (groups) to return, from 1 to 25. Default 10. */
-                MaxKeys?: number;
-                /** @description Maximum number of articles per key, from 1 to 25. Default 5. */
-                MaxPerKey?: number;
-                /** @description Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the time the article was collected, Rank by the confidence-adjusted importance score and Score by the raw importance score. Default Newest. */
-                SortBy?: components["schemas"]["NewsSortBy"];
-                /** @description Look-back window in hours, from 1 to 8760 (one year). Default 168. */
-                Hours?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_NewsController_ById: {
+    Api_News_View: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Unique id (UUID) of the article. */
-                newsId: string;
+                /** @description Article id, as returned in the Id field of the news list. */
+                id: string;
             };
             cookie?: never;
         };
@@ -2253,7 +984,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiNewsDetail"];
+                    "application/json": components["schemas"]["ResPonseOfNewsDetail"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2294,13 +1025,17 @@ export interface operations {
             };
         };
     };
-    Api_NewsController_Trending: {
+    Api_Sentiment_History: {
         parameters: {
             query?: {
-                /** @description Look-back window in hours, from 1 to 8760. Default 24. */
-                Hours?: number;
-                /** @description Number of articles to return, from 1 to 100. Default 20. */
-                Top?: number;
+                /** @description Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no articles in the window come back in NotFound. */
+                syms?: string;
+                /** @description How many days back, 1 to 90. Default 30. */
+                days?: number;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -2314,7 +1049,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNews"];
+                    "application/json": components["schemas"]["NwsPageOfSentimentDay"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2355,435 +1090,7 @@ export interface operations {
             };
         };
     };
-    Api_NewsController_View: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Checksum of the article, as returned in the checksum field of news results. */
-                checksum: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiNewsDetail"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_NewsController_RatingMake: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Checksum of the article, as returned in the checksum field of news results. */
-                checksum: string;
-            };
-            cookie?: never;
-        };
-        /** @description Rating request. ReqSite names the requesting site and ReqUsno the member the rating is requested for. */
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdApiRatingMake"];
-            };
-        };
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiNewsDetail"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_NewsController_Similar: {
-        parameters: {
-            query?: {
-                /** @description Maximum number of similar articles to return, from 1 to 50. Default 10. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Checksum of the article, as returned in the checksum field of news results. */
-                checksum: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNewsLite"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SentimentController_Aggregate: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in days, from 1 to 90. Default 7. */
-                Days?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSentimentAgg"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SentimentController_Trending: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in hours, from 1 to 168 (one week). Default 24. */
-                Hours?: number;
-                /** @description Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it. */
-                Top?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSentimentTrend"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SentimentController_BySymbol: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in days, from 1 to 365. Default 30. */
-                Days?: number;
-                /** @description Maximum number of points to return, from 1 to 1000. Default 200. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Ticker symbol, for example AAPL. */
-                symbol: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSentimentPoint"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SourcesController_List: {
-        parameters: {
-            query: {
-                /** @description Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the filter fields of this endpoint. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSource"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_SourcesController_Categories: {
+    Api_Sources_List: {
         parameters: {
             query?: never;
             header?: never;
@@ -2798,7 +1105,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNwsEnumOption"];
+                    "application/json": components["schemas"]["ResListOfSourceRef"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2839,13 +1146,145 @@ export interface operations {
             };
         };
     };
-    Api_SourcesController_View: {
+    Api_Trending_List: {
+        parameters: {
+            query?: {
+                /** @description Window: 1h, 24h or 7d. Default 24h. */
+                window?: string;
+                /** @description How many tickers to return, 1 to 50. Default 10. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NwsPageOfTrendingTicker"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_Videos_List: {
+        parameters: {
+            query?: {
+                /** @description Only videos that discuss one of these tickers, comma-separated, up to 50, any case. */
+                syms?: string;
+                /** @description Only videos from this channel, by channel name or key. */
+                channel?: string;
+                /** @description Only videos published at or after this time (ISO 8601, UTC). */
+                since?: string;
+                /** @description Only videos that matter at least this much, 0 to 10. */
+                minScore?: number;
+                /** @description Field to sort by: published (default) or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NwsPageOfVideoItem"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Api_Videos_View: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Key code of the news source, as returned by the sources list. */
-                keycode: string;
+                /** @description Video id, as returned in the Id field of the video list. */
+                id: string;
             };
             cookie?: never;
         };
@@ -2857,7 +1296,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSourceDetail"];
+                    "application/json": components["schemas"]["ResPonseOfVideoItem"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -2898,492 +1337,7 @@ export interface operations {
             };
         };
     };
-    Api_TrendingController_Tickers: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in hours, from 1 to 168 (one week). Default 24. */
-                Hours?: number;
-                /** @description Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it. */
-                Top?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiTrendItem"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_TrendingController_Topics: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in hours, from 1 to 168 (one week). Default 24. */
-                Hours?: number;
-                /** @description Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it. */
-                Top?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiTrendItem"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_VideosController_List: {
-        parameters: {
-            query: {
-                /** @description Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the filter fields of this endpoint. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiVideo"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_VideosController_View: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description YouTube video id. */
-                videoId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiVideoDetail"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_VideosController_RatingMake: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description YouTube video id. */
-                videoId: string;
-            };
-            cookie?: never;
-        };
-        /** @description Rating request. ReqSite names the requesting site and ReqUsno the member the rating is requested for. */
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdApiRatingMake"];
-            };
-        };
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiVideoDetail"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Api_VideosController_Transcript: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description YouTube video id. */
-                videoId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiVideoTranscript"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_EntitiesController_Industries: {
-        parameters: {
-            query?: {
-                /** @description Number of topics to return, ranked by frequency, from 1 to 500. Default 50. */
-                Top?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiIndustryHit"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_EntitiesController_Search: {
-        parameters: {
-            query?: {
-                /** @description Text that the entity name must start with. Required; an empty value is rejected. */
-                Q?: string;
-                /** @description Maximum number of distinct entities to return, from 1 to 100. Default 25. */
-                Limit?: number;
-                /** @description Look-back window in days, from 1 to 3650. Default 365. */
-                Days?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiEntityHit"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_EntitiesController_Types: {
+    Pub_Categories_List: {
         parameters: {
             query?: never;
             header?: never;
@@ -3398,16 +1352,58 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNwsEnumOption"];
+                    "application/json": components["schemas"]["ResListOfCategoryRef"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };
     };
-    Pub_NewsController_All: {
+    Pub_Mood_List: {
         parameters: {
-            query: {
-                /** @description Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the filter fields of this endpoint. */
-                qry: string;
+            query?: {
+                /** @description How many days back, 1 to 90. Default 7. */
+                days?: number;
+                /** @description Category slugs, comma-separated, from the categories endpoint. Leave empty for every category. */
+                cats?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -3421,18 +1417,133 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNews"];
+                    "application/json": components["schemas"]["NwsPageOfMoodDay"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };
     };
-    Pub_NewsController_ByChecksum: {
+    Pub_News_List: {
+        parameters: {
+            query?: {
+                /** @description Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article carries come back in NotFound. */
+                syms?: string;
+                /** @description Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto. */
+                cats?: string;
+                /** @description Publisher keys, comma-separated, from the sources endpoint. */
+                src?: string;
+                /** @description Only articles published at or after this time (ISO 8601, UTC). */
+                since?: string;
+                /** @description Only articles published at or before this time (ISO 8601, UTC). */
+                until?: string;
+                /** @description Words to find in the headline or text. */
+                q?: string;
+                /** @description Only articles that matter at least this much, 0 to 10. */
+                minScore?: number;
+                /** @description Only articles with this reading: Bullish, Bearish, Neutral or Unscored. */
+                sentiment?: string;
+                /** @description Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NwsPageOfNewsItem"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_News_View: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Checksum of the article, as returned in the checksum field of news results. */
-                checksum: string;
+                /** @description Article id, as returned in the Id field of the news list. */
+                id: string;
             };
             cookie?: never;
         };
@@ -3444,33 +1555,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiNewsDetail"];
-                };
-            };
-        };
-    };
-    Pub_NewsController_Similar: {
-        parameters: {
-            query?: {
-                /** @description Maximum number of similar articles to return, from 1 to 50. Default 10. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Checksum of the article, as returned in the checksum field of news results. */
-                checksum: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNewsLite"];
+                    "application/json": components["schemas"]["ResPonseOfNewsDetail"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3511,11 +1596,17 @@ export interface operations {
             };
         };
     };
-    Pub_SentimentController_Aggregate: {
+    Pub_Sentiment_History: {
         parameters: {
             query?: {
-                /** @description Look-back window in days, from 1 to 90. Default 7. */
-                Days?: number;
+                /** @description Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no articles in the window come back in NotFound. */
+                syms?: string;
+                /** @description How many days back, 1 to 90. Default 30. */
+                days?: number;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
             };
             header?: never;
             path?: never;
@@ -3529,7 +1620,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSentimentAgg"];
+                    "application/json": components["schemas"]["NwsPageOfSentimentDay"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
@@ -3570,155 +1661,7 @@ export interface operations {
             };
         };
     };
-    Pub_SentimentController_Ticker: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in days, from 1 to 365. Default 30. */
-                Days?: number;
-                /** @description Maximum number of points to return, from 1 to 1000. Default 200. */
-                Limit?: number;
-            };
-            header?: never;
-            path: {
-                /** @description Ticker symbol, for example AAPL. */
-                symbol: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSentimentPoint"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_SentimentController_Trending: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in hours, from 1 to 168 (one week). Default 24. */
-                Hours?: number;
-                /** @description Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it. */
-                Top?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSentimentTrend"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_SourcesController_List: {
-        parameters: {
-            query: {
-                /** @description Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the filter fields of this endpoint. */
-                qry: string;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiSource"];
-                };
-            };
-        };
-    };
-    Pub_SourcesController_Categories: {
+    Pub_Sources_List: {
         parameters: {
             query?: never;
             header?: never;
@@ -3733,18 +1676,186 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiNwsEnumOption"];
+                    "application/json": components["schemas"]["ResListOfSourceRef"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
                 };
             };
         };
     };
-    Pub_SourcesController_Get: {
+    Pub_Trending_List: {
+        parameters: {
+            query?: {
+                /** @description Window: 1h, 24h or 7d. Default 24h. */
+                window?: string;
+                /** @description How many tickers to return, 1 to 50. Default 10. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NwsPageOfTrendingTicker"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_Videos_List: {
+        parameters: {
+            query?: {
+                /** @description Only videos that discuss one of these tickers, comma-separated, up to 50, any case. */
+                syms?: string;
+                /** @description Only videos from this channel, by channel name or key. */
+                channel?: string;
+                /** @description Only videos published at or after this time (ISO 8601, UTC). */
+                since?: string;
+                /** @description Only videos that matter at least this much, 0 to 10. */
+                minScore?: number;
+                /** @description Field to sort by: published (default) or score. A minus sign in front sorts high to low, and published is high to low unless you say otherwise. */
+                sort?: string;
+                /** @description Page to return, from 1. Default 1. */
+                page?: number;
+                /** @description Rows per page, 1 to 50. Default 50. */
+                size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NwsPageOfVideoItem"];
+                };
+            };
+            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
+            402: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FinApiError"];
+                };
+            };
+        };
+    };
+    Pub_Videos_View: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Key code of the news source, as returned by the sources list. */
-                keycode: string;
+                /** @description Video id, as returned in the Id field of the video list. */
+                id: string;
             };
             cookie?: never;
         };
@@ -3756,129 +1867,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ResPonseOfDtoApiSourceDetail"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_TrendingController_TickersTrending: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in hours, from 1 to 168 (one week). Default 24. */
-                Hours?: number;
-                /** @description Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it. */
-                Top?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiTrendItem"];
-                };
-            };
-            /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description Not enough credits, or a credit budget or call limit was reached (insufficient_credits). */
-            402: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description The package of the key may not call this endpoint, or the endpoint is in preview (package_not_allowed, endpoint_preview). */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-            /** @description A rate or call limit was reached; the Retry-After header says how many seconds to wait. */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FinApiError"];
-                };
-            };
-        };
-    };
-    Pub_TrendingController_Topics: {
-        parameters: {
-            query?: {
-                /** @description Look-back window in hours, from 1 to 168 (one week). Default 24. */
-                Hours?: number;
-                /** @description Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers and sentiment, 200 for topics) are reduced to it. */
-                Top?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ResPagedOfDtoApiTrendItem"];
+                    "application/json": components["schemas"]["ResPonseOfVideoItem"];
                 };
             };
             /** @description The API key is missing, unknown or disabled (invalid_api_key, invalid_token). */

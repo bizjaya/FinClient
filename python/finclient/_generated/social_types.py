@@ -4,204 +4,115 @@ from __future__ import annotations
 from typing import Any, Dict, List, Literal, Optional, TypedDict, Union  # noqa: F401
 
 
-Confidence = Literal["None", "VLow", "Low", "Med", "High", "VHigh"]
+class ApiPageOfCreatorRow(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    """Symbols named in syms that no row carries, in upper case. Left out when every symbol was found."""
+    data: Optional[List["CreatorRow"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
 
-class DtoApiSocAuthor(TypedDict, total=False):
-    Id: Optional[str]
-    Platform: "SocPlatform"
+class ApiPageOfMarketMove(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    """Symbols named in syms that no row carries, in upper case. Left out when every symbol was found."""
+    data: Optional[List["MarketMove"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class ApiPageOfMarketRow(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    """Symbols named in syms that no row carries, in upper case. Left out when every symbol was found."""
+    data: Optional[List["MarketRow"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class ApiPageOfPostRow(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    """Symbols named in syms that no row carries, in upper case. Left out when every symbol was found."""
+    data: Optional[List["PostRow"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class ApiPageOfPulsePoint(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    """Symbols named in syms that no row carries, in upper case. Left out when every symbol was found."""
+    data: Optional[List["PulsePoint"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class ApiPageOfPulseRow(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    """Symbols named in syms that no row carries, in upper case. Left out when every symbol was found."""
+    data: Optional[List["PulseRow"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class ApiPageOfResolvedRow(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    """Symbols named in syms that no row carries, in upper case. Left out when every symbol was found."""
+    data: Optional[List["ResolvedRow"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class ApiPageOfVideoRow(TypedDict, total=False):
+    NotFound: Optional[List[str]]
+    """Symbols named in syms that no row carries, in upper case. Left out when every symbol was found."""
+    data: Optional[List["VideoRow"]]
+    paging: Optional["ResPage"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class CreatorRow(TypedDict, total=False):
     Handle: Optional[str]
-    DisplayName: Optional[str]
-    Followers: Optional[int]
-    Verified: bool
-    CreatedAt: Optional[str]
-    FirstSeenAt: str
-
-class DtoApiSocAuthorView(TypedDict, total=False):
-    Author: Optional["DtoApiSocAuthor"]
-    Series: Optional[List["DtoApiSocReach"]]
-
-class DtoApiSocEng(TypedDict, total=False):
-    TakenAt: str
-    Likes: Optional[int]
-    Replies: Optional[int]
-    Reposts: Optional[int]
-    Quotes: Optional[int]
-    Views: Optional[int]
-
-class DtoApiSocEvent(TypedDict, total=False):
-    Id: Optional[str]
-    Provider: "SocProvider"
-    Title: Optional[str]
-    Category: Optional[str]
-    OpensAt: Optional[str]
-    ClosesAt: Optional[str]
-
-class DtoApiSocHistory(TypedDict, total=False):
-    MarketId: Optional[str]
-    Granularity: Optional[str]
-    Series: Optional[List["DtoApiSocOutcomeSeries"]]
-
-class DtoApiSocMarket(TypedDict, total=False):
-    Id: Optional[str]
-    Provider: "SocProvider"
-    EventId: Optional[str]
-    Question: Optional[str]
-    Category: Optional[str]
-    Type: "SocMarketType"
-    Money: "SocMoney"
-    Status: "SocMarketStatus"
-    OpensAt: Optional[str]
-    ClosesAt: Optional[str]
-    SettledAt: Optional[str]
-    SourceUrl: Optional[str]
-
-class DtoApiSocMarketView(TypedDict, total=False):
-    Market: Optional["DtoApiSocMarket"]
-    RulesText: Optional[str]
-    Outcomes: Optional[List["DtoApiSocOutcome"]]
-    Resolution: Optional["DtoApiSocResolution"]
-
-class DtoApiSocMove(TypedDict, total=False):
-    MarketId: Optional[str]
-    Provider: "SocProvider"
-    Question: Optional[str]
-    OutcomeId: Optional[str]
-    OutcomeName: Optional[str]
-    From: float
-    To: float
-    Change: float
-    SourceUrl: Optional[str]
-
-class DtoApiSocOutcome(TypedDict, total=False):
-    Id: Optional[str]
+    """Handle of the account."""
     Name: Optional[str]
-    Price: Optional[float]
-    Volume: Optional[float]
-    PriceAt: Optional[str]
-
-class DtoApiSocOutcomeSeries(TypedDict, total=False):
-    OutcomeId: Optional[str]
-    Name: Optional[str]
-    Points: Optional[List["DtoApiSocPoint"]]
-
-class DtoApiSocPoint(TypedDict, total=False):
-    At: str
-    Price: float
-    Volume: Optional[float]
-
-class DtoApiSocPost(TypedDict, total=False):
-    Id: Optional[str]
-    Platform: "SocPlatform"
-    Kind: "SocPostKind"
-    ParentId: Optional[str]
-    AuthorId: Optional[str]
-    AuthorHandle: Optional[str]
-    Community: Optional[str]
-    Text: Optional[str]
-    TextWithheld: bool
-    Language: Optional[str]
-    PublishedAt: Optional[str]
-    Url: Optional[str]
-    Instruments: Optional[List[str]]
-    FinStm: "Sentiment"
-    StmScore: Optional[float]
-    StmConf: "Confidence"
-    EngSpeed: Optional[float]
-    L3Stance: "SocStance"
-    L3Sarcasm: Optional[bool]
-    L3ClaimDir: "SocClaimDir"
-    L3ClaimHorizon: Optional[str]
-    L3Conf: Optional[float]
-    Engagement: Optional["DtoApiSocEng"]
-
-class DtoApiSocPostView(TypedDict, total=False):
-    Post: Optional["DtoApiSocPost"]
-    Series: Optional[List["DtoApiSocEng"]]
-
-class DtoApiSocPulse(TypedDict, total=False):
-    At: str
-    Windows: Optional[List["DtoApiSocPulseWindow"]]
-
-class DtoApiSocPulseWindow(TypedDict, total=False):
-    Window: Optional[str]
-    Moves: Optional[List["DtoApiSocMove"]]
-
-class DtoApiSocReach(TypedDict, total=False):
-    TakenAt: str
+    """Display name of the account."""
+    Platform: Optional[str]
+    """Platform: HackerNews or Bluesky."""
     Followers: Optional[int]
-    Following: Optional[int]
-    Posts: Optional[int]
-
-class DtoApiSocResolution(TypedDict, total=False):
-    WinningOutcomeId: Optional[str]
-    State: "SocResolutionState"
-    SettledAt: Optional[str]
-    EvidenceUrl: Optional[str]
-
-class DtoApiSocResolved(TypedDict, total=False):
-    MarketId: Optional[str]
-    Provider: "SocProvider"
-    Question: Optional[str]
-    Category: Optional[str]
-    State: "SocResolutionState"
-    WinningOutcomeId: Optional[str]
-    WinningOutcome: Optional[str]
-    SettledAt: Optional[str]
-    Before30d: Optional[float]
-    Before7d: Optional[float]
-    Before24h: Optional[float]
-    Before1h: Optional[float]
-    SourceUrl: Optional[str]
-
-class DtoApiSocSentiment(TypedDict, total=False):
-    Instrument: Optional[str]
-    Window: Optional[str]
-    From: str
-    To: str
-    Count: int
-    MeanScore: Optional[float]
-    Positive: int
-    Negative: int
-    Neutral: int
-    Unknown: int
-
-class DtoApiSocTrend(TypedDict, total=False):
-    Instrument: Optional[str]
+    """Followers now, where the platform counts them."""
     Posts: int
+    """Posts of the account in the window."""
     Engagement: int
-    Ratio: float
+    """Likes, replies, reposts and quotes on those posts."""
+    ReachGrowth: Optional[float]
+    """Growth in followers over the window, in percent. Empty when there is no earlier reading."""
 
-class DtoApiSocTrending(TypedDict, total=False):
-    Window: Optional[str]
-    From: str
-    To: str
-    Tickers: Optional[List["DtoApiSocTrend"]]
-
-class DtoApiSocWatch(TypedDict, total=False):
-    Id: Optional[str]
-    Platform: "SocPlatform"
-    Kind: "SocWatchKind"
-    Handle: Optional[str]
-    DisplayName: Optional[str]
-    Status: "SocWatchStatus"
-
-DtoSocApiVideo = TypedDict(
-    "DtoSocApiVideo",
-    {
-        "VideoId": Optional[str],
-        "ChannelId": Optional[str],
-        "Channel": Optional[str],
-        "Title": Optional[str],
-        "Url": Optional[str],
-        "ThumbnailUrl": Optional[str],
-        "PublishedAt": str,
-        "Symbol": Optional[str],
-        "Score": Optional[float],
-        "Signal": Optional["Signal"],
-        "Summary": Optional[str],
-    },
-    total=False,
-)
+class EngagementPoint(TypedDict, total=False):
+    At: str
+    """When the counts were read, UTC."""
+    Likes: Optional[int]
+    """Likes."""
+    Replies: Optional[int]
+    """Replies."""
+    Reposts: Optional[int]
+    """Reposts."""
+    Quotes: Optional[int]
+    """Quotes."""
+    Views: Optional[int]
+    """Views, where the platform counts them."""
 
 class _FinApiErrorRequired(TypedDict):
     error: str
@@ -220,235 +131,199 @@ class FinApiError(_FinApiErrorRequired, total=False):
     tier: str
     """On per-category limits: the package tier of the caller."""
 
-OpCond = Literal["and", "or", "all", "in"]
+class MarketDetail(TypedDict, total=False):
+    Rules: Optional[str]
+    """The rules the market settles by."""
+    Outcomes: Optional[List["MarketOutcome"]]
+    """Every outcome with its latest price, bid and ask."""
+    History: Optional[List["OutcomeHistory"]]
+    """Price history of every outcome (at most 50 outcomes), by hour or day."""
+    Id: Optional[str]
+    """The market's id."""
+    Question: Optional[str]
+    """The question the market asks."""
+    Provider: Optional[str]
+    """Polymarket, Kalshi or Manifold."""
+    Category: Optional[str]
+    """Category the provider files it under."""
+    Event: Optional[str]
+    """Title of the event the market belongs to."""
+    Probability: Optional[float]
+    """Latest probability, 0 to 1: of Yes, or of the leading outcome in a market with several."""
+    Chg24h: Optional[float]
+    """Change of that probability over the last 24 hours, in points of probability (0.05 is five
+    points).
+    """
+    Volume: Optional[float]
+    """Volume traded, in the provider's own unit."""
+    Liquidity: Optional[float]
+    """Liquidity, in the provider's own unit."""
+    Closes: Optional[str]
+    """When trading closes, UTC."""
+    Status: Optional[str]
+    """Open, Closed, Resolved or Unknown."""
+    Url: Optional[str]
+    """Link to the market."""
 
-class QueApiSocAuthorList(TypedDict, total=False):
-    Platform: Optional["SocPlatform"]
-    """Return only items of this social platform. Empty means every platform available to you."""
+class MarketMove(TypedDict, total=False):
+    Id: Optional[str]
+    """The market's id."""
+    Question: Optional[str]
+    """The question the market asks."""
+    Provider: Optional[str]
+    """Polymarket, Kalshi or Manifold."""
+    Outcome: Optional[str]
+    """The outcome that moved most in this market."""
+    From: float
+    """Price at the start of the window, 0 to 1."""
+    To: float
+    """Latest price, 0 to 1."""
+    Change: float
+    """To minus From, in points of probability."""
+    Url: Optional[str]
+    """Link to the market."""
+
+class MarketOutcome(TypedDict, total=False):
+    Name: Optional[str]
+    """Name of the outcome."""
+    Price: Optional[float]
+    """Latest price, 0 to 1."""
+    Bid: Optional[float]
+    """Best price offered to buy at."""
+    Ask: Optional[float]
+    """Best price offered to sell at."""
+
+class MarketPoint(TypedDict, total=False):
+    At: str
+    """Start of the hour or day, UTC."""
+    Price: float
+    """Last price taken in that hour or day, 0 to 1."""
+
+class MarketRow(TypedDict, total=False):
+    Id: Optional[str]
+    """The market's id."""
+    Question: Optional[str]
+    """The question the market asks."""
+    Provider: Optional[str]
+    """Polymarket, Kalshi or Manifold."""
+    Category: Optional[str]
+    """Category the provider files it under."""
+    Event: Optional[str]
+    """Title of the event the market belongs to."""
+    Probability: Optional[float]
+    """Latest probability, 0 to 1: of Yes, or of the leading outcome in a market with several."""
+    Chg24h: Optional[float]
+    """Change of that probability over the last 24 hours, in points of probability (0.05 is five
+    points).
+    """
+    Volume: Optional[float]
+    """Volume traded, in the provider's own unit."""
+    Liquidity: Optional[float]
+    """Liquidity, in the provider's own unit."""
+    Closes: Optional[str]
+    """When trading closes, UTC."""
+    Status: Optional[str]
+    """Open, Closed, Resolved or Unknown."""
+    Url: Optional[str]
+    """Link to the market."""
+
+class OutcomeHistory(TypedDict, total=False):
+    Name: Optional[str]
+    """Name of the outcome."""
+    Points: Optional[List["MarketPoint"]]
+    """Prices, oldest first."""
+
+class PostDetail(TypedDict, total=False):
+    Series: Optional[List["EngagementPoint"]]
+    """Engagement readings, oldest first."""
+    Id: Optional[str]
+    """The post's id."""
+    Platform: Optional[str]
+    """Platform: HackerNews or Bluesky."""
+    Kind: Optional[str]
+    """Post, Comment or Reply."""
+    Author: Optional[str]
+    """Handle of the author."""
+    Url: Optional[str]
+    """Link to the post."""
+    Published: Optional[str]
+    """When it was published, UTC."""
+    Tickers: Optional[List[str]]
+    """Tickers the post names."""
+    Stance: Optional[str]
+    """Reading of the text: Bullish, Bearish, Neutral or Unscored."""
+    Score: Optional[float]
+    """Sentiment score from -1 (most bearish) to +1 (most bullish)."""
+    Engagement: int
+    """Likes, replies, reposts and quotes now."""
     Text: Optional[str]
-    """Return only authors whose handle or display name contains this text, ignoring case. Empty means
-    all authors.
-    """
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
+    """The post's text. Empty when the source does not allow it to be shown (TextWithheld is true)."""
+    TextWithheld: bool
+    """True when the text is left out because the source does not allow it to be shown."""
 
-class QueApiSocEventList(TypedDict, total=False):
-    Provider: Optional["SocProvider"]
-    """Return only items of this prediction-market provider. Empty means every provider available to
-    you.
-    """
-    Category: Optional[str]
-    """Return only items in this provider category, matched exactly. Empty means all categories."""
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
+class PostRow(TypedDict, total=False):
+    Id: Optional[str]
+    """The post's id."""
+    Platform: Optional[str]
+    """Platform: HackerNews or Bluesky."""
+    Kind: Optional[str]
+    """Post, Comment or Reply."""
+    Author: Optional[str]
+    """Handle of the author."""
+    Url: Optional[str]
+    """Link to the post."""
+    Published: Optional[str]
+    """When it was published, UTC."""
+    Tickers: Optional[List[str]]
+    """Tickers the post names."""
+    Stance: Optional[str]
+    """Reading of the text: Bullish, Bearish, Neutral or Unscored."""
+    Score: Optional[float]
+    """Sentiment score from -1 (most bearish) to +1 (most bullish)."""
+    Engagement: int
+    """Likes, replies, reposts and quotes now."""
+    Text: Optional[str]
+    """The post's text. Empty when the source does not allow it to be shown (TextWithheld is true)."""
+    TextWithheld: bool
+    """True when the text is left out because the source does not allow it to be shown."""
 
-class QueApiSocMarketList(TypedDict, total=False):
-    Provider: Optional["SocProvider"]
-    """Return only items of this prediction-market provider. Empty means every provider available to
-    you.
-    """
-    Category: Optional[str]
-    """Return only items in this provider category, matched exactly. Empty means all categories."""
-    Status: Optional["SocMarketStatus"]
-    """Return only markets in this lifecycle status. Empty means every status."""
-    EventId: Optional[str]
-    """Return only markets of this event, using the Id returned by the events list. Empty means all
-    events.
-    """
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
+class PulsePoint(TypedDict, total=False):
+    Sym: Optional[str]
+    """Ticker."""
+    At: str
+    """Start of the hour or day, UTC."""
+    Mentions: int
+    """Posts that named the ticker."""
+    Engagement: int
+    """Likes, replies, reposts and quotes on those posts."""
+    Attention: float
+    """Mentions against the usual mentions of the ticker for those hours: 1 is usual."""
+    MeanScore: Optional[float]
+    """Mean sentiment score of the scored posts, from -1 to +1. Empty when none is scored."""
 
-class QueApiSocPostList(TypedDict, total=False):
-    Ticker: Optional[str]
-    """Return only posts that mention this ticker symbol, for example BTC. Matching ignores case. Empty
-    means all tickers.
+class PulseRow(TypedDict, total=False):
+    Sym: Optional[str]
+    """Ticker."""
+    Mentions: int
+    """Posts that named the ticker in the window."""
+    Engagement: int
+    """Likes, replies, reposts and quotes on those posts."""
+    Attention: float
+    """Mentions against the usual mentions of the ticker for those hours, over the last 30 days: 1 is
+    usual, 3 is three times as much.
     """
-    AuthorId: Optional[str]
-    """Return only posts by this author, using the Id returned by the authors list. Empty means all
-    authors.
-    """
-    Platform: Optional["SocPlatform"]
-    """Return only items of this social platform. Empty means every platform available to you."""
-    From: Optional[str]
-    """Earliest post publication time to include, in UTC (ISO 8601). Empty means no lower limit."""
-    To: Optional[str]
-    """Latest post publication time to include, in UTC (ISO 8601). Empty means no upper limit."""
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
-
-class QueApiSocResolvedList(TypedDict, total=False):
-    Provider: Optional["SocProvider"]
-    """Return only items of this prediction-market provider. Empty means every provider available to
-    you.
-    """
-    Category: Optional[str]
-    """Return only items in this provider category, matched exactly. Empty means all categories."""
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
-
-class QueApiSocWatchList(TypedDict, total=False):
-    Platform: Optional["SocPlatform"]
-    """Return only items of this social platform. Empty means every platform available to you."""
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
-
-class QueSocApiVideoList(TypedDict, total=False):
-    ChannelId: Optional[str]
-    """Return only videos of this YouTube channel, by channel identifier. Empty means all channels."""
-    Symbol: Optional[str]
-    """Restrict the score rows returned to this ticker symbol, for example BTC. Matching ignores case.
-    Empty means the scores of every symbol.
-    """
-    MinScore: Optional[float]
-    """Keep only score rows with a video score at or above this value. Empty means no lower limit."""
-    MaxScore: Optional[float]
-    """Keep only score rows with a video score at or below this value. Empty means no upper limit."""
-    From: Optional[str]
-    """Earliest video publication time to include, in UTC (ISO 8601). Empty means no lower limit."""
-    To: Optional[str]
-    """Latest video publication time to include, in UTC (ISO 8601). Empty means no upper limit."""
-    cond: "OpCond"
-    """How the search triplets in srchBy combine: and, or, all or in."""
-    pageNo: int
-    """One-based page number. Default 1."""
-    pageSize: int
-    """Rows per page, from 1 to 100. Default 100."""
-    draw: Optional[int]
-    """Optional client counter that is echoed back with the paging result."""
-    sortBy: Optional[List[List[str]]]
-    """Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]]."""
-    srchBy: Optional[List[List[str]]]
-    """Search triplets. Each is a field name, a comparison operator and a value, combined using cond."""
-    include: Optional[List[str]]
-    """Optional field names to include in each returned row."""
-    srch: Optional[Dict[str, Any]]
-    """Raw filter document. Prefer the typed filters of the endpoint."""
-    sort: Optional[Dict[str, Any]]
-    """Raw sort document. Prefer sortBy pairs."""
-    pageOff: int
-    """Zero-based row offset of the selected page, calculated from pageNo and pageSize."""
-    resCount: int
-    """Result count used by paging responses."""
+    Bullish: int
+    """Posts read as bullish."""
+    Bearish: int
+    """Posts read as bearish."""
+    Neutral: int
+    """Posts read as neutral."""
+    Unscored: int
+    """Posts with no reading yet."""
+    MeanScore: Optional[float]
+    """Mean sentiment score of the scored posts, from -1 to +1. Empty when none is scored."""
+    Change: Optional[float]
+    """Change in mentions against the window before, in percent. Empty when the window before had none."""
 
 class ResPage(TypedDict, total=False):
     pageNo: int
@@ -456,148 +331,86 @@ class ResPage(TypedDict, total=False):
     pageCount: int
     resCount: int
 
-class ResPagedOfDtoApiSocAuthor(TypedDict, total=False):
-    data: Optional[List["DtoApiSocAuthor"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSocEvent(TypedDict, total=False):
-    data: Optional[List["DtoApiSocEvent"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSocMarket(TypedDict, total=False):
-    data: Optional[List["DtoApiSocMarket"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSocPost(TypedDict, total=False):
-    data: Optional[List["DtoApiSocPost"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSocResolved(TypedDict, total=False):
-    data: Optional[List["DtoApiSocResolved"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoApiSocWatch(TypedDict, total=False):
-    data: Optional[List["DtoApiSocWatch"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPagedOfDtoSocApiVideo(TypedDict, total=False):
-    data: Optional[List["DtoSocApiVideo"]]
-    paging: Optional["ResPage"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-
-class ResPonseOfDtoApiSocAuthorView(TypedDict, total=False):
-    data: Optional["DtoApiSocAuthorView"]
+class ResPonseOfMarketDetail(TypedDict, total=False):
+    data: Optional["MarketDetail"]
     code: int
     isOk: bool
     message: Optional[str]
     errors: Optional[List[str]]
     chksum: Optional[str]
 
-class ResPonseOfDtoApiSocHistory(TypedDict, total=False):
-    data: Optional["DtoApiSocHistory"]
+class ResPonseOfPostDetail(TypedDict, total=False):
+    data: Optional["PostDetail"]
     code: int
     isOk: bool
     message: Optional[str]
     errors: Optional[List[str]]
     chksum: Optional[str]
 
-class ResPonseOfDtoApiSocMarketView(TypedDict, total=False):
-    data: Optional["DtoApiSocMarketView"]
+class ResPonseOfVideoRow(TypedDict, total=False):
+    data: Optional["VideoRow"]
     code: int
     isOk: bool
     message: Optional[str]
     errors: Optional[List[str]]
     chksum: Optional[str]
 
-class ResPonseOfDtoApiSocPostView(TypedDict, total=False):
-    data: Optional["DtoApiSocPostView"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
+class ResolvedRow(TypedDict, total=False):
+    Id: Optional[str]
+    """The market's id."""
+    Question: Optional[str]
+    """The question the market asked."""
+    Provider: Optional[str]
+    """Polymarket, Kalshi or Manifold."""
+    Category: Optional[str]
+    """Category the provider files it under."""
+    Winner: Optional[str]
+    """Name of the winning outcome."""
+    SettledAt: Optional[str]
+    """When it settled, UTC."""
+    Before30d: Optional[float]
+    """The crowd's probability for the winner 30 days before it settled. Empty when there was no price
+    yet.
+    """
+    Before7d: Optional[float]
+    """The same 7 days before."""
+    Before24h: Optional[float]
+    """The same 24 hours before."""
+    Before1h: Optional[float]
+    """The same 1 hour before."""
+    Url: Optional[str]
+    """Link to the market."""
 
-class ResPonseOfDtoApiSocPulse(TypedDict, total=False):
-    data: Optional["DtoApiSocPulse"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
+class VideoCall(TypedDict, total=False):
+    Sym: Optional[str]
+    """Ticker."""
+    Sentiment: Optional[str]
+    """Reading of the text: Bullish, Bearish, Neutral or Unscored."""
+    Score: Optional[float]
+    """FinSocial's score for the ticker in this video."""
 
-class ResPonseOfDtoApiSocSentiment(TypedDict, total=False):
-    data: Optional["DtoApiSocSentiment"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
-
-class ResPonseOfDtoApiSocTrending(TypedDict, total=False):
-    data: Optional["DtoApiSocTrending"]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
-
-class ResPonseOfListOfDtoSocApiVideo(TypedDict, total=False):
-    data: Optional[List["DtoSocApiVideo"]]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
-
-Sentiment = Literal["Neutral", "Positive", "Unknown", "Negative"]
-
-Signal = Literal["N", "NB", "B", "SB", "VSB", "VSS", "SS", "S", "NS"]
-
-SocClaimDir = Literal["None", "Up", "Down"]
-
-SocMarketStatus = Literal["Open", "Closed", "Resolved", "Unknown"]
-
-SocMarketType = Literal["Binary", "Multi", "Scalar"]
-
-SocMoney = Literal["Real", "Play"]
-
-SocPlatform = Literal["HackerNews", "YouTube", "Bluesky"]
-
-SocPostKind = Literal["Post", "Comment", "Reply", "Video"]
-
-SocProvider = Literal["Polymarket", "Kalshi", "Manifold"]
-
-SocResolutionState = Literal["Final", "Disputed", "Void", "Refunded", "Split", "Pending"]
-
-SocStance = Literal["None", "Bullish", "Bearish", "Neutral", "Mixed"]
-
-SocWatchKind = Literal["Author", "Channel", "Community", "Query"]
-
-SocWatchStatus = Literal["Proposed", "Active", "Paused", "Dropped"]
+class VideoRow(TypedDict, total=False):
+    Id: Optional[str]
+    """The video's id."""
+    Title: Optional[str]
+    """Title of the video."""
+    Channel: Optional[str]
+    """Name of the channel."""
+    Url: Optional[str]
+    """Link to the video."""
+    Published: str
+    """When it was published, UTC."""
+    DurationSec: int
+    """Length in seconds."""
+    Views: Optional[int]
+    """Views when last read."""
+    Score: Optional[float]
+    """FinSocial's score for the video, 0 to 10. Empty when not scored yet."""
+    Signal: Optional[str]
+    """FinSocial's own signal for the video: VSS, SS, S, NS, N, NB, B, SB or VSB. Empty when not scored
+    yet.
+    """
+    Summary: Optional[str]
+    """FinSocial's summary of the video. Empty when it has none yet."""
+    Calls: Optional[List["VideoCall"]]
+    """What was read about each ticker the video names."""

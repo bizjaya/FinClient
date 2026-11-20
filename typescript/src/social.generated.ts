@@ -4,248 +4,533 @@
 import type { components } from "./generated/social-schema.js";
 import type { FinHttpTransport } from "./http-transport.js";
 import type { FinRequestOptions } from "./options.js";
-import { itemsOf, pagesByPageNo, pathSegment } from "./service-support.js";
+import { itemsOf, pagesByPage, pathSegment } from "./service-support.js";
 
 type S = components["schemas"];
+
+/** FinSocial Creators: the credit-charged /api operations. */
+export class SocialCreatorsResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Creator leaderboard. The accounts FinSocial follows, ranked by the engagement on their posts or by how fast
+   * their following grows: followers, posts and engagement in the window, and follower growth in percent. It answers
+   * once a source is cleared; until then the list is empty. GET /api/creators. Charged 1 credit per call.
+   */
+  async creators(query: {
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Length of the window: 24h, 7d or 30d. Default 7d. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to
+     * low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfCreatorRow"]> {
+    return this.http.call("GET", "api/creators", { query }, options);
+  }
+
+  /**
+   * Reads every page of creators, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  creatorsPages(query: {
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Length of the window: 24h, 7d or 30d. Default 7d. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to
+     * low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfCreatorRow"], void, undefined> {
+    return pagesByPage((q) => this.creators(q, options), query);
+  }
+
+  /** Reads every row of every page of creators, one at a time. */
+  creatorsItems(query: {
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Length of the window: 24h, 7d or 30d. Default 7d. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to
+     * low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["CreatorRow"], void, undefined> {
+    return itemsOf(this.creatorsPages(query, options));
+  }
+}
 
 /** FinSocial Markets: the credit-charged /api operations. */
 export class SocialMarketsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List prediction events. Real-world events the prediction markets are grouped under. Filters: Provider, Category.
-   * GET /api/markets/events. Charged 0.5 credits per call.
+   * Prediction markets. Prediction markets of Polymarket, Kalshi and Manifold, with the latest probability (the
+   * leading outcome in a market with several), its change over 24 hours, volume, liquidity, closing time and status.
+   * GET /api/markets. Charged 0.5 credits per call.
    */
-  async eventList(query: S["QueApiSocEventList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocEvent"]> {
-    return this.http.call("GET", "api/markets/events", { qry: query }, options);
-  }
-
-  /**
-   * Reads every page of eventList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
-   */
-  eventListPages(query: S["QueApiSocEventList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocEvent"], void, undefined> {
-    return pagesByPageNo((q) => this.eventList(q, options), query);
-  }
-
-  /** Reads every row of every page of eventList, one at a time. */
-  eventListItems(query: S["QueApiSocEventList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocEvent"], void, undefined> {
-    return itemsOf(this.eventListPages(query, options));
-  }
-
-  /**
-   * Prediction market history. A market's probability series per outcome, one point per hour (1h) or per day (1d),
-   * oldest first. GET /api/markets/history/{id}. Charged 1 credit per call.
-   */
-  async historyList(id: string, query: {
+  async markets(query: {
+    /** Only markets whose question contains this text, any case. */
+    q?: string;
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Only markets in this state: Open, Closed, Resolved or Unknown. */
+    status?: string;
     /**
-     * Size of one point: 1h for hourly or 1d for daily. Default 1h. Each point is the last price taken in
-     * its hour or day. Any other value is rejected with a 400 response.
+     * Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low),
+     * chg24h, closes. A minus sign sorts high to low; markets without a value come last.
      */
-    Granularity?: string;
-    /** Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-    From?: string | Date;
-    /** Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-    To?: string | Date;
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfMarketRow"]> {
+    return this.http.call("GET", "api/markets", { query }, options);
+  }
+
+  /**
+   * Reads every page of markets, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  marketsPages(query: {
+    /** Only markets whose question contains this text, any case. */
+    q?: string;
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Only markets in this state: Open, Closed, Resolved or Unknown. */
+    status?: string;
     /**
-     * Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range,
-     * the newest are kept. Points are returned oldest first.
+     * Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low),
+     * chg24h, closes. A minus sign sorts high to low; markets without a value come last.
      */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocHistory"]> {
-    return this.http.call("GET", `api/markets/history/${pathSegment(id)}`, { query }, options);
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfMarketRow"], void, undefined> {
+    return pagesByPage((q) => this.markets(q, options), query);
+  }
+
+  /** Reads every row of every page of markets, one at a time. */
+  marketsItems(query: {
+    /** Only markets whose question contains this text, any case. */
+    q?: string;
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Only markets in this state: Open, Closed, Resolved or Unknown. */
+    status?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low),
+     * chg24h, closes. A minus sign sorts high to low; markets without a value come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["MarketRow"], void, undefined> {
+    return itemsOf(this.marketsPages(query, options));
   }
 
   /**
-   * List prediction markets. Markets of Polymarket, Kalshi and Manifold. Filters: Provider, Category, Status,
-   * EventId. GET /api/markets/list. Charged 0.5 credits per call.
+   * Prediction market moves. The biggest probability moves of open prediction markets in a window: the outcome that
+   * moved most in each market, its price at the start and now. It answers once a provider is cleared; until then the
+   * list is empty. GET /api/markets/moves. Charged 1 credit per call.
    */
-  async marketList(query: S["QueApiSocMarketList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocMarket"]> {
-    return this.http.call("GET", "api/markets/list", { qry: query }, options);
+  async moves(query: {
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfMarketMove"]> {
+    return this.http.call("GET", "api/markets/moves", { query }, options);
   }
 
   /**
-   * Reads every page of marketList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
+   * Reads every page of moves, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  marketListPages(query: S["QueApiSocMarketList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocMarket"], void, undefined> {
-    return pagesByPageNo((q) => this.marketList(q, options), query);
+  movesPages(query: {
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfMarketMove"], void, undefined> {
+    return pagesByPage((q) => this.moves(q, options), query);
   }
 
-  /** Reads every row of every page of marketList, one at a time. */
-  marketListItems(query: S["QueApiSocMarketList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocMarket"], void, undefined> {
-    return itemsOf(this.marketListPages(query, options));
+  /** Reads every row of every page of moves, one at a time. */
+  movesItems(query: {
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["MarketMove"], void, undefined> {
+    return itemsOf(this.movesPages(query, options));
   }
 
   /**
-   * Prediction pulse. The biggest probability moves of open markets over 1 h, 24 h and 7 d. GET /api/markets/pulse.
-   * Charged 1 credit per call.
+   * Resolved prediction markets. Prediction markets that have settled, newest first: the winner and the crowd's
+   * probability for the winner 30 days, 7 days, 24 hours and 1 hour before it settled. GET /api/markets/resolved.
+   * Charged 0.5 credits per call.
    */
-  async pulseList(query: {
-    /** Maximum number of moves to return for each window, from 1 to 50. Default 10. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocPulse"]> {
-    return this.http.call("GET", "api/markets/pulse", { query }, options);
+  async resolved(query: {
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first). */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfResolvedRow"]> {
+    return this.http.call("GET", "api/markets/resolved", { query }, options);
   }
 
   /**
-   * Resolved market archive. Resolved markets: the winning probability 30 d, 7 d, 24 h and 1 h before the result,
-   * and the result. GET /api/markets/resolved. Charged 1 credit per call.
+   * Reads every page of resolved, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
    */
-  async resolvedList(query: S["QueApiSocResolvedList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocResolved"]> {
-    return this.http.call("GET", "api/markets/resolved", { qry: query }, options);
+  resolvedPages(query: {
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first). */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfResolvedRow"], void, undefined> {
+    return pagesByPage((q) => this.resolved(q, options), query);
+  }
+
+  /** Reads every row of every page of resolved, one at a time. */
+  resolvedItems(query: {
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first). */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResolvedRow"], void, undefined> {
+    return itemsOf(this.resolvedPages(query, options));
   }
 
   /**
-   * Reads every page of resolvedList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
+   * Prediction market. One prediction market with its rules, every outcome with its latest price, bid and ask, and
+   * each outcome's price history by hour or day. GET /api/markets/{id}. Charged 0.5 credits per call.
    */
-  resolvedListPages(query: S["QueApiSocResolvedList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocResolved"], void, undefined> {
-    return pagesByPageNo((q) => this.resolvedList(q, options), query);
-  }
-
-  /** Reads every row of every page of resolvedList, one at a time. */
-  resolvedListItems(query: S["QueApiSocResolvedList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocResolved"], void, undefined> {
-    return itemsOf(this.resolvedListPages(query, options));
-  }
-
-  /**
-   * View prediction market. One market with its rules, outcomes, latest probabilities and resolution.
-   * GET /api/markets/view/{id}. Charged 0.5 credits per call.
-   */
-  async marketView(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocMarketView"]> {
-    return this.http.call("GET", `api/markets/view/${pathSegment(id)}`, {  }, options);
+  async market(id: string, query: {
+    /** Size of one price point in the history: hour or day. Default hour. */
+    granularity?: string;
+    /** How many days of history, 1 to 90. Default 7. */
+    days?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfMarketDetail"]> {
+    return this.http.call("GET", `api/markets/${pathSegment(id)}`, { query }, options);
   }
 }
 
-/** FinSocial Social: the credit-charged /api operations. */
-export class SocialSocialResource {
+/** FinSocial Posts: the credit-charged /api operations. */
+export class SocialPostsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List social authors. Accounts seen on the platforms, most followed first. Filters: Platform, Text.
-   * GET /api/social/authors. Charged 0.5 credits per call.
+   * Posts. Posts from the social sources FinSocial may serve, newest first, with the tickers they name, the way they
+   * read (Bullish, Bearish, Neutral or Unscored), the score and the engagement now. The text comes only where the
+   * source allows it. GET /api/posts. Charged 0.5 credits per call.
    */
-  async authorList(query: S["QueApiSocAuthorList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocAuthor"]> {
-    return this.http.call("GET", "api/social/authors", { qry: query }, options);
-  }
-
-  /**
-   * Reads every page of authorList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
-   */
-  authorListPages(query: S["QueApiSocAuthorList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocAuthor"], void, undefined> {
-    return pagesByPageNo((q) => this.authorList(q, options), query);
-  }
-
-  /** Reads every row of every page of authorList, one at a time. */
-  authorListItems(query: S["QueApiSocAuthorList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocAuthor"], void, undefined> {
-    return itemsOf(this.authorListPages(query, options));
-  }
-
-  /**
-   * View social author. One account with its reach series (followers, following, posts), oldest first.
-   * GET /api/social/authors/{id}. Charged 1 credit per call.
-   */
-  async authorView(id: string, query: {
-    /** Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-    From?: string | Date;
-    /** Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-    To?: string | Date;
+  async posts(query: {
     /**
-     * Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range,
-     * the newest are kept. Points are returned oldest first.
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
      */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocAuthorView"]> {
-    return this.http.call("GET", `api/social/authors/${pathSegment(id)}`, { query }, options);
+    syms?: string;
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Only posts by this handle, any case. */
+    author?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only posts that read this way: Bullish, Bearish, Neutral or Unscored. */
+    stance?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), engagement. Sorting by engagement orders the 3,000 newest matching posts.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfPostRow"]> {
+    return this.http.call("GET", "api/posts", { query }, options);
   }
 
   /**
-   * List social posts. Posts, newest first, with FinSocial's sentiment score, the AI reading where there is one, and
-   * the latest engagement counts. Filters: Ticker, AuthorId, Platform, From, To. GET /api/social/posts. Charged 0.5
-   * credits per call.
+   * Reads every page of posts, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  async postList(query: S["QueApiSocPostList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocPost"]> {
-    return this.http.call("GET", "api/social/posts", { qry: query }, options);
+  postsPages(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Only posts by this handle, any case. */
+    author?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only posts that read this way: Bullish, Bearish, Neutral or Unscored. */
+    stance?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), engagement. Sorting by engagement orders the 3,000 newest matching posts.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfPostRow"], void, undefined> {
+    return pagesByPage((q) => this.posts(q, options), query);
+  }
+
+  /** Reads every row of every page of posts, one at a time. */
+  postsItems(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Only posts by this handle, any case. */
+    author?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only posts that read this way: Bullish, Bearish, Neutral or Unscored. */
+    stance?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), engagement. Sorting by engagement orders the 3,000 newest matching posts.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PostRow"], void, undefined> {
+    return itemsOf(this.postsPages(query, options));
   }
 
   /**
-   * Reads every page of postList, advancing pageNo from the one in the query (1 when unset). It stops after the last
+   * Post. One post with its engagement readings over time, oldest first. GET /api/posts/{id}. Charged 0.5 credits
+   * per call.
+   */
+  async post(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfPostDetail"]> {
+    return this.http.call("GET", `api/posts/${pathSegment(id)}`, {  }, options);
+  }
+}
+
+/** FinSocial Pulse: the credit-charged /api operations. */
+export class SocialPulseResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Ticker pulse. How much each ticker is being talked about on social media in a window: mentions, engagement,
+   * attention against its usual level, the mix of bullish, bearish and neutral posts, their mean score and the
+   * change in mentions against the window before. Ask for up to 50 tickers by name, or leave syms empty for every
+   * ticker, most-talked-about first. GET /api/pulse. Charged 1 credit per call.
+   */
+  async pulse(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low),
+     * mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come
+     * last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfPulseRow"]> {
+    return this.http.call("GET", "api/pulse", { query }, options);
+  }
+
+  /**
+   * Reads every page of pulse, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  pulsePages(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low),
+     * mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come
+     * last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfPulseRow"], void, undefined> {
+    return pagesByPage((q) => this.pulse(q, options), query);
+  }
+
+  /** Reads every row of every page of pulse, one at a time. */
+  pulseItems(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low),
+     * mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come
+     * last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PulseRow"], void, undefined> {
+    return itemsOf(this.pulsePages(query, options));
+  }
+
+  /**
+   * Ticker pulse history. How a ticker's social mentions moved: for each of up to 50 tickers, one row per hour or
+   * per day with mentions, engagement, attention against its usual level and the mean sentiment score. Rows come
+   * ticker by ticker, in the order asked. GET /api/pulse/history. Charged 1 credit per call.
+   */
+  async history(query: {
+    /**
+     * Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in
+     * NotFound.
+     */
+    syms?: string;
+    /** Size of one point: hour or day. Default hour. */
+    interval?: string;
+    /** How many days back, 1 to 30. Default 7. */
+    days?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest
+     * first). Rows always come ticker by ticker, in the order asked.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfPulsePoint"]> {
+    return this.http.call("GET", "api/pulse/history", { query }, options);
+  }
+
+  /**
+   * Reads every page of history, advancing page from the one in the query (1 when unset). It stops after the last
    * page the paging block names, or at the first empty page, which it does not yield.
    */
-  postListPages(query: S["QueApiSocPostList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocPost"], void, undefined> {
-    return pagesByPageNo((q) => this.postList(q, options), query);
-  }
-
-  /** Reads every row of every page of postList, one at a time. */
-  postListItems(query: S["QueApiSocPostList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocPost"], void, undefined> {
-    return itemsOf(this.postListPages(query, options));
-  }
-
-  /**
-   * View social post. One post with its engagement series, oldest first. GET /api/social/posts/{id}. Charged 1
-   * credit per call.
-   */
-  async postView(id: string, query: {
-    /** Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-    From?: string | Date;
-    /** Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-    To?: string | Date;
+  historyPages(query: {
     /**
-     * Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range,
-     * the newest are kept. Points are returned oldest first.
+     * Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in
+     * NotFound.
      */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocPostView"]> {
-    return this.http.call("GET", `api/social/posts/${pathSegment(id)}`, { query }, options);
+    syms?: string;
+    /** Size of one point: hour or day. Default hour. */
+    interval?: string;
+    /** How many days back, 1 to 30. Default 7. */
+    days?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest
+     * first). Rows always come ticker by ticker, in the order asked.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfPulsePoint"], void, undefined> {
+    return pagesByPage((q) => this.history(q, options), query);
   }
 
-  /**
-   * Social sentiment by ticker. Count, mean sentiment score and label counts of the posts that name one ticker in
-   * the window. Window 1h, 24h or 7d. GET /api/social/sentiment/{symbol}. Charged 1 credit per call.
-   */
-  async sentimentView(symbol: string, query: {
-    /** Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response. */
-    Window?: string;
-    /** Maximum number of rows to return, from 1 to 100. Default 20. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocSentiment"]> {
-    return this.http.call("GET", `api/social/sentiment/${pathSegment(symbol)}`, { query }, options);
-  }
-
-  /**
-   * Trending social tickers. Tickers ranked by attention: posts in the window against the usual posts for those
-   * hours. Window 1h, 24h or 7d. GET /api/social/trending. Charged 1 credit per call.
-   */
-  async trendingList(query: {
-    /** Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response. */
-    Window?: string;
-    /** Maximum number of rows to return, from 1 to 100. Default 20. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocTrending"]> {
-    return this.http.call("GET", "api/social/trending", { query }, options);
-  }
-
-  /**
-   * List watched social accounts. The accounts and channels FinSocial follows. Only active ones are listed. Filter:
-   * Platform. GET /api/social/watched. Charged 0.5 credits per call.
-   */
-  async watchList(query: S["QueApiSocWatchList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocWatch"]> {
-    return this.http.call("GET", "api/social/watched", { qry: query }, options);
-  }
-
-  /**
-   * Reads every page of watchList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
-   */
-  watchListPages(query: S["QueApiSocWatchList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocWatch"], void, undefined> {
-    return pagesByPageNo((q) => this.watchList(q, options), query);
-  }
-
-  /** Reads every row of every page of watchList, one at a time. */
-  watchListItems(query: S["QueApiSocWatchList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocWatch"], void, undefined> {
-    return itemsOf(this.watchListPages(query, options));
+  /** Reads every row of every page of history, one at a time. */
+  historyItems(query: {
+    /**
+     * Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in
+     * NotFound.
+     */
+    syms?: string;
+    /** Size of one point: hour or day. Default hour. */
+    interval?: string;
+    /** How many days back, 1 to 30. Default 7. */
+    days?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest
+     * first). Rows always come ticker by ticker, in the order asked.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PulsePoint"], void, undefined> {
+    return itemsOf(this.historyPages(query, options));
   }
 }
 
@@ -254,33 +539,166 @@ export class SocialVideosResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List videos. Videos with FinSocial scores, signals, summaries and links. Filters: ChannelId, Symbol, MinScore,
-   * MaxScore, From, To. Transcripts and video content are never returned. GET /api/videos. Charged 0.5 credits per
-   * call.
+   * Videos. Videos from the channels FinSocial follows, newest first, one row per video, with FinSocial's own score,
+   * signal and summary and what it read about each ticker the video names. Never the transcript or the video itself.
+   * GET /api/videos. Charged 0.5 credits per call.
    */
-  async list(query: S["QueSocApiVideoList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoSocApiVideo"]> {
-    return this.http.call("GET", "api/videos", { qry: query }, options);
+  async videos(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only videos of this channel: its name (any case) or its channel id. */
+    channel?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only videos whose own score is at least this, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), score. A minus sign sorts high to low; videos without a score come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfVideoRow"]> {
+    return this.http.call("GET", "api/videos", { query }, options);
   }
 
   /**
-   * Reads every page of list, advancing pageNo from the one in the query (1 when unset). It stops after the last
+   * Reads every page of videos, advancing page from the one in the query (1 when unset). It stops after the last
    * page the paging block names, or at the first empty page, which it does not yield.
    */
-  listPages(query: S["QueSocApiVideoList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoSocApiVideo"], void, undefined> {
-    return pagesByPageNo((q) => this.list(q, options), query);
+  videosPages(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only videos of this channel: its name (any case) or its channel id. */
+    channel?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only videos whose own score is at least this, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), score. A minus sign sorts high to low; videos without a score come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfVideoRow"], void, undefined> {
+    return pagesByPage((q) => this.videos(q, options), query);
   }
 
-  /** Reads every row of every page of list, one at a time. */
-  listItems(query: S["QueSocApiVideoList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoSocApiVideo"], void, undefined> {
-    return itemsOf(this.listPages(query, options));
+  /** Reads every row of every page of videos, one at a time. */
+  videosItems(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only videos of this channel: its name (any case) or its channel id. */
+    channel?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only videos whose own score is at least this, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), score. A minus sign sorts high to low; videos without a score come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["VideoRow"], void, undefined> {
+    return itemsOf(this.videosPages(query, options));
   }
 
   /**
-   * View video. One video with its scores, signals, summary and public link. Transcript and video content are never
-   * returned. GET /api/videos/{videoId}. Charged 0.5 credits per call.
+   * Video. One video with FinSocial's own score, signal and summary and what it read about each ticker the video
+   * names. Never the transcript or the video itself. GET /api/videos/{id}. Charged 0.5 credits per call.
    */
-  async view(videoId: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSocApiVideo"]> {
-    return this.http.call("GET", `api/videos/${pathSegment(videoId)}`, {  }, options);
+  async video(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfVideoRow"]> {
+    return this.http.call("GET", `api/videos/${pathSegment(id)}`, {  }, options);
+  }
+}
+
+/** FinSocial Creators: the plan-included /v1 operations. */
+export class SocialV1CreatorsResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Creator leaderboard. The accounts FinSocial follows, ranked by the engagement on their posts or by how fast
+   * their following grows: followers, posts and engagement in the window, and follower growth in percent. It answers
+   * once a source is cleared; until then the list is empty. GET /v1/creators. Included in paid plans, for package
+   * tiers 1, 2, 3, 4.
+   */
+  async creators(query: {
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Length of the window: 24h, 7d or 30d. Default 7d. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to
+     * low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfCreatorRow"]> {
+    return this.http.call("GET", "v1/creators", { query }, options);
+  }
+
+  /**
+   * Reads every page of creators, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  creatorsPages(query: {
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Length of the window: 24h, 7d or 30d. Default 7d. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to
+     * low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfCreatorRow"], void, undefined> {
+    return pagesByPage((q) => this.creators(q, options), query);
+  }
+
+  /** Reads every row of every page of creators, one at a time. */
+  creatorsItems(query: {
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Length of the window: 24h, 7d or 30d. Default 7d. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to
+     * low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["CreatorRow"], void, undefined> {
+    return itemsOf(this.creatorsPages(query, options));
   }
 }
 
@@ -289,240 +707,457 @@ export class SocialV1MarketsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List prediction events. Real-world events the prediction markets are grouped under. Filters: Provider, Category.
-   * GET /v1/markets/events. Included in paid plans.
+   * Prediction markets. Prediction markets of Polymarket, Kalshi and Manifold, with the latest probability (the
+   * leading outcome in a market with several), its change over 24 hours, volume, liquidity, closing time and status.
+   * GET /v1/markets. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async eventList(query: S["QueApiSocEventList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocEvent"]> {
-    return this.http.call("GET", "v1/markets/events", { qry: query }, options);
-  }
-
-  /**
-   * Reads every page of eventList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
-   */
-  eventListPages(query: S["QueApiSocEventList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocEvent"], void, undefined> {
-    return pagesByPageNo((q) => this.eventList(q, options), query);
-  }
-
-  /** Reads every row of every page of eventList, one at a time. */
-  eventListItems(query: S["QueApiSocEventList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocEvent"], void, undefined> {
-    return itemsOf(this.eventListPages(query, options));
-  }
-
-  /**
-   * Prediction market history. A market's probability series per outcome, one point per hour (1h) or per day (1d),
-   * oldest first. GET /v1/markets/history/{id}. Included in paid plans, for package tiers 2, 3, 4.
-   */
-  async historyList(id: string, query: {
+  async markets(query: {
+    /** Only markets whose question contains this text, any case. */
+    q?: string;
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Only markets in this state: Open, Closed, Resolved or Unknown. */
+    status?: string;
     /**
-     * Size of one point: 1h for hourly or 1d for daily. Default 1h. Each point is the last price taken in
-     * its hour or day. Any other value is rejected with a 400 response.
+     * Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low),
+     * chg24h, closes. A minus sign sorts high to low; markets without a value come last.
      */
-    Granularity?: string;
-    /** Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-    From?: string | Date;
-    /** Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-    To?: string | Date;
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfMarketRow"]> {
+    return this.http.call("GET", "v1/markets", { query }, options);
+  }
+
+  /**
+   * Reads every page of markets, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  marketsPages(query: {
+    /** Only markets whose question contains this text, any case. */
+    q?: string;
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Only markets in this state: Open, Closed, Resolved or Unknown. */
+    status?: string;
     /**
-     * Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range,
-     * the newest are kept. Points are returned oldest first.
+     * Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low),
+     * chg24h, closes. A minus sign sorts high to low; markets without a value come last.
      */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocHistory"]> {
-    return this.http.call("GET", `v1/markets/history/${pathSegment(id)}`, { query }, options);
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfMarketRow"], void, undefined> {
+    return pagesByPage((q) => this.markets(q, options), query);
+  }
+
+  /** Reads every row of every page of markets, one at a time. */
+  marketsItems(query: {
+    /** Only markets whose question contains this text, any case. */
+    q?: string;
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Only markets in this state: Open, Closed, Resolved or Unknown. */
+    status?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low),
+     * chg24h, closes. A minus sign sorts high to low; markets without a value come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["MarketRow"], void, undefined> {
+    return itemsOf(this.marketsPages(query, options));
   }
 
   /**
-   * List prediction markets. Markets of Polymarket, Kalshi and Manifold. Filters: Provider, Category, Status,
-   * EventId. GET /v1/markets/list. Included in paid plans.
+   * Prediction market moves. The biggest probability moves of open prediction markets in a window: the outcome that
+   * moved most in each market, its price at the start and now. It answers once a provider is cleared; until then the
+   * list is empty. GET /v1/markets/moves. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async marketList(query: S["QueApiSocMarketList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocMarket"]> {
-    return this.http.call("GET", "v1/markets/list", { qry: query }, options);
+  async moves(query: {
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfMarketMove"]> {
+    return this.http.call("GET", "v1/markets/moves", { query }, options);
   }
 
   /**
-   * Reads every page of marketList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
+   * Reads every page of moves, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  marketListPages(query: S["QueApiSocMarketList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocMarket"], void, undefined> {
-    return pagesByPageNo((q) => this.marketList(q, options), query);
+  movesPages(query: {
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfMarketMove"], void, undefined> {
+    return pagesByPage((q) => this.moves(q, options), query);
   }
 
-  /** Reads every row of every page of marketList, one at a time. */
-  marketListItems(query: S["QueApiSocMarketList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocMarket"], void, undefined> {
-    return itemsOf(this.marketListPages(query, options));
+  /** Reads every row of every page of moves, one at a time. */
+  movesItems(query: {
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["MarketMove"], void, undefined> {
+    return itemsOf(this.movesPages(query, options));
   }
 
   /**
-   * Prediction pulse. The biggest probability moves of open markets over 1 h, 24 h and 7 d. GET /v1/markets/pulse.
-   * Included in paid plans.
+   * Resolved prediction markets. Prediction markets that have settled, newest first: the winner and the crowd's
+   * probability for the winner 30 days, 7 days, 24 hours and 1 hour before it settled. GET /v1/markets/resolved.
+   * Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async pulseList(query: {
-    /** Maximum number of moves to return for each window, from 1 to 50. Default 10. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocPulse"]> {
-    return this.http.call("GET", "v1/markets/pulse", { query }, options);
+  async resolved(query: {
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first). */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfResolvedRow"]> {
+    return this.http.call("GET", "v1/markets/resolved", { query }, options);
   }
 
   /**
-   * Resolved market archive. Resolved markets: the winning probability 30 d, 7 d, 24 h and 1 h before the result,
-   * and the result. GET /v1/markets/resolved. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * Reads every page of resolved, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
    */
-  async resolvedList(query: S["QueApiSocResolvedList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocResolved"]> {
-    return this.http.call("GET", "v1/markets/resolved", { qry: query }, options);
+  resolvedPages(query: {
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first). */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfResolvedRow"], void, undefined> {
+    return pagesByPage((q) => this.resolved(q, options), query);
+  }
+
+  /** Reads every row of every page of resolved, one at a time. */
+  resolvedItems(query: {
+    /** Only this prediction-market provider: Polymarket, Kalshi or Manifold. */
+    provider?: string;
+    /** Only markets the provider files under this category, any case. */
+    category?: string;
+    /** Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first). */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResolvedRow"], void, undefined> {
+    return itemsOf(this.resolvedPages(query, options));
   }
 
   /**
-   * Reads every page of resolvedList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
+   * Prediction market. One prediction market with its rules, every outcome with its latest price, bid and ask, and
+   * each outcome's price history by hour or day. GET /v1/markets/{id}. Included in paid plans, for package tiers 1,
+   * 2, 3, 4.
    */
-  resolvedListPages(query: S["QueApiSocResolvedList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocResolved"], void, undefined> {
-    return pagesByPageNo((q) => this.resolvedList(q, options), query);
-  }
-
-  /** Reads every row of every page of resolvedList, one at a time. */
-  resolvedListItems(query: S["QueApiSocResolvedList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocResolved"], void, undefined> {
-    return itemsOf(this.resolvedListPages(query, options));
-  }
-
-  /**
-   * View prediction market. One market with its rules, outcomes, latest probabilities and resolution.
-   * GET /v1/markets/view/{id}. Included in paid plans, for package tiers 1, 2, 3, 4.
-   */
-  async marketView(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocMarketView"]> {
-    return this.http.call("GET", `v1/markets/view/${pathSegment(id)}`, {  }, options);
+  async market(id: string, query: {
+    /** Size of one price point in the history: hour or day. Default hour. */
+    granularity?: string;
+    /** How many days of history, 1 to 90. Default 7. */
+    days?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfMarketDetail"]> {
+    return this.http.call("GET", `v1/markets/${pathSegment(id)}`, { query }, options);
   }
 }
 
-/** FinSocial Social: the plan-included /v1 operations. */
-export class SocialV1SocialResource {
+/** FinSocial Posts: the plan-included /v1 operations. */
+export class SocialV1PostsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List social authors. Accounts seen on the platforms, most followed first. Filters: Platform, Text.
-   * GET /v1/social/authors. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * Posts. Posts from the social sources FinSocial may serve, newest first, with the tickers they name, the way they
+   * read (Bullish, Bearish, Neutral or Unscored), the score and the engagement now. The text comes only where the
+   * source allows it. GET /v1/posts. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async authorList(query: S["QueApiSocAuthorList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocAuthor"]> {
-    return this.http.call("GET", "v1/social/authors", { qry: query }, options);
-  }
-
-  /**
-   * Reads every page of authorList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
-   */
-  authorListPages(query: S["QueApiSocAuthorList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocAuthor"], void, undefined> {
-    return pagesByPageNo((q) => this.authorList(q, options), query);
-  }
-
-  /** Reads every row of every page of authorList, one at a time. */
-  authorListItems(query: S["QueApiSocAuthorList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocAuthor"], void, undefined> {
-    return itemsOf(this.authorListPages(query, options));
-  }
-
-  /**
-   * View social author. One account with its reach series (followers, following, posts), oldest first.
-   * GET /v1/social/authors/{id}. Included in paid plans, for package tiers 2, 3, 4.
-   */
-  async authorView(id: string, query: {
-    /** Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-    From?: string | Date;
-    /** Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-    To?: string | Date;
+  async posts(query: {
     /**
-     * Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range,
-     * the newest are kept. Points are returned oldest first.
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
      */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocAuthorView"]> {
-    return this.http.call("GET", `v1/social/authors/${pathSegment(id)}`, { query }, options);
+    syms?: string;
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Only posts by this handle, any case. */
+    author?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only posts that read this way: Bullish, Bearish, Neutral or Unscored. */
+    stance?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), engagement. Sorting by engagement orders the 3,000 newest matching posts.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfPostRow"]> {
+    return this.http.call("GET", "v1/posts", { query }, options);
   }
 
   /**
-   * List social posts. Posts, newest first, with FinSocial's sentiment score, the AI reading where there is one, and
-   * the latest engagement counts. Filters: Ticker, AuthorId, Platform, From, To. GET /v1/social/posts. Included in
-   * paid plans, for package tiers 1, 2, 3, 4.
+   * Reads every page of posts, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  async postList(query: S["QueApiSocPostList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocPost"]> {
-    return this.http.call("GET", "v1/social/posts", { qry: query }, options);
+  postsPages(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Only posts by this handle, any case. */
+    author?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only posts that read this way: Bullish, Bearish, Neutral or Unscored. */
+    stance?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), engagement. Sorting by engagement orders the 3,000 newest matching posts.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfPostRow"], void, undefined> {
+    return pagesByPage((q) => this.posts(q, options), query);
+  }
+
+  /** Reads every row of every page of posts, one at a time. */
+  postsItems(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only this platform: HackerNews or Bluesky. */
+    platform?: string;
+    /** Only posts by this handle, any case. */
+    author?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only posts that read this way: Bullish, Bearish, Neutral or Unscored. */
+    stance?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), engagement. Sorting by engagement orders the 3,000 newest matching posts.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PostRow"], void, undefined> {
+    return itemsOf(this.postsPages(query, options));
   }
 
   /**
-   * Reads every page of postList, advancing pageNo from the one in the query (1 when unset). It stops after the last
+   * Post. One post with its engagement readings over time, oldest first. GET /v1/posts/{id}. Included in paid plans,
+   * for package tiers 1, 2, 3, 4.
+   */
+  async post(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfPostDetail"]> {
+    return this.http.call("GET", `v1/posts/${pathSegment(id)}`, {  }, options);
+  }
+}
+
+/** FinSocial Pulse: the plan-included /v1 operations. */
+export class SocialV1PulseResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Ticker pulse. How much each ticker is being talked about on social media in a window: mentions, engagement,
+   * attention against its usual level, the mix of bullish, bearish and neutral posts, their mean score and the
+   * change in mentions against the window before. Ask for up to 50 tickers by name, or leave syms empty for every
+   * ticker, most-talked-about first. GET /v1/pulse. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async pulse(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low),
+     * mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come
+     * last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfPulseRow"]> {
+    return this.http.call("GET", "v1/pulse", { query }, options);
+  }
+
+  /**
+   * Reads every page of pulse, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  pulsePages(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low),
+     * mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come
+     * last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfPulseRow"], void, undefined> {
+    return pagesByPage((q) => this.pulse(q, options), query);
+  }
+
+  /** Reads every row of every page of pulse, one at a time. */
+  pulseItems(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Length of the window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low),
+     * mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come
+     * last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PulseRow"], void, undefined> {
+    return itemsOf(this.pulsePages(query, options));
+  }
+
+  /**
+   * Ticker pulse history. How a ticker's social mentions moved: for each of up to 50 tickers, one row per hour or
+   * per day with mentions, engagement, attention against its usual level and the mean sentiment score. Rows come
+   * ticker by ticker, in the order asked. GET /v1/pulse/history. Included in paid plans, for package tiers 1, 2, 3,
+   * 4.
+   */
+  async history(query: {
+    /**
+     * Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in
+     * NotFound.
+     */
+    syms?: string;
+    /** Size of one point: hour or day. Default hour. */
+    interval?: string;
+    /** How many days back, 1 to 30. Default 7. */
+    days?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest
+     * first). Rows always come ticker by ticker, in the order asked.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfPulsePoint"]> {
+    return this.http.call("GET", "v1/pulse/history", { query }, options);
+  }
+
+  /**
+   * Reads every page of history, advancing page from the one in the query (1 when unset). It stops after the last
    * page the paging block names, or at the first empty page, which it does not yield.
    */
-  postListPages(query: S["QueApiSocPostList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocPost"], void, undefined> {
-    return pagesByPageNo((q) => this.postList(q, options), query);
-  }
-
-  /** Reads every row of every page of postList, one at a time. */
-  postListItems(query: S["QueApiSocPostList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocPost"], void, undefined> {
-    return itemsOf(this.postListPages(query, options));
-  }
-
-  /**
-   * View social post. One post with its engagement series, oldest first. GET /v1/social/posts/{id}. Included in paid
-   * plans, for package tiers 2, 3, 4.
-   */
-  async postView(id: string, query: {
-    /** Earliest time to include, in UTC (ISO 8601). Empty means no lower limit. */
-    From?: string | Date;
-    /** Latest time to include, in UTC (ISO 8601). Empty means no upper limit. */
-    To?: string | Date;
+  historyPages(query: {
     /**
-     * Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range,
-     * the newest are kept. Points are returned oldest first.
+     * Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in
+     * NotFound.
      */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocPostView"]> {
-    return this.http.call("GET", `v1/social/posts/${pathSegment(id)}`, { query }, options);
+    syms?: string;
+    /** Size of one point: hour or day. Default hour. */
+    interval?: string;
+    /** How many days back, 1 to 30. Default 7. */
+    days?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest
+     * first). Rows always come ticker by ticker, in the order asked.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfPulsePoint"], void, undefined> {
+    return pagesByPage((q) => this.history(q, options), query);
   }
 
-  /**
-   * Social sentiment by ticker. Count, mean sentiment score and label counts of the posts that name one ticker in
-   * the window. Window 1h, 24h or 7d. GET /v1/social/sentiment/{symbol}. Included in paid plans, for package tiers
-   * 1, 2, 3, 4.
-   */
-  async sentimentView(symbol: string, query: {
-    /** Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response. */
-    Window?: string;
-    /** Maximum number of rows to return, from 1 to 100. Default 20. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocSentiment"]> {
-    return this.http.call("GET", `v1/social/sentiment/${pathSegment(symbol)}`, { query }, options);
-  }
-
-  /**
-   * Trending social tickers. Tickers ranked by attention: posts in the window against the usual posts for those
-   * hours. Window 1h, 24h or 7d. GET /v1/social/trending. Included in paid plans.
-   */
-  async trendingList(query: {
-    /** Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response. */
-    Window?: string;
-    /** Maximum number of rows to return, from 1 to 100. Default 20. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSocTrending"]> {
-    return this.http.call("GET", "v1/social/trending", { query }, options);
-  }
-
-  /**
-   * List watched social accounts. The accounts and channels FinSocial follows. Only active ones are listed. Filter:
-   * Platform. GET /v1/social/watched. Included in paid plans, for package tiers 1, 2, 3, 4.
-   */
-  async watchList(query: S["QueApiSocWatchList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSocWatch"]> {
-    return this.http.call("GET", "v1/social/watched", { qry: query }, options);
-  }
-
-  /**
-   * Reads every page of watchList, advancing pageNo from the one in the query (1 when unset). It stops after the
-   * last page the paging block names, or at the first empty page, which it does not yield.
-   */
-  watchListPages(query: S["QueApiSocWatchList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSocWatch"], void, undefined> {
-    return pagesByPageNo((q) => this.watchList(q, options), query);
-  }
-
-  /** Reads every row of every page of watchList, one at a time. */
-  watchListItems(query: S["QueApiSocWatchList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSocWatch"], void, undefined> {
-    return itemsOf(this.watchListPages(query, options));
+  /** Reads every row of every page of history, one at a time. */
+  historyItems(query: {
+    /**
+     * Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in
+     * NotFound.
+     */
+    syms?: string;
+    /** Size of one point: hour or day. Default hour. */
+    interval?: string;
+    /** How many days back, 1 to 30. Default 7. */
+    days?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest
+     * first). Rows always come ticker by ticker, in the order asked.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PulsePoint"], void, undefined> {
+    return itemsOf(this.historyPages(query, options));
   }
 }
 
@@ -531,60 +1166,132 @@ export class SocialV1VideosResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List videos. Videos with FinSocial scores, signals, summaries and links. Filters: ChannelId, Symbol, MinScore,
-   * MaxScore, From, To. Transcripts and video content are never returned. GET /v1/videos. Included in paid plans,
-   * for package tiers 1, 2, 3, 4.
+   * Videos. Videos from the channels FinSocial follows, newest first, one row per video, with FinSocial's own score,
+   * signal and summary and what it read about each ticker the video names. Never the transcript or the video itself.
+   * GET /v1/videos. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async list(query: S["QueSocApiVideoList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoSocApiVideo"]> {
-    return this.http.call("GET", "v1/videos", { qry: query }, options);
+  async videos(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only videos of this channel: its name (any case) or its channel id. */
+    channel?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only videos whose own score is at least this, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), score. A minus sign sorts high to low; videos without a score come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiPageOfVideoRow"]> {
+    return this.http.call("GET", "v1/videos", { query }, options);
   }
 
   /**
-   * Reads every page of list, advancing pageNo from the one in the query (1 when unset). It stops after the last
+   * Reads every page of videos, advancing page from the one in the query (1 when unset). It stops after the last
    * page the paging block names, or at the first empty page, which it does not yield.
    */
-  listPages(query: S["QueSocApiVideoList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoSocApiVideo"], void, undefined> {
-    return pagesByPageNo((q) => this.list(q, options), query);
+  videosPages(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only videos of this channel: its name (any case) or its channel id. */
+    channel?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only videos whose own score is at least this, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), score. A minus sign sorts high to low; videos without a score come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiPageOfVideoRow"], void, undefined> {
+    return pagesByPage((q) => this.videos(q, options), query);
   }
 
-  /** Reads every row of every page of list, one at a time. */
-  listItems(query: S["QueSocApiVideoList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoSocApiVideo"], void, undefined> {
-    return itemsOf(this.listPages(query, options));
+  /** Reads every row of every page of videos, one at a time. */
+  videosItems(query: {
+    /**
+     * Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no
+     * row carries come back in NotFound.
+     */
+    syms?: string;
+    /** Only videos of this channel: its name (any case) or its channel id. */
+    channel?: string;
+    /** Only rows from this time on: a date such as 2026-11-20 or a full UTC time. */
+    since?: string;
+    /** Only videos whose own score is at least this, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest
+     * first), score. A minus sign sorts high to low; videos without a score come last.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["VideoRow"], void, undefined> {
+    return itemsOf(this.videosPages(query, options));
   }
 
   /**
-   * View video. One video with its scores, signals, summary and public link. Transcript and video content are never
-   * returned. GET /v1/videos/{videoId}. Included in paid plans, for package tiers 2, 3, 4.
+   * Video. One video with FinSocial's own score, signal and summary and what it read about each ticker the video
+   * names. Never the transcript or the video itself. GET /v1/videos/{id}. Included in paid plans, for package tiers
+   * 1, 2, 3, 4.
    */
-  async view(videoId: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSocApiVideo"]> {
-    return this.http.call("GET", `v1/videos/${pathSegment(videoId)}`, {  }, options);
+  async video(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfVideoRow"]> {
+    return this.http.call("GET", `v1/videos/${pathSegment(id)}`, {  }, options);
   }
 }
 
 /** FinSocial's /v1 operations, included in paid plans and gated by package tier. */
 export class FinSocialV1 {
+  readonly creators: SocialV1CreatorsResource;
   readonly markets: SocialV1MarketsResource;
-  readonly social: SocialV1SocialResource;
+  readonly posts: SocialV1PostsResource;
+  readonly pulse: SocialV1PulseResource;
   readonly videos: SocialV1VideosResource;
 
   constructor(http: FinHttpTransport) {
+    this.creators = new SocialV1CreatorsResource(http);
     this.markets = new SocialV1MarketsResource(http);
-    this.social = new SocialV1SocialResource(http);
+    this.posts = new SocialV1PostsResource(http);
+    this.pulse = new SocialV1PulseResource(http);
     this.videos = new SocialV1VideosResource(http);
   }
 }
 
 /** FinSocial. The groups on this object are the /api operations, charged in credits per call; the /v1 operations, included in paid plans, are under `v1`. */
 export class FinSocial {
+  readonly creators: SocialCreatorsResource;
   readonly markets: SocialMarketsResource;
-  readonly social: SocialSocialResource;
+  readonly posts: SocialPostsResource;
+  readonly pulse: SocialPulseResource;
   readonly videos: SocialVideosResource;
   /** The /v1 operations: included in paid plans, gated by package tier. */
   readonly v1: FinSocialV1;
 
   constructor(http: FinHttpTransport) {
+    this.creators = new SocialCreatorsResource(http);
     this.markets = new SocialMarketsResource(http);
-    this.social = new SocialSocialResource(http);
+    this.posts = new SocialPostsResource(http);
+    this.pulse = new SocialPulseResource(http);
     this.videos = new SocialVideosResource(http);
     this.v1 = new FinSocialV1(http);
   }

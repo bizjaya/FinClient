@@ -54,23 +54,23 @@ def server() -> Iterator[str]:
 
 def test_default_transport_sends_the_key_header_and_reads_json(server: str) -> None:
     fin = FinClient(graph=ServiceOptions(api_key="graph-key", base_url=server))
-    assert fin.graph.tickers.list() == [1, 2]
+    assert fin.graph.tickers.list().items == [1, 2]
     assert Handler.seen[0]["key"] == "graph-key"
 
 
 def test_default_transport_maps_error_statuses(server: str) -> None:
-    raw = UrllibTransport().send(HttpRequest("GET", f"{server}/api/tickers?dax=FAIL", {}, None, 5.0))
+    raw = UrllibTransport().send(HttpRequest("GET", f"{server}/api/tickers?exchange=FAIL", {}, None, 5.0))
     assert raw.status == 500 and json.loads(raw.body)["error"] == "boom"
     fin = FinClient(graph=ServiceOptions(api_key="k", base_url=server), max_retries=0)
     with pytest.raises(ServerError) as raised:
-        fin.graph.tickers.list(dax="FAIL")
+        fin.graph.tickers.list(exchange="FAIL")
     assert raised.value.code == "boom"
 
 
 def test_redirects_are_not_followed_so_a_key_never_leaves_the_host(server: str) -> None:
     fin = FinClient(graph=ServiceOptions(api_key="k", base_url=server), max_retries=0)
     with pytest.raises(finclient.FinApiError) as raised:
-        fin.graph.tickers.list(dax="REDIR")
+        fin.graph.tickers.list(exchange="REDIR")
     assert raised.value.status_code == 302
     assert len(Handler.seen) == 1
 

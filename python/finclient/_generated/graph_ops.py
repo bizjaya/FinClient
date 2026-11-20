@@ -7,27 +7,6 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Union  # noqa: F4
 from .. import _runtime as rt
 from . import graph_types as t
 
-# The fields each operation's `qry` object knows, by schema; snake_case spellings are accepted for them.
-_QRY: Dict[str, Tuple[str, ...]] = {
-}
-
-
-class ApcDatApi(rt.Group):
-    """ApcDat operations under ``/api``."""
-
-    def snapshot(self) -> t.DtoPxTickBatch:
-        """Alpaca US-equity tick snapshot
-
-        Latest US-equity prices from the Alpaca feed, one entry per symbol, with the time the
-        snapshot was taken.
-
-        ``GET /api/apcasst/snapshot``. Billed 1 credit per call.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", "/api/apcasst/snapshot", auth="key",
-        )
 
 
 class AssetsApi(rt.Group):
@@ -36,68 +15,72 @@ class AssetsApi(rt.Group):
     def list(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         can_trade: Optional[bool] = None,
         quote: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> List[t.DtoApiAsset]:
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoApiAsset]:
         """Assets list
 
-        Lists assets from the asset registry. Filter by exchange, tradability and quote currency;
-        page with limit and offset.
+        Lists assets from the asset registry. Filter by exchange, tradability and quote coin; sort
+        by symbol; 50 rows a page.
 
         ``GET /api/assets``. Billed 0.5 credits per call.
 
         Args:
-            dax: Exchange key to filter by, for example BIN. Omit to include every exchange.
+            exchange: Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX.
+                Omit to include every exchange.
             can_trade: When true, only assets the exchange currently allows trading; when false,
                 only the others. Omit for both.
-            quote: Quote currency to filter by, for example USDT. Omit for every quote currency.
-            limit: Maximum number of rows to return, from 1 to 500. Default 100.
-            offset: Number of rows to skip, counted from zero. Add the limit to move to the next
-                page. Default 0.
+            quote: Quote coin to filter by, for example USDT. Omit for every quote coin.
+            sort: Field to sort by: symbol (default); a minus sign in front sorts high to low.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
+        return self._service.page(
             "GET", "/api/assets", auth="key",
-            query=[("dax", dax), ("canTrade", can_trade), ("quote", quote), ("limit", limit), ("offset", offset)],
+            query=[("exchange", exchange), ("canTrade", can_trade), ("quote", quote), ("sort", sort), ("page", page), ("size", size)],
         )
 
     def list_pages(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         can_trade: Optional[bool] = None,
         quote: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> Iterator[List[t.DtoApiAsset]]:
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoApiAsset]]:
         """Yield every page of :meth:`list`.
 
-        Advances ``offset`` by the rows returned until a short or empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_offset_pages(
-            lambda lim, off: self.list(dax=dax, can_trade=can_trade, quote=quote, limit=lim, offset=off), limit=limit, offset=offset)
+        return rt.iter_pages(
+            lambda n: self.list(exchange=exchange, can_trade=can_trade, quote=quote, sort=sort, page=n, size=size), first=page)
 
     def list_items(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         can_trade: Optional[bool] = None,
         quote: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
     ) -> Iterator[t.DtoApiAsset]:
         """Yield every row of :meth:`list`, page after page."""
         return rt.iter_items(self.list_pages(
-            dax=dax, can_trade=can_trade, quote=quote, limit=limit, offset=offset))
+            exchange=exchange, can_trade=can_trade, quote=quote, sort=sort, page=page, size=size))
 
     def exchanges(self) -> List[t.DtoApiExchange]:
         """Exchanges
 
-        Lists the exchange keys with their numeric value and TradingView prefix.
+        Lists the exchanges FinGraph reads, with their name and numeric value.
 
         ``GET /api/assets/exchanges``. Billed 0.5 credits per call.
 
@@ -105,50 +88,6 @@ class AssetsApi(rt.Group):
         """
         return self._service.data(
             "GET", "/api/assets/exchanges", auth="key",
-        )
-
-    def names_all(self) -> Dict[str, t.DtoFinAssetName]:
-        """Asset names (all)
-
-        Returns the symbol-to-name map for both lanes. Where a symbol exists in both, the equity
-        entry is used.
-
-        ``GET /api/assets/names``. Billed 0.5 credits per call.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", "/api/assets/names", auth="key",
-        )
-
-    def names(self, dax: str) -> Dict[str, t.DtoFinAssetName]:
-        """Asset names
-
-        Returns a map from symbol to asset name and identity for one lane: dax (crypto) or eqt (US
-        equity).
-
-        ``GET /api/assets/names/{dax}``. Billed 0.5 credits per call.
-
-        Args:
-            dax: Asset lane: dax for crypto assets or eqt for US equities.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/api/assets/names/{rt.seg(dax)}", auth="key",
-        )
-
-    def types(self) -> List[t.DtoApiEnumItem]:
-        """Asset types
-
-        Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
-
-        ``GET /api/assets/types``. Billed 0.5 credits per call.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/assets/types", auth="key",
         )
 
     def view(self, id: str) -> t.DtoApiAsset:
@@ -169,57 +108,430 @@ class AssetsApi(rt.Group):
         )
 
 
-class DaxDatApi(rt.Group):
-    """DaxDat operations under ``/api``."""
+class MarketsApi(rt.Group):
+    """Markets operations under ``/api``."""
 
-    def snapshot(self) -> t.DtoTickBatch:
-        """DAX price snapshot
+    def crypto(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCrypto]:
+        """Markets: Crypto
 
-        Latest crypto exchange prices, one entry per symbol, with the time the snapshot was taken.
+        Every coin with its latest Sum, Mav and Osc ratings, price changes, market value, volume and
+        FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask
+        for up to 50 symbols by name. Two coins that share a ticker each have their own symbol.
 
-        ``GET /api/daxdat/snapshot``. Billed 1 credit per call.
+        ``GET /api/markets/crypto``. Billed 1 credit per call.
 
-        Returns: the result.
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/api/daxdat/snapshot", auth="key",
+        return self._service.page(
+            "GET", "/api/markets/crypto", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
         )
 
+    def crypto_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCrypto]]:
+        """Yield every page of :meth:`crypto`.
 
-class FxsTikrApi(rt.Group):
-    """FxsTikr operations under ``/api``."""
-
-    def snapshot(self) -> t.DtoFxsTickBatch:
-        """FXS broker quote snapshot
-
-        Latest bid and ask for each forex and CFD instrument reported by the broker terminals, keyed
-        by symbol, with the time of each quote.
-
-        ``GET /api/fxstikr/snapshot``. Billed 1 credit per call.
-
-        Returns: the result.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return self._service.data(
-            "GET", "/api/fxstikr/snapshot", auth="key",
+        return rt.iter_pages(
+            lambda n: self.crypto(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def crypto_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCrypto]:
+        """Yield every row of :meth:`crypto`, page after page."""
+        return rt.iter_items(self.crypto_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def dax(
+        self,
+        *,
+        exchange: Optional[str] = None,
+        quote: Optional[str] = None,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktPair]:
+        """Markets: Crypto pairs
+
+        Every crypto pair of an exchange with its price, 24-hour change, volume and FinGraph's own
+        reading (signal, trend, confidence, score, term, rank). Pairs carry no Sum, Mav or Osc
+        ratings. 50 rows a page; ask for up to 50 symbols by name.
+
+        ``GET /api/markets/dax``. Billed 1 credit per call.
+
+        Args:
+            exchange: Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE;
+                only BINANCE has data today, the others answer an empty page.
+            quote: Only pairs priced in this coin, for example USDT.
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d,
+                vol24, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/api/markets/dax", auth="key",
+            query=[("exchange", exchange), ("quote", quote), ("syms", syms), ("sort", sort), ("page", page), ("size", size)],
         )
 
+    def dax_pages(
+        self,
+        *,
+        exchange: Optional[str] = None,
+        quote: Optional[str] = None,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktPair]]:
+        """Yield every page of :meth:`dax`.
 
-class KlsePrcApi(rt.Group):
-    """KlsePrc operations under ``/api``."""
-
-    def snapshot(self) -> t.DtoTickBatch:
-        """KLSE price snapshot
-
-        Latest Bursa Malaysia (KLSE) prices, one entry per symbol, with the time the snapshot was
-        taken.
-
-        ``GET /api/klseprc/snapshot``. Billed 1 credit per call.
-
-        Returns: the result.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return self._service.data(
-            "GET", "/api/klseprc/snapshot", auth="key",
+        return rt.iter_pages(
+            lambda n: self.dax(exchange=exchange, quote=quote, syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def dax_items(
+        self,
+        *,
+        exchange: Optional[str] = None,
+        quote: Optional[str] = None,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktPair]:
+        """Yield every row of :meth:`dax`, page after page."""
+        return rt.iter_items(self.dax_pages(
+            exchange=exchange, quote=quote, syms=syms, sort=sort, page=page, size=size))
+
+    def eqt_usa(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktEqtUsa]:
+        """Markets: US stocks
+
+        Every US stock with its latest Sum, Mav and Osc ratings, the analysts' rating, price
+        changes, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank).
+        50 rows a page; ask for up to 50 symbols by name.
+
+        ``GET /api/markets/eqtusa``. Billed 1 credit per call.
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, vol24, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/api/markets/eqtusa", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
         )
+
+    def eqt_usa_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktEqtUsa]]:
+        """Yield every page of :meth:`eqt_usa`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.eqt_usa(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def eqt_usa_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktEqtUsa]:
+        """Yield every row of :meth:`eqt_usa`, page after page."""
+        return rt.iter_items(self.eqt_usa_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def forex(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCfd]:
+        """Markets: Forex
+
+        Every forex pair with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+        reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50
+        symbols by name.
+
+        ``GET /api/markets/forex``. Billed 1 credit per call.
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/api/markets/forex", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def forex_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCfd]]:
+        """Yield every page of :meth:`forex`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.forex(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def forex_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCfd]:
+        """Yield every row of :meth:`forex`, page after page."""
+        return rt.iter_items(self.forex_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def futures(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCfd]:
+        """Markets: Futures
+
+        Every futures contract (energy, agricultural, interest-rate and index futures) with its
+        latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend,
+        confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+
+        ``GET /api/markets/futures``. Billed 1 credit per call.
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/api/markets/futures", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def futures_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCfd]]:
+        """Yield every page of :meth:`futures`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.futures(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def futures_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCfd]:
+        """Yield every row of :meth:`futures`, page after page."""
+        return rt.iter_items(self.futures_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def indices(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCfd]:
+        """Markets: Indices
+
+        Every stock index with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+        reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50
+        symbols by name.
+
+        ``GET /api/markets/indices``. Billed 1 credit per call.
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/api/markets/indices", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def indices_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCfd]]:
+        """Yield every page of :meth:`indices`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.indices(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def indices_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCfd]:
+        """Yield every row of :meth:`indices`, page after page."""
+        return rt.iter_items(self.indices_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def metals(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCfd]:
+        """Markets: Metals
+
+        Every metals contract with its latest Sum, Mav and Osc ratings, price changes and FinGraph's
+        own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50
+        symbols by name.
+
+        ``GET /api/markets/metals``. Billed 1 credit per call.
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/api/markets/metals", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def metals_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCfd]]:
+        """Yield every page of :meth:`metals`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.metals(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def metals_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCfd]:
+        """Yield every row of :meth:`metals`, page after page."""
+        return rt.iter_items(self.metals_pages(
+            syms=syms, sort=sort, page=page, size=size))
 
 
 class OhlcvApi(rt.Group):
@@ -228,8 +540,8 @@ class OhlcvApi(rt.Group):
     def batch(self, *, symbols: Optional[str] = None, timeframe: Optional[str] = None) -> Any:
         """Batch OHLCV
 
-        Reserved: candles for several symbols in one call. Candle data is not available yet and the
-        endpoint answers 501 Not Implemented.
+        Coming soon: candles for several symbols in one call. This endpoint is not available yet and
+        answers 501 Not Implemented until it is built.
 
         ``GET /api/ohlcv/batch``. Billed 1 credit per call.
 
@@ -255,8 +567,8 @@ class OhlcvApi(rt.Group):
     ) -> Any:
         """OHLCV candles
 
-        Reserved: candles for one symbol over a time range. Candle data is not available yet and the
-        endpoint answers 501 Not Implemented.
+        Coming soon: candles for one symbol over a time range. This endpoint is not available yet
+        and answers 501 Not Implemented until it is built.
 
         ``GET /api/ohlcv/{symbol}``. Billed 1 credit per call.
 
@@ -277,8 +589,8 @@ class OhlcvApi(rt.Group):
     def realtime(self, symbol: str) -> Any:
         """Realtime OHLCV
 
-        Reserved: the latest candle for one symbol. Candle data is not available yet and the
-        endpoint answers 501 Not Implemented.
+        Coming soon: the latest candle for one symbol. This endpoint is not available yet and
+        answers 501 Not Implemented until it is built.
 
         ``GET /api/ohlcv/{symbol}/realtime``. Billed 1 credit per call.
 
@@ -292,176 +604,317 @@ class OhlcvApi(rt.Group):
         )
 
 
-class SigCryApi(rt.Group):
-    """SigCry operations under ``/api``."""
+class RecordApi(rt.Group):
+    """Record operations under ``/api``."""
 
-    def snapshot(self) -> List[t.DtoSigCryMin]:
-        """SigCry Snapshot
+    def calls(
+        self,
+        *,
+        market: Optional[str] = None,
+        syms: Optional[str] = None,
+        side: Optional[str] = None,
+        horizon: Optional[str] = None,
+        conf: Optional[str] = None,
+        outcome: Optional[str] = None,
+        from_: Optional[str] = None,
+        to: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoRecordCall]:
+        """Track record: closed calls
 
-        Shortlist of crypto assets chosen by the technical screener, with their signals.
+        Every call FinGraph has followed to its end, newest first, with entry, exit and result.
+        Filter by market, symbols, side, horizon, confidence, outcome and dates. 50 a page.
 
-        ``GET /api/sigcry/snapshot``. Billed 1 credit per call.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/sigcry/snapshot", auth="key",
-        )
-
-
-class SigDaxApi(rt.Group):
-    """SigDax operations under ``/api``."""
-
-    def fast_prc(self, *, dax: t.DAX) -> List[t.DtoSigDaxMin]:
-        """SigDax FastPrc
-
-        Crypto pairs on one exchange with the fastest recent price movement, with their signals.
-
-        ``GET /api/sigdax/fastprc``. Billed 1 credit per call.
+        ``GET /api/record/calls``. Billed 1 credit per call.
 
         Args:
-            dax: Exchange key of the crypto exchange whose signals to return, for example BIN.
+            market: Only this market: eqtusa, crypto, dax or fxs.
+            syms: Only these symbols, comma-separated, up to 50, any case.
+            side: buy or sell.
+            horizon: How long the call was followed: 6h, 24h, 72h, 7d or 30d.
+            conf: How sure FinGraph was: VHigh, High, Med, Low, VLow or None.
+            outcome: won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result
+                such as TP1 or SL.
+            from_: Closed on or after this day (UTC), such as 2026-11-01.
+            to: Closed on or before this day (UTC), such as 2026-11-20.
+            sort: closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default
+                -closedAt.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/api/sigdax/fastprc", auth="key",
-            query=[("dax", dax)],
+        return self._service.page(
+            "GET", "/api/record/calls", auth="key",
+            query=[("market", market), ("syms", syms), ("side", side), ("horizon", horizon), ("conf", conf), ("outcome", outcome), ("from", from_), ("to", to), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def fast_vol(self, *, dax: t.DAX) -> List[t.DtoSigDaxMin]:
-        """SigDax FastVol
+    def calls_pages(
+        self,
+        *,
+        market: Optional[str] = None,
+        syms: Optional[str] = None,
+        side: Optional[str] = None,
+        horizon: Optional[str] = None,
+        conf: Optional[str] = None,
+        outcome: Optional[str] = None,
+        from_: Optional[str] = None,
+        to: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoRecordCall]]:
+        """Yield every page of :meth:`calls`.
 
-        Crypto pairs on one exchange with the fastest recent rise in trading volume, with their
-        signals.
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.calls(market=market, syms=syms, side=side, horizon=horizon, conf=conf, outcome=outcome, from_=from_, to=to, sort=sort, page=n, size=size), first=page)
 
-        ``GET /api/sigdax/fastvol``. Billed 1 credit per call.
+    def calls_items(
+        self,
+        *,
+        market: Optional[str] = None,
+        syms: Optional[str] = None,
+        side: Optional[str] = None,
+        horizon: Optional[str] = None,
+        conf: Optional[str] = None,
+        outcome: Optional[str] = None,
+        from_: Optional[str] = None,
+        to: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoRecordCall]:
+        """Yield every row of :meth:`calls`, page after page."""
+        return rt.iter_items(self.calls_pages(
+            market=market, syms=syms, side=side, horizon=horizon, conf=conf, outcome=outcome, from_=from_, to=to, sort=sort, page=page, size=size))
+
+
+class ScreensApi(rt.Group):
+    """Screens operations under ``/api``."""
+
+    def crypto(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoScrCrypto]:
+        """Screens: Crypto
+
+        FinGraph's ranked shortlists of coins: strongest risers, strongest fallers, moving fastest
+        in price, volume rising fastest and breaking out of range. The same row as the markets list,
+        plus LaneRank. 50 a page.
+
+        ``GET /api/screens/crypto/{lane}``. Billed 1 credit per call.
 
         Args:
-            dax: Exchange key of the crypto exchange whose signals to return, for example BIN.
+            lane: Which shortlist: fastprc (moving fastest in price now), topgain (strongest
+                risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout
+                (breaking out of its range). Forex has no volume, so its fastvol is empty.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/api/sigdax/fastvol", auth="key",
-            query=[("dax", dax)],
+        return self._service.page(
+            "GET", f"/api/screens/crypto/{rt.seg(lane)}", auth="key",
+            query=[("page", page), ("size", size)],
         )
 
-    def top_gain(self, *, dax: t.DAX) -> List[t.DtoSigDaxMin]:
-        """SigDax TopGain
+    def crypto_pages(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoScrCrypto]]:
+        """Yield every page of :meth:`crypto`.
 
-        Crypto pairs on one exchange with the largest gains, with their signals.
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.crypto(lane, page=n, size=size), first=page)
 
-        ``GET /api/sigdax/topgain``. Billed 1 credit per call.
+    def crypto_items(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoScrCrypto]:
+        """Yield every row of :meth:`crypto`, page after page."""
+        return rt.iter_items(self.crypto_pages(
+            lane, page=page, size=size))
+
+    def dax(
+        self,
+        lane: str,
+        *,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoScrPair]:
+        """Screens: Crypto pairs
+
+        FinGraph's ranked shortlists of crypto pairs: strongest risers, strongest fallers, moving
+        fastest in price, volume rising fastest and breaking out of range. The same row as the
+        markets list, plus LaneRank. 50 a page.
+
+        ``GET /api/screens/dax/{lane}``. Billed 1 credit per call.
 
         Args:
-            dax: Exchange key of the crypto exchange whose signals to return, for example BIN.
+            lane: Which shortlist: fastprc (moving fastest in price now), topgain (strongest
+                risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout
+                (breaking out of its range). Forex has no volume, so its fastvol is empty.
+            exchange: Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/api/sigdax/topgain", auth="key",
-            query=[("dax", dax)],
+        return self._service.page(
+            "GET", f"/api/screens/dax/{rt.seg(lane)}", auth="key",
+            query=[("exchange", exchange), ("page", page), ("size", size)],
         )
 
-    def top_lose(self, *, dax: t.DAX) -> List[t.DtoSigDaxMin]:
-        """SigDax TopLose
+    def dax_pages(
+        self,
+        lane: str,
+        *,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoScrPair]]:
+        """Yield every page of :meth:`dax`.
 
-        Crypto pairs on one exchange with the largest losses, with their signals.
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.dax(lane, exchange=exchange, page=n, size=size), first=page)
 
-        ``GET /api/sigdax/toplose``. Billed 1 credit per call.
+    def dax_items(
+        self,
+        lane: str,
+        *,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoScrPair]:
+        """Yield every row of :meth:`dax`, page after page."""
+        return rt.iter_items(self.dax_pages(
+            lane, exchange=exchange, page=page, size=size))
+
+    def eqt_usa(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoScrEqtUsa]:
+        """Screens: US stocks
+
+        FinGraph's ranked shortlists of US stocks: strongest risers, strongest fallers, moving
+        fastest in price, volume rising fastest and breaking out of range. The same row as the
+        markets list, plus LaneRank. 50 a page.
+
+        ``GET /api/screens/eqtusa/{lane}``. Billed 1 credit per call.
 
         Args:
-            dax: Exchange key of the crypto exchange whose signals to return, for example BIN.
+            lane: Which shortlist: fastprc (moving fastest in price now), topgain (strongest
+                risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout
+                (breaking out of its range). Forex has no volume, so its fastvol is empty.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/api/sigdax/toplose", auth="key",
-            query=[("dax", dax)],
+        return self._service.page(
+            "GET", f"/api/screens/eqtusa/{rt.seg(lane)}", auth="key",
+            query=[("page", page), ("size", size)],
         )
 
+    def eqt_usa_pages(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoScrEqtUsa]]:
+        """Yield every page of :meth:`eqt_usa`.
 
-class SigEqtApi(rt.Group):
-    """SigEqt operations under ``/api``."""
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.eqt_usa(lane, page=n, size=size), first=page)
 
-    def snapshot(self, *, a_type: Optional[t.AType] = None) -> List[t.DtoSigEqtMin]:
-        """SigEqt Snapshot
+    def eqt_usa_items(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoScrEqtUsa]:
+        """Yield every row of :meth:`eqt_usa`, page after page."""
+        return rt.iter_items(self.eqt_usa_pages(
+            lane, page=page, size=size))
 
-        Shortlist of equities of one asset class chosen by the technical screener, with their
-        signals.
+    def fxs(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoScrCfd]:
+        """Screens: Forex
 
-        ``GET /api/sigeqt/snapshot``. Billed 1 credit per call.
+        FinGraph's ranked shortlists of forex pairs: strongest risers, strongest fallers, moving
+        fastest in price, volume rising fastest and breaking out of range. The same row as the
+        markets list, plus LaneRank. 50 a page.
+
+        ``GET /api/screens/fxs/{lane}``. Billed 1 credit per call.
 
         Args:
-            a_type: Asset class to return, for example STOCKUSA. Default STOCKUSA.
+            lane: Which shortlist: fastprc (moving fastest in price now), topgain (strongest
+                risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout
+                (breaking out of its range). Forex has no volume, so its fastvol is empty.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/api/sigeqt/snapshot", auth="key",
-            query=[("aType", a_type)],
+        return self._service.page(
+            "GET", f"/api/screens/fxs/{rt.seg(lane)}", auth="key",
+            query=[("page", page), ("size", size)],
         )
 
+    def fxs_pages(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoScrCfd]]:
+        """Yield every page of :meth:`fxs`.
 
-class SigFxsApi(rt.Group):
-    """SigFxs operations under ``/api``."""
-
-    def breakout(self) -> List[t.DtoSigFxsLane]:
-        """SigFxs Breakout
-
-        Forex pairs breaking out of their recent range, with their signals. Scores are comparable
-        only within the forex list, not with crypto or equity scores.
-
-        ``GET /api/sigfxs/breakout``. Billed 1 credit per call.
-
-        Returns: the rows.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return self._service.data(
-            "GET", "/api/sigfxs/breakout", auth="key",
-        )
+        return rt.iter_pages(
+            lambda n: self.fxs(lane, page=n, size=size), first=page)
 
-    def fast_prc(self) -> List[t.DtoSigFxsLane]:
-        """SigFxs FastPrc
-
-        Forex pairs with the fastest recent price movement, with their signals. Scores are
-        comparable only within the forex list, not with crypto or equity scores.
-
-        ``GET /api/sigfxs/fastprc``. Billed 1 credit per call.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/sigfxs/fastprc", auth="key",
-        )
-
-    def top_gain(self) -> List[t.DtoSigFxsLane]:
-        """SigFxs TopGain
-
-        Forex pairs with the largest gains, with their signals. Scores are comparable only within
-        the forex list, not with crypto or equity scores.
-
-        ``GET /api/sigfxs/topgain``. Billed 1 credit per call.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/sigfxs/topgain", auth="key",
-        )
-
-    def top_lose(self) -> List[t.DtoSigFxsLane]:
-        """SigFxs TopLose
-
-        Forex pairs with the largest losses, with their signals. Scores are comparable only within
-        the forex list, not with crypto or equity scores.
-
-        ``GET /api/sigfxs/toplose``. Billed 1 credit per call.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/sigfxs/toplose", auth="key",
-        )
+    def fxs_items(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoScrCfd]:
+        """Yield every row of :meth:`fxs`, page after page."""
+        return rt.iter_items(self.fxs_pages(
+            lane, page=page, size=size))
 
 
 class SignalsApi(rt.Group):
@@ -497,47 +950,6 @@ class SignalsApi(rt.Group):
             query=[("family", family), ("direction", direction), ("enabled", enabled)],
         )
 
-    def recent(
-        self,
-        *,
-        limit: Optional[int] = None,
-        market: Optional[str] = None,
-    ) -> List[t.DtoApiSignal]:
-        """Recent signals
-
-        Most recently updated Malaysian equity signals, newest first. Optionally filter by market.
-
-        ``GET /api/signals/recent``. Billed 0.5 credits per call.
-
-        Args:
-            limit: Maximum number of rows to return, from 1 to 100. Default 25.
-            market: Market code of the signal rows to return. Omit for every market.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/signals/recent", auth="key",
-            query=[("limit", limit), ("market", market)],
-        )
-
-    def view(self, symbol: str) -> t.DtoApiSignalView:
-        """View signal
-
-        One symbol's signal: Malaysian equity lane first, US equity lane if the symbol is not found
-        there.
-
-        ``GET /api/signals/{symbol}``. Billed 0.5 credits per call.
-
-        Args:
-            symbol: Ticker symbol or code of the instrument, for example BTCUSDT or a Bursa Malaysia
-                code.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/api/signals/{rt.seg(symbol)}", auth="key",
-        )
-
 
 class StatsApi(rt.Group):
     """Stats operations under ``/api``."""
@@ -555,55 +967,6 @@ class StatsApi(rt.Group):
             "GET", "/api/stats/aggregate", auth="key",
         )
 
-    def movers(
-        self,
-        *,
-        direction: Optional[str] = None,
-        top: Optional[int] = None,
-        dax: Optional[t.DAX] = None,
-    ) -> List[t.DtoApiMover]:
-        """Market movers
-
-        Top gainers or losers by 24-hour price change percentage, optionally for one exchange.
-
-        ``GET /api/stats/movers``. Billed 1 credit per call.
-
-        Args:
-            direction: Ranking to return: gainers (largest rises, the default) or losers (largest
-                falls).
-            top: Number of rows to return, from 1 to 100. Default 10.
-            dax: Exchange key to restrict the ranking to, for example BIN. Omit for every exchange.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/stats/movers", auth="key",
-            query=[("direction", direction), ("top", top), ("dax", dax)],
-        )
-
-    def volume(
-        self,
-        *,
-        top: Optional[int] = None,
-        dax: Optional[t.DAX] = None,
-    ) -> List[t.DtoApiMover]:
-        """Volume leaders
-
-        Top symbols by 24-hour quote volume, optionally for one exchange.
-
-        ``GET /api/stats/volume``. Billed 1 credit per call.
-
-        Args:
-            top: Number of rows to return, from 1 to 100. Default 10.
-            dax: Exchange key to restrict the ranking to, for example BIN. Omit for every exchange.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/stats/volume", auth="key",
-            query=[("top", top), ("dax", dax)],
-        )
-
 
 class TickersApi(rt.Group):
     """Tickers operations under ``/api``."""
@@ -611,89 +974,125 @@ class TickersApi(rt.Group):
     def list(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         quote: Optional[str] = None,
         in_exchange: Optional[bool] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> List[t.DtoApiTicker]:
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoApiTicker]:
         """Tickers list
 
-        Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency
-        and listing state; page with limit and offset.
+        Lists crypto-pair tickers with last price, 24-hour change and volume. Filter by exchange,
+        quote coin and listing state; sort by symbol, lastprice, chgpct or quotvol; 50 rows a page.
 
         ``GET /api/tickers``. Billed 0.5 credits per call.
 
         Args:
-            dax: Exchange key to filter by, for example BIN. Omit to include every exchange.
-            quote: Quote currency to filter by, for example USDT. Omit for every quote currency.
+            exchange: Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX.
+                Omit to include every exchange.
+            quote: Quote coin to filter by, for example USDT. Omit for every quote coin.
             in_exchange: When true, only tickers currently listed on the exchange; when false, only
                 the others. Omit for both.
-            limit: Maximum number of rows to return, from 1 to 500. Default 100.
-            offset: Number of rows to skip, counted from zero. Add the limit to move to the next
-                page. Default 0.
+            sort: Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in
+                front sorts high to low.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
+        return self._service.page(
             "GET", "/api/tickers", auth="key",
-            query=[("dax", dax), ("quote", quote), ("inExchange", in_exchange), ("limit", limit), ("offset", offset)],
+            query=[("exchange", exchange), ("quote", quote), ("inExchange", in_exchange), ("sort", sort), ("page", page), ("size", size)],
         )
 
     def list_pages(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         quote: Optional[str] = None,
         in_exchange: Optional[bool] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> Iterator[List[t.DtoApiTicker]]:
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoApiTicker]]:
         """Yield every page of :meth:`list`.
 
-        Advances ``offset`` by the rows returned until a short or empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_offset_pages(
-            lambda lim, off: self.list(dax=dax, quote=quote, in_exchange=in_exchange, limit=lim, offset=off), limit=limit, offset=offset)
+        return rt.iter_pages(
+            lambda n: self.list(exchange=exchange, quote=quote, in_exchange=in_exchange, sort=sort, page=n, size=size), first=page)
 
     def list_items(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         quote: Optional[str] = None,
         in_exchange: Optional[bool] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
     ) -> Iterator[t.DtoApiTicker]:
         """Yield every row of :meth:`list`, page after page."""
         return rt.iter_items(self.list_pages(
-            dax=dax, quote=quote, in_exchange=in_exchange, limit=limit, offset=offset))
+            exchange=exchange, quote=quote, in_exchange=in_exchange, sort=sort, page=page, size=size))
 
     def search(
         self,
         *,
         q: Optional[str] = None,
-        dax: Optional[t.DAX] = None,
-        limit: Optional[int] = None,
-    ) -> List[t.DtoApiTickerLite]:
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoApiTickerLite]:
         """Ticker search
 
-        Finds tickers whose symbol contains the search text, case-insensitive.
+        Finds crypto-pair tickers whose symbol contains the search text, case-insensitive. 50 rows a
+        page.
 
         ``GET /api/tickers/search``. Billed 0.5 credits per call.
 
         Args:
             q: Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the
                 symbol. Required.
-            dax: Exchange key to filter by, for example BIN. Omit to include every exchange.
-            limit: Maximum number of rows to return, from 1 to 100. Default 25.
+            exchange: Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX.
+                Omit to include every exchange.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
+        return self._service.page(
             "GET", "/api/tickers/search", auth="key",
-            query=[("q", q), ("dax", dax), ("limit", limit)],
+            query=[("q", q), ("exchange", exchange), ("page", page), ("size", size)],
         )
+
+    def search_pages(
+        self,
+        *,
+        q: Optional[str] = None,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoApiTickerLite]]:
+        """Yield every page of :meth:`search`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.search(q=q, exchange=exchange, page=n, size=size), first=page)
+
+    def search_items(
+        self,
+        *,
+        q: Optional[str] = None,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoApiTickerLite]:
+        """Yield every row of :meth:`search`, page after page."""
+        return rt.iter_items(self.search_pages(
+            q=q, exchange=exchange, page=page, size=size))
 
     def view(self, symbol: str) -> t.DtoApiTickerDetail:
         """Ticker detail
@@ -729,21 +1128,49 @@ class TickersApi(rt.Group):
         )
 
 
-class TvdDatApi(rt.Group):
-    """TvdDat operations under ``/api``."""
+class TicksApi(rt.Group):
+    """Ticks operations under ``/api``."""
 
-    def snapshot(self) -> t.DtoPxTickBatch:
-        """TVD US-equity tick snapshot
+    def dax(self) -> t.DtoTickBatch:
+        """Ticks: crypto pairs
 
-        Latest US-equity prices from the TradingView feed, one entry per symbol, with the time the
+        Latest price of every crypto pair, one entry per exchange and symbol, with the time the
         snapshot was taken.
 
-        ``GET /api/tvdusaeqt/snapshot``. Billed 1 credit per call.
+        ``GET /api/ticks/dax``. Billed 1 credit per call.
 
         Returns: the result.
         """
         return self._service.data(
-            "GET", "/api/tvdusaeqt/snapshot", auth="key",
+            "GET", "/api/ticks/dax", auth="key",
+        )
+
+    def eqt_usa(self) -> t.DtoPxTickBatch:
+        """Ticks: US stocks
+
+        Latest price of every US stock, one entry per symbol, as [price, time in Unix seconds], with
+        the time the snapshot was taken.
+
+        ``GET /api/ticks/eqtusa``. Billed 1 credit per call.
+
+        Returns: the result.
+        """
+        return self._service.data(
+            "GET", "/api/ticks/eqtusa", auth="key",
+        )
+
+    def fxs(self) -> t.DtoFxsTickBatch:
+        """Ticks: forex
+
+        Latest bid and ask of every forex and CFD instrument the data terminals report, one entry
+        per symbol, with the time of each quote and of the snapshot.
+
+        ``GET /api/ticks/fxs``. Billed 1 credit per call.
+
+        Returns: the result.
+        """
+        return self._service.data(
+            "GET", "/api/ticks/fxs", auth="key",
         )
 
 
@@ -753,88 +1180,79 @@ class AssetsV1(rt.Group):
     def list(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         can_trade: Optional[bool] = None,
         quote: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> List[t.PubV1Asset]:
-        """List Assets
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoApiAsset]:
+        """Assets list
 
-        Lists assets from the asset registry. Filter by exchange, tradability and quote currency;
-        page with limit and offset.
+        Lists assets from the asset registry. Filter by exchange, tradability and quote coin; sort
+        by symbol; 50 rows a page.
 
-        ``GET /v1/assets``. Currently needs no API key.
+        ``GET /v1/assets``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            dax: Exchange key to filter by, for example BIN. Omit to include every exchange.
+            exchange: Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX.
+                Omit to include every exchange.
             can_trade: When true, only assets the exchange currently allows trading; when false,
                 only the others. Omit for both.
-            quote: Quote currency to filter by, for example USDT. Omit for every quote currency.
-            limit: Maximum number of rows to return, from 1 to 500. Default 100.
-            offset: Number of rows to skip, counted from zero. Add the limit to move to the next
-                page. Default 0.
+            quote: Quote coin to filter by, for example USDT. Omit for every quote coin.
+            sort: Field to sort by: symbol (default); a minus sign in front sorts high to low.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/v1/assets", auth="none",
-            query=[("dax", dax), ("canTrade", can_trade), ("quote", quote), ("limit", limit), ("offset", offset)],
+        return self._service.page(
+            "GET", "/v1/assets", auth="key",
+            query=[("exchange", exchange), ("canTrade", can_trade), ("quote", quote), ("sort", sort), ("page", page), ("size", size)],
         )
 
     def list_pages(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         can_trade: Optional[bool] = None,
         quote: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> Iterator[List[t.PubV1Asset]]:
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoApiAsset]]:
         """Yield every page of :meth:`list`.
 
-        Advances ``offset`` by the rows returned until a short or empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_offset_pages(
-            lambda lim, off: self.list(dax=dax, can_trade=can_trade, quote=quote, limit=lim, offset=off), limit=limit, offset=offset)
+        return rt.iter_pages(
+            lambda n: self.list(exchange=exchange, can_trade=can_trade, quote=quote, sort=sort, page=n, size=size), first=page)
 
     def list_items(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         can_trade: Optional[bool] = None,
         quote: Optional[str] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> Iterator[t.PubV1Asset]:
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoApiAsset]:
         """Yield every row of :meth:`list`, page after page."""
         return rt.iter_items(self.list_pages(
-            dax=dax, can_trade=can_trade, quote=quote, limit=limit, offset=offset))
+            exchange=exchange, can_trade=can_trade, quote=quote, sort=sort, page=page, size=size))
 
     def exchanges(self) -> List[t.PubV1Exchange]:
         """Exchanges Assets
 
-        Lists the exchange keys with their numeric value and TradingView prefix.
+        Lists the exchanges FinGraph reads, with their name and numeric value.
 
-        ``GET /v1/assets/exchanges``. Currently needs no API key.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/v1/assets/exchanges", auth="none",
-        )
-
-    def types(self) -> List[t.PubV1EnumItem]:
-        """Types Assets
-
-        Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
-
-        ``GET /v1/assets/types``. Currently needs no API key.
+        ``GET /v1/assets/exchanges``. Billed 0.5 credits per call.
 
         Returns: the rows.
         """
         return self._service.data(
-            "GET", "/v1/assets/types", auth="none",
+            "GET", "/v1/assets/exchanges", auth="key",
         )
 
     def get(self, id: str) -> t.PubV1Asset:
@@ -842,7 +1260,7 @@ class AssetsV1(rt.Group):
 
         Returns one asset from the registry by its id.
 
-        ``GET /v1/assets/{id}``. Currently needs no API key.
+        ``GET /v1/assets/{id}``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
             id: Asset id, as returned in the id field of the asset list (24-character hexadecimal
@@ -851,18 +1269,449 @@ class AssetsV1(rt.Group):
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/v1/assets/{rt.seg(id)}", auth="none",
+            "GET", f"/v1/assets/{rt.seg(id)}", auth="key",
         )
+
+
+class MarketsV1(rt.Group):
+    """Markets operations under ``/v1``."""
+
+    def crypto(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCrypto]:
+        """Markets: Crypto
+
+        Every coin with its latest Sum, Mav and Osc ratings, price changes, market value, volume and
+        FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask
+        for up to 50 symbols by name. Two coins that share a ticker each have their own symbol.
+
+        ``GET /v1/markets/crypto``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, vol24, score, mktcap.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/markets/crypto", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def crypto_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCrypto]]:
+        """Yield every page of :meth:`crypto`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.crypto(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def crypto_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCrypto]:
+        """Yield every row of :meth:`crypto`, page after page."""
+        return rt.iter_items(self.crypto_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def dax(
+        self,
+        *,
+        exchange: Optional[str] = None,
+        quote: Optional[str] = None,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktPair]:
+        """Markets: Crypto pairs
+
+        Every crypto pair of an exchange with its price, 24-hour change, volume and FinGraph's own
+        reading (signal, trend, confidence, score, term, rank). Pairs carry no Sum, Mav or Osc
+        ratings. 50 rows a page; ask for up to 50 symbols by name.
+
+        ``GET /v1/markets/dax``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            exchange: Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE;
+                only BINANCE has data today, the others answer an empty page.
+            quote: Only pairs priced in this coin, for example USDT.
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, chg1d,
+                vol24, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/markets/dax", auth="key",
+            query=[("exchange", exchange), ("quote", quote), ("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def dax_pages(
+        self,
+        *,
+        exchange: Optional[str] = None,
+        quote: Optional[str] = None,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktPair]]:
+        """Yield every page of :meth:`dax`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.dax(exchange=exchange, quote=quote, syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def dax_items(
+        self,
+        *,
+        exchange: Optional[str] = None,
+        quote: Optional[str] = None,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktPair]:
+        """Yield every row of :meth:`dax`, page after page."""
+        return rt.iter_items(self.dax_pages(
+            exchange=exchange, quote=quote, syms=syms, sort=sort, page=page, size=size))
+
+    def eqt_usa(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktEqtUsa]:
+        """Markets: US stocks
+
+        Every US stock with its latest Sum, Mav and Osc ratings, the analysts' rating, price
+        changes, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank).
+        50 rows a page; ask for up to 50 symbols by name.
+
+        ``GET /v1/markets/eqtusa``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, vol24, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/markets/eqtusa", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def eqt_usa_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktEqtUsa]]:
+        """Yield every page of :meth:`eqt_usa`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.eqt_usa(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def eqt_usa_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktEqtUsa]:
+        """Yield every row of :meth:`eqt_usa`, page after page."""
+        return rt.iter_items(self.eqt_usa_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def forex(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCfd]:
+        """Markets: Forex
+
+        Every forex pair with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+        reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50
+        symbols by name.
+
+        ``GET /v1/markets/forex``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/markets/forex", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def forex_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCfd]]:
+        """Yield every page of :meth:`forex`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.forex(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def forex_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCfd]:
+        """Yield every row of :meth:`forex`, page after page."""
+        return rt.iter_items(self.forex_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def futures(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCfd]:
+        """Markets: Futures
+
+        Every futures contract (energy, agricultural, interest-rate and index futures) with its
+        latest Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend,
+        confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+
+        ``GET /v1/markets/futures``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/markets/futures", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def futures_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCfd]]:
+        """Yield every page of :meth:`futures`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.futures(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def futures_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCfd]:
+        """Yield every row of :meth:`futures`, page after page."""
+        return rt.iter_items(self.futures_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def indices(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCfd]:
+        """Markets: Indices
+
+        Every stock index with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+        reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50
+        symbols by name.
+
+        ``GET /v1/markets/indices``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/markets/indices", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def indices_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCfd]]:
+        """Yield every page of :meth:`indices`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.indices(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def indices_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCfd]:
+        """Yield every row of :meth:`indices`, page after page."""
+        return rt.iter_items(self.indices_pages(
+            syms=syms, sort=sort, page=page, size=size))
+
+    def metals(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoMktCfd]:
+        """Markets: Metals
+
+        Every metals contract with its latest Sum, Mav and Osc ratings, price changes and FinGraph's
+        own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50
+        symbols by name.
+
+        ``GET /v1/markets/metals``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            syms: Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole
+                market. Symbols no row carries come back in NotFound.
+            sort: Field to sort by; a minus sign in front sorts high to low. Default rank (1 is
+                FinGraph's strongest). Missing values come last. Fields: rank, sym, price, sum, mav,
+                osc, chg1d, chg1w, chg1m, chgytd, score.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/markets/metals", auth="key",
+            query=[("syms", syms), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def metals_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoMktCfd]]:
+        """Yield every page of :meth:`metals`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.metals(syms=syms, sort=sort, page=n, size=size), first=page)
+
+    def metals_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoMktCfd]:
+        """Yield every row of :meth:`metals`, page after page."""
+        return rt.iter_items(self.metals_pages(
+            syms=syms, sort=sort, page=page, size=size))
 
 
 class OhlcvV1(rt.Group):
     """Ohlcv operations under ``/v1``."""
 
-    def batch(self, *, symbols: Optional[str] = None, timeframe: Optional[str] = None) -> Any:
+    def batch(
+        self,
+        *,
+        symbols: Optional[str] = None,
+        timeframe: Optional[str] = None,
+    ) -> Dict[str, Any]:
         """Batch OHLCV
 
-        Reserved: candles for several symbols in one call. Candle data is not available yet and the
-        endpoint answers 501 Not Implemented.
+        Coming soon: candles for several symbols in one call. This endpoint is not available yet and
+        answers 501 Not Implemented until it is built.
 
         ``GET /v1/ohlcv/batch``. Included in paid plans (package tiers 2, 3, 4).
 
@@ -885,13 +1734,13 @@ class OhlcvV1(rt.Group):
         from_: Optional[str] = None,
         to: Optional[str] = None,
         limit: Optional[int] = None,
-    ) -> Any:
+    ) -> Dict[str, Any]:
         """Get Ohlcv
 
-        Reserved: candles for one symbol over a time range. Candle data is not available yet and the
-        endpoint answers 501 Not Implemented.
+        Coming soon: candles for one symbol over a time range. This endpoint is not available yet
+        and answers 501 Not Implemented until it is built.
 
-        ``GET /v1/ohlcv/{symbol}``. Currently needs no API key.
+        ``GET /v1/ohlcv/{symbol}``. Included in paid plans (package tiers 2, 3, 4).
 
         Args:
             symbol: Trading symbol, for example BTCUSDT.
@@ -903,15 +1752,15 @@ class OhlcvV1(rt.Group):
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/v1/ohlcv/{rt.seg(symbol)}", auth="none",
+            "GET", f"/v1/ohlcv/{rt.seg(symbol)}", auth="key",
             query=[("timeframe", timeframe), ("from", from_), ("to", to), ("limit", limit)],
         )
 
-    def realtime(self, symbol: str) -> Any:
+    def realtime(self, symbol: str) -> Dict[str, Any]:
         """Realtime OHLCV
 
-        Reserved: the latest candle for one symbol. Candle data is not available yet and the
-        endpoint answers 501 Not Implemented.
+        Coming soon: the latest candle for one symbol. This endpoint is not available yet and
+        answers 501 Not Implemented until it is built.
 
         ``GET /v1/ohlcv/{symbol}/realtime``. Included in paid plans (package tiers 2, 3, 4).
 
@@ -931,18 +1780,16 @@ class QuotesV1(rt.Group):
     def realtime(self, symbol: str, *, market: Optional[str] = None) -> t.PubV1Quote:
         """Realtime quote
 
-        Latest price, 1-day change and volume for a symbol in any market lane (for example BTC,
-        NVDA, EURUSD, a Bursa Malaysia code or an exchange pair). Set market to search one lane
-        only.
+        Latest price, 1-day change and volume for a symbol in any market (for example BTC, NVDA,
+        EURUSD or an exchange pair). Set market to search one market only.
 
         ``GET /v1/quotes/{symbol}/realtime``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
             symbol: Trading symbol or code of the instrument, for example BTC, NVDA, EURUSD or an
                 exchange pair such as BTCUSDT.
-            market: Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or
-                pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is
-                rejected with status 400.
+            market: Market to restrict to: crypto, stocks, forex or pairs (exchange crypto pairs).
+                Omit to search every market. An unknown value is rejected with status 400.
 
         Returns: the result.
         """
@@ -950,6 +1797,319 @@ class QuotesV1(rt.Group):
             "GET", f"/v1/quotes/{rt.seg(symbol)}/realtime", auth="key",
             query=[("market", market)],
         )
+
+
+class RecordV1(rt.Group):
+    """Record operations under ``/v1``."""
+
+    def calls(
+        self,
+        *,
+        market: Optional[str] = None,
+        syms: Optional[str] = None,
+        side: Optional[str] = None,
+        horizon: Optional[str] = None,
+        conf: Optional[str] = None,
+        outcome: Optional[str] = None,
+        from_: Optional[str] = None,
+        to: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoRecordCall]:
+        """Track record: closed calls
+
+        Every call FinGraph has followed to its end, newest first, with entry, exit and result.
+        Filter by market, symbols, side, horizon, confidence, outcome and dates. 50 a page.
+
+        ``GET /v1/record/calls``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            market: Only this market: eqtusa, crypto, dax or fxs.
+            syms: Only these symbols, comma-separated, up to 50, any case.
+            side: buy or sell.
+            horizon: How long the call was followed: 6h, 24h, 72h, 7d or 30d.
+            conf: How sure FinGraph was: VHigh, High, Med, Low, VLow or None.
+            outcome: won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result
+                such as TP1 or SL.
+            from_: Closed on or after this day (UTC), such as 2026-11-01.
+            to: Closed on or before this day (UTC), such as 2026-11-20.
+            sort: closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default
+                -closedAt.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/record/calls", auth="key",
+            query=[("market", market), ("syms", syms), ("side", side), ("horizon", horizon), ("conf", conf), ("outcome", outcome), ("from", from_), ("to", to), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def calls_pages(
+        self,
+        *,
+        market: Optional[str] = None,
+        syms: Optional[str] = None,
+        side: Optional[str] = None,
+        horizon: Optional[str] = None,
+        conf: Optional[str] = None,
+        outcome: Optional[str] = None,
+        from_: Optional[str] = None,
+        to: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoRecordCall]]:
+        """Yield every page of :meth:`calls`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.calls(market=market, syms=syms, side=side, horizon=horizon, conf=conf, outcome=outcome, from_=from_, to=to, sort=sort, page=n, size=size), first=page)
+
+    def calls_items(
+        self,
+        *,
+        market: Optional[str] = None,
+        syms: Optional[str] = None,
+        side: Optional[str] = None,
+        horizon: Optional[str] = None,
+        conf: Optional[str] = None,
+        outcome: Optional[str] = None,
+        from_: Optional[str] = None,
+        to: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoRecordCall]:
+        """Yield every row of :meth:`calls`, page after page."""
+        return rt.iter_items(self.calls_pages(
+            market=market, syms=syms, side=side, horizon=horizon, conf=conf, outcome=outcome, from_=from_, to=to, sort=sort, page=page, size=size))
+
+
+class ScreensV1(rt.Group):
+    """Screens operations under ``/v1``."""
+
+    def crypto(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoScrCrypto]:
+        """Screens: Crypto
+
+        FinGraph's ranked shortlists of coins: strongest risers, strongest fallers, moving fastest
+        in price, volume rising fastest and breaking out of range. The same row as the markets list,
+        plus LaneRank. 50 a page.
+
+        ``GET /v1/screens/crypto/{lane}``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            lane: Which shortlist: fastprc (moving fastest in price now), topgain (strongest
+                risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout
+                (breaking out of its range). Forex has no volume, so its fastvol is empty.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", f"/v1/screens/crypto/{rt.seg(lane)}", auth="key",
+            query=[("page", page), ("size", size)],
+        )
+
+    def crypto_pages(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoScrCrypto]]:
+        """Yield every page of :meth:`crypto`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.crypto(lane, page=n, size=size), first=page)
+
+    def crypto_items(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoScrCrypto]:
+        """Yield every row of :meth:`crypto`, page after page."""
+        return rt.iter_items(self.crypto_pages(
+            lane, page=page, size=size))
+
+    def dax(
+        self,
+        lane: str,
+        *,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoScrPair]:
+        """Screens: Crypto pairs
+
+        FinGraph's ranked shortlists of crypto pairs: strongest risers, strongest fallers, moving
+        fastest in price, volume rising fastest and breaking out of range. The same row as the
+        markets list, plus LaneRank. 50 a page.
+
+        ``GET /v1/screens/dax/{lane}``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            lane: Which shortlist: fastprc (moving fastest in price now), topgain (strongest
+                risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout
+                (breaking out of its range). Forex has no volume, so its fastvol is empty.
+            exchange: Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", f"/v1/screens/dax/{rt.seg(lane)}", auth="key",
+            query=[("exchange", exchange), ("page", page), ("size", size)],
+        )
+
+    def dax_pages(
+        self,
+        lane: str,
+        *,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoScrPair]]:
+        """Yield every page of :meth:`dax`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.dax(lane, exchange=exchange, page=n, size=size), first=page)
+
+    def dax_items(
+        self,
+        lane: str,
+        *,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoScrPair]:
+        """Yield every row of :meth:`dax`, page after page."""
+        return rt.iter_items(self.dax_pages(
+            lane, exchange=exchange, page=page, size=size))
+
+    def eqt_usa(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoScrEqtUsa]:
+        """Screens: US stocks
+
+        FinGraph's ranked shortlists of US stocks: strongest risers, strongest fallers, moving
+        fastest in price, volume rising fastest and breaking out of range. The same row as the
+        markets list, plus LaneRank. 50 a page.
+
+        ``GET /v1/screens/eqtusa/{lane}``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            lane: Which shortlist: fastprc (moving fastest in price now), topgain (strongest
+                risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout
+                (breaking out of its range). Forex has no volume, so its fastvol is empty.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", f"/v1/screens/eqtusa/{rt.seg(lane)}", auth="key",
+            query=[("page", page), ("size", size)],
+        )
+
+    def eqt_usa_pages(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoScrEqtUsa]]:
+        """Yield every page of :meth:`eqt_usa`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.eqt_usa(lane, page=n, size=size), first=page)
+
+    def eqt_usa_items(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoScrEqtUsa]:
+        """Yield every row of :meth:`eqt_usa`, page after page."""
+        return rt.iter_items(self.eqt_usa_pages(
+            lane, page=page, size=size))
+
+    def fxs(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoScrCfd]:
+        """Screens: Forex
+
+        FinGraph's ranked shortlists of forex pairs: strongest risers, strongest fallers, moving
+        fastest in price, volume rising fastest and breaking out of range. The same row as the
+        markets list, plus LaneRank. 50 a page.
+
+        ``GET /v1/screens/fxs/{lane}``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            lane: Which shortlist: fastprc (moving fastest in price now), topgain (strongest
+                risers), toplose (strongest fallers), fastvol (volume rising fastest) or breakout
+                (breaking out of its range). Forex has no volume, so its fastvol is empty.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", f"/v1/screens/fxs/{rt.seg(lane)}", auth="key",
+            query=[("page", page), ("size", size)],
+        )
+
+    def fxs_pages(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoScrCfd]]:
+        """Yield every page of :meth:`fxs`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.fxs(lane, page=n, size=size), first=page)
+
+    def fxs_items(
+        self,
+        lane: str,
+        *,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoScrCfd]:
+        """Yield every row of :meth:`fxs`, page after page."""
+        return rt.iter_items(self.fxs_pages(
+            lane, page=page, size=size))
 
 
 class SignalsV1(rt.Group):
@@ -985,55 +2145,6 @@ class SignalsV1(rt.Group):
             query=[("family", family), ("direction", direction), ("enabled", enabled)],
         )
 
-    def recent(
-        self,
-        *,
-        limit: Optional[int] = None,
-        market: Optional[str] = None,
-    ) -> List[t.PubV1SignalRow]:
-        """Recent signals
-
-        Most recently updated signals across crypto, US stocks, forex, Malaysia stocks and crypto
-        pairs. Set market to restrict the result to one lane.
-
-        ``GET /v1/signals/recent``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            limit: Maximum number of rows to return, from 1 to 100. Default 25.
-            market: Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or
-                pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is
-                rejected with status 400.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/v1/signals/recent", auth="key",
-            query=[("limit", limit), ("market", market)],
-        )
-
-    def get(self, symbol: str, *, market: Optional[str] = None) -> t.PubV1Signal:
-        """View signal
-
-        One symbol's signal (for example BTC, NVDA, EURUSD, a Bursa Malaysia code, an exchange pair
-        or a TradingView code), with its short, mid and long term reads. Set market to search one
-        lane only.
-
-        ``GET /v1/signals/{symbol}``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            symbol: Trading symbol or code of the instrument, for example BTC, NVDA, EURUSD or an
-                exchange pair such as BTCUSDT.
-            market: Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or
-                pairs (exchange crypto pairs). Omit to search all lanes. An unknown value is
-                rejected with status 400.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/v1/signals/{rt.seg(symbol)}", auth="key",
-            query=[("market", market)],
-        )
-
 
 class StatsV1(rt.Group):
     """Stats operations under ``/v1``."""
@@ -1051,55 +2162,6 @@ class StatsV1(rt.Group):
             "GET", "/v1/stats/aggregate", auth="key",
         )
 
-    def movers(
-        self,
-        *,
-        direction: Optional[str] = None,
-        top: Optional[int] = None,
-        dax: Optional[t.DAX] = None,
-    ) -> List[t.PubV1Mover]:
-        """Market movers
-
-        Top gainers or losers by 24-hour price change percentage, optionally for one exchange.
-
-        ``GET /v1/stats/movers``. Billed 1 credit per call.
-
-        Args:
-            direction: Ranking to return: gainers (largest rises, the default) or losers (largest
-                falls).
-            top: Number of rows to return, from 1 to 100. Default 10.
-            dax: Exchange key to restrict the ranking to, for example BIN. Omit for every exchange.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/v1/stats/movers", auth="key",
-            query=[("direction", direction), ("top", top), ("dax", dax)],
-        )
-
-    def volume(
-        self,
-        *,
-        top: Optional[int] = None,
-        dax: Optional[t.DAX] = None,
-    ) -> List[t.PubV1Mover]:
-        """Volume leaders
-
-        Top symbols by 24-hour quote volume, optionally for one exchange.
-
-        ``GET /v1/stats/volume``. Billed 1 credit per call.
-
-        Args:
-            top: Number of rows to return, from 1 to 100. Default 10.
-            dax: Exchange key to restrict the ranking to, for example BIN. Omit for every exchange.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/v1/stats/volume", auth="key",
-            query=[("top", top), ("dax", dax)],
-        )
-
 
 class TickersV1(rt.Group):
     """Tickers operations under ``/v1``."""
@@ -1107,96 +2169,132 @@ class TickersV1(rt.Group):
     def list(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         quote: Optional[str] = None,
         in_exchange: Optional[bool] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> List[t.PubV1Ticker]:
-        """List Tickers
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoApiTicker]:
+        """Tickers list
 
-        Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency
-        and listing state; page with limit and offset.
+        Lists crypto-pair tickers with last price, 24-hour change and volume. Filter by exchange,
+        quote coin and listing state; sort by symbol, lastprice, chgpct or quotvol; 50 rows a page.
 
-        ``GET /v1/tickers``. Currently needs no API key.
+        ``GET /v1/tickers``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            dax: Exchange key to filter by, for example BIN. Omit to include every exchange.
-            quote: Quote currency to filter by, for example USDT. Omit for every quote currency.
+            exchange: Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX.
+                Omit to include every exchange.
+            quote: Quote coin to filter by, for example USDT. Omit for every quote coin.
             in_exchange: When true, only tickers currently listed on the exchange; when false, only
                 the others. Omit for both.
-            limit: Maximum number of rows to return, from 1 to 500. Default 100.
-            offset: Number of rows to skip, counted from zero. Add the limit to move to the next
-                page. Default 0.
+            sort: Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in
+                front sorts high to low.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/v1/tickers", auth="none",
-            query=[("dax", dax), ("quote", quote), ("inExchange", in_exchange), ("limit", limit), ("offset", offset)],
+        return self._service.page(
+            "GET", "/v1/tickers", auth="key",
+            query=[("exchange", exchange), ("quote", quote), ("inExchange", in_exchange), ("sort", sort), ("page", page), ("size", size)],
         )
 
     def list_pages(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         quote: Optional[str] = None,
         in_exchange: Optional[bool] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> Iterator[List[t.PubV1Ticker]]:
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoApiTicker]]:
         """Yield every page of :meth:`list`.
 
-        Advances ``offset`` by the rows returned until a short or empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_offset_pages(
-            lambda lim, off: self.list(dax=dax, quote=quote, in_exchange=in_exchange, limit=lim, offset=off), limit=limit, offset=offset)
+        return rt.iter_pages(
+            lambda n: self.list(exchange=exchange, quote=quote, in_exchange=in_exchange, sort=sort, page=n, size=size), first=page)
 
     def list_items(
         self,
         *,
-        dax: Optional[t.DAX] = None,
+        exchange: Optional[str] = None,
         quote: Optional[str] = None,
         in_exchange: Optional[bool] = None,
-        limit: Optional[int] = None,
-        offset: Optional[int] = None,
-    ) -> Iterator[t.PubV1Ticker]:
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoApiTicker]:
         """Yield every row of :meth:`list`, page after page."""
         return rt.iter_items(self.list_pages(
-            dax=dax, quote=quote, in_exchange=in_exchange, limit=limit, offset=offset))
+            exchange=exchange, quote=quote, in_exchange=in_exchange, sort=sort, page=page, size=size))
 
     def search(
         self,
         *,
         q: Optional[str] = None,
-        dax: Optional[t.DAX] = None,
-        limit: Optional[int] = None,
-    ) -> List[t.PubV1TickerHit]:
-        """Search Tickers
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.DtoApiTickerLite]:
+        """Ticker search
 
-        Finds tickers whose symbol contains the search text, case-insensitive.
+        Finds crypto-pair tickers whose symbol contains the search text, case-insensitive. 50 rows a
+        page.
 
-        ``GET /v1/tickers/search``. Currently needs no API key.
+        ``GET /v1/tickers/search``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
             q: Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the
                 symbol. Required.
-            dax: Exchange key to filter by, for example BIN. Omit to include every exchange.
-            limit: Maximum number of rows to return, from 1 to 100. Default 25.
+            exchange: Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX.
+                Omit to include every exchange.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the rows.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/v1/tickers/search", auth="none",
-            query=[("q", q), ("dax", dax), ("limit", limit)],
+        return self._service.page(
+            "GET", "/v1/tickers/search", auth="key",
+            query=[("q", q), ("exchange", exchange), ("page", page), ("size", size)],
         )
+
+    def search_pages(
+        self,
+        *,
+        q: Optional[str] = None,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.DtoApiTickerLite]]:
+        """Yield every page of :meth:`search`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.search(q=q, exchange=exchange, page=n, size=size), first=page)
+
+    def search_items(
+        self,
+        *,
+        q: Optional[str] = None,
+        exchange: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.DtoApiTickerLite]:
+        """Yield every row of :meth:`search`, page after page."""
+        return rt.iter_items(self.search_pages(
+            q=q, exchange=exchange, page=page, size=size))
 
     def get(self, symbol: str) -> t.PubV1TickerDetail:
         """Get Tickers
 
         Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
 
-        ``GET /v1/tickers/{symbol}``. Currently needs no API key.
+        ``GET /v1/tickers/{symbol}``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
             symbol: Trading symbol, for example BTCUSDT. Must match exactly.
@@ -1204,7 +2302,53 @@ class TickersV1(rt.Group):
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/v1/tickers/{rt.seg(symbol)}", auth="none",
+            "GET", f"/v1/tickers/{rt.seg(symbol)}", auth="key",
+        )
+
+
+class TicksV1(rt.Group):
+    """Ticks operations under ``/v1``."""
+
+    def dax(self) -> t.DtoTickBatch:
+        """Ticks: crypto pairs
+
+        Latest price of every crypto pair, one entry per exchange and symbol, with the time the
+        snapshot was taken.
+
+        ``GET /v1/ticks/dax``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Returns: the result.
+        """
+        return self._service.data(
+            "GET", "/v1/ticks/dax", auth="key",
+        )
+
+    def eqt_usa(self) -> t.DtoPxTickBatch:
+        """Ticks: US stocks
+
+        Latest price of every US stock, one entry per symbol, as [price, time in Unix seconds], with
+        the time the snapshot was taken.
+
+        ``GET /v1/ticks/eqtusa``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Returns: the result.
+        """
+        return self._service.data(
+            "GET", "/v1/ticks/eqtusa", auth="key",
+        )
+
+    def fxs(self) -> t.DtoFxsTickBatch:
+        """Ticks: forex
+
+        Latest bid and ask of every forex and CFD instrument the data terminals report, one entry
+        per symbol, with the time of each quote and of the snapshot.
+
+        ``GET /v1/ticks/fxs``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Returns: the result.
+        """
+        return self._service.data(
+            "GET", "/v1/ticks/fxs", auth="key",
         )
 
 
@@ -1212,20 +2356,15 @@ class GraphApiGroups:
     """Every FinGraph operation under ``/api``, by group."""
 
     def __init__(self, service: rt.Service) -> None:
-        self.apc_dat = ApcDatApi(service)
         self.assets = AssetsApi(service)
-        self.dax_dat = DaxDatApi(service)
-        self.fxs_tikr = FxsTikrApi(service)
-        self.klse_prc = KlsePrcApi(service)
+        self.markets = MarketsApi(service)
         self.ohlcv = OhlcvApi(service)
-        self.sig_cry = SigCryApi(service)
-        self.sig_dax = SigDaxApi(service)
-        self.sig_eqt = SigEqtApi(service)
-        self.sig_fxs = SigFxsApi(service)
+        self.record = RecordApi(service)
+        self.screens = ScreensApi(service)
         self.signals = SignalsApi(service)
         self.stats = StatsApi(service)
         self.tickers = TickersApi(service)
-        self.tvd_dat = TvdDatApi(service)
+        self.ticks = TicksApi(service)
 
 
 class GraphV1Groups:
@@ -1233,11 +2372,15 @@ class GraphV1Groups:
 
     def __init__(self, service: rt.Service) -> None:
         self.assets = AssetsV1(service)
+        self.markets = MarketsV1(service)
         self.ohlcv = OhlcvV1(service)
         self.quotes = QuotesV1(service)
+        self.record = RecordV1(service)
+        self.screens = ScreensV1(service)
         self.signals = SignalsV1(service)
         self.stats = StatsV1(service)
         self.tickers = TickersV1(service)
+        self.ticks = TicksV1(service)
 
 
 class FinGraph(GraphApiGroups):

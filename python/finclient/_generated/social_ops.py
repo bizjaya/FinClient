@@ -7,1417 +7,1203 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Union  # noqa: F4
 from .. import _runtime as rt
 from . import social_types as t
 
-# The fields each operation's `qry` object knows, by schema; snake_case spellings are accepted for them.
-_QRY: Dict[str, Tuple[str, ...]] = {
-    "QueApiSocAuthorList": (
-        "Platform",
-        "Text",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-    "QueApiSocEventList": (
-        "Provider",
-        "Category",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-    "QueApiSocMarketList": (
-        "Provider",
-        "Category",
-        "Status",
-        "EventId",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-    "QueApiSocPostList": (
-        "Ticker",
-        "AuthorId",
-        "Platform",
-        "From",
-        "To",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-    "QueApiSocResolvedList": (
-        "Provider",
-        "Category",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-    "QueApiSocWatchList": (
-        "Platform",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-    "QueSocApiVideoList": (
-        "ChannelId",
-        "Symbol",
-        "MinScore",
-        "MaxScore",
-        "From",
-        "To",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-}
+
+
+class CreatorsApi(rt.Group):
+    """Creators operations under ``/api``."""
+
+    def creators(
+        self,
+        *,
+        platform: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.CreatorRow]:
+        """Creator leaderboard
+
+        The accounts FinSocial follows, ranked by the engagement on their posts or by how fast their
+        following grows: followers, posts and engagement in the window, and follower growth in
+        percent. It answers once a source is cleared; until then the list is empty.
+
+        ``GET /api/creators``. Billed 1 credit per call.
+
+        Args:
+            platform: Only this platform: HackerNews or Bluesky.
+            window: Length of the window: 24h, 7d or 30d. Default 7d.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: engagement
+                (default, high to low), growth, posts, followers. A minus sign sorts high to low;
+                accounts without a value come last.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/api/creators", auth="key",
+            query=[("platform", platform), ("window", window), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def creators_pages(
+        self,
+        *,
+        platform: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.CreatorRow]]:
+        """Yield every page of :meth:`creators`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.creators(platform=platform, window=window, sort=sort, page=n, size=size), first=page)
+
+    def creators_items(
+        self,
+        *,
+        platform: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.CreatorRow]:
+        """Yield every row of :meth:`creators`, page after page."""
+        return rt.iter_items(self.creators_pages(
+            platform=platform, window=window, sort=sort, page=page, size=size))
 
 
 class MarketsApi(rt.Group):
     """Markets operations under ``/api``."""
 
-    def event_list(
+    def markets(
         self,
-        qry: Optional[t.QueApiSocEventList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocEvent]:
-        """List prediction events
-
-        Real-world events the prediction markets are grouped under. Filters: Provider, Category.
-
-        ``GET /api/markets/events``. Billed 0.5 credits per call.
-
-        Args:
-            qry: Paging, sorting and filters for the event list, sent as JSON in the qry query
-                parameter. The event filters are Provider and Category. Pass a dict, keyword
-                arguments, or both.
-                Provider: Return only items of this prediction-market provider. Empty means every
-                    provider available to you.
-                Category: Return only items in this provider category, matched exactly. Empty means
-                    all categories.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/markets/events", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocEventList"], qry, fields),
-        )
-
-    def event_list_pages(
-        self,
-        qry: Optional[t.QueApiSocEventList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocEvent]]:
-        """Yield every page of :meth:`event_list`.
-
-        Advances ``pageNo`` until the last page or an empty page.
-        """
-        return rt.iter_qry_pages(
-            self.event_list, qry=rt.build_qry(_QRY["QueApiSocEventList"], qry, fields))
-
-    def event_list_items(
-        self,
-        qry: Optional[t.QueApiSocEventList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocEvent]:
-        """Yield every row of :meth:`event_list`, page after page."""
-        return rt.iter_items(self.event_list_pages(qry, **fields))
-
-    def history_list(
-        self,
-        id: str,
         *,
-        granularity: Optional[str] = None,
-        from_: Optional[Union[str, datetime]] = None,
-        to: Optional[Union[str, datetime]] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocHistory:
-        """Prediction market history
+        q: Optional[str] = None,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        status: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.MarketRow]:
+        """Prediction markets
 
-        A market's probability series per outcome, one point per hour (1h) or per day (1d), oldest
-        first.
+        Prediction markets of Polymarket, Kalshi and Manifold, with the latest probability (the
+        leading outcome in a market with several), its change over 24 hours, volume, liquidity,
+        closing time and status.
 
-        ``GET /api/markets/history/{id}``. Billed 1 credit per call.
-
-        Args:
-            id: Market identifier, as returned in the Id field of the market list.
-            granularity: Size of one point: 1h for hourly or 1d for daily. Default 1h. Each point is
-                the last price taken in its hour or day. Any other value is rejected with a 400
-                response.
-            from_: Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.
-            to: Latest time to include, in UTC (ISO 8601). Empty means no upper limit.
-            limit: Maximum number of points to return, from 1 to 1000. Default 200. When more points
-                fall in the range, the newest are kept. Points are returned oldest first.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/api/markets/history/{rt.seg(id)}", auth="key",
-            query=[("Granularity", granularity), ("From", from_), ("To", to), ("Limit", limit)],
-        )
-
-    def market_list(
-        self,
-        qry: Optional[t.QueApiSocMarketList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocMarket]:
-        """List prediction markets
-
-        Markets of Polymarket, Kalshi and Manifold. Filters: Provider, Category, Status, EventId.
-
-        ``GET /api/markets/list``. Billed 0.5 credits per call.
+        ``GET /api/markets``. Billed 0.5 credits per call.
 
         Args:
-            qry: Paging, sorting and filters for the market list, sent as JSON in the qry query
-                parameter. The market filters are Provider, Category, Status and EventId. Pass a
-                dict, keyword arguments, or both.
-                Provider: Return only items of this prediction-market provider. Empty means every
-                    provider available to you.
-                Category: Return only items in this provider category, matched exactly. Empty means
-                    all categories.
-                Status: Return only markets in this lifecycle status. Empty means every status.
-                EventId: Return only markets of this event, using the Id returned by the events
-                    list. Empty means all events.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            q: Only markets whose question contains this text, any case.
+            provider: Only this prediction-market provider: Polymarket, Kalshi or Manifold.
+            category: Only markets the provider files under this category, any case.
+            status: Only markets in this state: Open, Closed, Resolved or Unknown.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: volume
+                (default, high to low), chg24h, closes. A minus sign sorts high to low; markets
+                without a value come last.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/api/markets/list", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocMarketList"], qry, fields),
+            "GET", "/api/markets", auth="key",
+            query=[("q", q), ("provider", provider), ("category", category), ("status", status), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def market_list_pages(
+    def markets_pages(
         self,
-        qry: Optional[t.QueApiSocMarketList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocMarket]]:
-        """Yield every page of :meth:`market_list`.
+        *,
+        q: Optional[str] = None,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        status: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.MarketRow]]:
+        """Yield every page of :meth:`markets`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.market_list, qry=rt.build_qry(_QRY["QueApiSocMarketList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.markets(q=q, provider=provider, category=category, status=status, sort=sort, page=n, size=size), first=page)
 
-    def market_list_items(
+    def markets_items(
         self,
-        qry: Optional[t.QueApiSocMarketList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocMarket]:
-        """Yield every row of :meth:`market_list`, page after page."""
-        return rt.iter_items(self.market_list_pages(qry, **fields))
+        *,
+        q: Optional[str] = None,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        status: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.MarketRow]:
+        """Yield every row of :meth:`markets`, page after page."""
+        return rt.iter_items(self.markets_pages(
+            q=q, provider=provider, category=category, status=status, sort=sort, page=page, size=size))
 
-    def pulse_list(self, *, limit: Optional[int] = None) -> t.DtoApiSocPulse:
-        """Prediction pulse
+    def moves(
+        self,
+        *,
+        window: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.MarketMove]:
+        """Prediction market moves
 
-        The biggest probability moves of open markets over 1 h, 24 h and 7 d.
+        The biggest probability moves of open prediction markets in a window: the outcome that moved
+        most in each market, its price at the start and now. It answers once a provider is cleared;
+        until then the list is empty.
 
-        ``GET /api/markets/pulse``. Billed 1 credit per call.
+        ``GET /api/markets/moves``. Billed 1 credit per call.
 
         Args:
-            limit: Maximum number of moves to return for each window, from 1 to 50. Default 10.
+            window: Length of the window: 1h, 24h or 7d. Default 24h.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the result.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/api/markets/pulse", auth="key",
-            query=[("Limit", limit)],
+        return self._service.page(
+            "GET", "/api/markets/moves", auth="key",
+            query=[("window", window), ("page", page), ("size", size)],
         )
 
-    def resolved_list(
+    def moves_pages(
         self,
-        qry: Optional[t.QueApiSocResolvedList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocResolved]:
-        """Resolved market archive
+        *,
+        window: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.MarketMove]]:
+        """Yield every page of :meth:`moves`.
 
-        Resolved markets: the winning probability 30 d, 7 d, 24 h and 1 h before the result, and the
-        result.
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.moves(window=window, page=n, size=size), first=page)
 
-        ``GET /api/markets/resolved``. Billed 1 credit per call.
+    def moves_items(
+        self,
+        *,
+        window: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.MarketMove]:
+        """Yield every row of :meth:`moves`, page after page."""
+        return rt.iter_items(self.moves_pages(
+            window=window, page=page, size=size))
+
+    def resolved(
+        self,
+        *,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.ResolvedRow]:
+        """Resolved prediction markets
+
+        Prediction markets that have settled, newest first: the winner and the crowd's probability
+        for the winner 30 days, 7 days, 24 hours and 1 hour before it settled.
+
+        ``GET /api/markets/resolved``. Billed 0.5 credits per call.
 
         Args:
-            qry: Paging, sorting and filters for the resolved-market archive, sent as JSON in the
-                qry query parameter. The filters are Provider and Category. Pass a dict, keyword
-                arguments, or both.
-                Provider: Return only items of this prediction-market provider. Empty means every
-                    provider available to you.
-                Category: Return only items in this provider category, matched exactly. Empty means
-                    all categories.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            provider: Only this prediction-market provider: Polymarket, Kalshi or Manifold.
+            category: Only markets the provider files under this category, any case.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: settled
+                (default, newest first).
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
             "GET", "/api/markets/resolved", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocResolvedList"], qry, fields),
+            query=[("provider", provider), ("category", category), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def resolved_list_pages(
+    def resolved_pages(
         self,
-        qry: Optional[t.QueApiSocResolvedList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocResolved]]:
-        """Yield every page of :meth:`resolved_list`.
+        *,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.ResolvedRow]]:
+        """Yield every page of :meth:`resolved`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.resolved_list, qry=rt.build_qry(_QRY["QueApiSocResolvedList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.resolved(provider=provider, category=category, sort=sort, page=n, size=size), first=page)
 
-    def resolved_list_items(
+    def resolved_items(
         self,
-        qry: Optional[t.QueApiSocResolvedList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocResolved]:
-        """Yield every row of :meth:`resolved_list`, page after page."""
-        return rt.iter_items(self.resolved_list_pages(qry, **fields))
+        *,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.ResolvedRow]:
+        """Yield every row of :meth:`resolved`, page after page."""
+        return rt.iter_items(self.resolved_pages(
+            provider=provider, category=category, sort=sort, page=page, size=size))
 
-    def market_view(self, id: str) -> t.DtoApiSocMarketView:
-        """View prediction market
-
-        One market with its rules, outcomes, latest probabilities and resolution.
-
-        ``GET /api/markets/view/{id}``. Billed 0.5 credits per call.
-
-        Args:
-            id: Market identifier, as returned in the Id field of the market list.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/api/markets/view/{rt.seg(id)}", auth="key",
-        )
-
-
-class SocialApi(rt.Group):
-    """Social operations under ``/api``."""
-
-    def author_list(
-        self,
-        qry: Optional[t.QueApiSocAuthorList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocAuthor]:
-        """List social authors
-
-        Accounts seen on the platforms, most followed first. Filters: Platform, Text.
-
-        ``GET /api/social/authors``. Billed 0.5 credits per call.
-
-        Args:
-            qry: Paging, sorting and filters for the author list, sent as JSON in the qry query
-                parameter. The author filters are Platform and Text. Pass a dict, keyword arguments,
-                or both.
-                Platform: Return only items of this social platform. Empty means every platform
-                    available to you.
-                Text: Return only authors whose handle or display name contains this text, ignoring
-                    case. Empty means all authors.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/social/authors", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocAuthorList"], qry, fields),
-        )
-
-    def author_list_pages(
-        self,
-        qry: Optional[t.QueApiSocAuthorList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocAuthor]]:
-        """Yield every page of :meth:`author_list`.
-
-        Advances ``pageNo`` until the last page or an empty page.
-        """
-        return rt.iter_qry_pages(
-            self.author_list, qry=rt.build_qry(_QRY["QueApiSocAuthorList"], qry, fields))
-
-    def author_list_items(
-        self,
-        qry: Optional[t.QueApiSocAuthorList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocAuthor]:
-        """Yield every row of :meth:`author_list`, page after page."""
-        return rt.iter_items(self.author_list_pages(qry, **fields))
-
-    def author_view(
+    def market(
         self,
         id: str,
         *,
-        from_: Optional[Union[str, datetime]] = None,
-        to: Optional[Union[str, datetime]] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocAuthorView:
-        """View social author
+        granularity: Optional[str] = None,
+        days: Optional[int] = None,
+    ) -> t.MarketDetail:
+        """Prediction market
 
-        One account with its reach series (followers, following, posts), oldest first.
+        One prediction market with its rules, every outcome with its latest price, bid and ask, and
+        each outcome's price history by hour or day.
 
-        ``GET /api/social/authors/{id}``. Billed 1 credit per call.
+        ``GET /api/markets/{id}``. Billed 0.5 credits per call.
 
         Args:
-            id: Author identifier, as returned in the Id field of the author list.
-            from_: Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.
-            to: Latest time to include, in UTC (ISO 8601). Empty means no upper limit.
-            limit: Maximum number of points to return, from 1 to 1000. Default 200. When more points
-                fall in the range, the newest are kept. Points are returned oldest first.
+            id: The Id of the row, as returned by its list.
+            granularity: Size of one price point in the history: hour or day. Default hour.
+            days: How many days of history, 1 to 90. Default 7.
 
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/api/social/authors/{rt.seg(id)}", auth="key",
-            query=[("From", from_), ("To", to), ("Limit", limit)],
+            "GET", f"/api/markets/{rt.seg(id)}", auth="key",
+            query=[("granularity", granularity), ("days", days)],
         )
 
-    def post_list(
+
+class PostsApi(rt.Group):
+    """Posts operations under ``/api``."""
+
+    def posts(
         self,
-        qry: Optional[t.QueApiSocPostList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocPost]:
-        """List social posts
+        *,
+        syms: Optional[str] = None,
+        platform: Optional[str] = None,
+        author: Optional[str] = None,
+        since: Optional[str] = None,
+        stance: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.PostRow]:
+        """Posts
 
-        Posts, newest first, with FinSocial's sentiment score, the AI reading where there is one,
-        and the latest engagement counts. Filters: Ticker, AuthorId, Platform, From, To.
+        Posts from the social sources FinSocial may serve, newest first, with the tickers they name,
+        the way they read (Bullish, Bearish, Neutral or Unscored), the score and the engagement now.
+        The text comes only where the source allows it.
 
-        ``GET /api/social/posts``. Billed 0.5 credits per call.
+        ``GET /api/posts``. Billed 0.5 credits per call.
 
         Args:
-            qry: Paging, sorting and filters for the post list, sent as JSON in the qry query
-                parameter. The post filters are Ticker, AuthorId, Platform, From and To. Pass a
-                dict, keyword arguments, or both.
-                Ticker: Return only posts that mention this ticker symbol, for example BTC. Matching
-                    ignores case. Empty means all tickers.
-                AuthorId: Return only posts by this author, using the Id returned by the authors
-                    list. Empty means all authors.
-                Platform: Return only items of this social platform. Empty means every platform
-                    available to you.
-                From: Earliest post publication time to include, in UTC (ISO 8601). Empty means no
-                    lower limit.
-                To: Latest post publication time to include, in UTC (ISO 8601). Empty means no upper
-                    limit.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Tickers to look up, comma-separated, up to 50, any case. Leave empty for every
+                ticker. Tickers no row carries come back in NotFound.
+            platform: Only this platform: HackerNews or Bluesky.
+            author: Only posts by this handle, any case.
+            since: Only rows from this time on: a date such as 2026-11-20 or a full UTC time.
+            stance: Only posts that read this way: Bullish, Bearish, Neutral or Unscored.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: published
+                (default, newest first), engagement. Sorting by engagement orders the 3,000 newest
+                matching posts.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/api/social/posts", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocPostList"], qry, fields),
+            "GET", "/api/posts", auth="key",
+            query=[("syms", syms), ("platform", platform), ("author", author), ("since", since), ("stance", stance), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def post_list_pages(
+    def posts_pages(
         self,
-        qry: Optional[t.QueApiSocPostList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocPost]]:
-        """Yield every page of :meth:`post_list`.
-
-        Advances ``pageNo`` until the last page or an empty page.
-        """
-        return rt.iter_qry_pages(
-            self.post_list, qry=rt.build_qry(_QRY["QueApiSocPostList"], qry, fields))
-
-    def post_list_items(
-        self,
-        qry: Optional[t.QueApiSocPostList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocPost]:
-        """Yield every row of :meth:`post_list`, page after page."""
-        return rt.iter_items(self.post_list_pages(qry, **fields))
-
-    def post_view(
-        self,
-        id: str,
         *,
-        from_: Optional[Union[str, datetime]] = None,
-        to: Optional[Union[str, datetime]] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocPostView:
-        """View social post
+        syms: Optional[str] = None,
+        platform: Optional[str] = None,
+        author: Optional[str] = None,
+        since: Optional[str] = None,
+        stance: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.PostRow]]:
+        """Yield every page of :meth:`posts`.
 
-        One post with its engagement series, oldest first.
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.posts(syms=syms, platform=platform, author=author, since=since, stance=stance, sort=sort, page=n, size=size), first=page)
 
-        ``GET /api/social/posts/{id}``. Billed 1 credit per call.
+    def posts_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        platform: Optional[str] = None,
+        author: Optional[str] = None,
+        since: Optional[str] = None,
+        stance: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.PostRow]:
+        """Yield every row of :meth:`posts`, page after page."""
+        return rt.iter_items(self.posts_pages(
+            syms=syms, platform=platform, author=author, since=since, stance=stance, sort=sort, page=page, size=size))
+
+    def post(self, id: str) -> t.PostDetail:
+        """Post
+
+        One post with its engagement readings over time, oldest first.
+
+        ``GET /api/posts/{id}``. Billed 0.5 credits per call.
 
         Args:
-            id: Post identifier, as returned in the Id field of the post list.
-            from_: Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.
-            to: Latest time to include, in UTC (ISO 8601). Empty means no upper limit.
-            limit: Maximum number of points to return, from 1 to 1000. Default 200. When more points
-                fall in the range, the newest are kept. Points are returned oldest first.
+            id: The Id of the row, as returned by its list.
 
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/api/social/posts/{rt.seg(id)}", auth="key",
-            query=[("From", from_), ("To", to), ("Limit", limit)],
+            "GET", f"/api/posts/{rt.seg(id)}", auth="key",
         )
 
-    def sentiment_view(
+
+class PulseApi(rt.Group):
+    """Pulse operations under ``/api``."""
+
+    def pulse(
         self,
-        symbol: str,
         *,
+        syms: Optional[str] = None,
         window: Optional[str] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocSentiment:
-        """Social sentiment by ticker
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.PulseRow]:
+        """Ticker pulse
 
-        Count, mean sentiment score and label counts of the posts that name one ticker in the
-        window. Window 1h, 24h or 7d.
+        How much each ticker is being talked about on social media in a window: mentions,
+        engagement, attention against its usual level, the mix of bullish, bearish and neutral
+        posts, their mean score and the change in mentions against the window before. Ask for up to
+        50 tickers by name, or leave syms empty for every ticker, most-talked-about first.
 
-        ``GET /api/social/sentiment/{symbol}``. Billed 1 credit per call.
-
-        Args:
-            symbol: Ticker symbol to report on, for example BTC. Matching ignores case.
-            window: Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with
-                a 400 response.
-            limit: Maximum number of rows to return, from 1 to 100. Default 20.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/api/social/sentiment/{rt.seg(symbol)}", auth="key",
-            query=[("Window", window), ("Limit", limit)],
-        )
-
-    def trending_list(
-        self,
-        *,
-        window: Optional[str] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocTrending:
-        """Trending social tickers
-
-        Tickers ranked by attention: posts in the window against the usual posts for those hours.
-        Window 1h, 24h or 7d.
-
-        ``GET /api/social/trending``. Billed 1 credit per call.
+        ``GET /api/pulse``. Billed 1 credit per call.
 
         Args:
-            window: Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with
-                a 400 response.
-            limit: Maximum number of rows to return, from 1 to 100. Default 20.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", "/api/social/trending", auth="key",
-            query=[("Window", window), ("Limit", limit)],
-        )
-
-    def watch_list(
-        self,
-        qry: Optional[t.QueApiSocWatchList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocWatch]:
-        """List watched social accounts
-
-        The accounts and channels FinSocial follows. Only active ones are listed. Filter: Platform.
-
-        ``GET /api/social/watched``. Billed 0.5 credits per call.
-
-        Args:
-            qry: Paging, sorting and filters for the list of followed accounts, sent as JSON in the
-                qry query parameter. The only filter is Platform. Pass a dict, keyword arguments, or
-                both.
-                Platform: Return only items of this social platform. Empty means every platform
-                    available to you.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Tickers to look up, comma-separated, up to 50, any case. Leave empty for every
+                ticker. Tickers no row carries come back in NotFound.
+            window: Length of the window: 1h, 24h or 7d. Default 24h.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: attention
+                (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts
+                high to low; rows without a value come last.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/api/social/watched", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocWatchList"], qry, fields),
+            "GET", "/api/pulse", auth="key",
+            query=[("syms", syms), ("window", window), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def watch_list_pages(
+    def pulse_pages(
         self,
-        qry: Optional[t.QueApiSocWatchList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocWatch]]:
-        """Yield every page of :meth:`watch_list`.
+        *,
+        syms: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.PulseRow]]:
+        """Yield every page of :meth:`pulse`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.watch_list, qry=rt.build_qry(_QRY["QueApiSocWatchList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.pulse(syms=syms, window=window, sort=sort, page=n, size=size), first=page)
 
-    def watch_list_items(
+    def pulse_items(
         self,
-        qry: Optional[t.QueApiSocWatchList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocWatch]:
-        """Yield every row of :meth:`watch_list`, page after page."""
-        return rt.iter_items(self.watch_list_pages(qry, **fields))
+        *,
+        syms: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.PulseRow]:
+        """Yield every row of :meth:`pulse`, page after page."""
+        return rt.iter_items(self.pulse_pages(
+            syms=syms, window=window, sort=sort, page=page, size=size))
+
+    def history(
+        self,
+        *,
+        syms: Optional[str] = None,
+        interval: Optional[str] = None,
+        days: Optional[int] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.PulsePoint]:
+        """Ticker pulse history
+
+        How a ticker's social mentions moved: for each of up to 50 tickers, one row per hour or per
+        day with mentions, engagement, attention against its usual level and the mean sentiment
+        score. Rows come ticker by ticker, in the order asked.
+
+        ``GET /api/pulse/history``. Billed 1 credit per call.
+
+        Args:
+            syms: Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row
+                carries come back in NotFound.
+            interval: Size of one point: hour or day. Default hour.
+            days: How many days back, 1 to 30. Default 7.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest
+                first; -at newest first). Rows always come ticker by ticker, in the order asked.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/api/pulse/history", auth="key",
+            query=[("syms", syms), ("interval", interval), ("days", days), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def history_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        interval: Optional[str] = None,
+        days: Optional[int] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.PulsePoint]]:
+        """Yield every page of :meth:`history`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.history(syms=syms, interval=interval, days=days, sort=sort, page=n, size=size), first=page)
+
+    def history_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        interval: Optional[str] = None,
+        days: Optional[int] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.PulsePoint]:
+        """Yield every row of :meth:`history`, page after page."""
+        return rt.iter_items(self.history_pages(
+            syms=syms, interval=interval, days=days, sort=sort, page=page, size=size))
 
 
 class VideosApi(rt.Group):
     """Videos operations under ``/api``."""
 
-    def list(
+    def videos(
         self,
-        qry: Optional[t.QueSocApiVideoList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoSocApiVideo]:
-        """List videos
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.VideoRow]:
+        """Videos
 
-        Videos with FinSocial scores, signals, summaries and links. Filters: ChannelId, Symbol,
-        MinScore, MaxScore, From, To. Transcripts and video content are never returned.
+        Videos from the channels FinSocial follows, newest first, one row per video, with
+        FinSocial's own score, signal and summary and what it read about each ticker the video
+        names. Never the transcript or the video itself.
 
         ``GET /api/videos``. Billed 0.5 credits per call.
 
         Args:
-            qry: Paging, sorting and filters for the video list, sent as JSON in the qry query
-                parameter. The video filters are ChannelId, Symbol, MinScore, MaxScore, From and To.
-                Pass a dict, keyword arguments, or both.
-                ChannelId: Return only videos of this YouTube channel, by channel identifier. Empty
-                    means all channels.
-                Symbol: Restrict the score rows returned to this ticker symbol, for example BTC.
-                    Matching ignores case. Empty means the scores of every symbol.
-                MinScore: Keep only score rows with a video score at or above this value. Empty
-                    means no lower limit.
-                MaxScore: Keep only score rows with a video score at or below this value. Empty
-                    means no upper limit.
-                From: Earliest video publication time to include, in UTC (ISO 8601). Empty means no
-                    lower limit.
-                To: Latest video publication time to include, in UTC (ISO 8601). Empty means no
-                    upper limit.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Tickers to look up, comma-separated, up to 50, any case. Leave empty for every
+                ticker. Tickers no row carries come back in NotFound.
+            channel: Only videos of this channel: its name (any case) or its channel id.
+            since: Only rows from this time on: a date such as 2026-11-20 or a full UTC time.
+            min_score: Only videos whose own score is at least this, 0 to 10.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: published
+                (default, newest first), score. A minus sign sorts high to low; videos without a
+                score come last.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
             "GET", "/api/videos", auth="key",
-            qry=rt.build_qry(_QRY["QueSocApiVideoList"], qry, fields),
+            query=[("syms", syms), ("channel", channel), ("since", since), ("minScore", min_score), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def list_pages(
+    def videos_pages(
         self,
-        qry: Optional[t.QueSocApiVideoList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoSocApiVideo]]:
-        """Yield every page of :meth:`list`.
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.VideoRow]]:
+        """Yield every page of :meth:`videos`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.list, qry=rt.build_qry(_QRY["QueSocApiVideoList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.videos(syms=syms, channel=channel, since=since, min_score=min_score, sort=sort, page=n, size=size), first=page)
 
-    def list_items(
+    def videos_items(
         self,
-        qry: Optional[t.QueSocApiVideoList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoSocApiVideo]:
-        """Yield every row of :meth:`list`, page after page."""
-        return rt.iter_items(self.list_pages(qry, **fields))
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.VideoRow]:
+        """Yield every row of :meth:`videos`, page after page."""
+        return rt.iter_items(self.videos_pages(
+            syms=syms, channel=channel, since=since, min_score=min_score, sort=sort, page=page, size=size))
 
-    def view(self, video_id: str) -> List[t.DtoSocApiVideo]:
-        """View video
+    def video(self, id: str) -> t.VideoRow:
+        """Video
 
-        One video with its scores, signals, summary and public link. Transcript and video content
-        are never returned.
+        One video with FinSocial's own score, signal and summary and what it read about each ticker
+        the video names. Never the transcript or the video itself.
 
-        ``GET /api/videos/{videoId}``. Billed 0.5 credits per call.
+        ``GET /api/videos/{id}``. Billed 0.5 credits per call.
 
         Args:
-            video_id: YouTube video identifier, as returned in the VideoId field of the video list.
+            id: The Id of the video, as returned by the video list.
 
-        Returns: the rows.
+        Returns: the result.
         """
         return self._service.data(
-            "GET", f"/api/videos/{rt.seg(video_id)}", auth="key",
+            "GET", f"/api/videos/{rt.seg(id)}", auth="key",
         )
+
+
+class CreatorsV1(rt.Group):
+    """Creators operations under ``/v1``."""
+
+    def creators(
+        self,
+        *,
+        platform: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.CreatorRow]:
+        """Creator leaderboard
+
+        The accounts FinSocial follows, ranked by the engagement on their posts or by how fast their
+        following grows: followers, posts and engagement in the window, and follower growth in
+        percent. It answers once a source is cleared; until then the list is empty.
+
+        ``GET /v1/creators``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            platform: Only this platform: HackerNews or Bluesky.
+            window: Length of the window: 24h, 7d or 30d. Default 7d.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: engagement
+                (default, high to low), growth, posts, followers. A minus sign sorts high to low;
+                accounts without a value come last.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/creators", auth="key",
+            query=[("platform", platform), ("window", window), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def creators_pages(
+        self,
+        *,
+        platform: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.CreatorRow]]:
+        """Yield every page of :meth:`creators`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.creators(platform=platform, window=window, sort=sort, page=n, size=size), first=page)
+
+    def creators_items(
+        self,
+        *,
+        platform: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.CreatorRow]:
+        """Yield every row of :meth:`creators`, page after page."""
+        return rt.iter_items(self.creators_pages(
+            platform=platform, window=window, sort=sort, page=page, size=size))
 
 
 class MarketsV1(rt.Group):
     """Markets operations under ``/v1``."""
 
-    def event_list(
+    def markets(
         self,
-        qry: Optional[t.QueApiSocEventList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocEvent]:
-        """List prediction events
-
-        Real-world events the prediction markets are grouped under. Filters: Provider, Category.
-
-        ``GET /v1/markets/events``. Billed 0.5 credits per call.
-
-        Args:
-            qry: Paging, sorting and filters for the event list, sent as JSON in the qry query
-                parameter. The event filters are Provider and Category. Pass a dict, keyword
-                arguments, or both.
-                Provider: Return only items of this prediction-market provider. Empty means every
-                    provider available to you.
-                Category: Return only items in this provider category, matched exactly. Empty means
-                    all categories.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/v1/markets/events", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocEventList"], qry, fields),
-        )
-
-    def event_list_pages(
-        self,
-        qry: Optional[t.QueApiSocEventList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocEvent]]:
-        """Yield every page of :meth:`event_list`.
-
-        Advances ``pageNo`` until the last page or an empty page.
-        """
-        return rt.iter_qry_pages(
-            self.event_list, qry=rt.build_qry(_QRY["QueApiSocEventList"], qry, fields))
-
-    def event_list_items(
-        self,
-        qry: Optional[t.QueApiSocEventList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocEvent]:
-        """Yield every row of :meth:`event_list`, page after page."""
-        return rt.iter_items(self.event_list_pages(qry, **fields))
-
-    def history_list(
-        self,
-        id: str,
         *,
-        granularity: Optional[str] = None,
-        from_: Optional[Union[str, datetime]] = None,
-        to: Optional[Union[str, datetime]] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocHistory:
-        """Prediction market history
+        q: Optional[str] = None,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        status: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.MarketRow]:
+        """Prediction markets
 
-        A market's probability series per outcome, one point per hour (1h) or per day (1d), oldest
-        first.
+        Prediction markets of Polymarket, Kalshi and Manifold, with the latest probability (the
+        leading outcome in a market with several), its change over 24 hours, volume, liquidity,
+        closing time and status.
 
-        ``GET /v1/markets/history/{id}``. Included in paid plans (package tiers 2, 3, 4).
-
-        Args:
-            id: Market identifier, as returned in the Id field of the market list.
-            granularity: Size of one point: 1h for hourly or 1d for daily. Default 1h. Each point is
-                the last price taken in its hour or day. Any other value is rejected with a 400
-                response.
-            from_: Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.
-            to: Latest time to include, in UTC (ISO 8601). Empty means no upper limit.
-            limit: Maximum number of points to return, from 1 to 1000. Default 200. When more points
-                fall in the range, the newest are kept. Points are returned oldest first.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/v1/markets/history/{rt.seg(id)}", auth="key",
-            query=[("Granularity", granularity), ("From", from_), ("To", to), ("Limit", limit)],
-        )
-
-    def market_list(
-        self,
-        qry: Optional[t.QueApiSocMarketList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocMarket]:
-        """List prediction markets
-
-        Markets of Polymarket, Kalshi and Manifold. Filters: Provider, Category, Status, EventId.
-
-        ``GET /v1/markets/list``. Billed 0.5 credits per call.
+        ``GET /v1/markets``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            qry: Paging, sorting and filters for the market list, sent as JSON in the qry query
-                parameter. The market filters are Provider, Category, Status and EventId. Pass a
-                dict, keyword arguments, or both.
-                Provider: Return only items of this prediction-market provider. Empty means every
-                    provider available to you.
-                Category: Return only items in this provider category, matched exactly. Empty means
-                    all categories.
-                Status: Return only markets in this lifecycle status. Empty means every status.
-                EventId: Return only markets of this event, using the Id returned by the events
-                    list. Empty means all events.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            q: Only markets whose question contains this text, any case.
+            provider: Only this prediction-market provider: Polymarket, Kalshi or Manifold.
+            category: Only markets the provider files under this category, any case.
+            status: Only markets in this state: Open, Closed, Resolved or Unknown.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: volume
+                (default, high to low), chg24h, closes. A minus sign sorts high to low; markets
+                without a value come last.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/v1/markets/list", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocMarketList"], qry, fields),
+            "GET", "/v1/markets", auth="key",
+            query=[("q", q), ("provider", provider), ("category", category), ("status", status), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def market_list_pages(
+    def markets_pages(
         self,
-        qry: Optional[t.QueApiSocMarketList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocMarket]]:
-        """Yield every page of :meth:`market_list`.
+        *,
+        q: Optional[str] = None,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        status: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.MarketRow]]:
+        """Yield every page of :meth:`markets`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.market_list, qry=rt.build_qry(_QRY["QueApiSocMarketList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.markets(q=q, provider=provider, category=category, status=status, sort=sort, page=n, size=size), first=page)
 
-    def market_list_items(
+    def markets_items(
         self,
-        qry: Optional[t.QueApiSocMarketList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocMarket]:
-        """Yield every row of :meth:`market_list`, page after page."""
-        return rt.iter_items(self.market_list_pages(qry, **fields))
+        *,
+        q: Optional[str] = None,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        status: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.MarketRow]:
+        """Yield every row of :meth:`markets`, page after page."""
+        return rt.iter_items(self.markets_pages(
+            q=q, provider=provider, category=category, status=status, sort=sort, page=page, size=size))
 
-    def pulse_list(self, *, limit: Optional[int] = None) -> t.DtoApiSocPulse:
-        """Prediction pulse
+    def moves(
+        self,
+        *,
+        window: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.MarketMove]:
+        """Prediction market moves
 
-        The biggest probability moves of open markets over 1 h, 24 h and 7 d.
+        The biggest probability moves of open prediction markets in a window: the outcome that moved
+        most in each market, its price at the start and now. It answers once a provider is cleared;
+        until then the list is empty.
 
-        ``GET /v1/markets/pulse``. Billed 1 credit per call.
+        ``GET /v1/markets/moves``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            limit: Maximum number of moves to return for each window, from 1 to 50. Default 10.
+            window: Length of the window: 1h, 24h or 7d. Default 24h.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
-        Returns: the result.
+        Returns: a page of rows with its paging info.
         """
-        return self._service.data(
-            "GET", "/v1/markets/pulse", auth="key",
-            query=[("Limit", limit)],
+        return self._service.page(
+            "GET", "/v1/markets/moves", auth="key",
+            query=[("window", window), ("page", page), ("size", size)],
         )
 
-    def resolved_list(
+    def moves_pages(
         self,
-        qry: Optional[t.QueApiSocResolvedList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocResolved]:
-        """Resolved market archive
+        *,
+        window: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.MarketMove]]:
+        """Yield every page of :meth:`moves`.
 
-        Resolved markets: the winning probability 30 d, 7 d, 24 h and 1 h before the result, and the
-        result.
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.moves(window=window, page=n, size=size), first=page)
+
+    def moves_items(
+        self,
+        *,
+        window: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.MarketMove]:
+        """Yield every row of :meth:`moves`, page after page."""
+        return rt.iter_items(self.moves_pages(
+            window=window, page=page, size=size))
+
+    def resolved(
+        self,
+        *,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.ResolvedRow]:
+        """Resolved prediction markets
+
+        Prediction markets that have settled, newest first: the winner and the crowd's probability
+        for the winner 30 days, 7 days, 24 hours and 1 hour before it settled.
 
         ``GET /v1/markets/resolved``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            qry: Paging, sorting and filters for the resolved-market archive, sent as JSON in the
-                qry query parameter. The filters are Provider and Category. Pass a dict, keyword
-                arguments, or both.
-                Provider: Return only items of this prediction-market provider. Empty means every
-                    provider available to you.
-                Category: Return only items in this provider category, matched exactly. Empty means
-                    all categories.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            provider: Only this prediction-market provider: Polymarket, Kalshi or Manifold.
+            category: Only markets the provider files under this category, any case.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: settled
+                (default, newest first).
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
             "GET", "/v1/markets/resolved", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocResolvedList"], qry, fields),
+            query=[("provider", provider), ("category", category), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def resolved_list_pages(
+    def resolved_pages(
         self,
-        qry: Optional[t.QueApiSocResolvedList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocResolved]]:
-        """Yield every page of :meth:`resolved_list`.
+        *,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.ResolvedRow]]:
+        """Yield every page of :meth:`resolved`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.resolved_list, qry=rt.build_qry(_QRY["QueApiSocResolvedList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.resolved(provider=provider, category=category, sort=sort, page=n, size=size), first=page)
 
-    def resolved_list_items(
+    def resolved_items(
         self,
-        qry: Optional[t.QueApiSocResolvedList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocResolved]:
-        """Yield every row of :meth:`resolved_list`, page after page."""
-        return rt.iter_items(self.resolved_list_pages(qry, **fields))
+        *,
+        provider: Optional[str] = None,
+        category: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.ResolvedRow]:
+        """Yield every row of :meth:`resolved`, page after page."""
+        return rt.iter_items(self.resolved_pages(
+            provider=provider, category=category, sort=sort, page=page, size=size))
 
-    def market_view(self, id: str) -> t.DtoApiSocMarketView:
-        """View prediction market
-
-        One market with its rules, outcomes, latest probabilities and resolution.
-
-        ``GET /v1/markets/view/{id}``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            id: Market identifier, as returned in the Id field of the market list.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/v1/markets/view/{rt.seg(id)}", auth="key",
-        )
-
-
-class SocialV1(rt.Group):
-    """Social operations under ``/v1``."""
-
-    def author_list(
-        self,
-        qry: Optional[t.QueApiSocAuthorList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocAuthor]:
-        """List social authors
-
-        Accounts seen on the platforms, most followed first. Filters: Platform, Text.
-
-        ``GET /v1/social/authors``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            qry: Paging, sorting and filters for the author list, sent as JSON in the qry query
-                parameter. The author filters are Platform and Text. Pass a dict, keyword arguments,
-                or both.
-                Platform: Return only items of this social platform. Empty means every platform
-                    available to you.
-                Text: Return only authors whose handle or display name contains this text, ignoring
-                    case. Empty means all authors.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/v1/social/authors", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocAuthorList"], qry, fields),
-        )
-
-    def author_list_pages(
-        self,
-        qry: Optional[t.QueApiSocAuthorList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocAuthor]]:
-        """Yield every page of :meth:`author_list`.
-
-        Advances ``pageNo`` until the last page or an empty page.
-        """
-        return rt.iter_qry_pages(
-            self.author_list, qry=rt.build_qry(_QRY["QueApiSocAuthorList"], qry, fields))
-
-    def author_list_items(
-        self,
-        qry: Optional[t.QueApiSocAuthorList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocAuthor]:
-        """Yield every row of :meth:`author_list`, page after page."""
-        return rt.iter_items(self.author_list_pages(qry, **fields))
-
-    def author_view(
+    def market(
         self,
         id: str,
         *,
-        from_: Optional[Union[str, datetime]] = None,
-        to: Optional[Union[str, datetime]] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocAuthorView:
-        """View social author
+        granularity: Optional[str] = None,
+        days: Optional[int] = None,
+    ) -> t.MarketDetail:
+        """Prediction market
 
-        One account with its reach series (followers, following, posts), oldest first.
+        One prediction market with its rules, every outcome with its latest price, bid and ask, and
+        each outcome's price history by hour or day.
 
-        ``GET /v1/social/authors/{id}``. Included in paid plans (package tiers 2, 3, 4).
+        ``GET /v1/markets/{id}``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            id: Author identifier, as returned in the Id field of the author list.
-            from_: Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.
-            to: Latest time to include, in UTC (ISO 8601). Empty means no upper limit.
-            limit: Maximum number of points to return, from 1 to 1000. Default 200. When more points
-                fall in the range, the newest are kept. Points are returned oldest first.
+            id: The Id of the row, as returned by its list.
+            granularity: Size of one price point in the history: hour or day. Default hour.
+            days: How many days of history, 1 to 90. Default 7.
 
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/v1/social/authors/{rt.seg(id)}", auth="key",
-            query=[("From", from_), ("To", to), ("Limit", limit)],
+            "GET", f"/v1/markets/{rt.seg(id)}", auth="key",
+            query=[("granularity", granularity), ("days", days)],
         )
 
-    def post_list(
+
+class PostsV1(rt.Group):
+    """Posts operations under ``/v1``."""
+
+    def posts(
         self,
-        qry: Optional[t.QueApiSocPostList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocPost]:
-        """List social posts
+        *,
+        syms: Optional[str] = None,
+        platform: Optional[str] = None,
+        author: Optional[str] = None,
+        since: Optional[str] = None,
+        stance: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.PostRow]:
+        """Posts
 
-        Posts, newest first, with FinSocial's sentiment score, the AI reading where there is one,
-        and the latest engagement counts. Filters: Ticker, AuthorId, Platform, From, To.
+        Posts from the social sources FinSocial may serve, newest first, with the tickers they name,
+        the way they read (Bullish, Bearish, Neutral or Unscored), the score and the engagement now.
+        The text comes only where the source allows it.
 
-        ``GET /v1/social/posts``. Included in paid plans (package tiers 1, 2, 3, 4).
+        ``GET /v1/posts``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            qry: Paging, sorting and filters for the post list, sent as JSON in the qry query
-                parameter. The post filters are Ticker, AuthorId, Platform, From and To. Pass a
-                dict, keyword arguments, or both.
-                Ticker: Return only posts that mention this ticker symbol, for example BTC. Matching
-                    ignores case. Empty means all tickers.
-                AuthorId: Return only posts by this author, using the Id returned by the authors
-                    list. Empty means all authors.
-                Platform: Return only items of this social platform. Empty means every platform
-                    available to you.
-                From: Earliest post publication time to include, in UTC (ISO 8601). Empty means no
-                    lower limit.
-                To: Latest post publication time to include, in UTC (ISO 8601). Empty means no upper
-                    limit.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Tickers to look up, comma-separated, up to 50, any case. Leave empty for every
+                ticker. Tickers no row carries come back in NotFound.
+            platform: Only this platform: HackerNews or Bluesky.
+            author: Only posts by this handle, any case.
+            since: Only rows from this time on: a date such as 2026-11-20 or a full UTC time.
+            stance: Only posts that read this way: Bullish, Bearish, Neutral or Unscored.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: published
+                (default, newest first), engagement. Sorting by engagement orders the 3,000 newest
+                matching posts.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/v1/social/posts", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocPostList"], qry, fields),
+            "GET", "/v1/posts", auth="key",
+            query=[("syms", syms), ("platform", platform), ("author", author), ("since", since), ("stance", stance), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def post_list_pages(
+    def posts_pages(
         self,
-        qry: Optional[t.QueApiSocPostList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocPost]]:
-        """Yield every page of :meth:`post_list`.
-
-        Advances ``pageNo`` until the last page or an empty page.
-        """
-        return rt.iter_qry_pages(
-            self.post_list, qry=rt.build_qry(_QRY["QueApiSocPostList"], qry, fields))
-
-    def post_list_items(
-        self,
-        qry: Optional[t.QueApiSocPostList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocPost]:
-        """Yield every row of :meth:`post_list`, page after page."""
-        return rt.iter_items(self.post_list_pages(qry, **fields))
-
-    def post_view(
-        self,
-        id: str,
         *,
-        from_: Optional[Union[str, datetime]] = None,
-        to: Optional[Union[str, datetime]] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocPostView:
-        """View social post
+        syms: Optional[str] = None,
+        platform: Optional[str] = None,
+        author: Optional[str] = None,
+        since: Optional[str] = None,
+        stance: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.PostRow]]:
+        """Yield every page of :meth:`posts`.
 
-        One post with its engagement series, oldest first.
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.posts(syms=syms, platform=platform, author=author, since=since, stance=stance, sort=sort, page=n, size=size), first=page)
 
-        ``GET /v1/social/posts/{id}``. Included in paid plans (package tiers 2, 3, 4).
+    def posts_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        platform: Optional[str] = None,
+        author: Optional[str] = None,
+        since: Optional[str] = None,
+        stance: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.PostRow]:
+        """Yield every row of :meth:`posts`, page after page."""
+        return rt.iter_items(self.posts_pages(
+            syms=syms, platform=platform, author=author, since=since, stance=stance, sort=sort, page=page, size=size))
+
+    def post(self, id: str) -> t.PostDetail:
+        """Post
+
+        One post with its engagement readings over time, oldest first.
+
+        ``GET /v1/posts/{id}``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            id: Post identifier, as returned in the Id field of the post list.
-            from_: Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.
-            to: Latest time to include, in UTC (ISO 8601). Empty means no upper limit.
-            limit: Maximum number of points to return, from 1 to 1000. Default 200. When more points
-                fall in the range, the newest are kept. Points are returned oldest first.
+            id: The Id of the row, as returned by its list.
 
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/v1/social/posts/{rt.seg(id)}", auth="key",
-            query=[("From", from_), ("To", to), ("Limit", limit)],
+            "GET", f"/v1/posts/{rt.seg(id)}", auth="key",
         )
 
-    def sentiment_view(
+
+class PulseV1(rt.Group):
+    """Pulse operations under ``/v1``."""
+
+    def pulse(
         self,
-        symbol: str,
         *,
+        syms: Optional[str] = None,
         window: Optional[str] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocSentiment:
-        """Social sentiment by ticker
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.PulseRow]:
+        """Ticker pulse
 
-        Count, mean sentiment score and label counts of the posts that name one ticker in the
-        window. Window 1h, 24h or 7d.
+        How much each ticker is being talked about on social media in a window: mentions,
+        engagement, attention against its usual level, the mix of bullish, bearish and neutral
+        posts, their mean score and the change in mentions against the window before. Ask for up to
+        50 tickers by name, or leave syms empty for every ticker, most-talked-about first.
 
-        ``GET /v1/social/sentiment/{symbol}``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            symbol: Ticker symbol to report on, for example BTC. Matching ignores case.
-            window: Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with
-                a 400 response.
-            limit: Maximum number of rows to return, from 1 to 100. Default 20.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/v1/social/sentiment/{rt.seg(symbol)}", auth="key",
-            query=[("Window", window), ("Limit", limit)],
-        )
-
-    def trending_list(
-        self,
-        *,
-        window: Optional[str] = None,
-        limit: Optional[int] = None,
-    ) -> t.DtoApiSocTrending:
-        """Trending social tickers
-
-        Tickers ranked by attention: posts in the window against the usual posts for those hours.
-        Window 1h, 24h or 7d.
-
-        ``GET /v1/social/trending``. Billed 1 credit per call.
+        ``GET /v1/pulse``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            window: Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with
-                a 400 response.
-            limit: Maximum number of rows to return, from 1 to 100. Default 20.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", "/v1/social/trending", auth="key",
-            query=[("Window", window), ("Limit", limit)],
-        )
-
-    def watch_list(
-        self,
-        qry: Optional[t.QueApiSocWatchList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSocWatch]:
-        """List watched social accounts
-
-        The accounts and channels FinSocial follows. Only active ones are listed. Filter: Platform.
-
-        ``GET /v1/social/watched``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            qry: Paging, sorting and filters for the list of followed accounts, sent as JSON in the
-                qry query parameter. The only filter is Platform. Pass a dict, keyword arguments, or
-                both.
-                Platform: Return only items of this social platform. Empty means every platform
-                    available to you.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Tickers to look up, comma-separated, up to 50, any case. Leave empty for every
+                ticker. Tickers no row carries come back in NotFound.
+            window: Length of the window: 1h, 24h or 7d. Default 24h.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: attention
+                (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts
+                high to low; rows without a value come last.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/v1/social/watched", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSocWatchList"], qry, fields),
+            "GET", "/v1/pulse", auth="key",
+            query=[("syms", syms), ("window", window), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def watch_list_pages(
+    def pulse_pages(
         self,
-        qry: Optional[t.QueApiSocWatchList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSocWatch]]:
-        """Yield every page of :meth:`watch_list`.
+        *,
+        syms: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.PulseRow]]:
+        """Yield every page of :meth:`pulse`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.watch_list, qry=rt.build_qry(_QRY["QueApiSocWatchList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.pulse(syms=syms, window=window, sort=sort, page=n, size=size), first=page)
 
-    def watch_list_items(
+    def pulse_items(
         self,
-        qry: Optional[t.QueApiSocWatchList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSocWatch]:
-        """Yield every row of :meth:`watch_list`, page after page."""
-        return rt.iter_items(self.watch_list_pages(qry, **fields))
+        *,
+        syms: Optional[str] = None,
+        window: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.PulseRow]:
+        """Yield every row of :meth:`pulse`, page after page."""
+        return rt.iter_items(self.pulse_pages(
+            syms=syms, window=window, sort=sort, page=page, size=size))
+
+    def history(
+        self,
+        *,
+        syms: Optional[str] = None,
+        interval: Optional[str] = None,
+        days: Optional[int] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.PulsePoint]:
+        """Ticker pulse history
+
+        How a ticker's social mentions moved: for each of up to 50 tickers, one row per hour or per
+        day with mentions, engagement, attention against its usual level and the mean sentiment
+        score. Rows come ticker by ticker, in the order asked.
+
+        ``GET /v1/pulse/history``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            syms: Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row
+                carries come back in NotFound.
+            interval: Size of one point: hour or day. Default hour.
+            days: How many days back, 1 to 30. Default 7.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest
+                first; -at newest first). Rows always come ticker by ticker, in the order asked.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
+
+        Returns: a page of rows with its paging info.
+        """
+        return self._service.page(
+            "GET", "/v1/pulse/history", auth="key",
+            query=[("syms", syms), ("interval", interval), ("days", days), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def history_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        interval: Optional[str] = None,
+        days: Optional[int] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.PulsePoint]]:
+        """Yield every page of :meth:`history`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.history(syms=syms, interval=interval, days=days, sort=sort, page=n, size=size), first=page)
+
+    def history_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        interval: Optional[str] = None,
+        days: Optional[int] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.PulsePoint]:
+        """Yield every row of :meth:`history`, page after page."""
+        return rt.iter_items(self.history_pages(
+            syms=syms, interval=interval, days=days, sort=sort, page=page, size=size))
 
 
 class VideosV1(rt.Group):
     """Videos operations under ``/v1``."""
 
-    def list(
+    def videos(
         self,
-        qry: Optional[t.QueSocApiVideoList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoSocApiVideo]:
-        """List videos
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.VideoRow]:
+        """Videos
 
-        Videos with FinSocial scores, signals, summaries and links. Filters: ChannelId, Symbol,
-        MinScore, MaxScore, From, To. Transcripts and video content are never returned.
+        Videos from the channels FinSocial follows, newest first, one row per video, with
+        FinSocial's own score, signal and summary and what it read about each ticker the video
+        names. Never the transcript or the video itself.
 
         ``GET /v1/videos``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            qry: Paging, sorting and filters for the video list, sent as JSON in the qry query
-                parameter. The video filters are ChannelId, Symbol, MinScore, MaxScore, From and To.
-                Pass a dict, keyword arguments, or both.
-                ChannelId: Return only videos of this YouTube channel, by channel identifier. Empty
-                    means all channels.
-                Symbol: Restrict the score rows returned to this ticker symbol, for example BTC.
-                    Matching ignores case. Empty means the scores of every symbol.
-                MinScore: Keep only score rows with a video score at or above this value. Empty
-                    means no lower limit.
-                MaxScore: Keep only score rows with a video score at or below this value. Empty
-                    means no upper limit.
-                From: Earliest video publication time to include, in UTC (ISO 8601). Empty means no
-                    lower limit.
-                To: Latest video publication time to include, in UTC (ISO 8601). Empty means no
-                    upper limit.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Tickers to look up, comma-separated, up to 50, any case. Leave empty for every
+                ticker. Tickers no row carries come back in NotFound.
+            channel: Only videos of this channel: its name (any case) or its channel id.
+            since: Only rows from this time on: a date such as 2026-11-20 or a full UTC time.
+            min_score: Only videos whose own score is at least this, 0 to 10.
+            sort: Field to sort by; a minus sign in front sorts high to low. Fields: published
+                (default, newest first), score. A minus sign sorts high to low; videos without a
+                score come last.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
             "GET", "/v1/videos", auth="key",
-            qry=rt.build_qry(_QRY["QueSocApiVideoList"], qry, fields),
+            query=[("syms", syms), ("channel", channel), ("since", since), ("minScore", min_score), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def list_pages(
+    def videos_pages(
         self,
-        qry: Optional[t.QueSocApiVideoList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoSocApiVideo]]:
-        """Yield every page of :meth:`list`.
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.VideoRow]]:
+        """Yield every page of :meth:`videos`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.list, qry=rt.build_qry(_QRY["QueSocApiVideoList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.videos(syms=syms, channel=channel, since=since, min_score=min_score, sort=sort, page=n, size=size), first=page)
 
-    def list_items(
+    def videos_items(
         self,
-        qry: Optional[t.QueSocApiVideoList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoSocApiVideo]:
-        """Yield every row of :meth:`list`, page after page."""
-        return rt.iter_items(self.list_pages(qry, **fields))
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.VideoRow]:
+        """Yield every row of :meth:`videos`, page after page."""
+        return rt.iter_items(self.videos_pages(
+            syms=syms, channel=channel, since=since, min_score=min_score, sort=sort, page=page, size=size))
 
-    def view(self, video_id: str) -> List[t.DtoSocApiVideo]:
-        """View video
+    def video(self, id: str) -> t.VideoRow:
+        """Video
 
-        One video with its scores, signals, summary and public link. Transcript and video content
-        are never returned.
+        One video with FinSocial's own score, signal and summary and what it read about each ticker
+        the video names. Never the transcript or the video itself.
 
-        ``GET /v1/videos/{videoId}``. Included in paid plans (package tiers 2, 3, 4).
+        ``GET /v1/videos/{id}``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            video_id: YouTube video identifier, as returned in the VideoId field of the video list.
+            id: The Id of the video, as returned by the video list.
 
-        Returns: the rows.
+        Returns: the result.
         """
         return self._service.data(
-            "GET", f"/v1/videos/{rt.seg(video_id)}", auth="key",
+            "GET", f"/v1/videos/{rt.seg(id)}", auth="key",
         )
 
 
@@ -1425,8 +1211,10 @@ class SocialApiGroups:
     """Every FinSocial operation under ``/api``, by group."""
 
     def __init__(self, service: rt.Service) -> None:
+        self.creators = CreatorsApi(service)
         self.markets = MarketsApi(service)
-        self.social = SocialApi(service)
+        self.posts = PostsApi(service)
+        self.pulse = PulseApi(service)
         self.videos = VideosApi(service)
 
 
@@ -1434,8 +1222,10 @@ class SocialV1Groups:
     """Every FinSocial operation under ``/v1``, by group."""
 
     def __init__(self, service: rt.Service) -> None:
+        self.creators = CreatorsV1(service)
         self.markets = MarketsV1(service)
-        self.social = SocialV1(service)
+        self.posts = PostsV1(service)
+        self.pulse = PulseV1(service)
         self.videos = VideosV1(service)
 
 
