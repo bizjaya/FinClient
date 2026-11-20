@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.11.0 (Unreleased)
+
+### Added
+
+- FinGraph, FinNews and FinSocial, in TypeScript (`fin.graph`, `fin.news`, `fin.social`) and .NET (`fin.Graph`, `fin.News`,
+  `fin.Social`). Every operation in each service's OpenAPI document is a method, with its generated 200 reply type.
+- Two surfaces, kept apart. `/api` operations are charged in credits per call on any plan and sit on the service's groups
+  (`fin.graph.tickers.list()`, `fin.Graph.Tickers.ListAsync()`); `/v1` operations are included in paid plans, gated by
+  package tier, and sit under `v1` (`fin.graph.v1.tickers.list()`, `fin.Graph.V1.Tickers.ListAsync()`). The group is the
+  operation's tag and the method its operation id's action (`Api_NewsController_RatingMake` is `ratingMake` / `RatingMakeAsync`).
+- Client options: optional `graph`, `news` and `social` blocks, each `{ apiKey, baseUrl? }` (.NET: `FinClientOptions.Graph`,
+  `News` and `Social`, each a `FinServiceOptions`), with the defaults `https://x.fingraph.io`, `https://x.finnews.io` and
+  `https://x.finsocial.io`. Timeouts, retries and the HTTP client are shared. The top-level `apiKey` is optional when a block
+  is given; a service whose key is missing throws a clear error when you first call it. Existing FinCopy code is unchanged.
+- FinGraph, FinNews and FinSocial take the key in the `FinUsrKey` header; FinCopy keeps `X-Api-Key`.
+- `qry`: list endpoints that take one JSON `qry` value take it as a typed options object (TypeScript) or a generated query class
+  (.NET: `QueApiNewsList`, ...) and send it as JSON. Other operations take their named query fields.
+- Paging helpers on every list that pages: `listPages` / `listItems` (TypeScript, `for await`) and `ListPagesAsync` /
+  `ListItemsAsync` (.NET, `IAsyncEnumerable`). They advance `pageNo` for `qry` lists and `offset` for FinGraph's limit and
+  offset lists, and stop on an empty page or when the paging information says it was the last.
+- `FinApiError` (TypeScript) and `FinApiException` (.NET) carry the API's own error code (`error` / `Error`: `invalid_api_key`,
+  `insufficient_credits`, `package_not_allowed`, ...) and the extra fields of a refusal: `lane`, `limit`, `catag` and `tier`. A
+  `429` still honours `Retry-After`.
+- OpenAPI snapshots for the three services (`spec/fingraph-v1.json`, `spec/finnews-v1.json`, `spec/finsocial-v1.json`), types
+  generated from each (TypeScript schema files under `src/generated/`; .NET DTOs in `Fin.Graph`, `Fin.News` and `Fin.Social`),
+  and resource classes generated from them by `scripts/generate-surface.mjs`. CI regenerates and diffs each, and the daily
+  drift check covers all four documents.
+- A runnable example per service per language.
+
+### Changed
+
+- The default error message of `FinApiError` and `FinApiException` is now "The Fin API request failed."
+
 ## 0.10.0 (2026-11-19)
 
 - Regenerate FinCopy DTOs for the T709 SL model and account limits.
