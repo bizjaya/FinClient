@@ -34,6 +34,24 @@ for (const account of page.items) console.log(account.Fleet?.Account?.ACNO);
 // await fin.copy.orders.make(52014125, { SYM: "EURUSD", ACT: "NEW", OTY: "OP_BUY", LOT: 0.01 });
 ```
 
+## Python
+
+```python
+import os
+from finclient import FinClient, ServiceOptions
+
+fin = FinClient(
+    api_key=os.environ["FINCOPY_API_KEY"],
+    news=ServiceOptions(api_key=os.environ["FINNEWS_API_KEY"]),
+)
+for account in fin.copy.accounts.list_items():
+    print(account["Fleet"]["Account"]["ACNO"])
+print(fin.news.v1.news.all(pageSize=10).items)
+```
+
+Install with `pip install finclient` (Python 3.10 or newer, no dependencies). The Python package also reaches FinGraph,
+FinNews and FinSocial; see [python/README.md](./python/README.md).
+
 ## API key or member session
 
 An API key (`X-Api-Key`) is for trusted server-side code. Never put one in browser JavaScript, a mobile app or a public
