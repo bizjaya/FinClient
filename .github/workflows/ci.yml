@@ -47,10 +47,14 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
-      - name: Generated types match spec/
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Generated types and resources match spec/
         shell: pwsh
         run: ./scripts/generate-dotnet.ps1
-      - run: git diff --exit-code -- dotnet/src/FinClient/Generated/FinCopyDtos.g.cs
+      - run: node scripts/generate-surface.mjs
+      - run: git diff --exit-code -- dotnet/src/FinClient/Generated
       - run: dotnet build dotnet/FinClient.slnx --configuration Release
       - run: dotnet test dotnet/FinClient.slnx --configuration Release
 
@@ -75,7 +79,9 @@ jobs:
         working-directory: typescript
       - run: npm run generate:types
         working-directory: typescript
-      - run: git diff --exit-code -- typescript/src/generated/schema.d.ts
+      - run: npm run generate:surface
+        working-directory: typescript
+      - run: git diff --exit-code -- typescript/src/generated typescript/src/graph.generated.ts typescript/src/news.generated.ts typescript/src/social.generated.ts
       - run: npm run typecheck
         working-directory: typescript
       - run: npm test
@@ -85,8 +91,9 @@ jobs:
       - run: npm ls --omit=dev
         working-directory: typescript
 
-  # Daily (and on demand): has FinCopy's live API description moved away from spec/? A difference means the SDK needs
-  # regenerating and a release. GitHub pauses scheduled workflows after 60 days without repository activity.
+  # Daily (and on demand): have the live API descriptions of FinCopy, FinGraph, FinNews and FinSocial moved away from
+  # spec/? A difference means the SDK needs regenerating and a release. GitHub pauses scheduled workflows after 60 days
+  # without repository activity.
   spec-drift:
     name: Public API spec drift
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -95,7 +102,17 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
+      - name: Download the live API descriptions
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/live"
+          for pair in fincopy:https://api.fincopy.io fingraph:https://x.fingraph.io finnews:https://x.finnews.io finsocial:https://x.finsocial.io; do
+            curl --fail --silent --show-error --retry 3 --retry-all-errors --max-time 30 \
+              "${pair#*:}/openapi/v1.json" --output "$RUNNER_TEMP/live/${pair%%:*}-v1.json"
+          done
       - run: >-
-          curl --fail --silent --show-error --retry 3 --retry-all-errors --max-time 30
-          https://api.fincopy.io/openapi/v1.json --output "$RUNNER_TEMP/fincopy-v1.json"
-      - run: node scripts/check-spec-drift.mjs spec/fincopy-v1.json "$RUNNER_TEMP/fincopy-v1.json"
+          node scripts/check-spec-drift.mjs
+          spec/fincopy-v1.json "$RUNNER_TEMP/live/fincopy-v1.json"
+          spec/fingraph-v1.json "$RUNNER_TEMP/live/fingraph-v1.json"
+          spec/finnews-v1.json "$RUNNER_TEMP/live/finnews-v1.json"
+          spec/finsocial-v1.json "$RUNNER_TEMP/live/finsocial-v1.json"
