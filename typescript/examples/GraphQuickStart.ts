@@ -9,17 +9,18 @@ const fin = new FinClient({ graph: { apiKey } });
 const exchanges = await fin.graph.v1.assets.exchanges();
 console.log(`Exchanges: ${exchanges.data?.length ?? 0}`);
 
-// An /api call: charged in credits per call, on any plan. The options are the endpoint's named query fields.
-const tickers = await fin.graph.tickers.list({ dax: "BIN", quote: "USDT", limit: 5 });
-for (const ticker of tickers.data ?? []) console.log(ticker.Symbol, ticker.LastPrice);
+// US stocks by name: up to 50 symbols, sorted by one-day change, highest first. Names no row carries come back in NotFound.
+const stocks = await fin.graph.markets.eqtUsa({ syms: "NVDA,MSFT,BCDA", sort: "-chg1d" });
+for (const stock of stocks.data ?? []) console.log(stock.Sym, stock.Price, stock.Signal);
+console.log(`Not found: ${stocks.NotFound?.join(", ") ?? "none"}`);
 
 // Path arguments are positional.
 const detail = await fin.graph.tickers.view("BTCUSDT");
 console.log(detail.data?.Symbol);
 
-// A list that pages by limit and offset: the iterator moves offset on until a page comes back empty.
+// A list pages with page and size: the iterator moves page on until the last page the paging block names.
 let shown = 0;
-for await (const asset of fin.graph.assets.listItems({ dax: "BIN", limit: 100 })) {
+for await (const asset of fin.graph.assets.listItems({ exchange: "BINANCE", size: 50 })) {
   console.log(asset.Symbol);
   if (++shown >= 250) break;
 }

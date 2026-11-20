@@ -14,42 +14,22 @@ export function pathSegment(value: string | number): string {
 interface PagedReply { data?: readonly unknown[] | null; paging?: { pageNo?: number; pageCount?: number } | null }
 
 /**
- * Reads every page of a page-numbered list, advancing `pageNo` from the one asked for (1 when unset). It stops after the
- * last page the paging block names, or at the first empty page; an empty page is not yielded.
+ * Reads every page of a list, advancing `page` from the one asked for (1 when unset). It stops after the last page the
+ * paging block names (`pageCount`), or at the first empty page; an empty page is not yielded.
  */
-export async function* pagesByPageNo<TQuery extends { pageNo?: number | null }, TPage extends PagedReply>(
+export async function* pagesByPage<TQuery extends { page?: number }, TPage extends PagedReply>(
   fetchPage: (query: TQuery) => Promise<TPage>,
   query: TQuery,
 ): AsyncGenerator<TPage, void, undefined> {
-  let pageNo = query.pageNo ?? 1;
+  let page = query.page ?? 1;
   while (true) {
-    const page = await fetchPage({ ...query, pageNo });
-    if (!page.data?.length) return;
-    yield page;
-    const shown = page.paging?.pageNo ?? pageNo;
-    const count = page.paging?.pageCount;
+    const reply = await fetchPage({ ...query, page });
+    if (!reply.data?.length) return;
+    yield reply;
+    const shown = reply.paging?.pageNo ?? page;
+    const count = reply.paging?.pageCount;
     if (typeof count === "number" && shown >= count) return;
-    pageNo = shown + 1;
-  }
-}
-
-/**
- * Reads every page of an offset list, moving `offset` on by the rows each page returned. It stops at the first empty page,
- * or when `isLast` (read from the page's own paging fields) says the page was the last; an empty page is not yielded.
- */
-export async function* pagesByOffset<TQuery extends { offset?: number | null }, TPage extends { data?: readonly unknown[] | null }>(
-  fetchPage: (query: TQuery) => Promise<TPage>,
-  query: TQuery,
-  isLast: (page: TPage) => boolean = () => false,
-): AsyncGenerator<TPage, void, undefined> {
-  let offset = query.offset ?? 0;
-  while (true) {
-    const page = await fetchPage({ ...query, offset });
-    const rows = page.data?.length ?? 0;
-    if (!rows) return;
-    yield page;
-    if (isLast(page)) return;
-    offset += rows;
+    page = shown + 1;
   }
 }
 

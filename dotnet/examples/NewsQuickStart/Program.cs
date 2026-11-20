@@ -10,29 +10,20 @@ if (string.IsNullOrWhiteSpace(apiKey))
 
 using var fin = new FinClient(new FinClientOptions { News = new FinServiceOptions(apiKey) });
 
-// The qry object: paging, sorting and this endpoint's filters, typed from the API's document. It is sent as one JSON value.
-var latest = await fin.News.News.ListAsync(new QueApiNewsList
-{
-    PageNo = 1,
-    PageSize = 10,
-    SortBy = [["published", "desc"]],
-    Symbols = "AAPL,MSFT",
-});
+// Plain query values: symbols, a sort (a minus sign sorts high to low), and the page to read.
+var latest = await fin.News.News.ListAsync(syms: "AAPL,MSFT", sort: "-published", page: 1, size: 10);
 foreach (var article in latest.Data ?? [])
     Console.WriteLine(article.Title);
 Console.WriteLine($"Pages: {latest.Paging?.PageCount}, articles: {latest.Paging?.ResCount}");
 
 // Walk every article that matches, a page at a time, however many pages there are.
 var shown = 0;
-await foreach (var article in fin.News.News.ListItemsAsync(new QueApiNewsList { PageSize = 50, Categories = "markets" }))
+await foreach (var article in fin.News.News.ListItemsAsync(cats: "markets", size: 50))
 {
-    Console.WriteLine($"{article.Checksum} {article.Title}");
+    Console.WriteLine($"{article.Id} {article.Title}");
     if (++shown >= 200) break;
 }
 
 // A /v1 call: included in paid plans, gated by package tier.
-var trending = await fin.News.V1.Trending.TopicsAsync(hours: 24, top: 10);
+var trending = await fin.News.V1.Trending.ListAsync(size: 10);
 Console.WriteLine(trending.Data?.Count);
-
-// This request is charged like any other call; ReqSite and ReqUsno are optional.
-// await fin.News.News.RatingMakeAsync("<checksum>", new CmdApiRatingMake());

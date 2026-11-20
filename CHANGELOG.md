@@ -1,5 +1,53 @@
 # Changelog
 
+## 0.12.0 (2026-11-21)
+
+This is a breaking change for everyone who calls FinGraph, FinNews or FinSocial: the three services were redesigned, and every
+generated method, query type and reply type is regenerated from their new API documents. FinCopy is unchanged.
+
+### Added
+
+- FinGraph: `markets` (`eqtUsa`, `crypto`, `dax`, `forex`, `futures`, `metals`, `indices`), `screens` (`eqtUsa`, `crypto`, `dax`,
+  `fxs`, each taking the lane as its first argument), `record` (`calls`, the closed calls) and `ticks` (`eqtUsa`, `dax`, `fxs`).
+  Tickers and assets page with `page` and `size`; exchanges are named (BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO, OKX).
+- FinNews: `mood` (daily mood), `trending` (symbols), a single `categories` list and `sentiment.history`, beside `news`
+  (`news.list`, `news.view`), `sources` and `videos` (`videos.list`, `videos.view`).
+- FinSocial: `pulse` (`pulse.pulse`, `pulse.history`), `posts`, `videos`, `creators` and `markets` (`markets.markets`,
+  `markets.market`, `markets.moves`, `markets.resolved`).
+- Symbol lookups: `syms` takes up to 50 names, and the reply's `NotFound` lists the names no row carries. In Python the
+  `Page` returned by a list has them as `not_found`.
+- `paging` on every list reply: `pageNo`, `pageSize`, `pageCount` and `resCount`.
+- Python: runnable examples rewritten for the new operations (`finsocial_pulse.py` replaces `finsocial_trending.py`).
+
+### Changed
+
+- Lists take plain query values instead of one JSON `qry` value: `page` (from 1), `size` (1 to 50), `sort` (a field name; a minus
+  sign in front sorts high to low) and the filters each endpoint lists. The typed query classes of .NET (`QueApiNewsList`, ...)
+  and the `qry` object of TypeScript and Python are gone; pass the values as named arguments (.NET, Python) or in the options
+  object (TypeScript).
+- The list iterators (`listPages` / `listItems`, `ListPagesAsync` / `ListItemsAsync`, `<operation>_pages` /
+  `<operation>_items`) advance `page` and stop after the last page the `paging` block names, or at an empty page.
+- Every `/v1` operation needs a key; no operation of these services is open without one.
+- The group and method names follow the new documents with the rule of 0.11.0: the group is the operation's first tag and the
+  method the action part of its operation id (`Pub_MarketsController_EqtUsa` is `fin.graph.v1.markets.eqtUsa()` and
+  `fin.Graph.V1.Markets.EqtUsaAsync()`).
+- A method that returns a list returns the whole reply, as before, now with `paging` and `NotFound`. In Python, FinGraph,
+  FinNews and FinSocial lists that carry `paging` return a `Page`.
+- Types are regenerated from the new documents (`Dto...` row types, `ApiMktPageOf...`, `NwsPageOf...` and `ApiPageOf...` page
+  types); read the generated types for the exact fields of each row.
+
+### Removed
+
+- FinGraph: the signal snapshot and lane operations (`apcasst`, `daxdat`, `fxstikr`, `klseprc`, `sigcry`, `sigeqt`, `tvdusaeqt`
+  snapshots; `sigdax` and `sigfxs` fast price, fast volume, top gain, top lose and breakout), `signals` recent and by symbol,
+  stats movers and volume, and the asset names and types lists.
+- FinNews: the category counts and tree, entities, news groups, similar and trending lists, news by id and by checksum, rating
+  requests, sentiment aggregate, trending and by symbol, source lookups by key, trending tickers and topics, and video
+  transcripts and ratings. Use `news`, `sentiment.history`, `mood`, `trending`, `categories`, `sources` and `videos`.
+- FinSocial: the `social` group (authors, posts, sentiment, trending, watched) and the market events, history, list, pulse and
+  view operations. Use `pulse`, `posts`, `creators` and `markets`.
+- The `qry` query object and the limit and offset iterators.
+
 ## 0.11.0 (2026-11-20)
 
 ### Added

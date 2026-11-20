@@ -29,708 +29,362 @@ namespace Fin.Social
     
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Confidence
+    public partial class ApiPageOfCreatorRow
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"VLow")]
-        VLow = 1,
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<CreatorRow>? Data { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Low")]
-        Low = 2,
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"Med")]
-        Med = 3,
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"High")]
-        High = 4,
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"VHigh")]
-        VHigh = 5,
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocAuthor
+    public partial class ApiPageOfMarketMove
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocPlatform>))]
-        public SocPlatform? Platform { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<MarketMove>? Data { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiPageOfMarketRow
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<MarketRow>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiPageOfPostRow
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<PostRow>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiPageOfPulsePoint
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<PulsePoint>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiPageOfPulseRow
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<PulseRow>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiPageOfResolvedRow
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<ResolvedRow>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ApiPageOfVideoRow
+    {
+
+        /// <summary>
+        /// Symbols named in syms that no row carries, in upper case. Left out when every symbol was found.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotFound")]
+        public System.Collections.Generic.ICollection<string>? NotFound { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<VideoRow>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreatorRow
+    {
+
+        /// <summary>
+        /// Handle of the account.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Handle")]
         public string? Handle { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DisplayName")]
-        public string? DisplayName { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Followers")]
-        public long? Followers { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Verified")]
-        public bool? Verified { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CreatedAt")]
-        public System.DateTimeOffset? CreatedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FirstSeenAt")]
-        public System.DateTimeOffset? FirstSeenAt { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocAuthorView
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Author")]
-        public DtoApiSocAuthor? Author { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Series")]
-        public System.Collections.Generic.ICollection<DtoApiSocReach>? Series { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocEng
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("TakenAt")]
-        public System.DateTimeOffset? TakenAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Likes")]
-        public long? Likes { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Replies")]
-        public long? Replies { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Reposts")]
-        public long? Reposts { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Quotes")]
-        public long? Quotes { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Views")]
-        public long? Views { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocEvent
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocProvider>))]
-        public SocProvider? Provider { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OpensAt")]
-        public System.DateTimeOffset? OpensAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ClosesAt")]
-        public System.DateTimeOffset? ClosesAt { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocHistory
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketId")]
-        public string? MarketId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Granularity")]
-        public string? Granularity { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Series")]
-        public System.Collections.Generic.ICollection<DtoApiSocOutcomeSeries>? Series { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocMarket
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocProvider>))]
-        public SocProvider? Provider { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("EventId")]
-        public string? EventId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Question")]
-        public string? Question { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Type")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocMarketType>))]
-        public SocMarketType? Type { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Money")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocMoney>))]
-        public SocMoney? Money { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Status")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocMarketStatus>))]
-        public SocMarketStatus? Status { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OpensAt")]
-        public System.DateTimeOffset? OpensAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ClosesAt")]
-        public System.DateTimeOffset? ClosesAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SettledAt")]
-        public System.DateTimeOffset? SettledAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SourceUrl")]
-        public string? SourceUrl { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocMarketView
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Market")]
-        public DtoApiSocMarket? Market { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RulesText")]
-        public string? RulesText { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Outcomes")]
-        public System.Collections.Generic.ICollection<DtoApiSocOutcome>? Outcomes { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Resolution")]
-        public DtoApiSocResolution? Resolution { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocMove
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketId")]
-        public string? MarketId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocProvider>))]
-        public SocProvider? Provider { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Question")]
-        public string? Question { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OutcomeId")]
-        public string? OutcomeId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OutcomeName")]
-        public string? OutcomeName { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("From")]
-        public double? From { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("To")]
-        public double? To { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Change")]
-        public double? Change { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SourceUrl")]
-        public string? SourceUrl { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocOutcome
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
+        /// <summary>
+        /// Display name of the account.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Name")]
         public string? Name { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Price")]
-        public double? Price { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Volume")]
-        public double? Volume { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PriceAt")]
-        public System.DateTimeOffset? PriceAt { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocOutcomeSeries
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("OutcomeId")]
-        public string? OutcomeId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Name")]
-        public string? Name { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Points")]
-        public System.Collections.Generic.ICollection<DtoApiSocPoint>? Points { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocPoint
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("At")]
-        public System.DateTimeOffset? At { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Price")]
-        public double? Price { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Volume")]
-        public double? Volume { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocPost
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
+        /// <summary>
+        /// Platform: HackerNews or Bluesky.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Platform")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocPlatform>))]
-        public SocPlatform? Platform { get; set; } = default!;
+        public string? Platform { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocPostKind>))]
-        public SocPostKind? Kind { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ParentId")]
-        public string? ParentId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AuthorId")]
-        public string? AuthorId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AuthorHandle")]
-        public string? AuthorHandle { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Community")]
-        public string? Community { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Text")]
-        public string? Text { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TextWithheld")]
-        public bool? TextWithheld { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Language")]
-        public string? Language { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PublishedAt")]
-        public System.DateTimeOffset? PublishedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Url")]
-        public string? Url { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Instruments")]
-        public System.Collections.Generic.ICollection<string>? Instruments { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FinStm")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Sentiment>))]
-        public Sentiment? FinStm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StmScore")]
-        public double? StmScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StmConf")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Confidence>))]
-        public Confidence? StmConf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("EngSpeed")]
-        public double? EngSpeed { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("L3Stance")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocStance>))]
-        public SocStance? L3Stance { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("L3Sarcasm")]
-        public bool? L3Sarcasm { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("L3ClaimDir")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocClaimDir>))]
-        public SocClaimDir? L3ClaimDir { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("L3ClaimHorizon")]
-        public string? L3ClaimHorizon { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("L3Conf")]
-        public double? L3Conf { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Engagement")]
-        public DtoApiSocEng? Engagement { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocPostView
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Post")]
-        public DtoApiSocPost? Post { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Series")]
-        public System.Collections.Generic.ICollection<DtoApiSocEng>? Series { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocPulse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("At")]
-        public System.DateTimeOffset? At { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Windows")]
-        public System.Collections.Generic.ICollection<DtoApiSocPulseWindow>? Windows { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocPulseWindow
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Window")]
-        public string? Window { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Moves")]
-        public System.Collections.Generic.ICollection<DtoApiSocMove>? Moves { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocReach
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("TakenAt")]
-        public System.DateTimeOffset? TakenAt { get; set; } = default!;
-
+        /// <summary>
+        /// Followers now, where the platform counts them.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Followers")]
         public long? Followers { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Following")]
-        public long? Following { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Posts")]
-        public long? Posts { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocResolution
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("WinningOutcomeId")]
-        public string? WinningOutcomeId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("State")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocResolutionState>))]
-        public SocResolutionState? State { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SettledAt")]
-        public System.DateTimeOffset? SettledAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("EvidenceUrl")]
-        public string? EvidenceUrl { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocResolved
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("MarketId")]
-        public string? MarketId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocProvider>))]
-        public SocProvider? Provider { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Question")]
-        public string? Question { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("State")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocResolutionState>))]
-        public SocResolutionState? State { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WinningOutcomeId")]
-        public string? WinningOutcomeId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("WinningOutcome")]
-        public string? WinningOutcome { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SettledAt")]
-        public System.DateTimeOffset? SettledAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Before30d")]
-        public double? Before30d { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Before7d")]
-        public double? Before7d { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Before24h")]
-        public double? Before24h { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Before1h")]
-        public double? Before1h { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SourceUrl")]
-        public string? SourceUrl { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocSentiment
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Instrument")]
-        public string? Instrument { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Window")]
-        public string? Window { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("From")]
-        public System.DateTimeOffset? From { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("To")]
-        public System.DateTimeOffset? To { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Count")]
-        public int? Count { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("MeanScore")]
-        public double? MeanScore { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Positive")]
-        public int? Positive { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Negative")]
-        public int? Negative { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Neutral")]
-        public int? Neutral { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Unknown")]
-        public int? Unknown { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocTrend
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Instrument")]
-        public string? Instrument { get; set; } = default!;
-
+        /// <summary>
+        /// Posts of the account in the window.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Posts")]
         public int? Posts { get; set; } = default!;
 
+        /// <summary>
+        /// Likes, replies, reposts and quotes on those posts.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Engagement")]
         public long? Engagement { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Ratio")]
-        public double? Ratio { get; set; } = default!;
+        /// <summary>
+        /// Growth in followers over the window, in percent. Empty when there is no earlier reading.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ReachGrowth")]
+        public double? ReachGrowth { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -744,105 +398,44 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocTrending
+    public partial class EngagementPoint
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Window")]
-        public string? Window { get; set; } = default!;
+        /// <summary>
+        /// When the counts were read, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("At")]
+        public System.DateTimeOffset? At { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("From")]
-        public System.DateTimeOffset? From { get; set; } = default!;
+        /// <summary>
+        /// Likes.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Likes")]
+        public long? Likes { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("To")]
-        public System.DateTimeOffset? To { get; set; } = default!;
+        /// <summary>
+        /// Replies.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Replies")]
+        public long? Replies { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
-        public System.Collections.Generic.ICollection<DtoApiSocTrend>? Tickers { get; set; } = default!;
+        /// <summary>
+        /// Reposts.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Reposts")]
+        public long? Reposts { get; set; } = default!;
 
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+        /// <summary>
+        /// Quotes.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Quotes")]
+        public long? Quotes { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoApiSocWatch
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocPlatform>))]
-        public SocPlatform? Platform { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocWatchKind>))]
-        public SocWatchKind? Kind { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Handle")]
-        public string? Handle { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("DisplayName")]
-        public string? DisplayName { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Status")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocWatchStatus>))]
-        public SocWatchStatus? Status { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoSocApiVideo
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("VideoId")]
-        public string? VideoId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ChannelId")]
-        public string? ChannelId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Channel")]
-        public string? Channel { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Title")]
-        public string? Title { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Url")]
-        public string? Url { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ThumbnailUrl")]
-        public string? ThumbnailUrl { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("PublishedAt")]
-        public System.DateTimeOffset? PublishedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Score")]
-        public double? Score { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Signal>))]
-        public Signal? Signal { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Summary")]
-        public string? Summary { get; set; } = default!;
+        /// <summary>
+        /// Views, where the platform counts them.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Views")]
+        public long? Views { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -907,106 +500,434 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum OpCond
+    public partial class MarketDetail
     {
 
-        [System.Runtime.Serialization.EnumMember(Value = @"and")]
-        And = 0,
+        /// <summary>
+        /// The rules the market settles by.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Rules")]
+        public string? Rules { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"or")]
-        Or = 1,
+        /// <summary>
+        /// Every outcome with its latest price, bid and ask.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Outcomes")]
+        public System.Collections.Generic.ICollection<MarketOutcome>? Outcomes { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"all")]
-        All = 2,
+        /// <summary>
+        /// Price history of every outcome (at most 50 outcomes), by hour or day.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("History")]
+        public System.Collections.Generic.ICollection<OutcomeHistory>? History { get; set; } = default!;
 
-        [System.Runtime.Serialization.EnumMember(Value = @"in")]
-        In = 3,
+        /// <summary>
+        /// The market's id.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        /// <summary>
+        /// The question the market asks.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Question")]
+        public string? Question { get; set; } = default!;
+
+        /// <summary>
+        /// Polymarket, Kalshi or Manifold.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
+        public string? Provider { get; set; } = default!;
+
+        /// <summary>
+        /// Category the provider files it under.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Category")]
+        public string? Category { get; set; } = default!;
+
+        /// <summary>
+        /// Title of the event the market belongs to.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Event")]
+        public string? Event { get; set; } = default!;
+
+        /// <summary>
+        /// Latest probability, 0 to 1: of Yes, or of the leading outcome in a market with several.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Probability")]
+        public double? Probability { get; set; } = default!;
+
+        /// <summary>
+        /// Change of that probability over the last 24 hours, in points of probability (0.05 is five points).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg24h")]
+        public double? Chg24h { get; set; } = default!;
+
+        /// <summary>
+        /// Volume traded, in the provider's own unit.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Volume")]
+        public double? Volume { get; set; } = default!;
+
+        /// <summary>
+        /// Liquidity, in the provider's own unit.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Liquidity")]
+        public double? Liquidity { get; set; } = default!;
+
+        /// <summary>
+        /// When trading closes, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Closes")]
+        public System.DateTimeOffset? Closes { get; set; } = default!;
+
+        /// <summary>
+        /// Open, Closed, Resolved or Unknown.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        public string? Status { get; set; } = default!;
+
+        /// <summary>
+        /// Link to the market.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiSocAuthorList
+    public partial class MarketMove
     {
 
         /// <summary>
-        /// Return only items of this social platform. Empty means every platform available to you.
+        /// The market's id.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocPlatform>))]
-        public SocPlatform? Platform { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
 
         /// <summary>
-        /// Return only authors whose handle or display name contains this text, ignoring case. Empty means all authors.
+        /// The question the market asks.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Question")]
+        public string? Question { get; set; } = default!;
+
+        /// <summary>
+        /// Polymarket, Kalshi or Manifold.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
+        public string? Provider { get; set; } = default!;
+
+        /// <summary>
+        /// The outcome that moved most in this market.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Outcome")]
+        public string? Outcome { get; set; } = default!;
+
+        /// <summary>
+        /// Price at the start of the window, 0 to 1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("From")]
+        public double? From { get; set; } = default!;
+
+        /// <summary>
+        /// Latest price, 0 to 1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("To")]
+        public double? To { get; set; } = default!;
+
+        /// <summary>
+        /// To minus From, in points of probability.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Change")]
+        public double? Change { get; set; } = default!;
+
+        /// <summary>
+        /// Link to the market.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MarketOutcome
+    {
+
+        /// <summary>
+        /// Name of the outcome.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// Latest price, 0 to 1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
+
+        /// <summary>
+        /// Best price offered to buy at.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Bid")]
+        public double? Bid { get; set; } = default!;
+
+        /// <summary>
+        /// Best price offered to sell at.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Ask")]
+        public double? Ask { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MarketPoint
+    {
+
+        /// <summary>
+        /// Start of the hour or day, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("At")]
+        public System.DateTimeOffset? At { get; set; } = default!;
+
+        /// <summary>
+        /// Last price taken in that hour or day, 0 to 1.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MarketRow
+    {
+
+        /// <summary>
+        /// The market's id.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        /// <summary>
+        /// The question the market asks.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Question")]
+        public string? Question { get; set; } = default!;
+
+        /// <summary>
+        /// Polymarket, Kalshi or Manifold.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
+        public string? Provider { get; set; } = default!;
+
+        /// <summary>
+        /// Category the provider files it under.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Category")]
+        public string? Category { get; set; } = default!;
+
+        /// <summary>
+        /// Title of the event the market belongs to.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Event")]
+        public string? Event { get; set; } = default!;
+
+        /// <summary>
+        /// Latest probability, 0 to 1: of Yes, or of the leading outcome in a market with several.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Probability")]
+        public double? Probability { get; set; } = default!;
+
+        /// <summary>
+        /// Change of that probability over the last 24 hours, in points of probability (0.05 is five points).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chg24h")]
+        public double? Chg24h { get; set; } = default!;
+
+        /// <summary>
+        /// Volume traded, in the provider's own unit.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Volume")]
+        public double? Volume { get; set; } = default!;
+
+        /// <summary>
+        /// Liquidity, in the provider's own unit.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Liquidity")]
+        public double? Liquidity { get; set; } = default!;
+
+        /// <summary>
+        /// When trading closes, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Closes")]
+        public System.DateTimeOffset? Closes { get; set; } = default!;
+
+        /// <summary>
+        /// Open, Closed, Resolved or Unknown.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        public string? Status { get; set; } = default!;
+
+        /// <summary>
+        /// Link to the market.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class OutcomeHistory
+    {
+
+        /// <summary>
+        /// Name of the outcome.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
+
+        /// <summary>
+        /// Prices, oldest first.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Points")]
+        public System.Collections.Generic.ICollection<MarketPoint>? Points { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PostDetail
+    {
+
+        /// <summary>
+        /// Engagement readings, oldest first.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Series")]
+        public System.Collections.Generic.ICollection<EngagementPoint>? Series { get; set; } = default!;
+
+        /// <summary>
+        /// The post's id.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        /// <summary>
+        /// Platform: HackerNews or Bluesky.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
+        public string? Platform { get; set; } = default!;
+
+        /// <summary>
+        /// Post, Comment or Reply.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
+
+        /// <summary>
+        /// Handle of the author.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Author")]
+        public string? Author { get; set; } = default!;
+
+        /// <summary>
+        /// Link to the post.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
+
+        /// <summary>
+        /// When it was published, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Published")]
+        public System.DateTimeOffset? Published { get; set; } = default!;
+
+        /// <summary>
+        /// Tickers the post names.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
+        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
+
+        /// <summary>
+        /// Reading of the text: Bullish, Bearish, Neutral or Unscored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Stance")]
+        public string? Stance { get; set; } = default!;
+
+        /// <summary>
+        /// Sentiment score from -1 (most bearish) to +1 (most bullish).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
+
+        /// <summary>
+        /// Likes, replies, reposts and quotes now.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Engagement")]
+        public long? Engagement { get; set; } = default!;
+
+        /// <summary>
+        /// The post's text. Empty when the source does not allow it to be shown (TextWithheld is true).
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Text")]
         public string? Text { get; set; } = default!;
 
         /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
+        /// True when the text is left out because the source does not allow it to be shown.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
-
-        /// <summary>
-        /// One-based page number. Default 1.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
-
-        /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
-
-        /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
-
-        /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
-
-        /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
-
-        /// <summary>
-        /// Optional field names to include in each returned row.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
-
-        /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
-
-        /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("TextWithheld")]
+        public bool? TextWithheld { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1020,309 +941,80 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiSocEventList
+    public partial class PostRow
     {
 
         /// <summary>
-        /// Return only items of this prediction-market provider. Empty means every provider available to you.
+        /// The post's id.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocProvider>))]
-        public SocProvider? Provider { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
 
         /// <summary>
-        /// Return only items in this provider category, matched exactly. Empty means all categories.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
-
-        /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
-
-        /// <summary>
-        /// One-based page number. Default 1.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
-
-        /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
-
-        /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
-
-        /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
-
-        /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
-
-        /// <summary>
-        /// Optional field names to include in each returned row.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
-
-        /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
-
-        /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiSocMarketList
-    {
-
-        /// <summary>
-        /// Return only items of this prediction-market provider. Empty means every provider available to you.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocProvider>))]
-        public SocProvider? Provider { get; set; } = default!;
-
-        /// <summary>
-        /// Return only items in this provider category, matched exactly. Empty means all categories.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
-
-        /// <summary>
-        /// Return only markets in this lifecycle status. Empty means every status.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Status")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocMarketStatus>))]
-        public SocMarketStatus? Status { get; set; } = default!;
-
-        /// <summary>
-        /// Return only markets of this event, using the Id returned by the events list. Empty means all events.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("EventId")]
-        public string? EventId { get; set; } = default!;
-
-        /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
-
-        /// <summary>
-        /// One-based page number. Default 1.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
-
-        /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
-
-        /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
-
-        /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
-
-        /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
-
-        /// <summary>
-        /// Optional field names to include in each returned row.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
-
-        /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
-
-        /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiSocPostList
-    {
-
-        /// <summary>
-        /// Return only posts that mention this ticker symbol, for example BTC. Matching ignores case. Empty means all tickers.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Ticker")]
-        public string? Ticker { get; set; } = default!;
-
-        /// <summary>
-        /// Return only posts by this author, using the Id returned by the authors list. Empty means all authors.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("AuthorId")]
-        public string? AuthorId { get; set; } = default!;
-
-        /// <summary>
-        /// Return only items of this social platform. Empty means every platform available to you.
+        /// Platform: HackerNews or Bluesky.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Platform")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocPlatform>))]
-        public SocPlatform? Platform { get; set; } = default!;
+        public string? Platform { get; set; } = default!;
 
         /// <summary>
-        /// Earliest post publication time to include, in UTC (ISO 8601). Empty means no lower limit.
+        /// Post, Comment or Reply.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("From")]
-        public System.DateTimeOffset? From { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
 
         /// <summary>
-        /// Latest post publication time to include, in UTC (ISO 8601). Empty means no upper limit.
+        /// Handle of the author.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("To")]
-        public System.DateTimeOffset? To { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Author")]
+        public string? Author { get; set; } = default!;
 
         /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
+        /// Link to the post.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
 
         /// <summary>
-        /// One-based page number. Default 1.
+        /// When it was published, UTC.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Published")]
+        public System.DateTimeOffset? Published { get; set; } = default!;
 
         /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
+        /// Tickers the post names.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Tickers")]
+        public System.Collections.Generic.ICollection<string>? Tickers { get; set; } = default!;
 
         /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
+        /// Reading of the text: Bullish, Bearish, Neutral or Unscored.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Stance")]
+        public string? Stance { get; set; } = default!;
 
         /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
+        /// Sentiment score from -1 (most bearish) to +1 (most bullish).
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
 
         /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
+        /// Likes, replies, reposts and quotes now.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Engagement")]
+        public long? Engagement { get; set; } = default!;
 
         /// <summary>
-        /// Optional field names to include in each returned row.
+        /// The post's text. Empty when the source does not allow it to be shown (TextWithheld is true).
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Text")]
+        public string? Text { get; set; } = default!;
 
         /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
+        /// True when the text is left out because the source does not allow it to be shown.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
-
-        /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("TextWithheld")]
+        public bool? TextWithheld { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1336,88 +1028,44 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiSocResolvedList
+    public partial class PulsePoint
     {
 
         /// <summary>
-        /// Return only items of this prediction-market provider. Empty means every provider available to you.
+        /// Ticker.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocProvider>))]
-        public SocProvider? Provider { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
         /// <summary>
-        /// Return only items in this provider category, matched exactly. Empty means all categories.
+        /// Start of the hour or day, UTC.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Category")]
-        public string? Category { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("At")]
+        public System.DateTimeOffset? At { get; set; } = default!;
 
         /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
+        /// Posts that named the ticker.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Mentions")]
+        public int? Mentions { get; set; } = default!;
 
         /// <summary>
-        /// One-based page number. Default 1.
+        /// Likes, replies, reposts and quotes on those posts.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Engagement")]
+        public long? Engagement { get; set; } = default!;
 
         /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
+        /// Mentions against the usual mentions of the ticker for those hours: 1 is usual.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Attention")]
+        public double? Attention { get; set; } = default!;
 
         /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
+        /// Mean sentiment score of the scored posts, from -1 to +1. Empty when none is scored.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
-
-        /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
-
-        /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
-
-        /// <summary>
-        /// Optional field names to include in each returned row.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
-
-        /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
-
-        /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("MeanScore")]
+        public double? MeanScore { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1431,200 +1079,68 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueApiSocWatchList
+    public partial class PulseRow
     {
 
         /// <summary>
-        /// Return only items of this social platform. Empty means every platform available to you.
+        /// Ticker.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<SocPlatform>))]
-        public SocPlatform? Platform { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
         /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
+        /// Posts that named the ticker in the window.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Mentions")]
+        public int? Mentions { get; set; } = default!;
 
         /// <summary>
-        /// One-based page number. Default 1.
+        /// Likes, replies, reposts and quotes on those posts.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Engagement")]
+        public long? Engagement { get; set; } = default!;
 
         /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
+        /// Mentions against the usual mentions of the ticker for those hours, over the last 30 days: 1 is usual, 3 is three times as much.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Attention")]
+        public double? Attention { get; set; } = default!;
 
         /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
+        /// Posts read as bullish.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Bullish")]
+        public int? Bullish { get; set; } = default!;
 
         /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
+        /// Posts read as bearish.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Bearish")]
+        public int? Bearish { get; set; } = default!;
 
         /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
+        /// Posts read as neutral.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Neutral")]
+        public int? Neutral { get; set; } = default!;
 
         /// <summary>
-        /// Optional field names to include in each returned row.
+        /// Posts with no reading yet.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Unscored")]
+        public int? Unscored { get; set; } = default!;
 
         /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
+        /// Mean sentiment score of the scored posts, from -1 to +1. Empty when none is scored.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("MeanScore")]
+        public double? MeanScore { get; set; } = default!;
 
         /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
+        /// Change in mentions against the window before, in percent. Empty when the window before had none.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class QueSocApiVideoList
-    {
-
-        /// <summary>
-        /// Return only videos of this YouTube channel, by channel identifier. Empty means all channels.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("ChannelId")]
-        public string? ChannelId { get; set; } = default!;
-
-        /// <summary>
-        /// Restrict the score rows returned to this ticker symbol, for example BTC. Matching ignores case. Empty means the scores of every symbol.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        /// <summary>
-        /// Keep only score rows with a video score at or above this value. Empty means no lower limit.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("MinScore")]
-        public double? MinScore { get; set; } = default!;
-
-        /// <summary>
-        /// Keep only score rows with a video score at or below this value. Empty means no upper limit.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("MaxScore")]
-        public double? MaxScore { get; set; } = default!;
-
-        /// <summary>
-        /// Earliest video publication time to include, in UTC (ISO 8601). Empty means no lower limit.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("From")]
-        public System.DateTimeOffset? From { get; set; } = default!;
-
-        /// <summary>
-        /// Latest video publication time to include, in UTC (ISO 8601). Empty means no upper limit.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("To")]
-        public System.DateTimeOffset? To { get; set; } = default!;
-
-        /// <summary>
-        /// How the search triplets in srchBy combine: and, or, all or in.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("cond")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<OpCond>))]
-        public OpCond? Cond { get; set; } = default!;
-
-        /// <summary>
-        /// One-based page number. Default 1.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageNo")]
-        public int? PageNo { get; set; } = default!;
-
-        /// <summary>
-        /// Rows per page, from 1 to 100. Default 100.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageSize")]
-        public int? PageSize { get; set; } = default!;
-
-        /// <summary>
-        /// Optional client counter that is echoed back with the paging result.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("draw")]
-        public long? Draw { get; set; } = default!;
-
-        /// <summary>
-        /// Sort pairs. Each pair is a field name and asc or desc, for example [["published","desc"]].
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sortBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SortBy { get; set; } = default!;
-
-        /// <summary>
-        /// Search triplets. Each is a field name, a comparison operator and a value, combined using cond.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srchBy")]
-        public System.Collections.Generic.ICollection<System.Collections.Generic.ICollection<string>>? SrchBy { get; set; } = default!;
-
-        /// <summary>
-        /// Optional field names to include in each returned row.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("include")]
-        public System.Collections.Generic.ICollection<string>? Include { get; set; } = default!;
-
-        /// <summary>
-        /// Raw filter document. Prefer the typed filters of the endpoint.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("srch")]
-        public object? Srch { get; set; } = default!;
-
-        /// <summary>
-        /// Raw sort document. Prefer sortBy pairs.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("sort")]
-        public object? Sort { get; set; } = default!;
-
-        /// <summary>
-        /// Zero-based row offset of the selected page, calculated from pageNo and pageSize.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("pageOff")]
-        public int? PageOff { get; set; } = default!;
-
-        /// <summary>
-        /// Result count used by paging responses.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("resCount")]
-        public int? ResCount { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Change")]
+        public double? Change { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -1665,242 +1181,11 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSocAuthor
+    public partial class ResPonseOfMarketDetail
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSocAuthor>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSocEvent
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSocEvent>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSocMarket
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSocMarket>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSocPost
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSocPost>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSocResolved
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSocResolved>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoApiSocWatch
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoApiSocWatch>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPagedOfDtoSocApiVideo
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoSocApiVideo>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("paging")]
-        public ResPage? Paging { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSocAuthorView
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSocAuthorView? Data { get; set; } = default!;
+        public MarketDetail? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -1929,11 +1214,11 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSocHistory
+    public partial class ResPonseOfPostDetail
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSocHistory? Data { get; set; } = default!;
+        public PostDetail? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -1962,11 +1247,11 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSocMarketView
+    public partial class ResPonseOfVideoRow
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSocMarketView? Data { get; set; } = default!;
+        public VideoRow? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -1995,26 +1280,74 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSocPostView
+    public partial class ResolvedRow
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSocPostView? Data { get; set; } = default!;
+        /// <summary>
+        /// The market's id.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
+        /// <summary>
+        /// The question the market asked.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Question")]
+        public string? Question { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
+        /// <summary>
+        /// Polymarket, Kalshi or Manifold.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
+        public string? Provider { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
+        /// <summary>
+        /// Category the provider files it under.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Category")]
+        public string? Category { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+        /// <summary>
+        /// Name of the winning outcome.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Winner")]
+        public string? Winner { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
+        /// <summary>
+        /// When it settled, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SettledAt")]
+        public System.DateTimeOffset? SettledAt { get; set; } = default!;
+
+        /// <summary>
+        /// The crowd's probability for the winner 30 days before it settled. Empty when there was no price yet.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Before30d")]
+        public double? Before30d { get; set; } = default!;
+
+        /// <summary>
+        /// The same 7 days before.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Before7d")]
+        public double? Before7d { get; set; } = default!;
+
+        /// <summary>
+        /// The same 24 hours before.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Before24h")]
+        public double? Before24h { get; set; } = default!;
+
+        /// <summary>
+        /// The same 1 hour before.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Before1h")]
+        public double? Before1h { get; set; } = default!;
+
+        /// <summary>
+        /// Link to the market.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2028,26 +1361,26 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSocPulse
+    public partial class VideoCall
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSocPulse? Data { get; set; } = default!;
+        /// <summary>
+        /// Ticker.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sym")]
+        public string? Sym { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
+        /// <summary>
+        /// Reading of the text: Bullish, Bearish, Neutral or Unscored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sentiment")]
+        public string? Sentiment { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
+        /// <summary>
+        /// FinSocial's score for the ticker in this video.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2061,26 +1394,74 @@ namespace Fin.Social
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSocSentiment
+    public partial class VideoRow
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSocSentiment? Data { get; set; } = default!;
+        /// <summary>
+        /// The video's id.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
+        /// <summary>
+        /// Title of the video.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Title")]
+        public string? Title { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
+        /// <summary>
+        /// Name of the channel.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Channel")]
+        public string? Channel { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
+        /// <summary>
+        /// Link to the video.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+        /// <summary>
+        /// When it was published, UTC.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Published")]
+        public System.DateTimeOffset? Published { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
+        /// <summary>
+        /// Length in seconds.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DurationSec")]
+        public int? DurationSec { get; set; } = default!;
+
+        /// <summary>
+        /// Views when last read.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Views")]
+        public long? Views { get; set; } = default!;
+
+        /// <summary>
+        /// FinSocial's score for the video, 0 to 10. Empty when not scored yet.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Score")]
+        public double? Score { get; set; } = default!;
+
+        /// <summary>
+        /// FinSocial's own signal for the video: VSS, SS, S, NS, N, NB, B, SB or VSB. Empty when not scored yet.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Signal")]
+        public string? Signal { get; set; } = default!;
+
+        /// <summary>
+        /// FinSocial's summary of the video. Empty when it has none yet.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Summary")]
+        public string? Summary { get; set; } = default!;
+
+        /// <summary>
+        /// What was read about each ticker the video names.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Calls")]
+        public System.Collections.Generic.ICollection<VideoCall>? Calls { get; set; } = default!;
 
         private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
 
@@ -2090,312 +1471,6 @@ namespace Fin.Social
             get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
             set { _additionalProperties = value; }
         }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfDtoApiSocTrending
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoApiSocTrending? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ResPonseOfListOfDtoSocApiVideo
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoSocApiVideo>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Sentiment
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Neutral")]
-        Neutral = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Positive")]
-        Positive = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Negative")]
-        Negative = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum Signal
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"N")]
-        N = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NB")]
-        NB = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"B")]
-        B = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SB")]
-        SB = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSB")]
-        VSB = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"VSS")]
-        VSS = 5,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"SS")]
-        SS = 6,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"S")]
-        S = 7,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"NS")]
-        NS = 8,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocClaimDir
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Up")]
-        Up = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Down")]
-        Down = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocMarketStatus
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Open")]
-        Open = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Closed")]
-        Closed = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Resolved")]
-        Resolved = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Unknown")]
-        Unknown = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocMarketType
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Binary")]
-        Binary = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Multi")]
-        Multi = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Scalar")]
-        Scalar = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocMoney
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Real")]
-        Real = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Play")]
-        Play = 1,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocPlatform
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"HackerNews")]
-        HackerNews = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"YouTube")]
-        YouTube = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Bluesky")]
-        Bluesky = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocPostKind
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Post")]
-        Post = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Comment")]
-        Comment = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Reply")]
-        Reply = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Video")]
-        Video = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocProvider
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Polymarket")]
-        Polymarket = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Kalshi")]
-        Kalshi = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Manifold")]
-        Manifold = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocResolutionState
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Final")]
-        Final = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Disputed")]
-        Disputed = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Void")]
-        Void = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Refunded")]
-        Refunded = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Split")]
-        Split = 4,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Pending")]
-        Pending = 5,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocStance
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"None")]
-        None = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Bullish")]
-        Bullish = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Bearish")]
-        Bearish = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Neutral")]
-        Neutral = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Mixed")]
-        Mixed = 4,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocWatchKind
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Author")]
-        Author = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Channel")]
-        Channel = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Community")]
-        Community = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Query")]
-        Query = 3,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public enum SocWatchStatus
-    {
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Proposed")]
-        Proposed = 0,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Active")]
-        Active = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Paused")]
-        Paused = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"Dropped")]
-        Dropped = 3,
 
     }
 

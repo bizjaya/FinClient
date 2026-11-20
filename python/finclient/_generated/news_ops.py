@@ -7,697 +7,299 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Union  # noqa: F4
 from .. import _runtime as rt
 from . import news_types as t
 
-# The fields each operation's `qry` object knows, by schema; snake_case spellings are accepted for them.
-_QRY: Dict[str, Tuple[str, ...]] = {
-    "QueApiNewsList": (
-        "Symbols",
-        "Industries",
-        "Categories",
-        "KeyCodes",
-        "StmGte",
-        "StmLte",
-        "PublishedAfter",
-        "Search",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-    "QueApiSourceList": (
-        "Category",
-        "Active",
-        "Vendor",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-    "QueApiVideoList": (
-        "KeyCode",
-        "Length",
-        "Transcript",
-        "Symbol",
-        "Category",
-        "Sentiment",
-        "PublishedAfter",
-        "Search",
-        "cond",
-        "pageNo",
-        "pageSize",
-        "draw",
-        "sortBy",
-        "srchBy",
-        "include",
-        "srch",
-        "sort",
-        "pageOff",
-        "resCount",
-    ),
-}
 
 
 class CategoriesApi(rt.Group):
     """Categories operations under ``/api``."""
 
-    def counts(self) -> List[t.DtoApiCateCount]:
-        """News category article counts
+    def list(self) -> List[t.CategoryRef]:
+        """List categories
 
-        Returns every enabled news category with its stable slug, its parent and its current article
-        count.
+        Returns the news category tree as rows with a Parent slug, and how many articles each
+        category got in the last 7 days.
 
-        ``GET /api/categories/counts``. Billed 1 credit per call.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/categories/counts", auth="key",
-        )
-
-    def flat(self) -> List[t.DtoApiCate]:
-        """List news categories (flat)
-
-        Returns every enabled news category as a flat list. Each entry has a stable slug, its parent
-        id and its name; use the slug, not the id, to refer to a category.
-
-        ``GET /api/categories/flat``. Billed 0.5 credits per call.
+        ``GET /api/categories``. Billed 0.5 credits per call.
 
         Returns: the rows.
         """
         return self._service.data(
-            "GET", "/api/categories/flat", auth="key",
-        )
-
-    def tree(self) -> List[t.DtoApiCate]:
-        """List news categories (tree)
-
-        Returns the enabled news categories as a tree: top-level categories with their
-        sub-categories nested under Children.
-
-        ``GET /api/categories/tree``. Billed 0.5 credits per call.
-
-        Returns: the rows.
-        """
-        return self._service.data(
-            "GET", "/api/categories/tree", auth="key",
+            "GET", "/api/categories", auth="key",
         )
 
 
-class EntitiesApi(rt.Group):
-    """Entities operations under ``/api``."""
+class MoodApi(rt.Group):
+    """Mood operations under ``/api``."""
 
-    def industries(self, *, top: Optional[int] = None) -> rt.Page[t.DtoApiIndustryHit]:
-        """Top industries
-
-        Returns the most frequently mentioned topics, used as an industry list, ranked by frequency.
-
-        ``GET /api/entities/industries``. Billed 0.5 credits per call.
-
-        Args:
-            top: Number of topics to return, ranked by frequency, from 1 to 500. Default 50.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/entities/industries", auth="key",
-            query=[("Top", top)],
-        )
-
-    def search(
+    def list(
         self,
         *,
-        q: Optional[str] = None,
-        limit: Optional[int] = None,
         days: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiEntityHit]:
-        """Search news entities
+        cats: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.MoodDay]:
+        """Market mood by category
 
-        Finds tickers and topics whose name starts with the given text, ranked by how often they
-        appear in recent news.
+        Returns, for each news category and day, how many articles were filed under it and how many
+        read bullish, bearish, neutral or unscored, with a mood from 0 to 100. An article counts in
+        every category it is filed under.
 
-        ``GET /api/entities/search``. Billed 0.5 credits per call.
+        ``GET /api/mood``. Billed 1 credit per call.
 
         Args:
-            q: Text that the entity name must start with. Required; an empty value is rejected.
-            limit: Maximum number of distinct entities to return, from 1 to 100. Default 25.
-            days: Look-back window in days, from 1 to 3650. Default 365.
+            days: How many days back, 1 to 90. Default 7.
+            cats: Category slugs, comma-separated, from the categories endpoint. Leave empty for
+                every category.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/api/entities/search", auth="key",
-            query=[("Q", q), ("Limit", limit), ("Days", days)],
+            "GET", "/api/mood", auth="key",
+            query=[("days", days), ("cats", cats), ("page", page), ("size", size)],
         )
 
-    def types(self) -> rt.Page[t.DtoApiNwsEnumOption]:
-        """News entity types
+    def list_pages(
+        self,
+        *,
+        days: Optional[int] = None,
+        cats: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.MoodDay]]:
+        """Yield every page of :meth:`list`.
 
-        Lists the entity types used by the news data, such as tickers and topics.
-
-        ``GET /api/entities/types``. Billed 0.5 credits per call.
-
-        Returns: a page of rows with its paging info.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return self._service.page(
-            "GET", "/api/entities/types", auth="key",
-        )
+        return rt.iter_pages(
+            lambda n: self.list(days=days, cats=cats, page=n, size=size), first=page)
+
+    def list_items(
+        self,
+        *,
+        days: Optional[int] = None,
+        cats: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.MoodDay]:
+        """Yield every row of :meth:`list`, page after page."""
+        return rt.iter_items(self.list_pages(
+            days=days, cats=cats, page=page, size=size))
 
 
 class NewsApi(rt.Group):
     """News operations under ``/api``."""
 
-    def list(self, qry: Optional[t.QueApiNewsList] = None, **fields: Any) -> rt.Page[t.DtoApiNews]:
-        """List news articles
+    def list(
+        self,
+        *,
+        syms: Optional[str] = None,
+        cats: Optional[str] = None,
+        src: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        until: Optional[Union[str, datetime]] = None,
+        q: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sentiment: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.NewsItem]:
+        """List news
 
-        Returns a paged, filterable feed of news articles with their sentiment and signal grades.
+        Lists news articles, newest first, with tickers, categories, sentiment, importance and a
+        summary when one exists. Filter by ticker, category, publisher, time, text, importance and
+        sentiment; sort by time, rank or score; 50 rows a page.
 
         ``GET /api/news``. Billed 0.5 credits per call.
 
         Args:
-            qry: Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the
-                filter fields of this endpoint. Pass a dict, keyword arguments, or both.
-                Symbols: Comma-separated ticker symbols. Returns articles that mention any of them.
-                Industries: Comma-separated topics. Returns articles filed under any of them.
-                Categories: Comma-separated category slugs, as returned by the news categories
-                    endpoints. Returns articles filed under any of them.
-                KeyCodes: Comma-separated source key codes. Returns articles from any of those
-                    sources.
-                StmGte: Lowest article sentiment to include. Allowed values: Negative, Neutral,
-                    Positive.
-                StmLte: Highest article sentiment to include. Allowed values: Negative, Neutral,
-                    Positive.
-                PublishedAfter: Return only articles published at or after this time (ISO 8601,
-                    UTC).
-                Search: Text to find in article titles and body text.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA.
+                Symbols no article carries come back in NotFound.
+            cats: Category slugs, comma-separated, from the categories endpoint, for example
+                earnings,crypto.
+            src: Publisher keys, comma-separated, from the sources endpoint.
+            since: Only articles published at or after this time (ISO 8601, UTC).
+            until: Only articles published at or before this time (ISO 8601, UTC).
+            q: Words to find in the headline or text.
+            min_score: Only articles that matter at least this much, 0 to 10.
+            sentiment: Only articles with this reading: Bullish, Bearish, Neutral or Unscored.
+            sort: Field to sort by: published (default), rank or score. A minus sign in front sorts
+                high to low, and published is high to low unless you say otherwise.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
             "GET", "/api/news", auth="key",
-            qry=rt.build_qry(_QRY["QueApiNewsList"], qry, fields),
+            query=[("syms", syms), ("cats", cats), ("src", src), ("since", since), ("until", until), ("q", q), ("minScore", min_score), ("sentiment", sentiment), ("sort", sort), ("page", page), ("size", size)],
         )
 
     def list_pages(
         self,
-        qry: Optional[t.QueApiNewsList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiNews]]:
+        *,
+        syms: Optional[str] = None,
+        cats: Optional[str] = None,
+        src: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        until: Optional[Union[str, datetime]] = None,
+        q: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sentiment: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.NewsItem]]:
         """Yield every page of :meth:`list`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.list, qry=rt.build_qry(_QRY["QueApiNewsList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.list(syms=syms, cats=cats, src=src, since=since, until=until, q=q, min_score=min_score, sentiment=sentiment, sort=sort, page=n, size=size), first=page)
 
     def list_items(
         self,
-        qry: Optional[t.QueApiNewsList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiNews]:
+        *,
+        syms: Optional[str] = None,
+        cats: Optional[str] = None,
+        src: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        until: Optional[Union[str, datetime]] = None,
+        q: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sentiment: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.NewsItem]:
         """Yield every row of :meth:`list`, page after page."""
-        return rt.iter_items(self.list_pages(qry, **fields))
+        return rt.iter_items(self.list_pages(
+            syms=syms, cats=cats, src=src, since=since, until=until, q=q, min_score=min_score, sentiment=sentiment, sort=sort, page=page, size=size))
 
-    def group_category_list(
-        self,
-        *,
-        keys: Optional[str] = None,
-        max_keys: Optional[int] = None,
-        max_per_key: Optional[int] = None,
-        sort_by: Optional[t.NewsSortBy] = None,
-        hours: Optional[int] = None,
-    ) -> Dict[str, List[t.DtoApiNewsLite]]:
-        """News grouped by category
-
-        Returns articles grouped by category slug, as an object keyed by category slug. When no keys
-        are given, the keys with the most articles in the window are used. Use the slug, not the
-        numeric id, to name a category.
-
-        ``GET /api/news/group/categories``. Billed 1 credit per call.
-
-        Args:
-            keys: Comma-separated keys to group by: tickers, category slugs, topics or source key
-                codes, depending on the endpoint. When empty, the keys with the most articles in the
-                window are used.
-            max_keys: Maximum number of keys (groups) to return, from 1 to 25. Default 10.
-            max_per_key: Maximum number of articles per key, from 1 to 25. Default 5.
-            sort_by: Order of the articles inside each group. Newest and Oldest order by publication
-                time, Fetched by the time the article was collected, Rank by the confidence-adjusted
-                importance score and Score by the raw importance score. Default Newest.
-            hours: Look-back window in hours, from 1 to 8760 (one year). Default 168.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", "/api/news/group/categories", auth="key",
-            query=[("Keys", keys), ("MaxKeys", max_keys), ("MaxPerKey", max_per_key), ("SortBy", sort_by), ("Hours", hours)],
-        )
-
-    def group_source_list(
-        self,
-        *,
-        keys: Optional[str] = None,
-        max_keys: Optional[int] = None,
-        max_per_key: Optional[int] = None,
-        sort_by: Optional[t.NewsSortBy] = None,
-        hours: Optional[int] = None,
-    ) -> Dict[str, List[t.DtoApiNewsLite]]:
-        """News grouped by source
-
-        Returns articles grouped by source key code, as an object keyed by source key code. When no
-        keys are given, the keys with the most articles in the window are used. For the source
-        catalogue itself, use the sources endpoints.
-
-        ``GET /api/news/group/sources``. Billed 1 credit per call.
-
-        Args:
-            keys: Comma-separated keys to group by: tickers, category slugs, topics or source key
-                codes, depending on the endpoint. When empty, the keys with the most articles in the
-                window are used.
-            max_keys: Maximum number of keys (groups) to return, from 1 to 25. Default 10.
-            max_per_key: Maximum number of articles per key, from 1 to 25. Default 5.
-            sort_by: Order of the articles inside each group. Newest and Oldest order by publication
-                time, Fetched by the time the article was collected, Rank by the confidence-adjusted
-                importance score and Score by the raw importance score. Default Newest.
-            hours: Look-back window in hours, from 1 to 8760 (one year). Default 168.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", "/api/news/group/sources", auth="key",
-            query=[("Keys", keys), ("MaxKeys", max_keys), ("MaxPerKey", max_per_key), ("SortBy", sort_by), ("Hours", hours)],
-        )
-
-    def group_ticker_list(
-        self,
-        *,
-        keys: Optional[str] = None,
-        max_keys: Optional[int] = None,
-        max_per_key: Optional[int] = None,
-        sort_by: Optional[t.NewsSortBy] = None,
-        hours: Optional[int] = None,
-    ) -> Dict[str, List[t.DtoApiNewsLite]]:
-        """News grouped by ticker
-
-        Returns articles grouped by ticker, as an object keyed by ticker. When no keys are given,
-        the keys with the most articles in the window are used.
-
-        ``GET /api/news/group/tickers``. Billed 1 credit per call.
-
-        Args:
-            keys: Comma-separated keys to group by: tickers, category slugs, topics or source key
-                codes, depending on the endpoint. When empty, the keys with the most articles in the
-                window are used.
-            max_keys: Maximum number of keys (groups) to return, from 1 to 25. Default 10.
-            max_per_key: Maximum number of articles per key, from 1 to 25. Default 5.
-            sort_by: Order of the articles inside each group. Newest and Oldest order by publication
-                time, Fetched by the time the article was collected, Rank by the confidence-adjusted
-                importance score and Score by the raw importance score. Default Newest.
-            hours: Look-back window in hours, from 1 to 8760 (one year). Default 168.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", "/api/news/group/tickers", auth="key",
-            query=[("Keys", keys), ("MaxKeys", max_keys), ("MaxPerKey", max_per_key), ("SortBy", sort_by), ("Hours", hours)],
-        )
-
-    def group_topic_list(
-        self,
-        *,
-        keys: Optional[str] = None,
-        max_keys: Optional[int] = None,
-        max_per_key: Optional[int] = None,
-        sort_by: Optional[t.NewsSortBy] = None,
-        hours: Optional[int] = None,
-    ) -> Dict[str, List[t.DtoApiNewsLite]]:
-        """News grouped by topic
-
-        Returns articles grouped by topic, as an object keyed by topic. When no keys are given, the
-        keys with the most articles in the window are used.
-
-        ``GET /api/news/group/topics``. Billed 1 credit per call.
-
-        Args:
-            keys: Comma-separated keys to group by: tickers, category slugs, topics or source key
-                codes, depending on the endpoint. When empty, the keys with the most articles in the
-                window are used.
-            max_keys: Maximum number of keys (groups) to return, from 1 to 25. Default 10.
-            max_per_key: Maximum number of articles per key, from 1 to 25. Default 5.
-            sort_by: Order of the articles inside each group. Newest and Oldest order by publication
-                time, Fetched by the time the article was collected, Rank by the confidence-adjusted
-                importance score and Score by the raw importance score. Default Newest.
-            hours: Look-back window in hours, from 1 to 8760 (one year). Default 168.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", "/api/news/group/topics", auth="key",
-            query=[("Keys", keys), ("MaxKeys", max_keys), ("MaxPerKey", max_per_key), ("SortBy", sort_by), ("Hours", hours)],
-        )
-
-    def by_id(self, news_id: str) -> t.DtoApiNewsDetail:
-        """View news article by NewsId
-
-        Returns one article's full detail, looked up by its NewsId. The checksum remains the main
-        public identifier of an article.
-
-        ``GET /api/news/id/{newsId}``. Billed 0.5 credits per call.
-
-        Args:
-            news_id: Unique id (UUID) of the article.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/api/news/id/{rt.seg(news_id)}", auth="key",
-        )
-
-    def trending(
-        self,
-        *,
-        hours: Optional[int] = None,
-        top: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiNews]:
-        """Trending news articles
-
-        Returns articles ranked by their confidence-adjusted importance score within the window. To
-        rank tickers and topics by how often they are mentioned, use the trending endpoints instead.
-
-        ``GET /api/news/trending``. Billed 1 credit per call.
-
-        Args:
-            hours: Look-back window in hours, from 1 to 8760. Default 24.
-            top: Number of articles to return, from 1 to 100. Default 20.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/news/trending", auth="key",
-            query=[("Hours", hours), ("Top", top)],
-        )
-
-    def view(self, checksum: str) -> t.DtoApiNewsDetail:
+    def view(self, id: str) -> t.NewsDetail:
         """View news article
 
-        Returns one article's full detail, looked up by its checksum.
+        Returns one article with its full text, author, a reading per ticker and up to five related
+        articles.
 
-        ``GET /api/news/{checksum}``. Billed 0.5 credits per call.
+        ``GET /api/news/{id}``. Billed 0.5 credits per call.
 
         Args:
-            checksum: Checksum of the article, as returned in the checksum field of news results.
+            id: Article id, as returned in the Id field of the news list.
 
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/api/news/{rt.seg(checksum)}", auth="key",
-        )
-
-    def rating_make(
-        self,
-        checksum: str,
-        body: Optional[t.CmdApiRatingMake] = None,
-    ) -> t.DtoApiNewsDetail:
-        """Rate news article
-
-        Requests an AI rating for one article, reusing the cached rating when one exists, and
-        returns the article detail including it.
-
-        ``POST /api/news/{checksum}/rating``. Billed 0.5 credits per call.
-
-        Args:
-            checksum: Checksum of the article, as returned in the checksum field of news results.
-            body: Rating request. ReqSite names the requesting site and ReqUsno the member the
-                rating is requested for.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "POST", f"/api/news/{rt.seg(checksum)}/rating", auth="key",
-            body=body if body is not None else {},
-        )
-
-    def similar(self, checksum: str, *, limit: Optional[int] = None) -> rt.Page[t.DtoApiNewsLite]:
-        """Similar news articles
-
-        Returns articles that share tickers or topics with the given article, published within a
-        7-day window.
-
-        ``GET /api/news/{checksum}/similar``. Billed 0.5 credits per call.
-
-        Args:
-            checksum: Checksum of the article, as returned in the checksum field of news results.
-            limit: Maximum number of similar articles to return, from 1 to 50. Default 10.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", f"/api/news/{rt.seg(checksum)}/similar", auth="key",
-            query=[("Limit", limit)],
+            "GET", f"/api/news/{rt.seg(id)}", auth="key",
         )
 
 
 class SentimentApi(rt.Group):
     """Sentiment operations under ``/api``."""
 
-    def aggregate(self, *, days: Optional[int] = None) -> rt.Page[t.DtoApiSentimentAgg]:
-        """Sentiment aggregate
-
-        Returns sentiment aggregated by news category and day.
-
-        ``GET /api/sentiment/aggregate``. Billed 1 credit per call.
-
-        Args:
-            days: Look-back window in days, from 1 to 90. Default 7.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/sentiment/aggregate", auth="key",
-            query=[("Days", days)],
-        )
-
-    def trending(
+    def history(
         self,
         *,
-        hours: Optional[int] = None,
-        top: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiSentimentTrend]:
-        """Trending sentiment tickers
-
-        Returns the tickers with the largest article volume in the recent window, ranked by
-        sentiment.
-
-        ``GET /api/sentiment/trending``. Billed 1 credit per call.
-
-        Args:
-            hours: Look-back window in hours, from 1 to 168 (one week). Default 24.
-            top: Number of ranked rows to return. Default 20. Values above the endpoint's maximum
-                (100 for tickers and sentiment, 200 for topics) are reduced to it.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/sentiment/trending", auth="key",
-            query=[("Hours", hours), ("Top", top)],
-        )
-
-    def by_symbol(
-        self,
-        symbol: str,
-        *,
+        syms: Optional[str] = None,
         days: Optional[int] = None,
-        limit: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiSentimentPoint]:
-        """Ticker sentiment series
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.SentimentDay]:
+        """Sentiment history
 
-        Returns the sentiment and signal time series for one ticker symbol.
+        Returns, for each ticker and day, how many articles named it and how many read bullish,
+        bearish, neutral or unscored, with a mood from 0 to 100 (the bullish share of the scored
+        articles).
 
-        ``GET /api/sentiment/{symbol}``. Billed 1 credit per call.
+        ``GET /api/sentiment/history``. Billed 1 credit per call.
 
         Args:
-            symbol: Ticker symbol, for example AAPL.
-            days: Look-back window in days, from 1 to 365. Default 30.
-            limit: Maximum number of points to return, from 1 to 1000. Default 200.
+            syms: Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA.
+                Required. Symbols with no articles in the window come back in NotFound.
+            days: How many days back, 1 to 90. Default 30.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", f"/api/sentiment/{rt.seg(symbol)}", auth="key",
-            query=[("Days", days), ("Limit", limit)],
+            "GET", "/api/sentiment/history", auth="key",
+            query=[("syms", syms), ("days", days), ("page", page), ("size", size)],
         )
+
+    def history_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        days: Optional[int] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.SentimentDay]]:
+        """Yield every page of :meth:`history`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.history(syms=syms, days=days, page=n, size=size), first=page)
+
+    def history_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        days: Optional[int] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.SentimentDay]:
+        """Yield every row of :meth:`history`, page after page."""
+        return rt.iter_items(self.history_pages(
+            syms=syms, days=days, page=page, size=size))
 
 
 class SourcesApi(rt.Group):
     """Sources operations under ``/api``."""
 
-    def list(
-        self,
-        qry: Optional[t.QueApiSourceList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSource]:
-        """List news sources
+    def list(self) -> List[t.SourceRef]:
+        """List sources
 
-        Returns the catalogue of news sources, paged, with optional category, activity and vendor
-        filters.
+        Returns the publishers FinNews collects news from, with their key, name, kind and whether
+        they are active.
 
         ``GET /api/sources``. Billed 0.5 credits per call.
 
-        Args:
-            qry: Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the
-                filter fields of this endpoint. Pass a dict, keyword arguments, or both.
-                Category: Return only sources of this category. An unknown value is rejected.
-                Active: Return only active (true) or inactive (false) sources. Omit for both.
-                Vendor: Return only sources from this vendor (exact match).
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/sources", auth="key",
-            qry=rt.build_qry(_QRY["QueApiSourceList"], qry, fields),
-        )
-
-    def list_pages(
-        self,
-        qry: Optional[t.QueApiSourceList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSource]]:
-        """Yield every page of :meth:`list`.
-
-        Advances ``pageNo`` until the last page or an empty page.
-        """
-        return rt.iter_qry_pages(
-            self.list, qry=rt.build_qry(_QRY["QueApiSourceList"], qry, fields))
-
-    def list_items(
-        self,
-        qry: Optional[t.QueApiSourceList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSource]:
-        """Yield every row of :meth:`list`, page after page."""
-        return rt.iter_items(self.list_pages(qry, **fields))
-
-    def categories(self) -> rt.Page[t.DtoApiNwsEnumOption]:
-        """News source categories
-
-        Lists the categories a news source can have.
-
-        ``GET /api/sources/categories``. Billed 0.5 credits per call.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/sources/categories", auth="key",
-        )
-
-    def view(self, keycode: str) -> t.DtoApiSourceDetail:
-        """View news source
-
-        Returns the detail card of one news source, including its latest run status.
-
-        ``GET /api/sources/{keycode}``. Billed 0.5 credits per call.
-
-        Args:
-            keycode: Key code of the news source, as returned by the sources list.
-
-        Returns: the result.
+        Returns: the rows.
         """
         return self._service.data(
-            "GET", f"/api/sources/{rt.seg(keycode)}", auth="key",
+            "GET", "/api/sources", auth="key",
         )
 
 
 class TrendingApi(rt.Group):
     """Trending operations under ``/api``."""
 
-    def tickers(
+    def list(
         self,
         *,
-        hours: Optional[int] = None,
-        top: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiTrendItem]:
+        window: Optional[str] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.TrendingTicker]:
         """Trending tickers
 
-        Returns tickers ranked by how often they are mentioned within the window. Hours sets the
-        window; mentions are not weighted by recency inside it.
+        Returns the tickers named in the most articles in the window, with the change in mentions
+        against the previous window and how many mentions read bullish or bearish.
 
-        ``GET /api/trending/tickers``. Billed 1 credit per call.
+        ``GET /api/trending``. Billed 1 credit per call.
 
         Args:
-            hours: Look-back window in hours, from 1 to 168 (one week). Default 24.
-            top: Number of ranked rows to return. Default 20. Values above the endpoint's maximum
-                (100 for tickers and sentiment, 200 for topics) are reduced to it.
+            window: Window: 1h, 24h or 7d. Default 24h.
+            size: How many tickers to return, 1 to 50. Default 10.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/api/trending/tickers", auth="key",
-            query=[("Hours", hours), ("Top", top)],
-        )
-
-    def topics(
-        self,
-        *,
-        hours: Optional[int] = None,
-        top: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiTrendItem]:
-        """Trending topics
-
-        Returns topics ranked by how often they are mentioned within the window. Hours sets the
-        window; mentions are not weighted by recency inside it.
-
-        ``GET /api/trending/topics``. Billed 1 credit per call.
-
-        Args:
-            hours: Look-back window in hours, from 1 to 168 (one week). Default 24.
-            top: Number of ranked rows to return. Default 20. Values above the endpoint's maximum
-                (100 for tickers and sentiment, 200 for topics) are reduced to it.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/api/trending/topics", auth="key",
-            query=[("Hours", hours), ("Top", top)],
+            "GET", "/api/trending", auth="key",
+            query=[("window", window), ("size", size)],
         )
 
 
@@ -706,507 +308,475 @@ class VideosApi(rt.Group):
 
     def list(
         self,
-        qry: Optional[t.QueApiVideoList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiVideo]:
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.VideoItem]:
         """List videos
 
-        Returns a paged video feed with optional score, transcript, symbol and category filters.
+        Lists finance videos with FinNews's score, a summary when one exists and what each video
+        says about the tickers it discusses. Filter by ticker, channel, time and score; sort by time
+        or score; 50 rows a page. Transcripts are not served.
 
         ``GET /api/videos``. Billed 0.5 credits per call.
 
         Args:
-            qry: Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the
-                filter fields of this endpoint. Pass a dict, keyword arguments, or both.
-                KeyCode: Return only videos from the source with this key code.
-                Length: Video length filter. Allowed values: all, shorts, long (over two minutes).
-                Transcript: Transcript filter. Allowed values: all, with, without.
-                Symbol: Return only videos that mention this ticker symbol, for example AAPL.
-                Category: Return only videos filed under this category slug.
-                Sentiment: Return only videos with this sentiment, such as Positive, Neutral or
-                    Negative.
-                PublishedAfter: Return only videos published at or after this time (ISO 8601, UTC).
-                Search: Text to find in video titles.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Only videos that discuss one of these tickers, comma-separated, up to 50, any
+                case.
+            channel: Only videos from this channel, by channel name or key.
+            since: Only videos published at or after this time (ISO 8601, UTC).
+            min_score: Only videos that matter at least this much, 0 to 10.
+            sort: Field to sort by: published (default) or score. A minus sign in front sorts high
+                to low, and published is high to low unless you say otherwise.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
             "GET", "/api/videos", auth="key",
-            qry=rt.build_qry(_QRY["QueApiVideoList"], qry, fields),
+            query=[("syms", syms), ("channel", channel), ("since", since), ("minScore", min_score), ("sort", sort), ("page", page), ("size", size)],
         )
 
     def list_pages(
         self,
-        qry: Optional[t.QueApiVideoList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiVideo]]:
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.VideoItem]]:
         """Yield every page of :meth:`list`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.list, qry=rt.build_qry(_QRY["QueApiVideoList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.list(syms=syms, channel=channel, since=since, min_score=min_score, sort=sort, page=n, size=size), first=page)
 
     def list_items(
         self,
-        qry: Optional[t.QueApiVideoList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiVideo]:
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.VideoItem]:
         """Yield every row of :meth:`list`, page after page."""
-        return rt.iter_items(self.list_pages(qry, **fields))
+        return rt.iter_items(self.list_pages(
+            syms=syms, channel=channel, since=since, min_score=min_score, sort=sort, page=page, size=size))
 
-    def view(self, video_id: str) -> t.DtoApiVideoDetail:
+    def view(self, id: str) -> t.VideoItem:
         """View video
 
-        Returns one video's detail, looked up by its YouTube video id. The transcript is served by a
-        separate endpoint.
+        Returns one video with its score, summary and what it says about each ticker it discusses.
+        No transcript.
 
-        ``GET /api/videos/{videoId}``. Billed 0.5 credits per call.
+        ``GET /api/videos/{id}``. Billed 0.5 credits per call.
 
         Args:
-            video_id: YouTube video id.
+            id: Video id, as returned in the Id field of the video list.
 
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/api/videos/{rt.seg(video_id)}", auth="key",
+            "GET", f"/api/videos/{rt.seg(id)}", auth="key",
         )
 
-    def rating_make(
-        self,
-        video_id: str,
-        body: Optional[t.CmdApiRatingMake] = None,
-    ) -> t.DtoApiVideoDetail:
-        """Rate video
 
-        Requests an AI rating for one video, reusing the cached rating when one exists, and returns
-        the video detail including it.
+class CategoriesV1(rt.Group):
+    """Categories operations under ``/v1``."""
 
-        ``POST /api/videos/{videoId}/rating``. Billed 0.5 credits per call.
+    def list(self) -> List[t.CategoryRef]:
+        """List categories
 
-        Args:
-            video_id: YouTube video id.
-            body: Rating request. ReqSite names the requesting site and ReqUsno the member the
-                rating is requested for.
+        Returns the news category tree as rows with a Parent slug, and how many articles each
+        category got in the last 7 days. Needs a Basic plan or above.
 
-        Returns: the result.
+        ``GET /v1/categories``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Returns: the rows.
         """
         return self._service.data(
-            "POST", f"/api/videos/{rt.seg(video_id)}/rating", auth="key",
-            body=body if body is not None else {},
-        )
-
-    def transcript(self, video_id: str) -> t.DtoApiVideoTranscript:
-        """View video transcript
-
-        Returns the transcript of one video. It is loaded only when requested.
-
-        ``GET /api/videos/{videoId}/transcript``. Billed 0.5 credits per call.
-
-        Args:
-            video_id: YouTube video id.
-
-        Returns: the result.
-        """
-        return self._service.data(
-            "GET", f"/api/videos/{rt.seg(video_id)}/transcript", auth="key",
+            "GET", "/v1/categories", auth="key",
         )
 
 
-class EntitiesV1(rt.Group):
-    """Entities operations under ``/v1``."""
+class MoodV1(rt.Group):
+    """Mood operations under ``/v1``."""
 
-    def industries(self, *, top: Optional[int] = None) -> rt.Page[t.DtoApiIndustryHit]:
-        """Top industries
-
-        Returns the most frequently mentioned topics, used as an industry list, ranked by frequency.
-
-        ``GET /v1/entities/industries``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            top: Number of topics to return, ranked by frequency, from 1 to 500. Default 50.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/v1/entities/industries", auth="key",
-            query=[("Top", top)],
-        )
-
-    def search(
+    def list(
         self,
         *,
-        q: Optional[str] = None,
-        limit: Optional[int] = None,
         days: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiEntityHit]:
-        """Search news entities
+        cats: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.MoodDay]:
+        """Market mood by category
 
-        Finds tickers and topics whose name starts with the given text, ranked by how often they
-        appear in recent news.
+        Returns, for each news category and day, how many articles were filed under it and how many
+        read bullish, bearish, neutral or unscored, with a mood from 0 to 100. An article counts in
+        every category it is filed under. Needs a Basic plan or above.
 
-        ``GET /v1/entities/search``. Included in paid plans (package tiers 1, 2, 3, 4).
+        ``GET /v1/mood``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            q: Text that the entity name must start with. Required; an empty value is rejected.
-            limit: Maximum number of distinct entities to return, from 1 to 100. Default 25.
-            days: Look-back window in days, from 1 to 3650. Default 365.
+            days: How many days back, 1 to 90. Default 7.
+            cats: Category slugs, comma-separated, from the categories endpoint. Leave empty for
+                every category.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/v1/entities/search", auth="key",
-            query=[("Q", q), ("Limit", limit), ("Days", days)],
+            "GET", "/v1/mood", auth="key",
+            query=[("days", days), ("cats", cats), ("page", page), ("size", size)],
         )
 
-    def types(self) -> rt.Page[t.DtoApiNwsEnumOption]:
-        """News entity types
+    def list_pages(
+        self,
+        *,
+        days: Optional[int] = None,
+        cats: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.MoodDay]]:
+        """Yield every page of :meth:`list`.
 
-        Lists the entity types used by the news data, such as tickers and topics.
-
-        ``GET /v1/entities/types``. Currently needs no API key.
-
-        Returns: a page of rows with its paging info.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return self._service.page(
-            "GET", "/v1/entities/types", auth="none",
-        )
+        return rt.iter_pages(
+            lambda n: self.list(days=days, cats=cats, page=n, size=size), first=page)
+
+    def list_items(
+        self,
+        *,
+        days: Optional[int] = None,
+        cats: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.MoodDay]:
+        """Yield every row of :meth:`list`, page after page."""
+        return rt.iter_items(self.list_pages(
+            days=days, cats=cats, page=page, size=size))
 
 
 class NewsV1(rt.Group):
     """News operations under ``/v1``."""
 
-    def all(self, qry: Optional[t.QueApiNewsList] = None, **fields: Any) -> rt.Page[t.DtoApiNews]:
-        """All news
+    def list(
+        self,
+        *,
+        syms: Optional[str] = None,
+        cats: Optional[str] = None,
+        src: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        until: Optional[Union[str, datetime]] = None,
+        q: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sentiment: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.NewsItem]:
+        """List news
 
-        Returns a paged, filterable feed of news articles with their sentiment and signal grades.
+        Lists news articles, newest first, with tickers, categories, sentiment, importance and a
+        summary when one exists. Filter by ticker, category, publisher, time, text, importance and
+        sentiment; sort by time, rank or score; 50 rows a page. Needs a Basic plan or above.
 
-        ``GET /v1/news/all``. Currently needs no API key.
+        ``GET /v1/news``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            qry: Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the
-                filter fields of this endpoint. Pass a dict, keyword arguments, or both.
-                Symbols: Comma-separated ticker symbols. Returns articles that mention any of them.
-                Industries: Comma-separated topics. Returns articles filed under any of them.
-                Categories: Comma-separated category slugs, as returned by the news categories
-                    endpoints. Returns articles filed under any of them.
-                KeyCodes: Comma-separated source key codes. Returns articles from any of those
-                    sources.
-                StmGte: Lowest article sentiment to include. Allowed values: Negative, Neutral,
-                    Positive.
-                StmLte: Highest article sentiment to include. Allowed values: Negative, Neutral,
-                    Positive.
-                PublishedAfter: Return only articles published at or after this time (ISO 8601,
-                    UTC).
-                Search: Text to find in article titles and body text.
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
+            syms: Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA.
+                Symbols no article carries come back in NotFound.
+            cats: Category slugs, comma-separated, from the categories endpoint, for example
+                earnings,crypto.
+            src: Publisher keys, comma-separated, from the sources endpoint.
+            since: Only articles published at or after this time (ISO 8601, UTC).
+            until: Only articles published at or before this time (ISO 8601, UTC).
+            q: Words to find in the headline or text.
+            min_score: Only articles that matter at least this much, 0 to 10.
+            sentiment: Only articles with this reading: Bullish, Bearish, Neutral or Unscored.
+            sort: Field to sort by: published (default), rank or score. A minus sign in front sorts
+                high to low, and published is high to low unless you say otherwise.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/v1/news/all", auth="none",
-            qry=rt.build_qry(_QRY["QueApiNewsList"], qry, fields),
+            "GET", "/v1/news", auth="key",
+            query=[("syms", syms), ("cats", cats), ("src", src), ("since", since), ("until", until), ("q", q), ("minScore", min_score), ("sentiment", sentiment), ("sort", sort), ("page", page), ("size", size)],
         )
 
-    def all_pages(
+    def list_pages(
         self,
-        qry: Optional[t.QueApiNewsList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiNews]]:
-        """Yield every page of :meth:`all`.
+        *,
+        syms: Optional[str] = None,
+        cats: Optional[str] = None,
+        src: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        until: Optional[Union[str, datetime]] = None,
+        q: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sentiment: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.NewsItem]]:
+        """Yield every page of :meth:`list`.
 
-        Advances ``pageNo`` until the last page or an empty page.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return rt.iter_qry_pages(
-            self.all, qry=rt.build_qry(_QRY["QueApiNewsList"], qry, fields))
+        return rt.iter_pages(
+            lambda n: self.list(syms=syms, cats=cats, src=src, since=since, until=until, q=q, min_score=min_score, sentiment=sentiment, sort=sort, page=n, size=size), first=page)
 
-    def all_items(
+    def list_items(
         self,
-        qry: Optional[t.QueApiNewsList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiNews]:
-        """Yield every row of :meth:`all`, page after page."""
-        return rt.iter_items(self.all_pages(qry, **fields))
+        *,
+        syms: Optional[str] = None,
+        cats: Optional[str] = None,
+        src: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        until: Optional[Union[str, datetime]] = None,
+        q: Optional[str] = None,
+        min_score: Optional[float] = None,
+        sentiment: Optional[str] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.NewsItem]:
+        """Yield every row of :meth:`list`, page after page."""
+        return rt.iter_items(self.list_pages(
+            syms=syms, cats=cats, src=src, since=since, until=until, q=q, min_score=min_score, sentiment=sentiment, sort=sort, page=page, size=size))
 
-    def by_checksum(self, checksum: str) -> t.DtoApiNewsDetail:
-        """News by checksum
+    def view(self, id: str) -> t.NewsDetail:
+        """View news article
 
-        Returns one article's full detail, looked up by its checksum.
+        Returns one article with its full text, author, a reading per ticker and up to five related
+        articles. Needs a Basic plan or above.
 
-        ``GET /v1/news/checksum/{checksum}``. Currently needs no API key.
+        ``GET /v1/news/{id}``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            checksum: Checksum of the article, as returned in the checksum field of news results.
+            id: Article id, as returned in the Id field of the news list.
 
         Returns: the result.
         """
         return self._service.data(
-            "GET", f"/v1/news/checksum/{rt.seg(checksum)}", auth="none",
-        )
-
-    def similar(self, checksum: str, *, limit: Optional[int] = None) -> rt.Page[t.DtoApiNewsLite]:
-        """Similar news articles
-
-        Returns articles that share tickers or topics with the given article, published within a
-        7-day window.
-
-        ``GET /v1/news/similar/{checksum}``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            checksum: Checksum of the article, as returned in the checksum field of news results.
-            limit: Maximum number of similar articles to return, from 1 to 50. Default 10.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", f"/v1/news/similar/{rt.seg(checksum)}", auth="key",
-            query=[("Limit", limit)],
+            "GET", f"/v1/news/{rt.seg(id)}", auth="key",
         )
 
 
 class SentimentV1(rt.Group):
     """Sentiment operations under ``/v1``."""
 
-    def aggregate(self, *, days: Optional[int] = None) -> rt.Page[t.DtoApiSentimentAgg]:
-        """Sentiment aggregate
-
-        Returns sentiment aggregated by news category and day.
-
-        ``GET /v1/sentiment/aggregate``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            days: Look-back window in days, from 1 to 90. Default 7.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/v1/sentiment/aggregate", auth="key",
-            query=[("Days", days)],
-        )
-
-    def ticker(
+    def history(
         self,
-        symbol: str,
         *,
+        syms: Optional[str] = None,
         days: Optional[int] = None,
-        limit: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiSentimentPoint]:
-        """Ticker sentiment series
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.SentimentDay]:
+        """Sentiment history
 
-        Returns the sentiment and signal time series for one ticker symbol.
+        Returns, for each ticker and day, how many articles named it and how many read bullish,
+        bearish, neutral or unscored, with a mood from 0 to 100 (the bullish share of the scored
+        articles). Needs a Basic plan or above.
 
-        ``GET /v1/sentiment/ticker/{symbol}``. Included in paid plans (package tiers 1, 2, 3, 4).
+        ``GET /v1/sentiment/history``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            symbol: Ticker symbol, for example AAPL.
-            days: Look-back window in days, from 1 to 365. Default 30.
-            limit: Maximum number of points to return, from 1 to 1000. Default 200.
+            syms: Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA.
+                Required. Symbols with no articles in the window come back in NotFound.
+            days: How many days back, 1 to 90. Default 30.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", f"/v1/sentiment/ticker/{rt.seg(symbol)}", auth="key",
-            query=[("Days", days), ("Limit", limit)],
+            "GET", "/v1/sentiment/history", auth="key",
+            query=[("syms", syms), ("days", days), ("page", page), ("size", size)],
         )
 
-    def trending(
+    def history_pages(
         self,
         *,
-        hours: Optional[int] = None,
-        top: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiSentimentTrend]:
-        """Trending sentiment tickers
+        syms: Optional[str] = None,
+        days: Optional[int] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.SentimentDay]]:
+        """Yield every page of :meth:`history`.
 
-        Returns the tickers with the largest article volume in the recent window, ranked by
-        sentiment.
-
-        ``GET /v1/sentiment/trending``. Billed 1 credit per call.
-
-        Args:
-            hours: Look-back window in hours, from 1 to 168 (one week). Default 24.
-            top: Number of ranked rows to return. Default 20. Values above the endpoint's maximum
-                (100 for tickers and sentiment, 200 for topics) are reduced to it.
-
-        Returns: a page of rows with its paging info.
+        Advances ``page`` until the last page the paging block names or an empty page.
         """
-        return self._service.page(
-            "GET", "/v1/sentiment/trending", auth="key",
-            query=[("Hours", hours), ("Top", top)],
-        )
+        return rt.iter_pages(
+            lambda n: self.history(syms=syms, days=days, page=n, size=size), first=page)
+
+    def history_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        days: Optional[int] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.SentimentDay]:
+        """Yield every row of :meth:`history`, page after page."""
+        return rt.iter_items(self.history_pages(
+            syms=syms, days=days, page=page, size=size))
 
 
 class SourcesV1(rt.Group):
     """Sources operations under ``/v1``."""
 
-    def list(
-        self,
-        qry: Optional[t.QueApiSourceList] = None,
-        **fields: Any,
-    ) -> rt.Page[t.DtoApiSource]:
-        """List news sources
+    def list(self) -> List[t.SourceRef]:
+        """List sources
 
-        Returns the catalogue of news sources, paged, with optional category, activity and vendor
-        filters.
+        Returns the publishers FinNews collects news from, with their key, name, kind and whether
+        they are active. Needs a Basic plan or above.
 
-        ``GET /v1/sources``. Currently needs no API key.
+        ``GET /v1/sources``. Included in paid plans (package tiers 1, 2, 3, 4).
 
-        Args:
-            qry: Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the
-                filter fields of this endpoint. Pass a dict, keyword arguments, or both.
-                Category: Return only sources of this category. An unknown value is rejected.
-                Active: Return only active (true) or inactive (false) sources. Omit for both.
-                Vendor: Return only sources from this vendor (exact match).
-                cond: How the search triplets in srchBy combine: and, or, all or in.
-                pageNo: One-based page number. Default 1.
-                pageSize: Rows per page, from 1 to 100. Default 100.
-                draw: Optional client counter that is echoed back with the paging result.
-                sortBy: Sort pairs. Each pair is a field name and asc or desc, for example
-                    [["published","desc"]].
-                srchBy: Search triplets. Each is a field name, a comparison operator and a value,
-                    combined using cond.
-                include: Optional field names to include in each returned row.
-                srch: Raw filter document. Prefer the typed filters of the endpoint.
-                sort: Raw sort document. Prefer sortBy pairs.
-                pageOff: Zero-based row offset of the selected page, calculated from pageNo and
-                    pageSize.
-                resCount: Result count used by paging responses.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/v1/sources", auth="none",
-            qry=rt.build_qry(_QRY["QueApiSourceList"], qry, fields),
-        )
-
-    def list_pages(
-        self,
-        qry: Optional[t.QueApiSourceList] = None,
-        **fields: Any,
-    ) -> Iterator[rt.Page[t.DtoApiSource]]:
-        """Yield every page of :meth:`list`.
-
-        Advances ``pageNo`` until the last page or an empty page.
-        """
-        return rt.iter_qry_pages(
-            self.list, qry=rt.build_qry(_QRY["QueApiSourceList"], qry, fields))
-
-    def list_items(
-        self,
-        qry: Optional[t.QueApiSourceList] = None,
-        **fields: Any,
-    ) -> Iterator[t.DtoApiSource]:
-        """Yield every row of :meth:`list`, page after page."""
-        return rt.iter_items(self.list_pages(qry, **fields))
-
-    def categories(self) -> rt.Page[t.DtoApiNwsEnumOption]:
-        """News source categories
-
-        Lists the categories a news source can have.
-
-        ``GET /v1/sources/categories``. Currently needs no API key.
-
-        Returns: a page of rows with its paging info.
-        """
-        return self._service.page(
-            "GET", "/v1/sources/categories", auth="none",
-        )
-
-    def get(self, keycode: str) -> t.DtoApiSourceDetail:
-        """View news source
-
-        Returns the detail card of one news source. The run-status fields are filled only on higher
-        package tiers and are null otherwise.
-
-        ``GET /v1/sources/{keycode}``. Included in paid plans (package tiers 1, 2, 3, 4).
-
-        Args:
-            keycode: Key code of the news source, as returned by the sources list.
-
-        Returns: the result.
+        Returns: the rows.
         """
         return self._service.data(
-            "GET", f"/v1/sources/{rt.seg(keycode)}", auth="key",
+            "GET", "/v1/sources", auth="key",
         )
 
 
 class TrendingV1(rt.Group):
     """Trending operations under ``/v1``."""
 
-    def tickers_trending(
+    def list(
         self,
         *,
-        hours: Optional[int] = None,
-        top: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiTrendItem]:
+        window: Optional[str] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.TrendingTicker]:
         """Trending tickers
 
-        Returns tickers ranked by how often they are mentioned within the window. Hours sets the
-        window; mentions are not weighted by recency inside it.
+        Returns the tickers named in the most articles in the window, with the change in mentions
+        against the previous window and how many mentions read bullish or bearish. Needs a Basic
+        plan or above.
 
-        ``GET /v1/tickers/trending``. Billed 1 credit per call.
+        ``GET /v1/trending``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            hours: Look-back window in hours, from 1 to 168 (one week). Default 24.
-            top: Number of ranked rows to return. Default 20. Values above the endpoint's maximum
-                (100 for tickers and sentiment, 200 for topics) are reduced to it.
+            window: Window: 1h, 24h or 7d. Default 24h.
+            size: How many tickers to return, 1 to 50. Default 10.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/v1/tickers/trending", auth="key",
-            query=[("Hours", hours), ("Top", top)],
+            "GET", "/v1/trending", auth="key",
+            query=[("window", window), ("size", size)],
         )
 
-    def topics(
+
+class VideosV1(rt.Group):
+    """Videos operations under ``/v1``."""
+
+    def list(
         self,
         *,
-        hours: Optional[int] = None,
-        top: Optional[int] = None,
-    ) -> rt.Page[t.DtoApiTrendItem]:
-        """Trending topics
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> rt.Page[t.VideoItem]:
+        """List videos
 
-        Returns topics ranked by how often they are mentioned within the window. Hours sets the
-        window; mentions are not weighted by recency inside it.
+        Lists finance videos with FinNews's score, a summary when one exists and what each video
+        says about the tickers it discusses. Filter by ticker, channel, time and score; sort by time
+        or score; 50 rows a page. Transcripts are not served. Needs a Basic plan or above.
 
-        ``GET /v1/topics``. Included in paid plans (package tiers 1, 2, 3, 4).
+        ``GET /v1/videos``. Included in paid plans (package tiers 1, 2, 3, 4).
 
         Args:
-            hours: Look-back window in hours, from 1 to 168 (one week). Default 24.
-            top: Number of ranked rows to return. Default 20. Values above the endpoint's maximum
-                (100 for tickers and sentiment, 200 for topics) are reduced to it.
+            syms: Only videos that discuss one of these tickers, comma-separated, up to 50, any
+                case.
+            channel: Only videos from this channel, by channel name or key.
+            since: Only videos published at or after this time (ISO 8601, UTC).
+            min_score: Only videos that matter at least this much, 0 to 10.
+            sort: Field to sort by: published (default) or score. A minus sign in front sorts high
+                to low, and published is high to low unless you say otherwise.
+            page: Page to return, from 1. Default 1.
+            size: Rows per page, 1 to 50. Default 50.
 
         Returns: a page of rows with its paging info.
         """
         return self._service.page(
-            "GET", "/v1/topics", auth="key",
-            query=[("Hours", hours), ("Top", top)],
+            "GET", "/v1/videos", auth="key",
+            query=[("syms", syms), ("channel", channel), ("since", since), ("minScore", min_score), ("sort", sort), ("page", page), ("size", size)],
+        )
+
+    def list_pages(
+        self,
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[rt.Page[t.VideoItem]]:
+        """Yield every page of :meth:`list`.
+
+        Advances ``page`` until the last page the paging block names or an empty page.
+        """
+        return rt.iter_pages(
+            lambda n: self.list(syms=syms, channel=channel, since=since, min_score=min_score, sort=sort, page=n, size=size), first=page)
+
+    def list_items(
+        self,
+        *,
+        syms: Optional[str] = None,
+        channel: Optional[str] = None,
+        since: Optional[Union[str, datetime]] = None,
+        min_score: Optional[float] = None,
+        sort: Optional[str] = None,
+        page: Optional[int] = None,
+        size: Optional[int] = None,
+    ) -> Iterator[t.VideoItem]:
+        """Yield every row of :meth:`list`, page after page."""
+        return rt.iter_items(self.list_pages(
+            syms=syms, channel=channel, since=since, min_score=min_score, sort=sort, page=page, size=size))
+
+    def view(self, id: str) -> t.VideoItem:
+        """View video
+
+        Returns one video with its score, summary and what it says about each ticker it discusses.
+        No transcript. Needs a Basic plan or above.
+
+        ``GET /v1/videos/{id}``. Included in paid plans (package tiers 1, 2, 3, 4).
+
+        Args:
+            id: Video id, as returned in the Id field of the video list.
+
+        Returns: the result.
+        """
+        return self._service.data(
+            "GET", f"/v1/videos/{rt.seg(id)}", auth="key",
         )
 
 
@@ -1215,7 +785,7 @@ class NewsApiGroups:
 
     def __init__(self, service: rt.Service) -> None:
         self.categories = CategoriesApi(service)
-        self.entities = EntitiesApi(service)
+        self.mood = MoodApi(service)
         self.news = NewsApi(service)
         self.sentiment = SentimentApi(service)
         self.sources = SourcesApi(service)
@@ -1227,11 +797,13 @@ class NewsV1Groups:
     """Every FinNews operation under ``/v1``, by group."""
 
     def __init__(self, service: rt.Service) -> None:
-        self.entities = EntitiesV1(service)
+        self.categories = CategoriesV1(service)
+        self.mood = MoodV1(service)
         self.news = NewsV1(service)
         self.sentiment = SentimentV1(service)
         self.sources = SourcesV1(service)
         self.trending = TrendingV1(service)
+        self.videos = VideosV1(service)
 
 
 class FinNews(NewsApiGroups):

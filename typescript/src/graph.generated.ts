@@ -4,120 +4,98 @@
 import type { components } from "./generated/graph-schema.js";
 import type { FinHttpTransport } from "./http-transport.js";
 import type { FinRequestOptions } from "./options.js";
-import { itemsOf, pagesByOffset, pathSegment } from "./service-support.js";
+import { itemsOf, pagesByPage, pathSegment } from "./service-support.js";
 
 type S = components["schemas"];
-
-/** FinGraph ApcDat: the credit-charged /api operations. */
-export class GraphApcDatResource {
-  constructor(private readonly http: FinHttpTransport) {}
-
-  /**
-   * Alpaca US-equity tick snapshot. Latest US-equity prices from the Alpaca feed, one entry per symbol, with the
-   * time the snapshot was taken. GET /api/apcasst/snapshot. Charged 1 credit per call.
-   */
-  async snapshot(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoPxTickBatch"]> {
-    return this.http.call("GET", "api/apcasst/snapshot", {  }, options);
-  }
-}
 
 /** FinGraph Assets: the credit-charged /api operations. */
 export class GraphAssetsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Assets list. Lists assets from the asset registry. Filter by exchange, tradability and quote currency; page with
-   * limit and offset. GET /api/assets. Charged 0.5 credits per call.
+   * Assets list. Lists assets from the asset registry. Filter by exchange, tradability and quote coin; sort by
+   * symbol; 50 rows a page. GET /api/assets. Charged 0.5 credits per call.
    */
   async list(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
     /**
      * When true, only assets the exchange currently allows trading; when false, only the others. Omit for
      * both.
      */
     canTrade?: boolean;
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiAsset"]> {
+    /** Field to sort by: symbol (default); a minus sign in front sorts high to low. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoApiAsset"]> {
     return this.http.call("GET", "api/assets", { query }, options);
   }
 
   /**
-   * Reads every page of list, moving offset on by the rows each page returned, from the offset in the query (0 when
-   * unset). It stops at the first empty page, which it does not yield.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
   listPages(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
     /**
      * When true, only assets the exchange currently allows trading; when false, only the others. Omit for
      * both.
      */
     canTrade?: boolean;
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResListOfDtoApiAsset"], void, undefined> {
-    return pagesByOffset((q) => this.list(q, options), query);
+    /** Field to sort by: symbol (default); a minus sign in front sorts high to low. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoApiAsset"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
   /** Reads every row of every page of list, one at a time. */
   listItems(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
     /**
      * When true, only assets the exchange currently allows trading; when false, only the others. Omit for
      * both.
      */
     canTrade?: boolean;
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
+    /** Field to sort by: symbol (default); a minus sign in front sorts high to low. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
   } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiAsset"], void, undefined> {
     return itemsOf(this.listPages(query, options));
   }
 
   /**
-   * Exchanges. Lists the exchange keys with their numeric value and TradingView prefix. GET /api/assets/exchanges.
+   * Exchanges. Lists the exchanges FinGraph reads, with their name and numeric value. GET /api/assets/exchanges.
    * Charged 0.5 credits per call.
    */
   async exchanges(options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiExchange"]> {
     return this.http.call("GET", "api/assets/exchanges", {  }, options);
-  }
-
-  /**
-   * Asset names (all). Returns the symbol-to-name map for both lanes. Where a symbol exists in both, the equity
-   * entry is used. GET /api/assets/names. Charged 0.5 credits per call.
-   */
-  async namesAll(options: FinRequestOptions = {}): Promise<S["ResPonseOfSafeDictOfStringAndDtoFinAssetName"]> {
-    return this.http.call("GET", "api/assets/names", {  }, options);
-  }
-
-  /**
-   * Asset names. Returns a map from symbol to asset name and identity for one lane: dax (crypto) or eqt (US equity).
-   * GET /api/assets/names/{dax}. Charged 0.5 credits per call.
-   */
-  async names(dax: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfSafeDictOfStringAndDtoFinAssetName"]> {
-    return this.http.call("GET", `api/assets/names/${pathSegment(dax)}`, {  }, options);
-  }
-
-  /**
-   * Asset types. Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
-   * GET /api/assets/types. Charged 0.5 credits per call.
-   */
-  async types(options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiEnumItem"]> {
-    return this.http.call("GET", "api/assets/types", {  }, options);
   }
 
   /** Asset detail. Returns one asset from the registry by its id. GET /api/assets/{id}. Charged 0.5 credits per call. */
@@ -126,42 +104,517 @@ export class GraphAssetsResource {
   }
 }
 
-/** FinGraph DaxDat: the credit-charged /api operations. */
-export class GraphDaxDatResource {
+/** FinGraph Markets: the credit-charged /api operations. */
+export class GraphMarketsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * DAX price snapshot. Latest crypto exchange prices, one entry per symbol, with the time the snapshot was taken.
-   * GET /api/daxdat/snapshot. Charged 1 credit per call.
+   * Markets: Crypto. Every coin with its latest Sum, Mav and Osc ratings, price changes, market value, volume and
+   * FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols
+   * by name. Two coins that share a ticker each have their own symbol. GET /api/markets/crypto. Charged 1 credit per
+   * call.
    */
-  async snapshot(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoTickBatch"]> {
-    return this.http.call("GET", "api/daxdat/snapshot", {  }, options);
+  async crypto(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score, mktcap.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCrypto"]> {
+    return this.http.call("GET", "api/markets/crypto", { query }, options);
   }
-}
-
-/** FinGraph FxsTikr: the credit-charged /api operations. */
-export class GraphFxsTikrResource {
-  constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * FXS broker quote snapshot. Latest bid and ask for each forex and CFD instrument reported by the broker
-   * terminals, keyed by symbol, with the time of each quote. GET /api/fxstikr/snapshot. Charged 1 credit per call.
+   * Reads every page of crypto, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
    */
-  async snapshot(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoFxsTickBatch"]> {
-    return this.http.call("GET", "api/fxstikr/snapshot", {  }, options);
+  cryptoPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score, mktcap.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCrypto"], void, undefined> {
+    return pagesByPage((q) => this.crypto(q, options), query);
   }
-}
 
-/** FinGraph KlsePrc: the credit-charged /api operations. */
-export class GraphKlsePrcResource {
-  constructor(private readonly http: FinHttpTransport) {}
+  /** Reads every row of every page of crypto, one at a time. */
+  cryptoItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score, mktcap.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCrypto"], void, undefined> {
+    return itemsOf(this.cryptoPages(query, options));
+  }
 
   /**
-   * KLSE price snapshot. Latest Bursa Malaysia (KLSE) prices, one entry per symbol, with the time the snapshot was
-   * taken. GET /api/klseprc/snapshot. Charged 1 credit per call.
+   * Markets: Crypto pairs. Every crypto pair of an exchange with its price, 24-hour change, volume and FinGraph's
+   * own reading (signal, trend, confidence, score, term, rank). Pairs carry no Sum, Mav or Osc ratings. 50 rows a
+   * page; ask for up to 50 symbols by name. GET /api/markets/dax. Charged 1 credit per call.
    */
-  async snapshot(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoTickBatch"]> {
-    return this.http.call("GET", "api/klseprc/snapshot", {  }, options);
+  async dax(query: {
+    /**
+     * Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data
+     * today, the others answer an empty page.
+     */
+    exchange?: string;
+    /** Only pairs priced in this coin, for example USDT. */
+    quote?: string;
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktPair"]> {
+    return this.http.call("GET", "api/markets/dax", { query }, options);
+  }
+
+  /**
+   * Reads every page of dax, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  daxPages(query: {
+    /**
+     * Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data
+     * today, the others answer an empty page.
+     */
+    exchange?: string;
+    /** Only pairs priced in this coin, for example USDT. */
+    quote?: string;
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktPair"], void, undefined> {
+    return pagesByPage((q) => this.dax(q, options), query);
+  }
+
+  /** Reads every row of every page of dax, one at a time. */
+  daxItems(query: {
+    /**
+     * Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data
+     * today, the others answer an empty page.
+     */
+    exchange?: string;
+    /** Only pairs priced in this coin, for example USDT. */
+    quote?: string;
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktPair"], void, undefined> {
+    return itemsOf(this.daxPages(query, options));
+  }
+
+  /**
+   * Markets: US stocks. Every US stock with its latest Sum, Mav and Osc ratings, the analysts' rating, price
+   * changes, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask
+   * for up to 50 symbols by name. GET /api/markets/eqtusa. Charged 1 credit per call.
+   */
+  async eqtUsa(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktEqtUsa"]> {
+    return this.http.call("GET", "api/markets/eqtusa", { query }, options);
+  }
+
+  /**
+   * Reads every page of eqtUsa, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  eqtUsaPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktEqtUsa"], void, undefined> {
+    return pagesByPage((q) => this.eqtUsa(q, options), query);
+  }
+
+  /** Reads every row of every page of eqtUsa, one at a time. */
+  eqtUsaItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktEqtUsa"], void, undefined> {
+    return itemsOf(this.eqtUsaPages(query, options));
+  }
+
+  /**
+   * Markets: Forex. Every forex pair with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+   * reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+   * GET /api/markets/forex. Charged 1 credit per call.
+   */
+  async forex(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCfd"]> {
+    return this.http.call("GET", "api/markets/forex", { query }, options);
+  }
+
+  /**
+   * Reads every page of forex, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  forexPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCfd"], void, undefined> {
+    return pagesByPage((q) => this.forex(q, options), query);
+  }
+
+  /** Reads every row of every page of forex, one at a time. */
+  forexItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCfd"], void, undefined> {
+    return itemsOf(this.forexPages(query, options));
+  }
+
+  /**
+   * Markets: Futures. Every futures contract (energy, agricultural, interest-rate and index futures) with its latest
+   * Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term,
+   * rank). 50 rows a page; ask for up to 50 symbols by name. GET /api/markets/futures. Charged 1 credit per call.
+   */
+  async futures(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCfd"]> {
+    return this.http.call("GET", "api/markets/futures", { query }, options);
+  }
+
+  /**
+   * Reads every page of futures, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  futuresPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCfd"], void, undefined> {
+    return pagesByPage((q) => this.futures(q, options), query);
+  }
+
+  /** Reads every row of every page of futures, one at a time. */
+  futuresItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCfd"], void, undefined> {
+    return itemsOf(this.futuresPages(query, options));
+  }
+
+  /**
+   * Markets: Indices. Every stock index with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+   * reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+   * GET /api/markets/indices. Charged 1 credit per call.
+   */
+  async indices(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCfd"]> {
+    return this.http.call("GET", "api/markets/indices", { query }, options);
+  }
+
+  /**
+   * Reads every page of indices, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  indicesPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCfd"], void, undefined> {
+    return pagesByPage((q) => this.indices(q, options), query);
+  }
+
+  /** Reads every row of every page of indices, one at a time. */
+  indicesItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCfd"], void, undefined> {
+    return itemsOf(this.indicesPages(query, options));
+  }
+
+  /**
+   * Markets: Metals. Every metals contract with its latest Sum, Mav and Osc ratings, price changes and FinGraph's
+   * own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+   * GET /api/markets/metals. Charged 1 credit per call.
+   */
+  async metals(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCfd"]> {
+    return this.http.call("GET", "api/markets/metals", { query }, options);
+  }
+
+  /**
+   * Reads every page of metals, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  metalsPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCfd"], void, undefined> {
+    return pagesByPage((q) => this.metals(q, options), query);
+  }
+
+  /** Reads every row of every page of metals, one at a time. */
+  metalsItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCfd"], void, undefined> {
+    return itemsOf(this.metalsPages(query, options));
   }
 }
 
@@ -170,8 +623,8 @@ export class GraphOhlcvResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Batch OHLCV. Reserved: candles for several symbols in one call. Candle data is not available yet and the
-   * endpoint answers 501 Not Implemented. GET /api/ohlcv/batch. Charged 1 credit per call.
+   * Batch OHLCV. Coming soon: candles for several symbols in one call. This endpoint is not available yet and
+   * answers 501 Not Implemented until it is built. GET /api/ohlcv/batch. Charged 1 credit per call.
    */
   async batch(query: {
     /** Comma-separated trading symbols, for example BTCUSDT,ETHUSDT. */
@@ -183,8 +636,8 @@ export class GraphOhlcvResource {
   }
 
   /**
-   * OHLCV candles. Reserved: candles for one symbol over a time range. Candle data is not available yet and the
-   * endpoint answers 501 Not Implemented. GET /api/ohlcv/{symbol}. Charged 1 credit per call.
+   * OHLCV candles. Coming soon: candles for one symbol over a time range. This endpoint is not available yet and
+   * answers 501 Not Implemented until it is built. GET /api/ohlcv/{symbol}. Charged 1 credit per call.
    */
   async view(symbol: string, query: {
     /** Candle interval, for example 1d. Default 1d. */
@@ -200,127 +653,266 @@ export class GraphOhlcvResource {
   }
 
   /**
-   * Realtime OHLCV. Reserved: the latest candle for one symbol. Candle data is not available yet and the endpoint
-   * answers 501 Not Implemented. GET /api/ohlcv/{symbol}/realtime. Charged 1 credit per call.
+   * Realtime OHLCV. Coming soon: the latest candle for one symbol. This endpoint is not available yet and answers
+   * 501 Not Implemented until it is built. GET /api/ohlcv/{symbol}/realtime. Charged 1 credit per call.
    */
   async realtime(symbol: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfObject"]> {
     return this.http.call("GET", `api/ohlcv/${pathSegment(symbol)}/realtime`, {  }, options);
   }
 }
 
-/** FinGraph SigCry: the credit-charged /api operations. */
-export class GraphSigCryResource {
+/** FinGraph Record: the credit-charged /api operations. */
+export class GraphRecordResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * SigCry Snapshot. Shortlist of crypto assets chosen by the technical screener, with their signals.
-   * GET /api/sigcry/snapshot. Charged 1 credit per call.
+   * Track record: closed calls. Every call FinGraph has followed to its end, newest first, with entry, exit and
+   * result. Filter by market, symbols, side, horizon, confidence, outcome and dates. 50 a page.
+   * GET /api/record/calls. Charged 1 credit per call.
    */
-  async snapshot(options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigCryMin"]> {
-    return this.http.call("GET", "api/sigcry/snapshot", {  }, options);
+  async calls(query: {
+    /** Only this market: eqtusa, crypto, dax or fxs. */
+    market?: string;
+    /** Only these symbols, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** buy or sell. */
+    side?: string;
+    /** How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+    horizon?: string;
+    /** How sure FinGraph was: VHigh, High, Med, Low, VLow or None. */
+    conf?: string;
+    /** won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL. */
+    outcome?: string;
+    /** Closed on or after this day (UTC), such as 2026-11-01. */
+    from?: string;
+    /** Closed on or before this day (UTC), such as 2026-11-20. */
+    to?: string;
+    /** closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoRecordCall"]> {
+    return this.http.call("GET", "api/record/calls", { query }, options);
+  }
+
+  /**
+   * Reads every page of calls, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  callsPages(query: {
+    /** Only this market: eqtusa, crypto, dax or fxs. */
+    market?: string;
+    /** Only these symbols, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** buy or sell. */
+    side?: string;
+    /** How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+    horizon?: string;
+    /** How sure FinGraph was: VHigh, High, Med, Low, VLow or None. */
+    conf?: string;
+    /** won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL. */
+    outcome?: string;
+    /** Closed on or after this day (UTC), such as 2026-11-01. */
+    from?: string;
+    /** Closed on or before this day (UTC), such as 2026-11-20. */
+    to?: string;
+    /** closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoRecordCall"], void, undefined> {
+    return pagesByPage((q) => this.calls(q, options), query);
+  }
+
+  /** Reads every row of every page of calls, one at a time. */
+  callsItems(query: {
+    /** Only this market: eqtusa, crypto, dax or fxs. */
+    market?: string;
+    /** Only these symbols, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** buy or sell. */
+    side?: string;
+    /** How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+    horizon?: string;
+    /** How sure FinGraph was: VHigh, High, Med, Low, VLow or None. */
+    conf?: string;
+    /** won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL. */
+    outcome?: string;
+    /** Closed on or after this day (UTC), such as 2026-11-01. */
+    from?: string;
+    /** Closed on or before this day (UTC), such as 2026-11-20. */
+    to?: string;
+    /** closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoRecordCall"], void, undefined> {
+    return itemsOf(this.callsPages(query, options));
   }
 }
 
-/** FinGraph SigDax: the credit-charged /api operations. */
-export class GraphSigDaxResource {
+/** FinGraph Screens: the credit-charged /api operations. */
+export class GraphScreensResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * SigDax FastPrc. Crypto pairs on one exchange with the fastest recent price movement, with their signals.
-   * GET /api/sigdax/fastprc. Charged 1 credit per call.
+   * Screens: Crypto. FinGraph's ranked shortlists of coins: strongest risers, strongest fallers, moving fastest in
+   * price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a
+   * page. GET /api/screens/crypto/{lane}. Charged 1 credit per call.
    */
-  async fastPrc(query: {
-    /** Exchange key of the crypto exchange whose signals to return, for example BIN. */
-    dax: S["DAX"];
-  }, options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigDaxMin"]> {
-    return this.http.call("GET", "api/sigdax/fastprc", { query }, options);
+  async crypto(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoScrCrypto"]> {
+    return this.http.call("GET", `api/screens/crypto/${pathSegment(lane)}`, { query }, options);
   }
 
   /**
-   * SigDax FastVol. Crypto pairs on one exchange with the fastest recent rise in trading volume, with their signals.
-   * GET /api/sigdax/fastvol. Charged 1 credit per call.
+   * Reads every page of crypto, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
    */
-  async fastVol(query: {
-    /** Exchange key of the crypto exchange whose signals to return, for example BIN. */
-    dax: S["DAX"];
-  }, options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigDaxMin"]> {
-    return this.http.call("GET", "api/sigdax/fastvol", { query }, options);
+  cryptoPages(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoScrCrypto"], void, undefined> {
+    return pagesByPage((q) => this.crypto(lane, q, options), query);
+  }
+
+  /** Reads every row of every page of crypto, one at a time. */
+  cryptoItems(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoScrCrypto"], void, undefined> {
+    return itemsOf(this.cryptoPages(lane, query, options));
   }
 
   /**
-   * SigDax TopGain. Crypto pairs on one exchange with the largest gains, with their signals.
-   * GET /api/sigdax/topgain. Charged 1 credit per call.
+   * Screens: Crypto pairs. FinGraph's ranked shortlists of crypto pairs: strongest risers, strongest fallers, moving
+   * fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus
+   * LaneRank. 50 a page. GET /api/screens/dax/{lane}. Charged 1 credit per call.
    */
-  async topGain(query: {
-    /** Exchange key of the crypto exchange whose signals to return, for example BIN. */
-    dax: S["DAX"];
-  }, options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigDaxMin"]> {
-    return this.http.call("GET", "api/sigdax/topgain", { query }, options);
+  async dax(lane: string, query: {
+    /** Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE. */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoScrPair"]> {
+    return this.http.call("GET", `api/screens/dax/${pathSegment(lane)}`, { query }, options);
   }
 
   /**
-   * SigDax TopLose. Crypto pairs on one exchange with the largest losses, with their signals.
-   * GET /api/sigdax/toplose. Charged 1 credit per call.
+   * Reads every page of dax, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  async topLose(query: {
-    /** Exchange key of the crypto exchange whose signals to return, for example BIN. */
-    dax: S["DAX"];
-  }, options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigDaxMin"]> {
-    return this.http.call("GET", "api/sigdax/toplose", { query }, options);
+  daxPages(lane: string, query: {
+    /** Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE. */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoScrPair"], void, undefined> {
+    return pagesByPage((q) => this.dax(lane, q, options), query);
   }
-}
 
-/** FinGraph SigEqt: the credit-charged /api operations. */
-export class GraphSigEqtResource {
-  constructor(private readonly http: FinHttpTransport) {}
-
-  /**
-   * SigEqt Snapshot. Shortlist of equities of one asset class chosen by the technical screener, with their signals.
-   * GET /api/sigeqt/snapshot. Charged 1 credit per call.
-   */
-  async snapshot(query: {
-    /** Asset class to return, for example STOCKUSA. Default STOCKUSA. */
-    aType?: S["AType"];
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigEqtMin"]> {
-    return this.http.call("GET", "api/sigeqt/snapshot", { query }, options);
-  }
-}
-
-/** FinGraph SigFxs: the credit-charged /api operations. */
-export class GraphSigFxsResource {
-  constructor(private readonly http: FinHttpTransport) {}
-
-  /**
-   * SigFxs Breakout. Forex pairs breaking out of their recent range, with their signals. Scores are comparable only
-   * within the forex list, not with crypto or equity scores. GET /api/sigfxs/breakout. Charged 1 credit per call.
-   */
-  async breakout(options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigFxsLane"]> {
-    return this.http.call("GET", "api/sigfxs/breakout", {  }, options);
+  /** Reads every row of every page of dax, one at a time. */
+  daxItems(lane: string, query: {
+    /** Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE. */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoScrPair"], void, undefined> {
+    return itemsOf(this.daxPages(lane, query, options));
   }
 
   /**
-   * SigFxs FastPrc. Forex pairs with the fastest recent price movement, with their signals. Scores are comparable
-   * only within the forex list, not with crypto or equity scores. GET /api/sigfxs/fastprc. Charged 1 credit per
-   * call.
+   * Screens: US stocks. FinGraph's ranked shortlists of US stocks: strongest risers, strongest fallers, moving
+   * fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus
+   * LaneRank. 50 a page. GET /api/screens/eqtusa/{lane}. Charged 1 credit per call.
    */
-  async fastPrc(options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigFxsLane"]> {
-    return this.http.call("GET", "api/sigfxs/fastprc", {  }, options);
+  async eqtUsa(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoScrEqtUsa"]> {
+    return this.http.call("GET", `api/screens/eqtusa/${pathSegment(lane)}`, { query }, options);
   }
 
   /**
-   * SigFxs TopGain. Forex pairs with the largest gains, with their signals. Scores are comparable only within the
-   * forex list, not with crypto or equity scores. GET /api/sigfxs/topgain. Charged 1 credit per call.
+   * Reads every page of eqtUsa, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
    */
-  async topGain(options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigFxsLane"]> {
-    return this.http.call("GET", "api/sigfxs/topgain", {  }, options);
+  eqtUsaPages(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoScrEqtUsa"], void, undefined> {
+    return pagesByPage((q) => this.eqtUsa(lane, q, options), query);
+  }
+
+  /** Reads every row of every page of eqtUsa, one at a time. */
+  eqtUsaItems(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoScrEqtUsa"], void, undefined> {
+    return itemsOf(this.eqtUsaPages(lane, query, options));
   }
 
   /**
-   * SigFxs TopLose. Forex pairs with the largest losses, with their signals. Scores are comparable only within the
-   * forex list, not with crypto or equity scores. GET /api/sigfxs/toplose. Charged 1 credit per call.
+   * Screens: Forex. FinGraph's ranked shortlists of forex pairs: strongest risers, strongest fallers, moving fastest
+   * in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a
+   * page. GET /api/screens/fxs/{lane}. Charged 1 credit per call.
    */
-  async topLose(options: FinRequestOptions = {}): Promise<S["ResPonseOfListOfDtoSigFxsLane"]> {
-    return this.http.call("GET", "api/sigfxs/toplose", {  }, options);
+  async fxs(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoScrCfd"]> {
+    return this.http.call("GET", `api/screens/fxs/${pathSegment(lane)}`, { query }, options);
+  }
+
+  /**
+   * Reads every page of fxs, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  fxsPages(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoScrCfd"], void, undefined> {
+    return pagesByPage((q) => this.fxs(lane, q, options), query);
+  }
+
+  /** Reads every row of every page of fxs, one at a time. */
+  fxsItems(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoScrCfd"], void, undefined> {
+    return itemsOf(this.fxsPages(lane, query, options));
   }
 }
 
@@ -349,27 +941,6 @@ export class GraphSignalsResource {
   } = {}, options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiPattern"]> {
     return this.http.call("GET", "api/signals/patterns", { query }, options);
   }
-
-  /**
-   * Recent signals. Most recently updated Malaysian equity signals, newest first. Optionally filter by market.
-   * GET /api/signals/recent. Charged 0.5 credits per call.
-   */
-  async recent(query: {
-    /** Maximum number of rows to return, from 1 to 100. Default 25. */
-    limit?: number;
-    /** Market code of the signal rows to return. Omit for every market. */
-    market?: string;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiSignal"]> {
-    return this.http.call("GET", "api/signals/recent", { query }, options);
-  }
-
-  /**
-   * View signal. One symbol's signal: Malaysian equity lane first, US equity lane if the symbol is not found there.
-   * GET /api/signals/{symbol}. Charged 0.5 credits per call.
-   */
-  async view(symbol: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSignalView"]> {
-    return this.http.call("GET", `api/signals/${pathSegment(symbol)}`, {  }, options);
-  }
 }
 
 /** FinGraph Stats: the credit-charged /api operations. */
@@ -383,34 +954,6 @@ export class GraphStatsResource {
   async aggregate(options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiAggregate"]> {
     return this.http.call("GET", "api/stats/aggregate", {  }, options);
   }
-
-  /**
-   * Market movers. Top gainers or losers by 24-hour price change percentage, optionally for one exchange.
-   * GET /api/stats/movers. Charged 1 credit per call.
-   */
-  async movers(query: {
-    /** Ranking to return: gainers (largest rises, the default) or losers (largest falls). */
-    direction?: string;
-    /** Number of rows to return, from 1 to 100. Default 10. */
-    top?: number;
-    /** Exchange key to restrict the ranking to, for example BIN. Omit for every exchange. */
-    dax?: S["DAX"];
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiMover"]> {
-    return this.http.call("GET", "api/stats/movers", { query }, options);
-  }
-
-  /**
-   * Volume leaders. Top symbols by 24-hour quote volume, optionally for one exchange. GET /api/stats/volume. Charged
-   * 1 credit per call.
-   */
-  async volume(query: {
-    /** Number of rows to return, from 1 to 100. Default 10. */
-    top?: number;
-    /** Exchange key to restrict the ranking to, for example BIN. Omit for every exchange. */
-    dax?: S["DAX"];
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiMover"]> {
-    return this.http.call("GET", "api/stats/volume", { query }, options);
-  }
 }
 
 /** FinGraph Tickers: the credit-charged /api operations. */
@@ -418,71 +961,96 @@ export class GraphTickersResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Tickers list. Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency and
-   * listing state; page with limit and offset. GET /api/tickers. Charged 0.5 credits per call.
+   * Tickers list. Lists crypto-pair tickers with last price, 24-hour change and volume. Filter by exchange, quote
+   * coin and listing state; sort by symbol, lastprice, chgpct or quotvol; 50 rows a page. GET /api/tickers. Charged
+   * 0.5 credits per call.
    */
   async list(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
     /**
      * When true, only tickers currently listed on the exchange; when false, only the others. Omit for
      * both.
      */
     inExchange?: boolean;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiTicker"]> {
+    /**
+     * Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high
+     * to low.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoApiTicker"]> {
     return this.http.call("GET", "api/tickers", { query }, options);
   }
 
   /**
-   * Reads every page of list, moving offset on by the rows each page returned, from the offset in the query (0 when
-   * unset). It stops at the first empty page, which it does not yield.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
   listPages(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
     /**
      * When true, only tickers currently listed on the exchange; when false, only the others. Omit for
      * both.
      */
     inExchange?: boolean;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResListOfDtoApiTicker"], void, undefined> {
-    return pagesByOffset((q) => this.list(q, options), query);
+    /**
+     * Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high
+     * to low.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoApiTicker"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
   /** Reads every row of every page of list, one at a time. */
   listItems(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
     /**
      * When true, only tickers currently listed on the exchange; when false, only the others. Omit for
      * both.
      */
     inExchange?: boolean;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
+    /**
+     * Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high
+     * to low.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
   } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiTicker"], void, undefined> {
     return itemsOf(this.listPages(query, options));
   }
 
   /**
-   * Ticker search. Finds tickers whose symbol contains the search text, case-insensitive. GET /api/tickers/search.
-   * Charged 0.5 credits per call.
+   * Ticker search. Finds crypto-pair tickers whose symbol contains the search text, case-insensitive. 50 rows a
+   * page. GET /api/tickers/search. Charged 0.5 credits per call.
    */
   async search(query: {
     /**
@@ -490,12 +1058,60 @@ export class GraphTickersResource {
      * Required.
      */
     q?: string;
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
-    /** Maximum number of rows to return, from 1 to 100. Default 25. */
-    limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiTickerLite"]> {
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoApiTickerLite"]> {
     return this.http.call("GET", "api/tickers/search", { query }, options);
+  }
+
+  /**
+   * Reads every page of search, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  searchPages(query: {
+    /**
+     * Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol.
+     * Required.
+     */
+    q?: string;
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoApiTickerLite"], void, undefined> {
+    return pagesByPage((q) => this.search(q, options), query);
+  }
+
+  /** Reads every row of every page of search, one at a time. */
+  searchItems(query: {
+    /**
+     * Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol.
+     * Required.
+     */
+    q?: string;
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiTickerLite"], void, undefined> {
+    return itemsOf(this.searchPages(query, options));
   }
 
   /**
@@ -515,16 +1131,32 @@ export class GraphTickersResource {
   }
 }
 
-/** FinGraph TvdDat: the credit-charged /api operations. */
-export class GraphTvdDatResource {
+/** FinGraph Ticks: the credit-charged /api operations. */
+export class GraphTicksResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * TVD US-equity tick snapshot. Latest US-equity prices from the TradingView feed, one entry per symbol, with the
-   * time the snapshot was taken. GET /api/tvdusaeqt/snapshot. Charged 1 credit per call.
+   * Ticks: crypto pairs. Latest price of every crypto pair, one entry per exchange and symbol, with the time the
+   * snapshot was taken. GET /api/ticks/dax. Charged 1 credit per call.
    */
-  async snapshot(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoPxTickBatch"]> {
-    return this.http.call("GET", "api/tvdusaeqt/snapshot", {  }, options);
+  async dax(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoTickBatch"]> {
+    return this.http.call("GET", "api/ticks/dax", {  }, options);
+  }
+
+  /**
+   * Ticks: US stocks. Latest price of every US stock, one entry per symbol, as [price, time in Unix seconds], with
+   * the time the snapshot was taken. GET /api/ticks/eqtusa. Charged 1 credit per call.
+   */
+  async eqtUsa(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoPxTickBatch"]> {
+    return this.http.call("GET", "api/ticks/eqtusa", {  }, options);
+  }
+
+  /**
+   * Ticks: forex. Latest bid and ask of every forex and CFD instrument the data terminals report, one entry per
+   * symbol, with the time of each quote and of the snapshot. GET /api/ticks/fxs. Charged 1 credit per call.
+   */
+  async fxs(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoFxsTickBatch"]> {
+    return this.http.call("GET", "api/ticks/fxs", {  }, options);
   }
 }
 
@@ -533,82 +1165,89 @@ export class GraphV1AssetsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List Assets. Lists assets from the asset registry. Filter by exchange, tradability and quote currency; page with
-   * limit and offset. GET /v1/assets. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * Assets list. Lists assets from the asset registry. Filter by exchange, tradability and quote coin; sort by
+   * symbol; 50 rows a page. GET /v1/assets. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
   async list(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
     /**
      * When true, only assets the exchange currently allows trading; when false, only the others. Omit for
      * both.
      */
     canTrade?: boolean;
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["PubV1PageOfPubV1Asset"]> {
+    /** Field to sort by: symbol (default); a minus sign in front sorts high to low. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoApiAsset"]> {
     return this.http.call("GET", "v1/assets", { query }, options);
   }
 
   /**
-   * Reads every page of list, moving offset on by the rows each page returned, from the offset in the query (0 when
-   * unset). It stops at the first empty page, which it does not yield, or at a page shorter than its own limit.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
   listPages(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
     /**
      * When true, only assets the exchange currently allows trading; when false, only the others. Omit for
      * both.
      */
     canTrade?: boolean;
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PubV1PageOfPubV1Asset"], void, undefined> {
-    return pagesByOffset((q) => this.list(q, options), query, (page) => page.count !== undefined && page.limit !== undefined && page.count < page.limit);
+    /** Field to sort by: symbol (default); a minus sign in front sorts high to low. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoApiAsset"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
   /** Reads every row of every page of list, one at a time. */
   listItems(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
     /**
      * When true, only assets the exchange currently allows trading; when false, only the others. Omit for
      * both.
      */
     canTrade?: boolean;
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PubV1Asset"], void, undefined> {
+    /** Field to sort by: symbol (default); a minus sign in front sorts high to low. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiAsset"], void, undefined> {
     return itemsOf(this.listPages(query, options));
   }
 
   /**
-   * Exchanges Assets. Lists the exchange keys with their numeric value and TradingView prefix.
+   * Exchanges Assets. Lists the exchanges FinGraph reads, with their name and numeric value.
    * GET /v1/assets/exchanges. Included in paid plans.
    */
   async exchanges(options: FinRequestOptions = {}): Promise<S["PubV1ListOfPubV1Exchange"]> {
     return this.http.call("GET", "v1/assets/exchanges", {  }, options);
-  }
-
-  /**
-   * Types Assets. Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
-   * GET /v1/assets/types. Included in paid plans.
-   */
-  async types(options: FinRequestOptions = {}): Promise<S["PubV1ListOfPubV1EnumItem"]> {
-    return this.http.call("GET", "v1/assets/types", {  }, options);
   }
 
   /**
@@ -620,13 +1259,530 @@ export class GraphV1AssetsResource {
   }
 }
 
+/** FinGraph Markets: the plan-included /v1 operations. */
+export class GraphV1MarketsResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Markets: Crypto. Every coin with its latest Sum, Mav and Osc ratings, price changes, market value, volume and
+   * FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols
+   * by name. Two coins that share a ticker each have their own symbol. GET /v1/markets/crypto. Included in paid
+   * plans, for package tiers 1, 2, 3, 4.
+   */
+  async crypto(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score, mktcap.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCrypto"]> {
+    return this.http.call("GET", "v1/markets/crypto", { query }, options);
+  }
+
+  /**
+   * Reads every page of crypto, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  cryptoPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score, mktcap.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCrypto"], void, undefined> {
+    return pagesByPage((q) => this.crypto(q, options), query);
+  }
+
+  /** Reads every row of every page of crypto, one at a time. */
+  cryptoItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score, mktcap.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCrypto"], void, undefined> {
+    return itemsOf(this.cryptoPages(query, options));
+  }
+
+  /**
+   * Markets: Crypto pairs. Every crypto pair of an exchange with its price, 24-hour change, volume and FinGraph's
+   * own reading (signal, trend, confidence, score, term, rank). Pairs carry no Sum, Mav or Osc ratings. 50 rows a
+   * page; ask for up to 50 symbols by name. GET /v1/markets/dax. Included in paid plans, for package tiers 1, 2, 3,
+   * 4.
+   */
+  async dax(query: {
+    /**
+     * Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data
+     * today, the others answer an empty page.
+     */
+    exchange?: string;
+    /** Only pairs priced in this coin, for example USDT. */
+    quote?: string;
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktPair"]> {
+    return this.http.call("GET", "v1/markets/dax", { query }, options);
+  }
+
+  /**
+   * Reads every page of dax, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  daxPages(query: {
+    /**
+     * Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data
+     * today, the others answer an empty page.
+     */
+    exchange?: string;
+    /** Only pairs priced in this coin, for example USDT. */
+    quote?: string;
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktPair"], void, undefined> {
+    return pagesByPage((q) => this.dax(q, options), query);
+  }
+
+  /** Reads every row of every page of dax, one at a time. */
+  daxItems(query: {
+    /**
+     * Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE; only BINANCE has data
+     * today, the others answer an empty page.
+     */
+    exchange?: string;
+    /** Only pairs priced in this coin, for example USDT. */
+    quote?: string;
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, chg1d, vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktPair"], void, undefined> {
+    return itemsOf(this.daxPages(query, options));
+  }
+
+  /**
+   * Markets: US stocks. Every US stock with its latest Sum, Mav and Osc ratings, the analysts' rating, price
+   * changes, volume and FinGraph's own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask
+   * for up to 50 symbols by name. GET /v1/markets/eqtusa. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async eqtUsa(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktEqtUsa"]> {
+    return this.http.call("GET", "v1/markets/eqtusa", { query }, options);
+  }
+
+  /**
+   * Reads every page of eqtUsa, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  eqtUsaPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktEqtUsa"], void, undefined> {
+    return pagesByPage((q) => this.eqtUsa(q, options), query);
+  }
+
+  /** Reads every row of every page of eqtUsa, one at a time. */
+  eqtUsaItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * vol24, score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktEqtUsa"], void, undefined> {
+    return itemsOf(this.eqtUsaPages(query, options));
+  }
+
+  /**
+   * Markets: Forex. Every forex pair with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+   * reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+   * GET /v1/markets/forex. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async forex(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCfd"]> {
+    return this.http.call("GET", "v1/markets/forex", { query }, options);
+  }
+
+  /**
+   * Reads every page of forex, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  forexPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCfd"], void, undefined> {
+    return pagesByPage((q) => this.forex(q, options), query);
+  }
+
+  /** Reads every row of every page of forex, one at a time. */
+  forexItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCfd"], void, undefined> {
+    return itemsOf(this.forexPages(query, options));
+  }
+
+  /**
+   * Markets: Futures. Every futures contract (energy, agricultural, interest-rate and index futures) with its latest
+   * Sum, Mav and Osc ratings, price changes and FinGraph's own reading (signal, trend, confidence, score, term,
+   * rank). 50 rows a page; ask for up to 50 symbols by name. GET /v1/markets/futures. Included in paid plans, for
+   * package tiers 1, 2, 3, 4.
+   */
+  async futures(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCfd"]> {
+    return this.http.call("GET", "v1/markets/futures", { query }, options);
+  }
+
+  /**
+   * Reads every page of futures, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  futuresPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCfd"], void, undefined> {
+    return pagesByPage((q) => this.futures(q, options), query);
+  }
+
+  /** Reads every row of every page of futures, one at a time. */
+  futuresItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCfd"], void, undefined> {
+    return itemsOf(this.futuresPages(query, options));
+  }
+
+  /**
+   * Markets: Indices. Every stock index with its latest Sum, Mav and Osc ratings, price changes and FinGraph's own
+   * reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+   * GET /v1/markets/indices. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async indices(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCfd"]> {
+    return this.http.call("GET", "v1/markets/indices", { query }, options);
+  }
+
+  /**
+   * Reads every page of indices, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  indicesPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCfd"], void, undefined> {
+    return pagesByPage((q) => this.indices(q, options), query);
+  }
+
+  /** Reads every row of every page of indices, one at a time. */
+  indicesItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCfd"], void, undefined> {
+    return itemsOf(this.indicesPages(query, options));
+  }
+
+  /**
+   * Markets: Metals. Every metals contract with its latest Sum, Mav and Osc ratings, price changes and FinGraph's
+   * own reading (signal, trend, confidence, score, term, rank). 50 rows a page; ask for up to 50 symbols by name.
+   * GET /v1/markets/metals. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async metals(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoMktCfd"]> {
+    return this.http.call("GET", "v1/markets/metals", { query }, options);
+  }
+
+  /**
+   * Reads every page of metals, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  metalsPages(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoMktCfd"], void, undefined> {
+    return pagesByPage((q) => this.metals(q, options), query);
+  }
+
+  /** Reads every row of every page of metals, one at a time. */
+  metalsItems(query: {
+    /**
+     * Symbols to look up, comma-separated, up to 50, any case. Leave empty for the whole market. Symbols
+     * no row carries come back in NotFound.
+     */
+    syms?: string;
+    /**
+     * Field to sort by; a minus sign in front sorts high to low. Default rank (1 is FinGraph's strongest).
+     * Missing values come last. Fields: rank, sym, price, sum, mav, osc, chg1d, chg1w, chg1m, chgytd,
+     * score.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoMktCfd"], void, undefined> {
+    return itemsOf(this.metalsPages(query, options));
+  }
+}
+
 /** FinGraph Ohlcv: the plan-included /v1 operations. */
 export class GraphV1OhlcvResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Batch OHLCV. Reserved: candles for several symbols in one call. Candle data is not available yet and the
-   * endpoint answers 501 Not Implemented. GET /v1/ohlcv/batch. Included in paid plans, for package tiers 2, 3, 4.
+   * Batch OHLCV. Coming soon: candles for several symbols in one call. This endpoint is not available yet and
+   * answers 501 Not Implemented until it is built. GET /v1/ohlcv/batch. Included in paid plans, for package tiers 2,
+   * 3, 4.
    */
   async batch(query: {
     /** Comma-separated trading symbols, for example BTCUSDT,ETHUSDT. */
@@ -638,8 +1794,9 @@ export class GraphV1OhlcvResource {
   }
 
   /**
-   * Get Ohlcv. Reserved: candles for one symbol over a time range. Candle data is not available yet and the endpoint
-   * answers 501 Not Implemented. GET /v1/ohlcv/{symbol}. Included in paid plans, for package tiers 2, 3, 4.
+   * Get Ohlcv. Coming soon: candles for one symbol over a time range. This endpoint is not available yet and answers
+   * 501 Not Implemented until it is built. GET /v1/ohlcv/{symbol}. Included in paid plans, for package tiers 2, 3,
+   * 4.
    */
   async get(symbol: string, query: {
     /** Candle interval, for example 1d. Default 1d. */
@@ -655,8 +1812,9 @@ export class GraphV1OhlcvResource {
   }
 
   /**
-   * Realtime OHLCV. Reserved: the latest candle for one symbol. Candle data is not available yet and the endpoint
-   * answers 501 Not Implemented. GET /v1/ohlcv/{symbol}/realtime. Included in paid plans, for package tiers 2, 3, 4.
+   * Realtime OHLCV. Coming soon: the latest candle for one symbol. This endpoint is not available yet and answers
+   * 501 Not Implemented until it is built. GET /v1/ohlcv/{symbol}/realtime. Included in paid plans, for package
+   * tiers 2, 3, 4.
    */
   async realtime(symbol: string, options: FinRequestOptions = {}): Promise<unknown> {
     return this.http.call("GET", `v1/ohlcv/${pathSegment(symbol)}/realtime`, {  }, options);
@@ -668,18 +1826,273 @@ export class GraphV1QuotesResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Realtime quote. Latest price, 1-day change and volume for a symbol in any market lane (for example BTC, NVDA,
-   * EURUSD, a Bursa Malaysia code or an exchange pair). Set market to search one lane only.
-   * GET /v1/quotes/{symbol}/realtime. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * Realtime quote. Latest price, 1-day change and volume for a symbol in any market (for example BTC, NVDA, EURUSD
+   * or an exchange pair). Set market to search one market only. GET /v1/quotes/{symbol}/realtime. Included in paid
+   * plans, for package tiers 1, 2, 3, 4.
    */
   async realtime(symbol: string, query: {
     /**
-     * Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto
-     * pairs). Omit to search all lanes. An unknown value is rejected with status 400.
+     * Market to restrict to: crypto, stocks, forex or pairs (exchange crypto pairs). Omit to search every
+     * market. An unknown value is rejected with status 400.
      */
     market?: string;
   } = {}, options: FinRequestOptions = {}): Promise<S["PubV1ItemOfPubV1Quote"]> {
     return this.http.call("GET", `v1/quotes/${pathSegment(symbol)}/realtime`, { query }, options);
+  }
+}
+
+/** FinGraph Record: the plan-included /v1 operations. */
+export class GraphV1RecordResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Track record: closed calls. Every call FinGraph has followed to its end, newest first, with entry, exit and
+   * result. Filter by market, symbols, side, horizon, confidence, outcome and dates. 50 a page.
+   * GET /v1/record/calls. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async calls(query: {
+    /** Only this market: eqtusa, crypto, dax or fxs. */
+    market?: string;
+    /** Only these symbols, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** buy or sell. */
+    side?: string;
+    /** How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+    horizon?: string;
+    /** How sure FinGraph was: VHigh, High, Med, Low, VLow or None. */
+    conf?: string;
+    /** won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL. */
+    outcome?: string;
+    /** Closed on or after this day (UTC), such as 2026-11-01. */
+    from?: string;
+    /** Closed on or before this day (UTC), such as 2026-11-20. */
+    to?: string;
+    /** closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoRecordCall"]> {
+    return this.http.call("GET", "v1/record/calls", { query }, options);
+  }
+
+  /**
+   * Reads every page of calls, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  callsPages(query: {
+    /** Only this market: eqtusa, crypto, dax or fxs. */
+    market?: string;
+    /** Only these symbols, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** buy or sell. */
+    side?: string;
+    /** How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+    horizon?: string;
+    /** How sure FinGraph was: VHigh, High, Med, Low, VLow or None. */
+    conf?: string;
+    /** won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL. */
+    outcome?: string;
+    /** Closed on or after this day (UTC), such as 2026-11-01. */
+    from?: string;
+    /** Closed on or before this day (UTC), such as 2026-11-20. */
+    to?: string;
+    /** closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoRecordCall"], void, undefined> {
+    return pagesByPage((q) => this.calls(q, options), query);
+  }
+
+  /** Reads every row of every page of calls, one at a time. */
+  callsItems(query: {
+    /** Only this market: eqtusa, crypto, dax or fxs. */
+    market?: string;
+    /** Only these symbols, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** buy or sell. */
+    side?: string;
+    /** How long the call was followed: 6h, 24h, 72h, 7d or 30d. */
+    horizon?: string;
+    /** How sure FinGraph was: VHigh, High, Med, Low, VLow or None. */
+    conf?: string;
+    /** won (Win, TP1, TP2, TP3), lost (Loss, SL), flat (the rest), or one exact result such as TP1 or SL. */
+    outcome?: string;
+    /** Closed on or after this day (UTC), such as 2026-11-01. */
+    from?: string;
+    /** Closed on or before this day (UTC), such as 2026-11-20. */
+    to?: string;
+    /** closedAt, calledAt, returnPct or sym; a minus sign sorts high to low. Default -closedAt. */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoRecordCall"], void, undefined> {
+    return itemsOf(this.callsPages(query, options));
+  }
+}
+
+/** FinGraph Screens: the plan-included /v1 operations. */
+export class GraphV1ScreensResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Screens: Crypto. FinGraph's ranked shortlists of coins: strongest risers, strongest fallers, moving fastest in
+   * price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a
+   * page. GET /v1/screens/crypto/{lane}. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async crypto(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoScrCrypto"]> {
+    return this.http.call("GET", `v1/screens/crypto/${pathSegment(lane)}`, { query }, options);
+  }
+
+  /**
+   * Reads every page of crypto, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  cryptoPages(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoScrCrypto"], void, undefined> {
+    return pagesByPage((q) => this.crypto(lane, q, options), query);
+  }
+
+  /** Reads every row of every page of crypto, one at a time. */
+  cryptoItems(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoScrCrypto"], void, undefined> {
+    return itemsOf(this.cryptoPages(lane, query, options));
+  }
+
+  /**
+   * Screens: Crypto pairs. FinGraph's ranked shortlists of crypto pairs: strongest risers, strongest fallers, moving
+   * fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus
+   * LaneRank. 50 a page. GET /v1/screens/dax/{lane}. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async dax(lane: string, query: {
+    /** Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE. */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoScrPair"]> {
+    return this.http.call("GET", `v1/screens/dax/${pathSegment(lane)}`, { query }, options);
+  }
+
+  /**
+   * Reads every page of dax, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  daxPages(lane: string, query: {
+    /** Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE. */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoScrPair"], void, undefined> {
+    return pagesByPage((q) => this.dax(lane, q, options), query);
+  }
+
+  /** Reads every row of every page of dax, one at a time. */
+  daxItems(lane: string, query: {
+    /** Exchange name: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Default BINANCE. */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoScrPair"], void, undefined> {
+    return itemsOf(this.daxPages(lane, query, options));
+  }
+
+  /**
+   * Screens: US stocks. FinGraph's ranked shortlists of US stocks: strongest risers, strongest fallers, moving
+   * fastest in price, volume rising fastest and breaking out of range. The same row as the markets list, plus
+   * LaneRank. 50 a page. GET /v1/screens/eqtusa/{lane}. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async eqtUsa(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoScrEqtUsa"]> {
+    return this.http.call("GET", `v1/screens/eqtusa/${pathSegment(lane)}`, { query }, options);
+  }
+
+  /**
+   * Reads every page of eqtUsa, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  eqtUsaPages(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoScrEqtUsa"], void, undefined> {
+    return pagesByPage((q) => this.eqtUsa(lane, q, options), query);
+  }
+
+  /** Reads every row of every page of eqtUsa, one at a time. */
+  eqtUsaItems(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoScrEqtUsa"], void, undefined> {
+    return itemsOf(this.eqtUsaPages(lane, query, options));
+  }
+
+  /**
+   * Screens: Forex. FinGraph's ranked shortlists of forex pairs: strongest risers, strongest fallers, moving fastest
+   * in price, volume rising fastest and breaking out of range. The same row as the markets list, plus LaneRank. 50 a
+   * page. GET /v1/screens/fxs/{lane}. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async fxs(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoScrCfd"]> {
+    return this.http.call("GET", `v1/screens/fxs/${pathSegment(lane)}`, { query }, options);
+  }
+
+  /**
+   * Reads every page of fxs, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
+   */
+  fxsPages(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoScrCfd"], void, undefined> {
+    return pagesByPage((q) => this.fxs(lane, q, options), query);
+  }
+
+  /** Reads every row of every page of fxs, one at a time. */
+  fxsItems(lane: string, query: {
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoScrCfd"], void, undefined> {
+    return itemsOf(this.fxsPages(lane, query, options));
   }
 }
 
@@ -708,38 +2121,6 @@ export class GraphV1SignalsResource {
   } = {}, options: FinRequestOptions = {}): Promise<S["PubV1ListOfPubV1Pattern"]> {
     return this.http.call("GET", "v1/patterns", { query }, options);
   }
-
-  /**
-   * Recent signals. Most recently updated signals across crypto, US stocks, forex, Malaysia stocks and crypto pairs.
-   * Set market to restrict the result to one lane. GET /v1/signals/recent. Included in paid plans, for package tiers
-   * 1, 2, 3, 4.
-   */
-  async recent(query: {
-    /** Maximum number of rows to return, from 1 to 100. Default 25. */
-    limit?: number;
-    /**
-     * Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto
-     * pairs). Omit to search all lanes. An unknown value is rejected with status 400.
-     */
-    market?: string;
-  } = {}, options: FinRequestOptions = {}): Promise<S["PubV1ListOfPubV1SignalRow"]> {
-    return this.http.call("GET", "v1/signals/recent", { query }, options);
-  }
-
-  /**
-   * View signal. One symbol's signal (for example BTC, NVDA, EURUSD, a Bursa Malaysia code, an exchange pair or a
-   * TradingView code), with its short, mid and long term reads. Set market to search one lane only.
-   * GET /v1/signals/{symbol}. Included in paid plans, for package tiers 1, 2, 3, 4.
-   */
-  async get(symbol: string, query: {
-    /**
-     * Market lane to restrict to: crypto, stocks, forex, mys (Malaysia stocks) or pairs (exchange crypto
-     * pairs). Omit to search all lanes. An unknown value is rejected with status 400.
-     */
-    market?: string;
-  } = {}, options: FinRequestOptions = {}): Promise<S["PubV1ItemOfPubV1Signal"]> {
-    return this.http.call("GET", `v1/signals/${pathSegment(symbol)}`, { query }, options);
-  }
 }
 
 /** FinGraph Stats: the plan-included /v1 operations. */
@@ -753,34 +2134,6 @@ export class GraphV1StatsResource {
   async aggregate(options: FinRequestOptions = {}): Promise<S["PubV1ListOfPubV1Aggregate"]> {
     return this.http.call("GET", "v1/stats/aggregate", {  }, options);
   }
-
-  /**
-   * Market movers. Top gainers or losers by 24-hour price change percentage, optionally for one exchange.
-   * GET /v1/stats/movers. Included in paid plans.
-   */
-  async movers(query: {
-    /** Ranking to return: gainers (largest rises, the default) or losers (largest falls). */
-    direction?: string;
-    /** Number of rows to return, from 1 to 100. Default 10. */
-    top?: number;
-    /** Exchange key to restrict the ranking to, for example BIN. Omit for every exchange. */
-    dax?: S["DAX"];
-  } = {}, options: FinRequestOptions = {}): Promise<S["PubV1Movers"]> {
-    return this.http.call("GET", "v1/stats/movers", { query }, options);
-  }
-
-  /**
-   * Volume leaders. Top symbols by 24-hour quote volume, optionally for one exchange. GET /v1/stats/volume. Included
-   * in paid plans.
-   */
-  async volume(query: {
-    /** Number of rows to return, from 1 to 100. Default 10. */
-    top?: number;
-    /** Exchange key to restrict the ranking to, for example BIN. Omit for every exchange. */
-    dax?: S["DAX"];
-  } = {}, options: FinRequestOptions = {}): Promise<S["PubV1ListOfPubV1Mover"]> {
-    return this.http.call("GET", "v1/stats/volume", { query }, options);
-  }
 }
 
 /** FinGraph Tickers: the plan-included /v1 operations. */
@@ -788,72 +2141,96 @@ export class GraphV1TickersResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List Tickers. Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency and
-   * listing state; page with limit and offset. GET /v1/tickers. Included in paid plans, for package tiers 1, 2, 3,
-   * 4.
+   * Tickers list. Lists crypto-pair tickers with last price, 24-hour change and volume. Filter by exchange, quote
+   * coin and listing state; sort by symbol, lastprice, chgpct or quotvol; 50 rows a page. GET /v1/tickers. Included
+   * in paid plans, for package tiers 1, 2, 3, 4.
    */
   async list(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
     /**
      * When true, only tickers currently listed on the exchange; when false, only the others. Omit for
      * both.
      */
     inExchange?: boolean;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["PubV1PageOfPubV1Ticker"]> {
+    /**
+     * Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high
+     * to low.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoApiTicker"]> {
     return this.http.call("GET", "v1/tickers", { query }, options);
   }
 
   /**
-   * Reads every page of list, moving offset on by the rows each page returned, from the offset in the query (0 when
-   * unset). It stops at the first empty page, which it does not yield, or at a page shorter than its own limit.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
   listPages(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
     /**
      * When true, only tickers currently listed on the exchange; when false, only the others. Omit for
      * both.
      */
     inExchange?: boolean;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PubV1PageOfPubV1Ticker"], void, undefined> {
-    return pagesByOffset((q) => this.list(q, options), query, (page) => page.count !== undefined && page.limit !== undefined && page.count < page.limit);
+    /**
+     * Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high
+     * to low.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoApiTicker"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
   /** Reads every row of every page of list, one at a time. */
   listItems(query: {
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
-    /** Quote currency to filter by, for example USDT. Omit for every quote currency. */
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Quote coin to filter by, for example USDT. Omit for every quote coin. */
     quote?: string;
     /**
      * When true, only tickers currently listed on the exchange; when false, only the others. Omit for
      * both.
      */
     inExchange?: boolean;
-    /** Maximum number of rows to return, from 1 to 500. Default 100. */
-    limit?: number;
-    /** Number of rows to skip, counted from zero. Add the limit to move to the next page. Default 0. */
-    offset?: number;
-  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["PubV1Ticker"], void, undefined> {
+    /**
+     * Field to sort by: symbol (default), lastprice, chgpct or quotvol; a minus sign in front sorts high
+     * to low.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiTicker"], void, undefined> {
     return itemsOf(this.listPages(query, options));
   }
 
   /**
-   * Search Tickers. Finds tickers whose symbol contains the search text, case-insensitive. GET /v1/tickers/search.
-   * Included in paid plans, for package tiers 1, 2, 3, 4.
+   * Ticker search. Finds crypto-pair tickers whose symbol contains the search text, case-insensitive. 50 rows a
+   * page. GET /v1/tickers/search. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
   async search(query: {
     /**
@@ -861,12 +2238,60 @@ export class GraphV1TickersResource {
      * Required.
      */
     q?: string;
-    /** Exchange key to filter by, for example BIN. Omit to include every exchange. */
-    dax?: S["DAX"];
-    /** Maximum number of rows to return, from 1 to 100. Default 25. */
-    limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["PubV1TickerSearch"]> {
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["ApiMktPageOfDtoApiTickerLite"]> {
     return this.http.call("GET", "v1/tickers/search", { query }, options);
+  }
+
+  /**
+   * Reads every page of search, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  searchPages(query: {
+    /**
+     * Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol.
+     * Required.
+     */
+    q?: string;
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ApiMktPageOfDtoApiTickerLite"], void, undefined> {
+    return pagesByPage((q) => this.search(q, options), query);
+  }
+
+  /** Reads every row of every page of search, one at a time. */
+  searchItems(query: {
+    /**
+     * Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the symbol.
+     * Required.
+     */
+    q?: string;
+    /**
+     * Exchange name to filter by: BINANCE, KUCOIN, HUOBI, KRAKEN, GATEIO or OKX. Omit to include every
+     * exchange.
+     */
+    exchange?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiTickerLite"], void, undefined> {
+    return itemsOf(this.searchPages(query, options));
   }
 
   /**
@@ -878,59 +2303,87 @@ export class GraphV1TickersResource {
   }
 }
 
+/** FinGraph Ticks: the plan-included /v1 operations. */
+export class GraphV1TicksResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Ticks: crypto pairs. Latest price of every crypto pair, one entry per exchange and symbol, with the time the
+   * snapshot was taken. GET /v1/ticks/dax. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async dax(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoTickBatch"]> {
+    return this.http.call("GET", "v1/ticks/dax", {  }, options);
+  }
+
+  /**
+   * Ticks: US stocks. Latest price of every US stock, one entry per symbol, as [price, time in Unix seconds], with
+   * the time the snapshot was taken. GET /v1/ticks/eqtusa. Included in paid plans, for package tiers 1, 2, 3, 4.
+   */
+  async eqtUsa(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoPxTickBatch"]> {
+    return this.http.call("GET", "v1/ticks/eqtusa", {  }, options);
+  }
+
+  /**
+   * Ticks: forex. Latest bid and ask of every forex and CFD instrument the data terminals report, one entry per
+   * symbol, with the time of each quote and of the snapshot. GET /v1/ticks/fxs. Included in paid plans, for package
+   * tiers 1, 2, 3, 4.
+   */
+  async fxs(options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoFxsTickBatch"]> {
+    return this.http.call("GET", "v1/ticks/fxs", {  }, options);
+  }
+}
+
 /** FinGraph's /v1 operations, included in paid plans and gated by package tier. */
 export class FinGraphV1 {
   readonly assets: GraphV1AssetsResource;
+  readonly markets: GraphV1MarketsResource;
   readonly ohlcv: GraphV1OhlcvResource;
   readonly quotes: GraphV1QuotesResource;
+  readonly record: GraphV1RecordResource;
+  readonly screens: GraphV1ScreensResource;
   readonly signals: GraphV1SignalsResource;
   readonly stats: GraphV1StatsResource;
   readonly tickers: GraphV1TickersResource;
+  readonly ticks: GraphV1TicksResource;
 
   constructor(http: FinHttpTransport) {
     this.assets = new GraphV1AssetsResource(http);
+    this.markets = new GraphV1MarketsResource(http);
     this.ohlcv = new GraphV1OhlcvResource(http);
     this.quotes = new GraphV1QuotesResource(http);
+    this.record = new GraphV1RecordResource(http);
+    this.screens = new GraphV1ScreensResource(http);
     this.signals = new GraphV1SignalsResource(http);
     this.stats = new GraphV1StatsResource(http);
     this.tickers = new GraphV1TickersResource(http);
+    this.ticks = new GraphV1TicksResource(http);
   }
 }
 
 /** FinGraph. The groups on this object are the /api operations, charged in credits per call; the /v1 operations, included in paid plans, are under `v1`. */
 export class FinGraph {
-  readonly apcDat: GraphApcDatResource;
   readonly assets: GraphAssetsResource;
-  readonly daxDat: GraphDaxDatResource;
-  readonly fxsTikr: GraphFxsTikrResource;
-  readonly klsePrc: GraphKlsePrcResource;
+  readonly markets: GraphMarketsResource;
   readonly ohlcv: GraphOhlcvResource;
-  readonly sigCry: GraphSigCryResource;
-  readonly sigDax: GraphSigDaxResource;
-  readonly sigEqt: GraphSigEqtResource;
-  readonly sigFxs: GraphSigFxsResource;
+  readonly record: GraphRecordResource;
+  readonly screens: GraphScreensResource;
   readonly signals: GraphSignalsResource;
   readonly stats: GraphStatsResource;
   readonly tickers: GraphTickersResource;
-  readonly tvdDat: GraphTvdDatResource;
+  readonly ticks: GraphTicksResource;
   /** The /v1 operations: included in paid plans, gated by package tier. */
   readonly v1: FinGraphV1;
 
   constructor(http: FinHttpTransport) {
-    this.apcDat = new GraphApcDatResource(http);
     this.assets = new GraphAssetsResource(http);
-    this.daxDat = new GraphDaxDatResource(http);
-    this.fxsTikr = new GraphFxsTikrResource(http);
-    this.klsePrc = new GraphKlsePrcResource(http);
+    this.markets = new GraphMarketsResource(http);
     this.ohlcv = new GraphOhlcvResource(http);
-    this.sigCry = new GraphSigCryResource(http);
-    this.sigDax = new GraphSigDaxResource(http);
-    this.sigEqt = new GraphSigEqtResource(http);
-    this.sigFxs = new GraphSigFxsResource(http);
+    this.record = new GraphRecordResource(http);
+    this.screens = new GraphScreensResource(http);
     this.signals = new GraphSignalsResource(http);
     this.stats = new GraphStatsResource(http);
     this.tickers = new GraphTickersResource(http);
-    this.tvdDat = new GraphTvdDatResource(http);
+    this.ticks = new GraphTicksResource(http);
     this.v1 = new FinGraphV1(http);
   }
 }

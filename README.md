@@ -108,8 +108,8 @@ To verify a webhook in TypeScript, import `FinWebhook` from `@bizjaya/finclient/
 
 ## FinGraph, FinNews and FinSocial
 
-Beside FinCopy, the same client reaches FinGraph (market data, tickers, signals and statistics), FinNews (news, sentiment,
-trending, sources and videos) and FinSocial (prediction markets, social posts, authors and videos). Install the package
+Beside FinCopy, the same client reaches FinGraph (markets, screens, closed calls, tickers, candles and statistics), FinNews
+(news, sentiment, mood, trending, sources and videos) and FinSocial (pulse, posts, videos, prediction markets and creators). Install the package
 (`dotnet add package FinClient` or `npm install @bizjaya/finclient`). Each service has its own API key, sent in the
 `FinUsrKey` header (FinCopy's stays `X-Api-Key`), and its own address (`https://x.fingraph.io`, `https://x.finnews.io`,
 `https://x.finsocial.io`). Give the client a block for each service you use; the top-level key is optional when a block is
@@ -144,9 +144,9 @@ differently:
 | .NET | `fin.Graph.Tickers.ListAsync()` | `fin.Graph.V1.Tickers.ListAsync()` |
 
 The group is the operation's tag (`tickers`, `news`, `markets`, ...) and the method is the action part of its operation id
-(`Api_NewsController_RatingMake` is `fin.news.news.ratingMake()` and `fin.News.News.RatingMakeAsync()`). Path parameters are
-required positional arguments, then come the body, the query and the per-request options (an abort signal or cancellation
-token, an idempotency key for writes). A method returns the documented 200 reply, typed from the API's document. Refusals
+(`Pub_MarketsController_EqtUsa` is `fin.graph.v1.markets.eqtUsa()` and `fin.Graph.V1.Markets.EqtUsaAsync()`). Path parameters
+are required positional arguments, then come the query and the per-request options (an abort signal or cancellation token).
+Every `/v1` operation needs a key. A method returns the documented 200 reply, typed from the API's document. Refusals
 (`401` `invalid_api_key`, `402` `insufficient_credits`, `403` `package_not_allowed`, `429` rate limited) throw `FinApiError` /
 `FinApiException` with the API's error code, message and the limit fields (`lane`, `limit`, `catag`, `tier`); a `429` is retried
 after `Retry-After`. The full naming and argument rules are in the [TypeScript](./typescript/README.md) and
@@ -154,28 +154,26 @@ after `Retry-After`. The full naming and argument rules are in the [TypeScript](
 
 ### Filtering and paging
 
-Most FinNews and FinSocial lists take one query parameter, `qry`, a JSON object with `pageNo`, `pageSize`, `sortBy`, `srchBy` and
-the endpoint's own filter fields. The method takes it as a typed object and sends it as JSON. Lists that page also have
-iterators over pages and over items that advance `pageNo` (or `offset`, for FinGraph's `limit` and `offset` lists) and stop
-on an empty page or the last page.
+Lists take plain query values: `page` (from 1) and `size` (1 to 50), `sort` (a field name; a minus sign in front sorts high to
+low), and the filters each endpoint lists. Symbol lookups take `syms`, up to 50 names, comma-separated and in any case;
+the names no row carries come back in the reply's `NotFound`. Every reply that lists carries `paging` with `pageNo`,
+`pageSize`, `pageCount` and `resCount`. Lists that page also have iterators over pages and over items that advance `page`
+and stop after the last page or at an empty page.
 
 ```csharp
-var page = await fin.News.News.ListAsync(new QueApiNewsList
-{
-    PageNo = 1, PageSize = 20, SortBy = [["published", "desc"]], Symbols = "AAPL,MSFT",
-});
-await foreach (var article in fin.News.News.ListItemsAsync(new QueApiNewsList { Symbols = "AAPL" }))
+var page = await fin.News.News.ListAsync(syms: "AAPL,MSFT", sort: "-published", page: 1, size: 20);
+await foreach (var article in fin.News.News.ListItemsAsync(syms: "AAPL"))
     Console.WriteLine(article.Title);
 ```
 
 ```ts
-const page = await fin.news.news.list({ pageNo: 1, pageSize: 20, sortBy: [["published", "desc"]], Symbols: "AAPL,MSFT" });
-for await (const article of fin.news.news.listItems({ Symbols: "AAPL" })) console.log(article.Title);
+const page = await fin.news.news.list({ syms: "AAPL,MSFT", sort: "-published", page: 1, size: 20 });
+for await (const article of fin.news.news.listItems({ syms: "AAPL" })) console.log(article.Title);
 ```
 
-Other operations take their named query fields directly: `fin.graph.tickers.list({ dax: "BIN", quote: "USDT", limit: 20 })`.
-A runnable example for each service is in `typescript/examples` and `dotnet/examples`, reading its key from an environment
-variable (`FINGRAPH_API_KEY`, `FINNEWS_API_KEY`, `FINSOCIAL_API_KEY`).
+Other operations take their own named query values the same way: `fin.graph.markets.eqtUsa({ syms: "NVDA,MSFT", sort: "-chg1d" })`.
+A runnable example for each service is in `typescript/examples`, `dotnet/examples` and `python/examples`, reading its key from
+an environment variable (`FINGRAPH_API_KEY`, `FINNEWS_API_KEY`, `FINSOCIAL_API_KEY`).
 
 For FinCopy's routes and authentication details, see the [FinCopy API documentation](https://fincopy.io/docs). Source:
 [GitHub](https://github.com/bizjaya/FinClient).

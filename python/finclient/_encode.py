@@ -1,13 +1,13 @@
-"""Encoding of paths, query strings, the ``qry`` object and request bodies."""
+"""Encoding of paths, query strings and request bodies."""
 from __future__ import annotations
 
 import json
 import re
 from datetime import date, datetime
-from typing import Any, Dict, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import Any, Iterable, List, Mapping, Optional, Sequence, Tuple, Union
 from urllib.parse import quote
 
-__all__ = ["build_qry", "drop_none", "encode_query", "seg", "snake"]
+__all__ = ["drop_none", "encode_query", "seg", "snake"]
 
 
 def snake(name: str) -> str:
@@ -40,17 +40,6 @@ def drop_none(value: Any) -> Any:
     return _scalar(value)
 
 
-def build_qry(known: Sequence[str], qry: Optional[Mapping[str, Any]], fields: Mapping[str, Any]) -> Dict[str, Any]:
-    """Merge a ``qry`` dict with keyword fields. Wire names are kept; ``page_no`` is accepted for ``pageNo``."""
-    by_snake = {snake(name): name for name in known}
-    merged: Dict[str, Any] = {}
-    for source in (qry or {}, fields):
-        for key, value in source.items():
-            wire = key if key in known else by_snake.get(snake(key), key)
-            merged[wire] = value
-    return {key: item for key, item in drop_none(merged).items()}
-
-
 def _query_value(value: Any) -> str:
     if isinstance(value, bool):
         return "true" if value else "false"
@@ -59,10 +48,9 @@ def _query_value(value: Any) -> str:
 
 def encode_query(
     query: Optional[Iterable[Tuple[str, Any]]] = None,
-    qry: Optional[Mapping[str, Any]] = None,
     extra: Optional[Iterable[Tuple[str, Any]]] = None,
 ) -> str:
-    """The query string (without ``?``). ``qry`` becomes one JSON-encoded ``qry`` parameter."""
+    """The query string (without ``?``); values that are None are left out and a list repeats its name."""
     pairs: List[Tuple[str, str]] = []
     for name, value in list(query or []) + list(extra or []):
         if value is None:
@@ -71,8 +59,6 @@ def encode_query(
             pairs.extend((name, _query_value(item)) for item in value if item is not None)
         else:
             pairs.append((name, _query_value(value)))
-    if qry is not None:
-        pairs.append(("qry", json.dumps(qry, separators=(",", ":"), default=_json_default)))
     return "&".join(f"{quote(name, safe='')}={quote(value, safe='')}" for name, value in pairs)
 
 

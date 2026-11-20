@@ -4,7 +4,7 @@
 import type { components } from "./generated/news-schema.js";
 import type { FinHttpTransport } from "./http-transport.js";
 import type { FinRequestOptions } from "./options.js";
-import { itemsOf, pagesByPageNo, pathSegment } from "./service-support.js";
+import { itemsOf, pagesByPage, pathSegment } from "./service-support.js";
 
 type S = components["schemas"];
 
@@ -13,67 +13,65 @@ export class NewsCategoriesResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * News category article counts. Returns every enabled news category with its stable slug, its parent and its
-   * current article count. GET /api/categories/counts. Charged 1 credit per call.
+   * List categories. Returns the news category tree as rows with a Parent slug, and how many articles each category
+   * got in the last 7 days. GET /api/categories. Charged 0.5 credits per call.
    */
-  async counts(options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiCateCount"]> {
-    return this.http.call("GET", "api/categories/counts", {  }, options);
-  }
-
-  /**
-   * List news categories (flat). Returns every enabled news category as a flat list. Each entry has a stable slug,
-   * its parent id and its name; use the slug, not the id, to refer to a category. GET /api/categories/flat. Charged
-   * 0.5 credits per call.
-   */
-  async flat(options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiCate"]> {
-    return this.http.call("GET", "api/categories/flat", {  }, options);
-  }
-
-  /**
-   * List news categories (tree). Returns the enabled news categories as a tree: top-level categories with their
-   * sub-categories nested under Children. GET /api/categories/tree. Charged 0.5 credits per call.
-   */
-  async tree(options: FinRequestOptions = {}): Promise<S["ResListOfDtoApiCate"]> {
-    return this.http.call("GET", "api/categories/tree", {  }, options);
+  async list(options: FinRequestOptions = {}): Promise<S["ResListOfCategoryRef"]> {
+    return this.http.call("GET", "api/categories", {  }, options);
   }
 }
 
-/** FinNews Entities: the credit-charged /api operations. */
-export class NewsEntitiesResource {
+/** FinNews Mood: the credit-charged /api operations. */
+export class NewsMoodResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Top industries. Returns the most frequently mentioned topics, used as an industry list, ranked by frequency.
-   * GET /api/entities/industries. Charged 0.5 credits per call.
+   * Market mood by category. Returns, for each news category and day, how many articles were filed under it and how
+   * many read bullish, bearish, neutral or unscored, with a mood from 0 to 100. An article counts in every category
+   * it is filed under. GET /api/mood. Charged 1 credit per call.
    */
-  async industries(query: {
-    /** Number of topics to return, ranked by frequency, from 1 to 500. Default 50. */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiIndustryHit"]> {
-    return this.http.call("GET", "api/entities/industries", { query }, options);
+  async list(query: {
+    /** How many days back, 1 to 90. Default 7. */
+    days?: number;
+    /** Category slugs, comma-separated, from the categories endpoint. Leave empty for every category. */
+    cats?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfMoodDay"]> {
+    return this.http.call("GET", "api/mood", { query }, options);
   }
 
   /**
-   * Search news entities. Finds tickers and topics whose name starts with the given text, ranked by how often they
-   * appear in recent news. GET /api/entities/search. Charged 0.5 credits per call.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  async search(query: {
-    /** Text that the entity name must start with. Required; an empty value is rejected. */
-    Q?: string;
-    /** Maximum number of distinct entities to return, from 1 to 100. Default 25. */
-    Limit?: number;
-    /** Look-back window in days, from 1 to 3650. Default 365. */
-    Days?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiEntityHit"]> {
-    return this.http.call("GET", "api/entities/search", { query }, options);
+  listPages(query: {
+    /** How many days back, 1 to 90. Default 7. */
+    days?: number;
+    /** Category slugs, comma-separated, from the categories endpoint. Leave empty for every category. */
+    cats?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NwsPageOfMoodDay"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
-  /**
-   * News entity types. Lists the entity types used by the news data, such as tickers and topics.
-   * GET /api/entities/types. Charged 0.5 credits per call.
-   */
-  async types(options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNwsEnumOption"]> {
-    return this.http.call("GET", "api/entities/types", {  }, options);
+  /** Reads every row of every page of list, one at a time. */
+  listItems(query: {
+    /** How many days back, 1 to 90. Default 7. */
+    days?: number;
+    /** Category slugs, comma-separated, from the categories endpoint. Leave empty for every category. */
+    cats?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["MoodDay"], void, undefined> {
+    return itemsOf(this.listPages(query, options));
   }
 }
 
@@ -82,180 +80,120 @@ export class NewsNewsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List news articles. Returns a paged, filterable feed of news articles with their sentiment and signal grades.
-   * GET /api/news. Charged 0.5 credits per call.
+   * List news. Lists news articles, newest first, with tickers, categories, sentiment, importance and a summary when
+   * one exists. Filter by ticker, category, publisher, time, text, importance and sentiment; sort by time, rank or
+   * score; 50 rows a page. GET /api/news. Charged 0.5 credits per call.
    */
-  async list(query: S["QueApiNewsList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNews"]> {
-    return this.http.call("GET", "api/news", { qry: query }, options);
+  async list(query: {
+    /**
+     * Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article
+     * carries come back in NotFound.
+     */
+    syms?: string;
+    /** Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto. */
+    cats?: string;
+    /** Publisher keys, comma-separated, from the sources endpoint. */
+    src?: string;
+    /** Only articles published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only articles published at or before this time (ISO 8601, UTC). */
+    until?: string | Date;
+    /** Words to find in the headline or text. */
+    q?: string;
+    /** Only articles that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /** Only articles with this reading: Bullish, Bearish, Neutral or Unscored. */
+    sentiment?: string;
+    /**
+     * Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfNewsItem"]> {
+    return this.http.call("GET", "api/news", { query }, options);
   }
 
   /**
-   * Reads every page of list, advancing pageNo from the one in the query (1 when unset). It stops after the last
-   * page the paging block names, or at the first empty page, which it does not yield.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  listPages(query: S["QueApiNewsList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiNews"], void, undefined> {
-    return pagesByPageNo((q) => this.list(q, options), query);
+  listPages(query: {
+    /**
+     * Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article
+     * carries come back in NotFound.
+     */
+    syms?: string;
+    /** Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto. */
+    cats?: string;
+    /** Publisher keys, comma-separated, from the sources endpoint. */
+    src?: string;
+    /** Only articles published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only articles published at or before this time (ISO 8601, UTC). */
+    until?: string | Date;
+    /** Words to find in the headline or text. */
+    q?: string;
+    /** Only articles that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /** Only articles with this reading: Bullish, Bearish, Neutral or Unscored. */
+    sentiment?: string;
+    /**
+     * Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NwsPageOfNewsItem"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
   /** Reads every row of every page of list, one at a time. */
-  listItems(query: S["QueApiNewsList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiNews"], void, undefined> {
+  listItems(query: {
+    /**
+     * Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article
+     * carries come back in NotFound.
+     */
+    syms?: string;
+    /** Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto. */
+    cats?: string;
+    /** Publisher keys, comma-separated, from the sources endpoint. */
+    src?: string;
+    /** Only articles published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only articles published at or before this time (ISO 8601, UTC). */
+    until?: string | Date;
+    /** Words to find in the headline or text. */
+    q?: string;
+    /** Only articles that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /** Only articles with this reading: Bullish, Bearish, Neutral or Unscored. */
+    sentiment?: string;
+    /**
+     * Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NewsItem"], void, undefined> {
     return itemsOf(this.listPages(query, options));
   }
 
   /**
-   * News grouped by category. Returns articles grouped by category slug, as an object keyed by category slug. When
-   * no keys are given, the keys with the most articles in the window are used. Use the slug, not the numeric id, to
-   * name a category. GET /api/news/group/categories. Charged 1 credit per call.
+   * View news article. Returns one article with its full text, author, a reading per ticker and up to five related
+   * articles. GET /api/news/{id}. Charged 0.5 credits per call.
    */
-  async groupCategoryList(query: {
-    /**
-     * Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on
-     * the endpoint. When empty, the keys with the most articles in the window are used.
-     */
-    Keys?: string;
-    /** Maximum number of keys (groups) to return, from 1 to 25. Default 10. */
-    MaxKeys?: number;
-    /** Maximum number of articles per key, from 1 to 25. Default 5. */
-    MaxPerKey?: number;
-    /**
-     * Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the
-     * time the article was collected, Rank by the confidence-adjusted importance score and Score by the
-     * raw importance score. Default Newest.
-     */
-    SortBy?: S["NewsSortBy"];
-    /** Look-back window in hours, from 1 to 8760 (one year). Default 168. */
-    Hours?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite"]> {
-    return this.http.call("GET", "api/news/group/categories", { query }, options);
-  }
-
-  /**
-   * News grouped by source. Returns articles grouped by source key code, as an object keyed by source key code. When
-   * no keys are given, the keys with the most articles in the window are used. For the source catalogue itself, use
-   * the sources endpoints. GET /api/news/group/sources. Charged 1 credit per call.
-   */
-  async groupSourceList(query: {
-    /**
-     * Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on
-     * the endpoint. When empty, the keys with the most articles in the window are used.
-     */
-    Keys?: string;
-    /** Maximum number of keys (groups) to return, from 1 to 25. Default 10. */
-    MaxKeys?: number;
-    /** Maximum number of articles per key, from 1 to 25. Default 5. */
-    MaxPerKey?: number;
-    /**
-     * Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the
-     * time the article was collected, Rank by the confidence-adjusted importance score and Score by the
-     * raw importance score. Default Newest.
-     */
-    SortBy?: S["NewsSortBy"];
-    /** Look-back window in hours, from 1 to 8760 (one year). Default 168. */
-    Hours?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite"]> {
-    return this.http.call("GET", "api/news/group/sources", { query }, options);
-  }
-
-  /**
-   * News grouped by ticker. Returns articles grouped by ticker, as an object keyed by ticker. When no keys are
-   * given, the keys with the most articles in the window are used. GET /api/news/group/tickers. Charged 1 credit per
-   * call.
-   */
-  async groupTickerList(query: {
-    /**
-     * Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on
-     * the endpoint. When empty, the keys with the most articles in the window are used.
-     */
-    Keys?: string;
-    /** Maximum number of keys (groups) to return, from 1 to 25. Default 10. */
-    MaxKeys?: number;
-    /** Maximum number of articles per key, from 1 to 25. Default 5. */
-    MaxPerKey?: number;
-    /**
-     * Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the
-     * time the article was collected, Rank by the confidence-adjusted importance score and Score by the
-     * raw importance score. Default Newest.
-     */
-    SortBy?: S["NewsSortBy"];
-    /** Look-back window in hours, from 1 to 8760 (one year). Default 168. */
-    Hours?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite"]> {
-    return this.http.call("GET", "api/news/group/tickers", { query }, options);
-  }
-
-  /**
-   * News grouped by topic. Returns articles grouped by topic, as an object keyed by topic. When no keys are given,
-   * the keys with the most articles in the window are used. GET /api/news/group/topics. Charged 1 credit per call.
-   */
-  async groupTopicList(query: {
-    /**
-     * Comma-separated keys to group by: tickers, category slugs, topics or source key codes, depending on
-     * the endpoint. When empty, the keys with the most articles in the window are used.
-     */
-    Keys?: string;
-    /** Maximum number of keys (groups) to return, from 1 to 25. Default 10. */
-    MaxKeys?: number;
-    /** Maximum number of articles per key, from 1 to 25. Default 5. */
-    MaxPerKey?: number;
-    /**
-     * Order of the articles inside each group. Newest and Oldest order by publication time, Fetched by the
-     * time the article was collected, Rank by the confidence-adjusted importance score and Score by the
-     * raw importance score. Default Newest.
-     */
-    SortBy?: S["NewsSortBy"];
-    /** Look-back window in hours, from 1 to 8760 (one year). Default 168. */
-    Hours?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPonseOfSafeDictOfStringAndListOfDtoApiNewsLite"]> {
-    return this.http.call("GET", "api/news/group/topics", { query }, options);
-  }
-
-  /**
-   * View news article by NewsId. Returns one article's full detail, looked up by its NewsId. The checksum remains
-   * the main public identifier of an article. GET /api/news/id/{newsId}. Charged 0.5 credits per call.
-   */
-  async byId(newsId: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiNewsDetail"]> {
-    return this.http.call("GET", `api/news/id/${pathSegment(newsId)}`, {  }, options);
-  }
-
-  /**
-   * Trending news articles. Returns articles ranked by their confidence-adjusted importance score within the window.
-   * To rank tickers and topics by how often they are mentioned, use the trending endpoints instead.
-   * GET /api/news/trending. Charged 1 credit per call.
-   */
-  async trending(query: {
-    /** Look-back window in hours, from 1 to 8760. Default 24. */
-    Hours?: number;
-    /** Number of articles to return, from 1 to 100. Default 20. */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNews"]> {
-    return this.http.call("GET", "api/news/trending", { query }, options);
-  }
-
-  /**
-   * View news article. Returns one article's full detail, looked up by its checksum. GET /api/news/{checksum}.
-   * Charged 0.5 credits per call.
-   */
-  async view(checksum: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiNewsDetail"]> {
-    return this.http.call("GET", `api/news/${pathSegment(checksum)}`, {  }, options);
-  }
-
-  /**
-   * Rate news article. Requests an AI rating for one article, reusing the cached rating when one exists, and returns
-   * the article detail including it. POST /api/news/{checksum}/rating. Charged 0.5 credits per call.
-   */
-  async ratingMake(checksum: string, body: S["CmdApiRatingMake"], options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiNewsDetail"]> {
-    return this.http.call("POST", `api/news/${pathSegment(checksum)}/rating`, { body }, options);
-  }
-
-  /**
-   * Similar news articles. Returns articles that share tickers or topics with the given article, published within a
-   * 7-day window. GET /api/news/{checksum}/similar. Charged 0.5 credits per call.
-   */
-  async similar(checksum: string, query: {
-    /** Maximum number of similar articles to return, from 1 to 50. Default 10. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNewsLite"]> {
-    return this.http.call("GET", `api/news/${pathSegment(checksum)}/similar`, { query }, options);
+  async view(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfNewsDetail"]> {
+    return this.http.call("GET", `api/news/${pathSegment(id)}`, {  }, options);
   }
 }
 
@@ -264,43 +202,61 @@ export class NewsSentimentResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Sentiment aggregate. Returns sentiment aggregated by news category and day. GET /api/sentiment/aggregate.
-   * Charged 1 credit per call.
+   * Sentiment history. Returns, for each ticker and day, how many articles named it and how many read bullish,
+   * bearish, neutral or unscored, with a mood from 0 to 100 (the bullish share of the scored articles).
+   * GET /api/sentiment/history. Charged 1 credit per call.
    */
-  async aggregate(query: {
-    /** Look-back window in days, from 1 to 90. Default 7. */
-    Days?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSentimentAgg"]> {
-    return this.http.call("GET", "api/sentiment/aggregate", { query }, options);
-  }
-
-  /**
-   * Trending sentiment tickers. Returns the tickers with the largest article volume in the recent window, ranked by
-   * sentiment. GET /api/sentiment/trending. Charged 1 credit per call.
-   */
-  async trending(query: {
-    /** Look-back window in hours, from 1 to 168 (one week). Default 24. */
-    Hours?: number;
+  async history(query: {
     /**
-     * Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers
-     * and sentiment, 200 for topics) are reduced to it.
+     * Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no
+     * articles in the window come back in NotFound.
      */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSentimentTrend"]> {
-    return this.http.call("GET", "api/sentiment/trending", { query }, options);
+    syms?: string;
+    /** How many days back, 1 to 90. Default 30. */
+    days?: number;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfSentimentDay"]> {
+    return this.http.call("GET", "api/sentiment/history", { query }, options);
   }
 
   /**
-   * Ticker sentiment series. Returns the sentiment and signal time series for one ticker symbol.
-   * GET /api/sentiment/{symbol}. Charged 1 credit per call.
+   * Reads every page of history, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
    */
-  async bySymbol(symbol: string, query: {
-    /** Look-back window in days, from 1 to 365. Default 30. */
-    Days?: number;
-    /** Maximum number of points to return, from 1 to 1000. Default 200. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSentimentPoint"]> {
-    return this.http.call("GET", `api/sentiment/${pathSegment(symbol)}`, { query }, options);
+  historyPages(query: {
+    /**
+     * Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no
+     * articles in the window come back in NotFound.
+     */
+    syms?: string;
+    /** How many days back, 1 to 90. Default 30. */
+    days?: number;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NwsPageOfSentimentDay"], void, undefined> {
+    return pagesByPage((q) => this.history(q, options), query);
+  }
+
+  /** Reads every row of every page of history, one at a time. */
+  historyItems(query: {
+    /**
+     * Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no
+     * articles in the window come back in NotFound.
+     */
+    syms?: string;
+    /** How many days back, 1 to 90. Default 30. */
+    days?: number;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["SentimentDay"], void, undefined> {
+    return itemsOf(this.historyPages(query, options));
   }
 }
 
@@ -309,40 +265,11 @@ export class NewsSourcesResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List news sources. Returns the catalogue of news sources, paged, with optional category, activity and vendor
-   * filters. GET /api/sources. Charged 0.5 credits per call.
+   * List sources. Returns the publishers FinNews collects news from, with their key, name, kind and whether they are
+   * active. GET /api/sources. Charged 0.5 credits per call.
    */
-  async list(query: S["QueApiSourceList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSource"]> {
-    return this.http.call("GET", "api/sources", { qry: query }, options);
-  }
-
-  /**
-   * Reads every page of list, advancing pageNo from the one in the query (1 when unset). It stops after the last
-   * page the paging block names, or at the first empty page, which it does not yield.
-   */
-  listPages(query: S["QueApiSourceList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSource"], void, undefined> {
-    return pagesByPageNo((q) => this.list(q, options), query);
-  }
-
-  /** Reads every row of every page of list, one at a time. */
-  listItems(query: S["QueApiSourceList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSource"], void, undefined> {
-    return itemsOf(this.listPages(query, options));
-  }
-
-  /**
-   * News source categories. Lists the categories a news source can have. GET /api/sources/categories. Charged 0.5
-   * credits per call.
-   */
-  async categories(options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNwsEnumOption"]> {
-    return this.http.call("GET", "api/sources/categories", {  }, options);
-  }
-
-  /**
-   * View news source. Returns the detail card of one news source, including its latest run status.
-   * GET /api/sources/{keycode}. Charged 0.5 credits per call.
-   */
-  async view(keycode: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSourceDetail"]> {
-    return this.http.call("GET", `api/sources/${pathSegment(keycode)}`, {  }, options);
+  async list(options: FinRequestOptions = {}): Promise<S["ResListOfSourceRef"]> {
+    return this.http.call("GET", "api/sources", {  }, options);
   }
 }
 
@@ -351,35 +278,17 @@ export class NewsTrendingResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Trending tickers. Returns tickers ranked by how often they are mentioned within the window. Hours sets the
-   * window; mentions are not weighted by recency inside it. GET /api/trending/tickers. Charged 1 credit per call.
+   * Trending tickers. Returns the tickers named in the most articles in the window, with the change in mentions
+   * against the previous window and how many mentions read bullish or bearish. GET /api/trending. Charged 1 credit
+   * per call.
    */
-  async tickers(query: {
-    /** Look-back window in hours, from 1 to 168 (one week). Default 24. */
-    Hours?: number;
-    /**
-     * Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers
-     * and sentiment, 200 for topics) are reduced to it.
-     */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiTrendItem"]> {
-    return this.http.call("GET", "api/trending/tickers", { query }, options);
-  }
-
-  /**
-   * Trending topics. Returns topics ranked by how often they are mentioned within the window. Hours sets the window;
-   * mentions are not weighted by recency inside it. GET /api/trending/topics. Charged 1 credit per call.
-   */
-  async topics(query: {
-    /** Look-back window in hours, from 1 to 168 (one week). Default 24. */
-    Hours?: number;
-    /**
-     * Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers
-     * and sentiment, 200 for topics) are reduced to it.
-     */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiTrendItem"]> {
-    return this.http.call("GET", "api/trending/topics", { query }, options);
+  async list(query: {
+    /** Window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /** How many tickers to return, 1 to 50. Default 10. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfTrendingTicker"]> {
+    return this.http.call("GET", "api/trending", { query }, options);
   }
 }
 
@@ -388,87 +297,156 @@ export class NewsVideosResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List videos. Returns a paged video feed with optional score, transcript, symbol and category filters.
-   * GET /api/videos. Charged 0.5 credits per call.
+   * List videos. Lists finance videos with FinNews's score, a summary when one exists and what each video says about
+   * the tickers it discusses. Filter by ticker, channel, time and score; sort by time or score; 50 rows a page.
+   * Transcripts are not served. GET /api/videos. Charged 0.5 credits per call.
    */
-  async list(query: S["QueApiVideoList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiVideo"]> {
-    return this.http.call("GET", "api/videos", { qry: query }, options);
+  async list(query: {
+    /** Only videos that discuss one of these tickers, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** Only videos from this channel, by channel name or key. */
+    channel?: string;
+    /** Only videos published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only videos that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by: published (default) or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfVideoItem"]> {
+    return this.http.call("GET", "api/videos", { query }, options);
   }
 
   /**
-   * Reads every page of list, advancing pageNo from the one in the query (1 when unset). It stops after the last
-   * page the paging block names, or at the first empty page, which it does not yield.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  listPages(query: S["QueApiVideoList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiVideo"], void, undefined> {
-    return pagesByPageNo((q) => this.list(q, options), query);
+  listPages(query: {
+    /** Only videos that discuss one of these tickers, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** Only videos from this channel, by channel name or key. */
+    channel?: string;
+    /** Only videos published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only videos that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by: published (default) or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NwsPageOfVideoItem"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
   /** Reads every row of every page of list, one at a time. */
-  listItems(query: S["QueApiVideoList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiVideo"], void, undefined> {
+  listItems(query: {
+    /** Only videos that discuss one of these tickers, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** Only videos from this channel, by channel name or key. */
+    channel?: string;
+    /** Only videos published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only videos that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by: published (default) or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["VideoItem"], void, undefined> {
     return itemsOf(this.listPages(query, options));
   }
 
   /**
-   * View video. Returns one video's detail, looked up by its YouTube video id. The transcript is served by a
-   * separate endpoint. GET /api/videos/{videoId}. Charged 0.5 credits per call.
+   * View video. Returns one video with its score, summary and what it says about each ticker it discusses. No
+   * transcript. GET /api/videos/{id}. Charged 0.5 credits per call.
    */
-  async view(videoId: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiVideoDetail"]> {
-    return this.http.call("GET", `api/videos/${pathSegment(videoId)}`, {  }, options);
-  }
-
-  /**
-   * Rate video. Requests an AI rating for one video, reusing the cached rating when one exists, and returns the
-   * video detail including it. POST /api/videos/{videoId}/rating. Charged 0.5 credits per call.
-   */
-  async ratingMake(videoId: string, body: S["CmdApiRatingMake"], options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiVideoDetail"]> {
-    return this.http.call("POST", `api/videos/${pathSegment(videoId)}/rating`, { body }, options);
-  }
-
-  /**
-   * View video transcript. Returns the transcript of one video. It is loaded only when requested.
-   * GET /api/videos/{videoId}/transcript. Charged 0.5 credits per call.
-   */
-  async transcript(videoId: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiVideoTranscript"]> {
-    return this.http.call("GET", `api/videos/${pathSegment(videoId)}/transcript`, {  }, options);
+  async view(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfVideoItem"]> {
+    return this.http.call("GET", `api/videos/${pathSegment(id)}`, {  }, options);
   }
 }
 
-/** FinNews Entities: the plan-included /v1 operations. */
-export class NewsV1EntitiesResource {
+/** FinNews Categories: the plan-included /v1 operations. */
+export class NewsV1CategoriesResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Top industries. Returns the most frequently mentioned topics, used as an industry list, ranked by frequency.
-   * GET /v1/entities/industries. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * List categories. Returns the news category tree as rows with a Parent slug, and how many articles each category
+   * got in the last 7 days. Needs a Basic plan or above. GET /v1/categories. Included in paid plans, for package
+   * tiers 1, 2, 3, 4.
    */
-  async industries(query: {
-    /** Number of topics to return, ranked by frequency, from 1 to 500. Default 50. */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiIndustryHit"]> {
-    return this.http.call("GET", "v1/entities/industries", { query }, options);
+  async list(options: FinRequestOptions = {}): Promise<S["ResListOfCategoryRef"]> {
+    return this.http.call("GET", "v1/categories", {  }, options);
+  }
+}
+
+/** FinNews Mood: the plan-included /v1 operations. */
+export class NewsV1MoodResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * Market mood by category. Returns, for each news category and day, how many articles were filed under it and how
+   * many read bullish, bearish, neutral or unscored, with a mood from 0 to 100. An article counts in every category
+   * it is filed under. Needs a Basic plan or above. GET /v1/mood. Included in paid plans, for package tiers 1, 2, 3,
+   * 4.
+   */
+  async list(query: {
+    /** How many days back, 1 to 90. Default 7. */
+    days?: number;
+    /** Category slugs, comma-separated, from the categories endpoint. Leave empty for every category. */
+    cats?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfMoodDay"]> {
+    return this.http.call("GET", "v1/mood", { query }, options);
   }
 
   /**
-   * Search news entities. Finds tickers and topics whose name starts with the given text, ranked by how often they
-   * appear in recent news. GET /v1/entities/search. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  async search(query: {
-    /** Text that the entity name must start with. Required; an empty value is rejected. */
-    Q?: string;
-    /** Maximum number of distinct entities to return, from 1 to 100. Default 25. */
-    Limit?: number;
-    /** Look-back window in days, from 1 to 3650. Default 365. */
-    Days?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiEntityHit"]> {
-    return this.http.call("GET", "v1/entities/search", { query }, options);
+  listPages(query: {
+    /** How many days back, 1 to 90. Default 7. */
+    days?: number;
+    /** Category slugs, comma-separated, from the categories endpoint. Leave empty for every category. */
+    cats?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NwsPageOfMoodDay"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
-  /**
-   * News entity types. Lists the entity types used by the news data, such as tickers and topics.
-   * GET /v1/entities/types. Included in paid plans.
-   */
-  async types(options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNwsEnumOption"]> {
-    return this.http.call("GET", "v1/entities/types", {  }, options);
+  /** Reads every row of every page of list, one at a time. */
+  listItems(query: {
+    /** How many days back, 1 to 90. Default 7. */
+    days?: number;
+    /** Category slugs, comma-separated, from the categories endpoint. Leave empty for every category. */
+    cats?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["MoodDay"], void, undefined> {
+    return itemsOf(this.listPages(query, options));
   }
 }
 
@@ -477,43 +455,121 @@ export class NewsV1NewsResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * All news. Returns a paged, filterable feed of news articles with their sentiment and signal grades.
-   * GET /v1/news/all. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * List news. Lists news articles, newest first, with tickers, categories, sentiment, importance and a summary when
+   * one exists. Filter by ticker, category, publisher, time, text, importance and sentiment; sort by time, rank or
+   * score; 50 rows a page. Needs a Basic plan or above. GET /v1/news. Included in paid plans, for package tiers 1,
+   * 2, 3, 4.
    */
-  async all(query: S["QueApiNewsList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNews"]> {
-    return this.http.call("GET", "v1/news/all", { qry: query }, options);
+  async list(query: {
+    /**
+     * Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article
+     * carries come back in NotFound.
+     */
+    syms?: string;
+    /** Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto. */
+    cats?: string;
+    /** Publisher keys, comma-separated, from the sources endpoint. */
+    src?: string;
+    /** Only articles published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only articles published at or before this time (ISO 8601, UTC). */
+    until?: string | Date;
+    /** Words to find in the headline or text. */
+    q?: string;
+    /** Only articles that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /** Only articles with this reading: Bullish, Bearish, Neutral or Unscored. */
+    sentiment?: string;
+    /**
+     * Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfNewsItem"]> {
+    return this.http.call("GET", "v1/news", { query }, options);
   }
 
   /**
-   * Reads every page of all, advancing pageNo from the one in the query (1 when unset). It stops after the last page
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
    * the paging block names, or at the first empty page, which it does not yield.
    */
-  allPages(query: S["QueApiNewsList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiNews"], void, undefined> {
-    return pagesByPageNo((q) => this.all(q, options), query);
+  listPages(query: {
+    /**
+     * Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article
+     * carries come back in NotFound.
+     */
+    syms?: string;
+    /** Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto. */
+    cats?: string;
+    /** Publisher keys, comma-separated, from the sources endpoint. */
+    src?: string;
+    /** Only articles published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only articles published at or before this time (ISO 8601, UTC). */
+    until?: string | Date;
+    /** Words to find in the headline or text. */
+    q?: string;
+    /** Only articles that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /** Only articles with this reading: Bullish, Bearish, Neutral or Unscored. */
+    sentiment?: string;
+    /**
+     * Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NwsPageOfNewsItem"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
   }
 
-  /** Reads every row of every page of all, one at a time. */
-  allItems(query: S["QueApiNewsList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiNews"], void, undefined> {
-    return itemsOf(this.allPages(query, options));
+  /** Reads every row of every page of list, one at a time. */
+  listItems(query: {
+    /**
+     * Ticker symbols, comma-separated, up to 50, any case, for example NVDA,TSLA. Symbols no article
+     * carries come back in NotFound.
+     */
+    syms?: string;
+    /** Category slugs, comma-separated, from the categories endpoint, for example earnings,crypto. */
+    cats?: string;
+    /** Publisher keys, comma-separated, from the sources endpoint. */
+    src?: string;
+    /** Only articles published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only articles published at or before this time (ISO 8601, UTC). */
+    until?: string | Date;
+    /** Words to find in the headline or text. */
+    q?: string;
+    /** Only articles that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /** Only articles with this reading: Bullish, Bearish, Neutral or Unscored. */
+    sentiment?: string;
+    /**
+     * Field to sort by: published (default), rank or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NewsItem"], void, undefined> {
+    return itemsOf(this.listPages(query, options));
   }
 
   /**
-   * News by checksum. Returns one article's full detail, looked up by its checksum.
-   * GET /v1/news/checksum/{checksum}. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * View news article. Returns one article with its full text, author, a reading per ticker and up to five related
+   * articles. Needs a Basic plan or above. GET /v1/news/{id}. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async byChecksum(checksum: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiNewsDetail"]> {
-    return this.http.call("GET", `v1/news/checksum/${pathSegment(checksum)}`, {  }, options);
-  }
-
-  /**
-   * Similar news articles. Returns articles that share tickers or topics with the given article, published within a
-   * 7-day window. GET /v1/news/similar/{checksum}. Included in paid plans, for package tiers 1, 2, 3, 4.
-   */
-  async similar(checksum: string, query: {
-    /** Maximum number of similar articles to return, from 1 to 50. Default 10. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNewsLite"]> {
-    return this.http.call("GET", `v1/news/similar/${pathSegment(checksum)}`, { query }, options);
+  async view(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfNewsDetail"]> {
+    return this.http.call("GET", `v1/news/${pathSegment(id)}`, {  }, options);
   }
 }
 
@@ -522,43 +578,61 @@ export class NewsV1SentimentResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Sentiment aggregate. Returns sentiment aggregated by news category and day. GET /v1/sentiment/aggregate.
-   * Included in paid plans, for package tiers 1, 2, 3, 4.
+   * Sentiment history. Returns, for each ticker and day, how many articles named it and how many read bullish,
+   * bearish, neutral or unscored, with a mood from 0 to 100 (the bullish share of the scored articles). Needs a
+   * Basic plan or above. GET /v1/sentiment/history. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async aggregate(query: {
-    /** Look-back window in days, from 1 to 90. Default 7. */
-    Days?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSentimentAgg"]> {
-    return this.http.call("GET", "v1/sentiment/aggregate", { query }, options);
-  }
-
-  /**
-   * Ticker sentiment series. Returns the sentiment and signal time series for one ticker symbol.
-   * GET /v1/sentiment/ticker/{symbol}. Included in paid plans, for package tiers 1, 2, 3, 4.
-   */
-  async ticker(symbol: string, query: {
-    /** Look-back window in days, from 1 to 365. Default 30. */
-    Days?: number;
-    /** Maximum number of points to return, from 1 to 1000. Default 200. */
-    Limit?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSentimentPoint"]> {
-    return this.http.call("GET", `v1/sentiment/ticker/${pathSegment(symbol)}`, { query }, options);
-  }
-
-  /**
-   * Trending sentiment tickers. Returns the tickers with the largest article volume in the recent window, ranked by
-   * sentiment. GET /v1/sentiment/trending. Included in paid plans.
-   */
-  async trending(query: {
-    /** Look-back window in hours, from 1 to 168 (one week). Default 24. */
-    Hours?: number;
+  async history(query: {
     /**
-     * Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers
-     * and sentiment, 200 for topics) are reduced to it.
+     * Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no
+     * articles in the window come back in NotFound.
      */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSentimentTrend"]> {
-    return this.http.call("GET", "v1/sentiment/trending", { query }, options);
+    syms?: string;
+    /** How many days back, 1 to 90. Default 30. */
+    days?: number;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfSentimentDay"]> {
+    return this.http.call("GET", "v1/sentiment/history", { query }, options);
+  }
+
+  /**
+   * Reads every page of history, advancing page from the one in the query (1 when unset). It stops after the last
+   * page the paging block names, or at the first empty page, which it does not yield.
+   */
+  historyPages(query: {
+    /**
+     * Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no
+     * articles in the window come back in NotFound.
+     */
+    syms?: string;
+    /** How many days back, 1 to 90. Default 30. */
+    days?: number;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NwsPageOfSentimentDay"], void, undefined> {
+    return pagesByPage((q) => this.history(q, options), query);
+  }
+
+  /** Reads every row of every page of history, one at a time. */
+  historyItems(query: {
+    /**
+     * Ticker symbols, comma-separated, 1 to 50, any case, for example NVDA,TSLA. Required. Symbols with no
+     * articles in the window come back in NotFound.
+     */
+    syms?: string;
+    /** How many days back, 1 to 90. Default 30. */
+    days?: number;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["SentimentDay"], void, undefined> {
+    return itemsOf(this.historyPages(query, options));
   }
 }
 
@@ -567,41 +641,11 @@ export class NewsV1SourcesResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * List news sources. Returns the catalogue of news sources, paged, with optional category, activity and vendor
-   * filters. GET /v1/sources. Included in paid plans, for package tiers 1, 2, 3, 4.
+   * List sources. Returns the publishers FinNews collects news from, with their key, name, kind and whether they are
+   * active. Needs a Basic plan or above. GET /v1/sources. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async list(query: S["QueApiSourceList"] = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiSource"]> {
-    return this.http.call("GET", "v1/sources", { qry: query }, options);
-  }
-
-  /**
-   * Reads every page of list, advancing pageNo from the one in the query (1 when unset). It stops after the last
-   * page the paging block names, or at the first empty page, which it does not yield.
-   */
-  listPages(query: S["QueApiSourceList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["ResPagedOfDtoApiSource"], void, undefined> {
-    return pagesByPageNo((q) => this.list(q, options), query);
-  }
-
-  /** Reads every row of every page of list, one at a time. */
-  listItems(query: S["QueApiSourceList"] = {}, options: FinRequestOptions = {}): AsyncGenerator<S["DtoApiSource"], void, undefined> {
-    return itemsOf(this.listPages(query, options));
-  }
-
-  /**
-   * News source categories. Lists the categories a news source can have. GET /v1/sources/categories. Included in
-   * paid plans.
-   */
-  async categories(options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiNwsEnumOption"]> {
-    return this.http.call("GET", "v1/sources/categories", {  }, options);
-  }
-
-  /**
-   * View news source. Returns the detail card of one news source. The run-status fields are filled only on higher
-   * package tiers and are null otherwise. GET /v1/sources/{keycode}. Included in paid plans, for package tiers 1, 2,
-   * 3, 4.
-   */
-  async get(keycode: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfDtoApiSourceDetail"]> {
-    return this.http.call("GET", `v1/sources/${pathSegment(keycode)}`, {  }, options);
+  async list(options: FinRequestOptions = {}): Promise<S["ResListOfSourceRef"]> {
+    return this.http.call("GET", "v1/sources", {  }, options);
   }
 }
 
@@ -610,60 +654,136 @@ export class NewsV1TrendingResource {
   constructor(private readonly http: FinHttpTransport) {}
 
   /**
-   * Trending tickers. Returns tickers ranked by how often they are mentioned within the window. Hours sets the
-   * window; mentions are not weighted by recency inside it. GET /v1/tickers/trending. Included in paid plans.
+   * Trending tickers. Returns the tickers named in the most articles in the window, with the change in mentions
+   * against the previous window and how many mentions read bullish or bearish. Needs a Basic plan or above.
+   * GET /v1/trending. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
-  async tickersTrending(query: {
-    /** Look-back window in hours, from 1 to 168 (one week). Default 24. */
-    Hours?: number;
+  async list(query: {
+    /** Window: 1h, 24h or 7d. Default 24h. */
+    window?: string;
+    /** How many tickers to return, 1 to 50. Default 10. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfTrendingTicker"]> {
+    return this.http.call("GET", "v1/trending", { query }, options);
+  }
+}
+
+/** FinNews Videos: the plan-included /v1 operations. */
+export class NewsV1VideosResource {
+  constructor(private readonly http: FinHttpTransport) {}
+
+  /**
+   * List videos. Lists finance videos with FinNews's score, a summary when one exists and what each video says about
+   * the tickers it discusses. Filter by ticker, channel, time and score; sort by time or score; 50 rows a page.
+   * Transcripts are not served. Needs a Basic plan or above. GET /v1/videos. Included in paid plans, for package
+   * tiers 1, 2, 3, 4.
+   */
+  async list(query: {
+    /** Only videos that discuss one of these tickers, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** Only videos from this channel, by channel name or key. */
+    channel?: string;
+    /** Only videos published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only videos that matter at least this much, 0 to 10. */
+    minScore?: number;
     /**
-     * Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers
-     * and sentiment, 200 for topics) are reduced to it.
+     * Field to sort by: published (default) or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
      */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiTrendItem"]> {
-    return this.http.call("GET", "v1/tickers/trending", { query }, options);
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): Promise<S["NwsPageOfVideoItem"]> {
+    return this.http.call("GET", "v1/videos", { query }, options);
   }
 
   /**
-   * Trending topics. Returns topics ranked by how often they are mentioned within the window. Hours sets the window;
-   * mentions are not weighted by recency inside it. GET /v1/topics. Included in paid plans, for package tiers 1, 2,
-   * 3, 4.
+   * Reads every page of list, advancing page from the one in the query (1 when unset). It stops after the last page
+   * the paging block names, or at the first empty page, which it does not yield.
    */
-  async topics(query: {
-    /** Look-back window in hours, from 1 to 168 (one week). Default 24. */
-    Hours?: number;
+  listPages(query: {
+    /** Only videos that discuss one of these tickers, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** Only videos from this channel, by channel name or key. */
+    channel?: string;
+    /** Only videos published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only videos that matter at least this much, 0 to 10. */
+    minScore?: number;
     /**
-     * Number of ranked rows to return. Default 20. Values above the endpoint's maximum (100 for tickers
-     * and sentiment, 200 for topics) are reduced to it.
+     * Field to sort by: published (default) or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
      */
-    Top?: number;
-  } = {}, options: FinRequestOptions = {}): Promise<S["ResPagedOfDtoApiTrendItem"]> {
-    return this.http.call("GET", "v1/topics", { query }, options);
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["NwsPageOfVideoItem"], void, undefined> {
+    return pagesByPage((q) => this.list(q, options), query);
+  }
+
+  /** Reads every row of every page of list, one at a time. */
+  listItems(query: {
+    /** Only videos that discuss one of these tickers, comma-separated, up to 50, any case. */
+    syms?: string;
+    /** Only videos from this channel, by channel name or key. */
+    channel?: string;
+    /** Only videos published at or after this time (ISO 8601, UTC). */
+    since?: string | Date;
+    /** Only videos that matter at least this much, 0 to 10. */
+    minScore?: number;
+    /**
+     * Field to sort by: published (default) or score. A minus sign in front sorts high to low, and
+     * published is high to low unless you say otherwise.
+     */
+    sort?: string;
+    /** Page to return, from 1. Default 1. */
+    page?: number;
+    /** Rows per page, 1 to 50. Default 50. */
+    size?: number;
+  } = {}, options: FinRequestOptions = {}): AsyncGenerator<S["VideoItem"], void, undefined> {
+    return itemsOf(this.listPages(query, options));
+  }
+
+  /**
+   * View video. Returns one video with its score, summary and what it says about each ticker it discusses. No
+   * transcript. Needs a Basic plan or above. GET /v1/videos/{id}. Included in paid plans, for package tiers 1, 2, 3,
+   * 4.
+   */
+  async view(id: string, options: FinRequestOptions = {}): Promise<S["ResPonseOfVideoItem"]> {
+    return this.http.call("GET", `v1/videos/${pathSegment(id)}`, {  }, options);
   }
 }
 
 /** FinNews's /v1 operations, included in paid plans and gated by package tier. */
 export class FinNewsV1 {
-  readonly entities: NewsV1EntitiesResource;
+  readonly categories: NewsV1CategoriesResource;
+  readonly mood: NewsV1MoodResource;
   readonly news: NewsV1NewsResource;
   readonly sentiment: NewsV1SentimentResource;
   readonly sources: NewsV1SourcesResource;
   readonly trending: NewsV1TrendingResource;
+  readonly videos: NewsV1VideosResource;
 
   constructor(http: FinHttpTransport) {
-    this.entities = new NewsV1EntitiesResource(http);
+    this.categories = new NewsV1CategoriesResource(http);
+    this.mood = new NewsV1MoodResource(http);
     this.news = new NewsV1NewsResource(http);
     this.sentiment = new NewsV1SentimentResource(http);
     this.sources = new NewsV1SourcesResource(http);
     this.trending = new NewsV1TrendingResource(http);
+    this.videos = new NewsV1VideosResource(http);
   }
 }
 
 /** FinNews. The groups on this object are the /api operations, charged in credits per call; the /v1 operations, included in paid plans, are under `v1`. */
 export class FinNews {
   readonly categories: NewsCategoriesResource;
-  readonly entities: NewsEntitiesResource;
+  readonly mood: NewsMoodResource;
   readonly news: NewsNewsResource;
   readonly sentiment: NewsSentimentResource;
   readonly sources: NewsSourcesResource;
@@ -674,7 +794,7 @@ export class FinNews {
 
   constructor(http: FinHttpTransport) {
     this.categories = new NewsCategoriesResource(http);
-    this.entities = new NewsEntitiesResource(http);
+    this.mood = new NewsMoodResource(http);
     this.news = new NewsNewsResource(http);
     this.sentiment = new NewsSentimentResource(http);
     this.sources = new NewsSourcesResource(http);

@@ -46,12 +46,10 @@ export interface FinServiceConfig {
   keyHint?: string;
 }
 
-/** The query string, JSON `qry` object and JSON body of one request to FinGraph, FinNews or FinSocial. */
+/** The query string and JSON body of one request to FinGraph, FinNews or FinSocial. */
 export interface FinCallInput {
   /** Named query fields. Missing and null values are left out; dates are sent as ISO 8601. */
   query?: Readonly<Record<string, unknown>>;
-  /** A query object sent as one JSON-encoded `qry` parameter. */
-  qry?: object;
   /** A JSON body. */
   body?: unknown;
 }
@@ -147,7 +145,6 @@ export class FinHttpTransport {
       if (value === undefined || value === null) continue;
       params.append(key, value instanceof Date ? value.toISOString() : String(value));
     }
-    if (input.qry !== undefined) params.append("qry", JSON.stringify(input.qry, (_key, value) => (value === null ? undefined : value)));
     const suffix = params.toString();
     const reply = await this.exchange(method, suffix ? `${path}?${suffix}` : path, input.body, requestOptions);
     const { status, raw, serverWait } = reply;

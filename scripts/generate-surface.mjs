@@ -57,8 +57,6 @@ function readOperations(svc) {
         if (p.$ref) throw new Error(`${svc.spec}: parameter references are not supported (${path}).`);
         return p;
       });
-      const qryParam = params.find((p) => p.in === "query" && p.name === "qry" && p.content?.["application/json"]);
-      const qryRef = qryParam ? refName(qryParam.content["application/json"].schema) : null;
       const bodySchema = op.requestBody?.content?.["application/json"]?.schema;
       const ok = op.responses?.["200"]?.content?.["application/json"]?.schema;
       ops.push({
@@ -66,11 +64,10 @@ function readOperations(svc) {
         name: lowerFirst(action),
         summary: op.summary ?? "", description: op.description ?? "",
         pathParams: params.filter((p) => p.in === "path").map(paramOf),
-        queryParams: params.filter((p) => p.in === "query" && p !== qryParam).map(paramOf),
-        qry: qryRef ? { ref: qryRef, schema: schemas[qryRef] } : null,
+        queryParams: params.filter((p) => p.in === "query").map(paramOf),
         body: bodySchema ? { ref: refName(bodySchema), required: op.requestBody.required === true } : null,
-        // The one /v1 route family whose document names its error body as the 200 reply: its reply is left untyped.
-        response: ok && refName(ok) !== "PubV1ErrorBody" ? { ref: refName(ok), schema: schemas[refName(ok)] } : null,
+        // A reply the document does not name (the candle routes return free-form JSON) is left untyped.
+        response: refName(ok) ? { ref: refName(ok), schema: schemas[refName(ok)] } : null,
         cost: op["x-fin-cost"] ?? null,
         tiers: (op["x-fin-tiers"]?.length ? op["x-fin-tiers"] : op["x-fin-configured-tiers"]) ?? [],
       });
@@ -108,16 +105,12 @@ function paramOf(p) {
   return { name: p.name, required: p.required === true, description: p.description ?? "", kind, ref };
 }
 
-/** How an operation pages, when it does: by page number (a qry with pageNo and a reply with a paging block) or by offset. */
+/** How an operation pages, when it does: a `page` query value and a reply with a `data` array and a paging block. */
 function pagingOf(op) {
   const props = op.response?.schema?.properties;
   const items = refName(props?.data?.items);
   if (!props?.data || props.data.type !== "array" || !items) return null;
-  if (op.qry?.schema?.properties?.pageNo && props.paging) return { kind: "page", items };
-  const names = new Set(op.queryParams.map((p) => p.name));
-  if (names.has("limit") && names.has("offset")) {
-    return { kind: "offset", items, last: props.count && props.limit ? "countBelowLimit" : null };
-  }
+  if (op.queryParams.some((p) => p.name === "page") && props.paging) return { items };
   return null;
 }
 
@@ -185,16 +178,14 @@ function tsMethod(svc, op) {
   const args = [...pathArgs];
   if (op.body) args.push(`body: S["${op.body.ref}"]`);
   let queryArg = null;
-  if (op.qry) queryArg = `query: S["${op.qry.ref}"] = {}`;
-  else if (op.queryParams.length) queryArg = `query: ${tsQueryType(op, "  ")}${queryRequired ? "" : " = {}"}`;
+  if (op.queryParams.length) queryArg = `query: ${tsQueryType(op, "  ")}${queryRequired ? "" : " = {}"}`;
   if (queryArg) args.push(queryArg);
   args.push("options: FinRequestOptions = {}");
 
   const template = "`" + op.path.slice(1).replace(/\{(\w+)\}/g, (_m, n) => "${pathSegment(" + n + ")}") + "`";
   const url = op.pathParams.length ? template : `"${op.path.slice(1)}"`;
   const input = [];
-  if (op.qry) input.push("qry: query");
-  else if (op.queryParams.length) input.push("query");
+  if (op.queryParams.length) input.push("query");
   if (op.body) input.push("body");
   lines.push(tsDoc(docLines(op), "  "));
   // async: an argument that cannot be sent (an empty path argument) rejects the promise like every other failure.
@@ -206,20 +197,12 @@ function tsMethod(svc, op) {
     const passArgs = [...op.pathParams.map((p) => p.name)].concat(op.body ? ["body"] : []);
     const pageType = `S["${op.response.ref}"]`;
     const itemType = `S["${op.paging.items}"]`;
-    const queryType = op.qry ? `S["${op.qry.ref}"]` : tsQueryType(op, "  ");
-    const sig = [...pathArgs, `query: ${queryType} = {}`, "options: FinRequestOptions = {}"].join(", ");
+    const sig = [...pathArgs, `query: ${tsQueryType(op, "  ")} = {}`, "options: FinRequestOptions = {}"].join(", ");
     const call = `(q) => this.${op.name}(${[...passArgs, "q", "options"].join(", ")})`;
     lines.push("");
-    if (op.paging.kind === "page") {
-      lines.push(tsDoc(wrap(`Reads every page of ${op.name}, advancing pageNo from the one in the query (1 when unset). It stops after the last page the paging block names, or at the first empty page, which it does not yield.`, 112), "  "));
-      lines.push(`  ${op.name}Pages(${sig}): AsyncGenerator<${pageType}, void, undefined> {`);
-      lines.push(`    return pagesByPageNo(${call}, query);`);
-    } else {
-      lines.push(tsDoc(wrap(`Reads every page of ${op.name}, moving offset on by the rows each page returned, from the offset in the query (0 when unset). It stops at the first empty page, which it does not yield${op.paging.last ? ", or at a page shorter than its own limit" : ""}.`, 112), "  "));
-      lines.push(`  ${op.name}Pages(${sig}): AsyncGenerator<${pageType}, void, undefined> {`);
-      const last = op.paging.last ? ", (page) => page.count !== undefined && page.limit !== undefined && page.count < page.limit" : "";
-      lines.push(`    return pagesByOffset(${call}, query${last});`);
-    }
+    lines.push(tsDoc(wrap(`Reads every page of ${op.name}, advancing page from the one in the query (1 when unset). It stops after the last page the paging block names, or at the first empty page, which it does not yield.`, 112), "  "));
+    lines.push(`  ${op.name}Pages(${sig}): AsyncGenerator<${pageType}, void, undefined> {`);
+    lines.push(`    return pagesByPage(${call}, query);`);
     lines.push("  }");
     lines.push("");
     lines.push(tsDoc([`Reads every row of every page of ${op.name}, one at a time.`], "  "));
@@ -231,14 +214,8 @@ function tsMethod(svc, op) {
 }
 
 function emitTypeScript(svc, ops) {
-  const used = { page: false, offset: false, items: false, segment: false };
-  for (const op of ops) {
-    if (op.paging?.kind === "page") used.page = true;
-    if (op.paging?.kind === "offset") used.offset = true;
-    if (op.paging) used.items = true;
-    if (op.pathParams.length) used.segment = true;
-  }
-  const support = [used.items && "itemsOf", used.offset && "pagesByOffset", used.page && "pagesByPageNo", used.segment && "pathSegment"].filter(Boolean);
+  const used = { paging: ops.some((op) => op.paging), segment: ops.some((op) => op.pathParams.length) };
+  const support = [used.paging && "itemsOf", used.paging && "pagesByPage", used.segment && "pathSegment"].filter(Boolean);
   const out = [];
   out.push(`// <auto-generated>`);
   out.push(`// Generated by scripts/generate-surface.mjs from spec/${svc.spec}. Do not edit by hand: change the generator or the spec.`);
@@ -318,10 +295,6 @@ function csSignature(op) {
   const docs = [];
   for (const p of op.pathParams) { required.push(`string ${csIdent(camel(p.name))}`); docs.push([camel(p.name), p.description || `The ${p.name} in the path.`]); }
   if (op.body) { required.push(`${op.body.ref} body`); docs.push(["body", "The request body."]); }
-  if (op.qry) {
-    optional.push(`${op.qry.ref}? qry = null`);
-    docs.push(["qry", "The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none."]);
-  }
   for (const p of op.queryParams) {
     const id = csIdent(camel(p.name));
     if (p.required) { required.push(`${csType(p)} ${id}`); } else { optional.push(`${csType(p)}? ${id} = null`); }
@@ -341,7 +314,6 @@ function csMethod(svc, op) {
   const args = [...sig.required, ...sig.optional, ...extras].join(", ");
   const pathText = op.path.slice(1).replace(/\{(\w+)\}/g, (_m, n) => `{FinQuery.Segment(${csIdent(camel(n))})}`);
   const tuples = [];
-  if (op.qry) tuples.push(`("qry", FinQuery.Json(qry ?? new ${op.qry.ref}()))`);
   for (const p of op.queryParams) tuples.push(`("${p.name}", ${csIdent(camel(p.name))})`);
   const template = op.pathParams.length ? `$"${pathText}"` : `"${pathText}"`;
   const url = `FinQuery.Path(${[template, ...tuples].join(", ")})`;
@@ -359,25 +331,16 @@ function csMethod(svc, op) {
     const pagesSig = [...sig.required, ...sig.optional, "CancellationToken cancellationToken = default"].join(", ");
     const passArgs = [...passPath, ...(op.body ? ["body"] : [])];
     out.push("");
-    if (op.paging.kind === "page") {
-      out.push(csDoc(wrap(`Reads every page of ${name}Async, advancing PageNo from the one in qry (1 when unset). It stops after the last page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not changed.`, 112), "    ", baseDocs));
-      out.push(`    public IAsyncEnumerable<${pageType}> ${name}PagesAsync(${pagesSig})`);
-      out.push(`        => FinPaging.ByPageNumber<${op.qry.ref}, ${pageType}, ${itemType}>(qry ?? new ${op.qry.ref}(),`);
-      out.push(`            (q, ct) => ${name}Async(${[...passArgs, "q", "ct"].join(", ")}),`);
-      out.push(`            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);`);
-    } else {
-      const optionalNames = op.queryParams.map((p) => csIdent(camel(p.name)));
-      const callArgs = [...passArgs, ...optionalNames.map((n) => (n === "offset" ? "o" : n)), "ct"];
-      out.push(csDoc(wrap(`Reads every page of ${name}Async, moving offset on by the rows each page returned, from the offset you pass (0 when unset). It stops at the first empty page, which it does not yield${op.paging.last ? ", or at a page shorter than its own limit" : ""}.`, 112), "    ", baseDocs));
-      out.push(`    public IAsyncEnumerable<${pageType}> ${name}PagesAsync(${pagesSig})`);
-      const last = op.paging.last ? "p => p.Count < p.Limit" : "null";
-      out.push(`        => FinPaging.ByOffset<${pageType}, ${itemType}>(offset ?? 0,`);
-      out.push(`            (o, ct) => ${name}Async(${callArgs.join(", ")}),`);
-      out.push(`            p => p.Data, ${last}, cancellationToken);`);
-    }
+    const optionalNames = op.queryParams.map((p) => csIdent(camel(p.name)));
+    const callArgs = [...passArgs, ...optionalNames.map((n) => (n === "page" ? "n" : n)), "ct"];
+    out.push(csDoc(wrap(`Reads every page of ${name}Async, advancing page from the one you pass (1 when unset). It stops after the last page the paging block names, or at the first empty page, which it does not yield.`, 112), "    ", baseDocs));
+    out.push(`    public IAsyncEnumerable<${pageType}> ${name}PagesAsync(${pagesSig})`);
+    out.push(`        => FinPaging.ByPage<${pageType}, ${itemType}>(page ?? 1,`);
+    out.push(`            (n, ct) => ${name}Async(${callArgs.join(", ")}),`);
+    out.push(`            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);`);
     out.push("");
     out.push(csDoc([`Reads every row of every page of ${name}PagesAsync, one at a time.`], "    ", baseDocs));
-    const pass = [...passArgs, ...(op.qry ? ["qry"] : op.queryParams.map((p) => csIdent(camel(p.name)))), "cancellationToken"];
+    const pass = [...passArgs, ...op.queryParams.map((p) => csIdent(camel(p.name))), "cancellationToken"];
     out.push(`    public IAsyncEnumerable<${itemType}> ${name}ItemsAsync(${pagesSig})`);
     out.push(`        => FinPaging.Items<${pageType}, ${itemType}>(${name}PagesAsync(${pass.join(", ")}), p => p.Data);`);
   }

@@ -7,6 +7,56 @@ using System.Text.Json;
 namespace Fin.Social;
 
 /// <summary>
+/// FinSocial Creators: the credit-charged /api operations.
+/// </summary>
+public sealed class CreatorsResource
+{
+    private readonly FinHttpTransport _http;
+    internal CreatorsResource(FinHttpTransport http) => _http = http;
+
+    /// <summary>
+    /// Creator leaderboard. The accounts FinSocial follows, ranked by the engagement on their posts or by how fast
+    /// their following grows: followers, posts and engagement in the window, and follower growth in percent. It answers
+    /// once a source is cleared; until then the list is empty. GET /api/creators. Charged 1 credit per call.
+    /// </summary>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="window">Length of the window: 24h, 7d or 30d. Default 7d.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiPageOfCreatorRow> CreatorsAsync(string? platform = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfCreatorRow>("GET", FinQuery.Path("api/creators", ("platform", platform), ("window", window), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of CreatorsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="window">Length of the window: 24h, 7d or 30d. Default 7d.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiPageOfCreatorRow> CreatorsPagesAsync(string? platform = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfCreatorRow, CreatorRow>(page ?? 1,
+            (n, ct) => CreatorsAsync(platform, window, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of CreatorsPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="window">Length of the window: 24h, 7d or 30d. Default 7d.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<CreatorRow> CreatorsItemsAsync(string? platform = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfCreatorRow, CreatorRow>(CreatorsPagesAsync(platform, window, sort, page, size, cancellationToken), p => p.Data);
+}
+
+/// <summary>
 /// FinSocial Markets: the credit-charged /api operations.
 /// </summary>
 public sealed class MarketsResource
@@ -15,264 +65,301 @@ public sealed class MarketsResource
     internal MarketsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List prediction events. Real-world events the prediction markets are grouped under. Filters: Provider, Category.
-    /// GET /api/markets/events. Charged 0.5 credits per call.
+    /// Prediction markets. Prediction markets of Polymarket, Kalshi and Manifold, with the latest probability (the
+    /// leading outcome in a market with several), its change over 24 hours, volume, liquidity, closing time and status.
+    /// GET /api/markets. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="q">Only markets whose question contains this text, any case.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="status">Only markets in this state: Open, Closed, Resolved or Unknown.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low), chg24h, closes. A minus sign sorts high to low; markets without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocEvent> EventListAsync(QueApiSocEventList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocEvent>("GET", FinQuery.Path("api/markets/events", ("qry", FinQuery.Json(qry ?? new QueApiSocEventList()))), null, null, cancellationToken);
+    public Task<ApiPageOfMarketRow> MarketsAsync(string? q = null, string? provider = null, string? category = null, string? status = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfMarketRow>("GET", FinQuery.Path("api/markets", ("q", q), ("provider", provider), ("category", category), ("status", status), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of EventListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last
-    /// page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Reads every page of MarketsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="q">Only markets whose question contains this text, any case.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="status">Only markets in this state: Open, Closed, Resolved or Unknown.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low), chg24h, closes. A minus sign sorts high to low; markets without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocEvent> EventListPagesAsync(QueApiSocEventList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocEventList, ResPagedOfDtoApiSocEvent, DtoApiSocEvent>(qry ?? new QueApiSocEventList(),
-            (q, ct) => EventListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfMarketRow> MarketsPagesAsync(string? q = null, string? provider = null, string? category = null, string? status = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfMarketRow, MarketRow>(page ?? 1,
+            (n, ct) => MarketsAsync(q, provider, category, status, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of EventListPagesAsync, one at a time.
+    /// Reads every row of every page of MarketsPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="q">Only markets whose question contains this text, any case.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="status">Only markets in this state: Open, Closed, Resolved or Unknown.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low), chg24h, closes. A minus sign sorts high to low; markets without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocEvent> EventListItemsAsync(QueApiSocEventList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocEvent, DtoApiSocEvent>(EventListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<MarketRow> MarketsItemsAsync(string? q = null, string? provider = null, string? category = null, string? status = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfMarketRow, MarketRow>(MarketsPagesAsync(q, provider, category, status, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Prediction market history. A market's probability series per outcome, one point per hour (1h) or per day (1d),
-    /// oldest first. GET /api/markets/history/{id}. Charged 1 credit per call.
+    /// Prediction market moves. The biggest probability moves of open prediction markets in a window: the outcome that
+    /// moved most in each market, its price at the start and now. It answers once a provider is cleared; until then the
+    /// list is empty. GET /api/markets/moves. Charged 1 credit per call.
     /// </summary>
-    /// <param name="id">Market identifier, as returned in the Id field of the market list.</param>
-    /// <param name="granularity">Size of one point: 1h for hourly or 1d for daily. Default 1h. Each point is the last price taken in its hour or day. Any other value is rejected with a 400 response.</param>
-    /// <param name="from">Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.</param>
-    /// <param name="to">Latest time to include, in UTC (ISO 8601). Empty means no upper limit.</param>
-    /// <param name="limit">Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocHistory> HistoryListAsync(string id, string? granularity = null, DateTimeOffset? @from = null, DateTimeOffset? @to = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocHistory>("GET", FinQuery.Path($"api/markets/history/{FinQuery.Segment(id)}", ("Granularity", granularity), ("From", @from), ("To", @to), ("Limit", limit)), null, null, cancellationToken);
+    public Task<ApiPageOfMarketMove> MovesAsync(string? window = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfMarketMove>("GET", FinQuery.Path("api/markets/moves", ("window", window), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// List prediction markets. Markets of Polymarket, Kalshi and Manifold. Filters: Provider, Category, Status,
-    /// EventId. GET /api/markets/list. Charged 0.5 credits per call.
+    /// Reads every page of MovesAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocMarket> MarketListAsync(QueApiSocMarketList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocMarket>("GET", FinQuery.Path("api/markets/list", ("qry", FinQuery.Json(qry ?? new QueApiSocMarketList()))), null, null, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfMarketMove> MovesPagesAsync(string? window = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfMarketMove, MarketMove>(page ?? 1,
+            (n, ct) => MovesAsync(window, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every page of MarketListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the
-    /// last page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Reads every row of every page of MovesPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocMarket> MarketListPagesAsync(QueApiSocMarketList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocMarketList, ResPagedOfDtoApiSocMarket, DtoApiSocMarket>(qry ?? new QueApiSocMarketList(),
-            (q, ct) => MarketListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<MarketMove> MovesItemsAsync(string? window = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfMarketMove, MarketMove>(MovesPagesAsync(window, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Reads every row of every page of MarketListPagesAsync, one at a time.
+    /// Resolved prediction markets. Prediction markets that have settled, newest first: the winner and the crowd's
+    /// probability for the winner 30 days, 7 days, 24 hours and 1 hour before it settled. GET /api/markets/resolved.
+    /// Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first).</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocMarket> MarketListItemsAsync(QueApiSocMarketList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocMarket, DtoApiSocMarket>(MarketListPagesAsync(qry, cancellationToken), p => p.Data);
+    public Task<ApiPageOfResolvedRow> ResolvedAsync(string? provider = null, string? category = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfResolvedRow>("GET", FinQuery.Path("api/markets/resolved", ("provider", provider), ("category", category), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Prediction pulse. The biggest probability moves of open markets over 1 h, 24 h and 7 d. GET /api/markets/pulse.
-    /// Charged 1 credit per call.
+    /// Reads every page of ResolvedAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="limit">Maximum number of moves to return for each window, from 1 to 50. Default 10.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first).</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocPulse> PulseListAsync(int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocPulse>("GET", FinQuery.Path("api/markets/pulse", ("Limit", limit)), null, null, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfResolvedRow> ResolvedPagesAsync(string? provider = null, string? category = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfResolvedRow, ResolvedRow>(page ?? 1,
+            (n, ct) => ResolvedAsync(provider, category, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Resolved market archive. Resolved markets: the winning probability 30 d, 7 d, 24 h and 1 h before the result,
-    /// and the result. GET /api/markets/resolved. Charged 1 credit per call.
+    /// Reads every row of every page of ResolvedPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first).</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocResolved> ResolvedListAsync(QueApiSocResolvedList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocResolved>("GET", FinQuery.Path("api/markets/resolved", ("qry", FinQuery.Json(qry ?? new QueApiSocResolvedList()))), null, null, cancellationToken);
+    public IAsyncEnumerable<ResolvedRow> ResolvedItemsAsync(string? provider = null, string? category = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfResolvedRow, ResolvedRow>(ResolvedPagesAsync(provider, category, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Reads every page of ResolvedListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the
-    /// last page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Prediction market. One prediction market with its rules, every outcome with its latest price, bid and ask, and
+    /// each outcome's price history by hour or day. GET /api/markets/{id}. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="id">The Id of the row, as returned by its list.</param>
+    /// <param name="granularity">Size of one price point in the history: hour or day. Default hour.</param>
+    /// <param name="days">How many days of history, 1 to 90. Default 7.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocResolved> ResolvedListPagesAsync(QueApiSocResolvedList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocResolvedList, ResPagedOfDtoApiSocResolved, DtoApiSocResolved>(qry ?? new QueApiSocResolvedList(),
-            (q, ct) => ResolvedListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
-
-    /// <summary>
-    /// Reads every row of every page of ResolvedListPagesAsync, one at a time.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocResolved> ResolvedListItemsAsync(QueApiSocResolvedList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocResolved, DtoApiSocResolved>(ResolvedListPagesAsync(qry, cancellationToken), p => p.Data);
-
-    /// <summary>
-    /// View prediction market. One market with its rules, outcomes, latest probabilities and resolution.
-    /// GET /api/markets/view/{id}. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="id">Market identifier, as returned in the Id field of the market list.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocMarketView> MarketViewAsync(string id, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocMarketView>("GET", FinQuery.Path($"api/markets/view/{FinQuery.Segment(id)}"), null, null, cancellationToken);
+    public Task<ResPonseOfMarketDetail> MarketAsync(string id, string? granularity = null, int? days = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfMarketDetail>("GET", FinQuery.Path($"api/markets/{FinQuery.Segment(id)}", ("granularity", granularity), ("days", days)), null, null, cancellationToken);
 }
 
 /// <summary>
-/// FinSocial Social: the credit-charged /api operations.
+/// FinSocial Posts: the credit-charged /api operations.
 /// </summary>
-public sealed class SocialResource
+public sealed class PostsResource
 {
     private readonly FinHttpTransport _http;
-    internal SocialResource(FinHttpTransport http) => _http = http;
+    internal PostsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List social authors. Accounts seen on the platforms, most followed first. Filters: Platform, Text.
-    /// GET /api/social/authors. Charged 0.5 credits per call.
+    /// Posts. Posts from the social sources FinSocial may serve, newest first, with the tickers they name, the way they
+    /// read (Bullish, Bearish, Neutral or Unscored), the score and the engagement now. The text comes only where the
+    /// source allows it. GET /api/posts. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="author">Only posts by this handle, any case.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="stance">Only posts that read this way: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), engagement. Sorting by engagement orders the 3,000 newest matching posts.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocAuthor> AuthorListAsync(QueApiSocAuthorList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocAuthor>("GET", FinQuery.Path("api/social/authors", ("qry", FinQuery.Json(qry ?? new QueApiSocAuthorList()))), null, null, cancellationToken);
+    public Task<ApiPageOfPostRow> PostsAsync(string? syms = null, string? platform = null, string? author = null, string? since = null, string? stance = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfPostRow>("GET", FinQuery.Path("api/posts", ("syms", syms), ("platform", platform), ("author", author), ("since", since), ("stance", stance), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of AuthorListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the
-    /// last page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Reads every page of PostsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="author">Only posts by this handle, any case.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="stance">Only posts that read this way: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), engagement. Sorting by engagement orders the 3,000 newest matching posts.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocAuthor> AuthorListPagesAsync(QueApiSocAuthorList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocAuthorList, ResPagedOfDtoApiSocAuthor, DtoApiSocAuthor>(qry ?? new QueApiSocAuthorList(),
-            (q, ct) => AuthorListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfPostRow> PostsPagesAsync(string? syms = null, string? platform = null, string? author = null, string? since = null, string? stance = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfPostRow, PostRow>(page ?? 1,
+            (n, ct) => PostsAsync(syms, platform, author, since, stance, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of AuthorListPagesAsync, one at a time.
+    /// Reads every row of every page of PostsPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="author">Only posts by this handle, any case.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="stance">Only posts that read this way: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), engagement. Sorting by engagement orders the 3,000 newest matching posts.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocAuthor> AuthorListItemsAsync(QueApiSocAuthorList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocAuthor, DtoApiSocAuthor>(AuthorListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<PostRow> PostsItemsAsync(string? syms = null, string? platform = null, string? author = null, string? since = null, string? stance = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfPostRow, PostRow>(PostsPagesAsync(syms, platform, author, since, stance, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// View social author. One account with its reach series (followers, following, posts), oldest first.
-    /// GET /api/social/authors/{id}. Charged 1 credit per call.
+    /// Post. One post with its engagement readings over time, oldest first. GET /api/posts/{id}. Charged 0.5 credits
+    /// per call.
     /// </summary>
-    /// <param name="id">Author identifier, as returned in the Id field of the author list.</param>
-    /// <param name="from">Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.</param>
-    /// <param name="to">Latest time to include, in UTC (ISO 8601). Empty means no upper limit.</param>
-    /// <param name="limit">Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first.</param>
+    /// <param name="id">The Id of the row, as returned by its list.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocAuthorView> AuthorViewAsync(string id, DateTimeOffset? @from = null, DateTimeOffset? @to = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocAuthorView>("GET", FinQuery.Path($"api/social/authors/{FinQuery.Segment(id)}", ("From", @from), ("To", @to), ("Limit", limit)), null, null, cancellationToken);
+    public Task<ResPonseOfPostDetail> PostAsync(string id, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfPostDetail>("GET", FinQuery.Path($"api/posts/{FinQuery.Segment(id)}"), null, null, cancellationToken);
+}
+
+/// <summary>
+/// FinSocial Pulse: the credit-charged /api operations.
+/// </summary>
+public sealed class PulseResource
+{
+    private readonly FinHttpTransport _http;
+    internal PulseResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List social posts. Posts, newest first, with FinSocial's sentiment score, the AI reading where there is one, and
-    /// the latest engagement counts. Filters: Ticker, AuthorId, Platform, From, To. GET /api/social/posts. Charged 0.5
-    /// credits per call.
+    /// Ticker pulse. How much each ticker is being talked about on social media in a window: mentions, engagement,
+    /// attention against its usual level, the mix of bullish, bearish and neutral posts, their mean score and the
+    /// change in mentions against the window before. Ask for up to 50 tickers by name, or leave syms empty for every
+    /// ticker, most-talked-about first. GET /api/pulse. Charged 1 credit per call.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocPost> PostListAsync(QueApiSocPostList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocPost>("GET", FinQuery.Path("api/social/posts", ("qry", FinQuery.Json(qry ?? new QueApiSocPostList()))), null, null, cancellationToken);
+    public Task<ApiPageOfPulseRow> PulseAsync(string? syms = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfPulseRow>("GET", FinQuery.Path("api/pulse", ("syms", syms), ("window", window), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of PostListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last
-    /// page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Reads every page of PulseAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocPost> PostListPagesAsync(QueApiSocPostList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocPostList, ResPagedOfDtoApiSocPost, DtoApiSocPost>(qry ?? new QueApiSocPostList(),
-            (q, ct) => PostListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfPulseRow> PulsePagesAsync(string? syms = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfPulseRow, PulseRow>(page ?? 1,
+            (n, ct) => PulseAsync(syms, window, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of PostListPagesAsync, one at a time.
+    /// Reads every row of every page of PulsePagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocPost> PostListItemsAsync(QueApiSocPostList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocPost, DtoApiSocPost>(PostListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<PulseRow> PulseItemsAsync(string? syms = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfPulseRow, PulseRow>(PulsePagesAsync(syms, window, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// View social post. One post with its engagement series, oldest first. GET /api/social/posts/{id}. Charged 1
-    /// credit per call.
+    /// Ticker pulse history. How a ticker's social mentions moved: for each of up to 50 tickers, one row per hour or
+    /// per day with mentions, engagement, attention against its usual level and the mean sentiment score. Rows come
+    /// ticker by ticker, in the order asked. GET /api/pulse/history. Charged 1 credit per call.
     /// </summary>
-    /// <param name="id">Post identifier, as returned in the Id field of the post list.</param>
-    /// <param name="from">Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.</param>
-    /// <param name="to">Latest time to include, in UTC (ISO 8601). Empty means no upper limit.</param>
-    /// <param name="limit">Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first.</param>
+    /// <param name="syms">Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in NotFound.</param>
+    /// <param name="interval">Size of one point: hour or day. Default hour.</param>
+    /// <param name="days">How many days back, 1 to 30. Default 7.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest first). Rows always come ticker by ticker, in the order asked.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocPostView> PostViewAsync(string id, DateTimeOffset? @from = null, DateTimeOffset? @to = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocPostView>("GET", FinQuery.Path($"api/social/posts/{FinQuery.Segment(id)}", ("From", @from), ("To", @to), ("Limit", limit)), null, null, cancellationToken);
+    public Task<ApiPageOfPulsePoint> HistoryAsync(string? syms = null, string? interval = null, int? days = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfPulsePoint>("GET", FinQuery.Path("api/pulse/history", ("syms", syms), ("interval", interval), ("days", days), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Social sentiment by ticker. Count, mean sentiment score and label counts of the posts that name one ticker in
-    /// the window. Window 1h, 24h or 7d. GET /api/social/sentiment/{symbol}. Charged 1 credit per call.
+    /// Reads every page of HistoryAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="symbol">Ticker symbol to report on, for example BTC. Matching ignores case.</param>
-    /// <param name="window">Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 100. Default 20.</param>
+    /// <param name="syms">Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in NotFound.</param>
+    /// <param name="interval">Size of one point: hour or day. Default hour.</param>
+    /// <param name="days">How many days back, 1 to 30. Default 7.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest first). Rows always come ticker by ticker, in the order asked.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocSentiment> SentimentViewAsync(string symbol, string? window = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocSentiment>("GET", FinQuery.Path($"api/social/sentiment/{FinQuery.Segment(symbol)}", ("Window", window), ("Limit", limit)), null, null, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfPulsePoint> HistoryPagesAsync(string? syms = null, string? interval = null, int? days = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfPulsePoint, PulsePoint>(page ?? 1,
+            (n, ct) => HistoryAsync(syms, interval, days, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Trending social tickers. Tickers ranked by attention: posts in the window against the usual posts for those
-    /// hours. Window 1h, 24h or 7d. GET /api/social/trending. Charged 1 credit per call.
+    /// Reads every row of every page of HistoryPagesAsync, one at a time.
     /// </summary>
-    /// <param name="window">Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 100. Default 20.</param>
+    /// <param name="syms">Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in NotFound.</param>
+    /// <param name="interval">Size of one point: hour or day. Default hour.</param>
+    /// <param name="days">How many days back, 1 to 30. Default 7.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest first). Rows always come ticker by ticker, in the order asked.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocTrending> TrendingListAsync(string? window = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocTrending>("GET", FinQuery.Path("api/social/trending", ("Window", window), ("Limit", limit)), null, null, cancellationToken);
-
-    /// <summary>
-    /// List watched social accounts. The accounts and channels FinSocial follows. Only active ones are listed. Filter:
-    /// Platform. GET /api/social/watched. Charged 0.5 credits per call.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocWatch> WatchListAsync(QueApiSocWatchList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocWatch>("GET", FinQuery.Path("api/social/watched", ("qry", FinQuery.Json(qry ?? new QueApiSocWatchList()))), null, null, cancellationToken);
-
-    /// <summary>
-    /// Reads every page of WatchListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last
-    /// page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocWatch> WatchListPagesAsync(QueApiSocWatchList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocWatchList, ResPagedOfDtoApiSocWatch, DtoApiSocWatch>(qry ?? new QueApiSocWatchList(),
-            (q, ct) => WatchListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
-
-    /// <summary>
-    /// Reads every row of every page of WatchListPagesAsync, one at a time.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocWatch> WatchListItemsAsync(QueApiSocWatchList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocWatch, DtoApiSocWatch>(WatchListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<PulsePoint> HistoryItemsAsync(string? syms = null, string? interval = null, int? days = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfPulsePoint, PulsePoint>(HistoryPagesAsync(syms, interval, days, sort, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -284,42 +371,111 @@ public sealed class VideosResource
     internal VideosResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List videos. Videos with FinSocial scores, signals, summaries and links. Filters: ChannelId, Symbol, MinScore,
-    /// MaxScore, From, To. Transcripts and video content are never returned. GET /api/videos. Charged 0.5 credits per
-    /// call.
+    /// Videos. Videos from the channels FinSocial follows, newest first, one row per video, with FinSocial's own score,
+    /// signal and summary and what it read about each ticker the video names. Never the transcript or the video itself.
+    /// GET /api/videos. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="channel">Only videos of this channel: its name (any case) or its channel id.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="minScore">Only videos whose own score is at least this, 0 to 10.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), score. A minus sign sorts high to low; videos without a score come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoSocApiVideo> ListAsync(QueSocApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoSocApiVideo>("GET", FinQuery.Path("api/videos", ("qry", FinQuery.Json(qry ?? new QueSocApiVideoList()))), null, null, cancellationToken);
+    public Task<ApiPageOfVideoRow> VideosAsync(string? syms = null, string? channel = null, string? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfVideoRow>("GET", FinQuery.Path("api/videos", ("syms", syms), ("channel", channel), ("since", since), ("minScore", minScore), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of ListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last page
-    /// the paging block names, or at the first empty page, which it does not yield. The qry you pass is not changed.
+    /// Reads every page of VideosAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="channel">Only videos of this channel: its name (any case) or its channel id.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="minScore">Only videos whose own score is at least this, 0 to 10.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), score. A minus sign sorts high to low; videos without a score come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoSocApiVideo> ListPagesAsync(QueSocApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueSocApiVideoList, ResPagedOfDtoSocApiVideo, DtoSocApiVideo>(qry ?? new QueSocApiVideoList(),
-            (q, ct) => ListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfVideoRow> VideosPagesAsync(string? syms = null, string? channel = null, string? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfVideoRow, VideoRow>(page ?? 1,
+            (n, ct) => VideosAsync(syms, channel, since, minScore, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of ListPagesAsync, one at a time.
+    /// Reads every row of every page of VideosPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="channel">Only videos of this channel: its name (any case) or its channel id.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="minScore">Only videos whose own score is at least this, 0 to 10.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), score. A minus sign sorts high to low; videos without a score come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoSocApiVideo> ListItemsAsync(QueSocApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoSocApiVideo, DtoSocApiVideo>(ListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<VideoRow> VideosItemsAsync(string? syms = null, string? channel = null, string? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfVideoRow, VideoRow>(VideosPagesAsync(syms, channel, since, minScore, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// View video. One video with its scores, signals, summary and public link. Transcript and video content are never
-    /// returned. GET /api/videos/{videoId}. Charged 0.5 credits per call.
+    /// Video. One video with FinSocial's own score, signal and summary and what it read about each ticker the video
+    /// names. Never the transcript or the video itself. GET /api/videos/{id}. Charged 0.5 credits per call.
     /// </summary>
-    /// <param name="videoId">YouTube video identifier, as returned in the VideoId field of the video list.</param>
+    /// <param name="id">The Id of the video, as returned by the video list.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSocApiVideo> ViewAsync(string videoId, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSocApiVideo>("GET", FinQuery.Path($"api/videos/{FinQuery.Segment(videoId)}"), null, null, cancellationToken);
+    public Task<ResPonseOfVideoRow> VideoAsync(string id, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfVideoRow>("GET", FinQuery.Path($"api/videos/{FinQuery.Segment(id)}"), null, null, cancellationToken);
+}
+
+/// <summary>
+/// FinSocial Creators: the plan-included /v1 operations.
+/// </summary>
+public sealed class V1CreatorsResource
+{
+    private readonly FinHttpTransport _http;
+    internal V1CreatorsResource(FinHttpTransport http) => _http = http;
+
+    /// <summary>
+    /// Creator leaderboard. The accounts FinSocial follows, ranked by the engagement on their posts or by how fast
+    /// their following grows: followers, posts and engagement in the window, and follower growth in percent. It answers
+    /// once a source is cleared; until then the list is empty. GET /v1/creators. Included in paid plans, for package
+    /// tiers 1, 2, 3, 4.
+    /// </summary>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="window">Length of the window: 24h, 7d or 30d. Default 7d.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public Task<ApiPageOfCreatorRow> CreatorsAsync(string? platform = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfCreatorRow>("GET", FinQuery.Path("v1/creators", ("platform", platform), ("window", window), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
+
+    /// <summary>
+    /// Reads every page of CreatorsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
+    /// </summary>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="window">Length of the window: 24h, 7d or 30d. Default 7d.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<ApiPageOfCreatorRow> CreatorsPagesAsync(string? platform = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfCreatorRow, CreatorRow>(page ?? 1,
+            (n, ct) => CreatorsAsync(platform, window, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+
+    /// <summary>
+    /// Reads every row of every page of CreatorsPagesAsync, one at a time.
+    /// </summary>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="window">Length of the window: 24h, 7d or 30d. Default 7d.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: engagement (default, high to low), growth, posts, followers. A minus sign sorts high to low; accounts without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
+    /// <param name="cancellationToken">Cancels the call.</param>
+    public IAsyncEnumerable<CreatorRow> CreatorsItemsAsync(string? platform = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfCreatorRow, CreatorRow>(CreatorsPagesAsync(platform, window, sort, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -331,265 +487,303 @@ public sealed class V1MarketsResource
     internal V1MarketsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List prediction events. Real-world events the prediction markets are grouped under. Filters: Provider, Category.
-    /// GET /v1/markets/events. Included in paid plans.
+    /// Prediction markets. Prediction markets of Polymarket, Kalshi and Manifold, with the latest probability (the
+    /// leading outcome in a market with several), its change over 24 hours, volume, liquidity, closing time and status.
+    /// GET /v1/markets. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="q">Only markets whose question contains this text, any case.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="status">Only markets in this state: Open, Closed, Resolved or Unknown.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low), chg24h, closes. A minus sign sorts high to low; markets without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocEvent> EventListAsync(QueApiSocEventList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocEvent>("GET", FinQuery.Path("v1/markets/events", ("qry", FinQuery.Json(qry ?? new QueApiSocEventList()))), null, null, cancellationToken);
+    public Task<ApiPageOfMarketRow> MarketsAsync(string? q = null, string? provider = null, string? category = null, string? status = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfMarketRow>("GET", FinQuery.Path("v1/markets", ("q", q), ("provider", provider), ("category", category), ("status", status), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of EventListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last
-    /// page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Reads every page of MarketsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="q">Only markets whose question contains this text, any case.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="status">Only markets in this state: Open, Closed, Resolved or Unknown.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low), chg24h, closes. A minus sign sorts high to low; markets without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocEvent> EventListPagesAsync(QueApiSocEventList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocEventList, ResPagedOfDtoApiSocEvent, DtoApiSocEvent>(qry ?? new QueApiSocEventList(),
-            (q, ct) => EventListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfMarketRow> MarketsPagesAsync(string? q = null, string? provider = null, string? category = null, string? status = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfMarketRow, MarketRow>(page ?? 1,
+            (n, ct) => MarketsAsync(q, provider, category, status, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of EventListPagesAsync, one at a time.
+    /// Reads every row of every page of MarketsPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="q">Only markets whose question contains this text, any case.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="status">Only markets in this state: Open, Closed, Resolved or Unknown.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: volume (default, high to low), chg24h, closes. A minus sign sorts high to low; markets without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocEvent> EventListItemsAsync(QueApiSocEventList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocEvent, DtoApiSocEvent>(EventListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<MarketRow> MarketsItemsAsync(string? q = null, string? provider = null, string? category = null, string? status = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfMarketRow, MarketRow>(MarketsPagesAsync(q, provider, category, status, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Prediction market history. A market's probability series per outcome, one point per hour (1h) or per day (1d),
-    /// oldest first. GET /v1/markets/history/{id}. Included in paid plans, for package tiers 2, 3, 4.
+    /// Prediction market moves. The biggest probability moves of open prediction markets in a window: the outcome that
+    /// moved most in each market, its price at the start and now. It answers once a provider is cleared; until then the
+    /// list is empty. GET /v1/markets/moves. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="id">Market identifier, as returned in the Id field of the market list.</param>
-    /// <param name="granularity">Size of one point: 1h for hourly or 1d for daily. Default 1h. Each point is the last price taken in its hour or day. Any other value is rejected with a 400 response.</param>
-    /// <param name="from">Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.</param>
-    /// <param name="to">Latest time to include, in UTC (ISO 8601). Empty means no upper limit.</param>
-    /// <param name="limit">Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocHistory> HistoryListAsync(string id, string? granularity = null, DateTimeOffset? @from = null, DateTimeOffset? @to = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocHistory>("GET", FinQuery.Path($"v1/markets/history/{FinQuery.Segment(id)}", ("Granularity", granularity), ("From", @from), ("To", @to), ("Limit", limit)), null, null, cancellationToken);
+    public Task<ApiPageOfMarketMove> MovesAsync(string? window = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfMarketMove>("GET", FinQuery.Path("v1/markets/moves", ("window", window), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// List prediction markets. Markets of Polymarket, Kalshi and Manifold. Filters: Provider, Category, Status,
-    /// EventId. GET /v1/markets/list. Included in paid plans.
+    /// Reads every page of MovesAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocMarket> MarketListAsync(QueApiSocMarketList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocMarket>("GET", FinQuery.Path("v1/markets/list", ("qry", FinQuery.Json(qry ?? new QueApiSocMarketList()))), null, null, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfMarketMove> MovesPagesAsync(string? window = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfMarketMove, MarketMove>(page ?? 1,
+            (n, ct) => MovesAsync(window, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every page of MarketListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the
-    /// last page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Reads every row of every page of MovesPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocMarket> MarketListPagesAsync(QueApiSocMarketList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocMarketList, ResPagedOfDtoApiSocMarket, DtoApiSocMarket>(qry ?? new QueApiSocMarketList(),
-            (q, ct) => MarketListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<MarketMove> MovesItemsAsync(string? window = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfMarketMove, MarketMove>(MovesPagesAsync(window, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Reads every row of every page of MarketListPagesAsync, one at a time.
+    /// Resolved prediction markets. Prediction markets that have settled, newest first: the winner and the crowd's
+    /// probability for the winner 30 days, 7 days, 24 hours and 1 hour before it settled. GET /v1/markets/resolved.
+    /// Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first).</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocMarket> MarketListItemsAsync(QueApiSocMarketList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocMarket, DtoApiSocMarket>(MarketListPagesAsync(qry, cancellationToken), p => p.Data);
+    public Task<ApiPageOfResolvedRow> ResolvedAsync(string? provider = null, string? category = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfResolvedRow>("GET", FinQuery.Path("v1/markets/resolved", ("provider", provider), ("category", category), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Prediction pulse. The biggest probability moves of open markets over 1 h, 24 h and 7 d. GET /v1/markets/pulse.
-    /// Included in paid plans.
+    /// Reads every page of ResolvedAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="limit">Maximum number of moves to return for each window, from 1 to 50. Default 10.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first).</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocPulse> PulseListAsync(int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocPulse>("GET", FinQuery.Path("v1/markets/pulse", ("Limit", limit)), null, null, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfResolvedRow> ResolvedPagesAsync(string? provider = null, string? category = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfResolvedRow, ResolvedRow>(page ?? 1,
+            (n, ct) => ResolvedAsync(provider, category, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Resolved market archive. Resolved markets: the winning probability 30 d, 7 d, 24 h and 1 h before the result,
-    /// and the result. GET /v1/markets/resolved. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// Reads every row of every page of ResolvedPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="provider">Only this prediction-market provider: Polymarket, Kalshi or Manifold.</param>
+    /// <param name="category">Only markets the provider files under this category, any case.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: settled (default, newest first).</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocResolved> ResolvedListAsync(QueApiSocResolvedList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocResolved>("GET", FinQuery.Path("v1/markets/resolved", ("qry", FinQuery.Json(qry ?? new QueApiSocResolvedList()))), null, null, cancellationToken);
+    public IAsyncEnumerable<ResolvedRow> ResolvedItemsAsync(string? provider = null, string? category = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfResolvedRow, ResolvedRow>(ResolvedPagesAsync(provider, category, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Reads every page of ResolvedListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the
-    /// last page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Prediction market. One prediction market with its rules, every outcome with its latest price, bid and ask, and
+    /// each outcome's price history by hour or day. GET /v1/markets/{id}. Included in paid plans, for package tiers 1,
+    /// 2, 3, 4.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="id">The Id of the row, as returned by its list.</param>
+    /// <param name="granularity">Size of one price point in the history: hour or day. Default hour.</param>
+    /// <param name="days">How many days of history, 1 to 90. Default 7.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocResolved> ResolvedListPagesAsync(QueApiSocResolvedList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocResolvedList, ResPagedOfDtoApiSocResolved, DtoApiSocResolved>(qry ?? new QueApiSocResolvedList(),
-            (q, ct) => ResolvedListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
-
-    /// <summary>
-    /// Reads every row of every page of ResolvedListPagesAsync, one at a time.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocResolved> ResolvedListItemsAsync(QueApiSocResolvedList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocResolved, DtoApiSocResolved>(ResolvedListPagesAsync(qry, cancellationToken), p => p.Data);
-
-    /// <summary>
-    /// View prediction market. One market with its rules, outcomes, latest probabilities and resolution.
-    /// GET /v1/markets/view/{id}. Included in paid plans, for package tiers 1, 2, 3, 4.
-    /// </summary>
-    /// <param name="id">Market identifier, as returned in the Id field of the market list.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocMarketView> MarketViewAsync(string id, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocMarketView>("GET", FinQuery.Path($"v1/markets/view/{FinQuery.Segment(id)}"), null, null, cancellationToken);
+    public Task<ResPonseOfMarketDetail> MarketAsync(string id, string? granularity = null, int? days = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfMarketDetail>("GET", FinQuery.Path($"v1/markets/{FinQuery.Segment(id)}", ("granularity", granularity), ("days", days)), null, null, cancellationToken);
 }
 
 /// <summary>
-/// FinSocial Social: the plan-included /v1 operations.
+/// FinSocial Posts: the plan-included /v1 operations.
 /// </summary>
-public sealed class V1SocialResource
+public sealed class V1PostsResource
 {
     private readonly FinHttpTransport _http;
-    internal V1SocialResource(FinHttpTransport http) => _http = http;
+    internal V1PostsResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List social authors. Accounts seen on the platforms, most followed first. Filters: Platform, Text.
-    /// GET /v1/social/authors. Included in paid plans, for package tiers 1, 2, 3, 4.
+    /// Posts. Posts from the social sources FinSocial may serve, newest first, with the tickers they name, the way they
+    /// read (Bullish, Bearish, Neutral or Unscored), the score and the engagement now. The text comes only where the
+    /// source allows it. GET /v1/posts. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="author">Only posts by this handle, any case.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="stance">Only posts that read this way: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), engagement. Sorting by engagement orders the 3,000 newest matching posts.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocAuthor> AuthorListAsync(QueApiSocAuthorList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocAuthor>("GET", FinQuery.Path("v1/social/authors", ("qry", FinQuery.Json(qry ?? new QueApiSocAuthorList()))), null, null, cancellationToken);
+    public Task<ApiPageOfPostRow> PostsAsync(string? syms = null, string? platform = null, string? author = null, string? since = null, string? stance = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfPostRow>("GET", FinQuery.Path("v1/posts", ("syms", syms), ("platform", platform), ("author", author), ("since", since), ("stance", stance), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of AuthorListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the
-    /// last page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Reads every page of PostsAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="author">Only posts by this handle, any case.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="stance">Only posts that read this way: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), engagement. Sorting by engagement orders the 3,000 newest matching posts.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocAuthor> AuthorListPagesAsync(QueApiSocAuthorList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocAuthorList, ResPagedOfDtoApiSocAuthor, DtoApiSocAuthor>(qry ?? new QueApiSocAuthorList(),
-            (q, ct) => AuthorListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfPostRow> PostsPagesAsync(string? syms = null, string? platform = null, string? author = null, string? since = null, string? stance = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfPostRow, PostRow>(page ?? 1,
+            (n, ct) => PostsAsync(syms, platform, author, since, stance, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of AuthorListPagesAsync, one at a time.
+    /// Reads every row of every page of PostsPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="platform">Only this platform: HackerNews or Bluesky.</param>
+    /// <param name="author">Only posts by this handle, any case.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="stance">Only posts that read this way: Bullish, Bearish, Neutral or Unscored.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), engagement. Sorting by engagement orders the 3,000 newest matching posts.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocAuthor> AuthorListItemsAsync(QueApiSocAuthorList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocAuthor, DtoApiSocAuthor>(AuthorListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<PostRow> PostsItemsAsync(string? syms = null, string? platform = null, string? author = null, string? since = null, string? stance = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfPostRow, PostRow>(PostsPagesAsync(syms, platform, author, since, stance, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// View social author. One account with its reach series (followers, following, posts), oldest first.
-    /// GET /v1/social/authors/{id}. Included in paid plans, for package tiers 2, 3, 4.
+    /// Post. One post with its engagement readings over time, oldest first. GET /v1/posts/{id}. Included in paid plans,
+    /// for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="id">Author identifier, as returned in the Id field of the author list.</param>
-    /// <param name="from">Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.</param>
-    /// <param name="to">Latest time to include, in UTC (ISO 8601). Empty means no upper limit.</param>
-    /// <param name="limit">Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first.</param>
+    /// <param name="id">The Id of the row, as returned by its list.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocAuthorView> AuthorViewAsync(string id, DateTimeOffset? @from = null, DateTimeOffset? @to = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocAuthorView>("GET", FinQuery.Path($"v1/social/authors/{FinQuery.Segment(id)}", ("From", @from), ("To", @to), ("Limit", limit)), null, null, cancellationToken);
+    public Task<ResPonseOfPostDetail> PostAsync(string id, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfPostDetail>("GET", FinQuery.Path($"v1/posts/{FinQuery.Segment(id)}"), null, null, cancellationToken);
+}
+
+/// <summary>
+/// FinSocial Pulse: the plan-included /v1 operations.
+/// </summary>
+public sealed class V1PulseResource
+{
+    private readonly FinHttpTransport _http;
+    internal V1PulseResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List social posts. Posts, newest first, with FinSocial's sentiment score, the AI reading where there is one, and
-    /// the latest engagement counts. Filters: Ticker, AuthorId, Platform, From, To. GET /v1/social/posts. Included in
-    /// paid plans, for package tiers 1, 2, 3, 4.
+    /// Ticker pulse. How much each ticker is being talked about on social media in a window: mentions, engagement,
+    /// attention against its usual level, the mix of bullish, bearish and neutral posts, their mean score and the
+    /// change in mentions against the window before. Ask for up to 50 tickers by name, or leave syms empty for every
+    /// ticker, most-talked-about first. GET /v1/pulse. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocPost> PostListAsync(QueApiSocPostList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocPost>("GET", FinQuery.Path("v1/social/posts", ("qry", FinQuery.Json(qry ?? new QueApiSocPostList()))), null, null, cancellationToken);
+    public Task<ApiPageOfPulseRow> PulseAsync(string? syms = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfPulseRow>("GET", FinQuery.Path("v1/pulse", ("syms", syms), ("window", window), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of PostListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last
-    /// page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
+    /// Reads every page of PulseAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocPost> PostListPagesAsync(QueApiSocPostList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocPostList, ResPagedOfDtoApiSocPost, DtoApiSocPost>(qry ?? new QueApiSocPostList(),
-            (q, ct) => PostListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfPulseRow> PulsePagesAsync(string? syms = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfPulseRow, PulseRow>(page ?? 1,
+            (n, ct) => PulseAsync(syms, window, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of PostListPagesAsync, one at a time.
+    /// Reads every row of every page of PulsePagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="window">Length of the window: 1h, 24h or 7d. Default 24h.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: attention (default, high to low), mentions, engagement, change, score, sym. A minus sign sorts high to low; rows without a value come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocPost> PostListItemsAsync(QueApiSocPostList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocPost, DtoApiSocPost>(PostListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<PulseRow> PulseItemsAsync(string? syms = null, string? window = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfPulseRow, PulseRow>(PulsePagesAsync(syms, window, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// View social post. One post with its engagement series, oldest first. GET /v1/social/posts/{id}. Included in paid
-    /// plans, for package tiers 2, 3, 4.
+    /// Ticker pulse history. How a ticker's social mentions moved: for each of up to 50 tickers, one row per hour or
+    /// per day with mentions, engagement, attention against its usual level and the mean sentiment score. Rows come
+    /// ticker by ticker, in the order asked. GET /v1/pulse/history. Included in paid plans, for package tiers 1, 2, 3,
+    /// 4.
     /// </summary>
-    /// <param name="id">Post identifier, as returned in the Id field of the post list.</param>
-    /// <param name="from">Earliest time to include, in UTC (ISO 8601). Empty means no lower limit.</param>
-    /// <param name="to">Latest time to include, in UTC (ISO 8601). Empty means no upper limit.</param>
-    /// <param name="limit">Maximum number of points to return, from 1 to 1000. Default 200. When more points fall in the range, the newest are kept. Points are returned oldest first.</param>
+    /// <param name="syms">Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in NotFound.</param>
+    /// <param name="interval">Size of one point: hour or day. Default hour.</param>
+    /// <param name="days">How many days back, 1 to 30. Default 7.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest first). Rows always come ticker by ticker, in the order asked.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocPostView> PostViewAsync(string id, DateTimeOffset? @from = null, DateTimeOffset? @to = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocPostView>("GET", FinQuery.Path($"v1/social/posts/{FinQuery.Segment(id)}", ("From", @from), ("To", @to), ("Limit", limit)), null, null, cancellationToken);
+    public Task<ApiPageOfPulsePoint> HistoryAsync(string? syms = null, string? interval = null, int? days = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfPulsePoint>("GET", FinQuery.Path("v1/pulse/history", ("syms", syms), ("interval", interval), ("days", days), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Social sentiment by ticker. Count, mean sentiment score and label counts of the posts that name one ticker in
-    /// the window. Window 1h, 24h or 7d. GET /v1/social/sentiment/{symbol}. Included in paid plans, for package tiers
-    /// 1, 2, 3, 4.
+    /// Reads every page of HistoryAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="symbol">Ticker symbol to report on, for example BTC. Matching ignores case.</param>
-    /// <param name="window">Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 100. Default 20.</param>
+    /// <param name="syms">Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in NotFound.</param>
+    /// <param name="interval">Size of one point: hour or day. Default hour.</param>
+    /// <param name="days">How many days back, 1 to 30. Default 7.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest first). Rows always come ticker by ticker, in the order asked.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocSentiment> SentimentViewAsync(string symbol, string? window = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocSentiment>("GET", FinQuery.Path($"v1/social/sentiment/{FinQuery.Segment(symbol)}", ("Window", window), ("Limit", limit)), null, null, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfPulsePoint> HistoryPagesAsync(string? syms = null, string? interval = null, int? days = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfPulsePoint, PulsePoint>(page ?? 1,
+            (n, ct) => HistoryAsync(syms, interval, days, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Trending social tickers. Tickers ranked by attention: posts in the window against the usual posts for those
-    /// hours. Window 1h, 24h or 7d. GET /v1/social/trending. Included in paid plans.
+    /// Reads every row of every page of HistoryPagesAsync, one at a time.
     /// </summary>
-    /// <param name="window">Aggregation window: 1h, 24h or 7d. Default 24h. Any other value is rejected with a 400 response.</param>
-    /// <param name="limit">Maximum number of rows to return, from 1 to 100. Default 20.</param>
+    /// <param name="syms">Tickers to read, comma-separated, up to 50, any case. Required. Tickers no row carries come back in NotFound.</param>
+    /// <param name="interval">Size of one point: hour or day. Default hour.</param>
+    /// <param name="days">How many days back, 1 to 30. Default 7.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: at (oldest first; -at newest first). Rows always come ticker by ticker, in the order asked.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfDtoApiSocTrending> TrendingListAsync(string? window = null, int? limit = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfDtoApiSocTrending>("GET", FinQuery.Path("v1/social/trending", ("Window", window), ("Limit", limit)), null, null, cancellationToken);
-
-    /// <summary>
-    /// List watched social accounts. The accounts and channels FinSocial follows. Only active ones are listed. Filter:
-    /// Platform. GET /v1/social/watched. Included in paid plans, for package tiers 1, 2, 3, 4.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoApiSocWatch> WatchListAsync(QueApiSocWatchList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoApiSocWatch>("GET", FinQuery.Path("v1/social/watched", ("qry", FinQuery.Json(qry ?? new QueApiSocWatchList()))), null, null, cancellationToken);
-
-    /// <summary>
-    /// Reads every page of WatchListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last
-    /// page the paging block names, or at the first empty page, which it does not yield. The qry you pass is not
-    /// changed.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoApiSocWatch> WatchListPagesAsync(QueApiSocWatchList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueApiSocWatchList, ResPagedOfDtoApiSocWatch, DtoApiSocWatch>(qry ?? new QueApiSocWatchList(),
-            (q, ct) => WatchListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
-
-    /// <summary>
-    /// Reads every row of every page of WatchListPagesAsync, one at a time.
-    /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
-    /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoApiSocWatch> WatchListItemsAsync(QueApiSocWatchList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoApiSocWatch, DtoApiSocWatch>(WatchListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<PulsePoint> HistoryItemsAsync(string? syms = null, string? interval = null, int? days = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfPulsePoint, PulsePoint>(HistoryPagesAsync(syms, interval, days, sort, page, size, cancellationToken), p => p.Data);
 }
 
 /// <summary>
@@ -601,42 +795,61 @@ public sealed class V1VideosResource
     internal V1VideosResource(FinHttpTransport http) => _http = http;
 
     /// <summary>
-    /// List videos. Videos with FinSocial scores, signals, summaries and links. Filters: ChannelId, Symbol, MinScore,
-    /// MaxScore, From, To. Transcripts and video content are never returned. GET /v1/videos. Included in paid plans,
-    /// for package tiers 1, 2, 3, 4.
+    /// Videos. Videos from the channels FinSocial follows, newest first, one row per video, with FinSocial's own score,
+    /// signal and summary and what it read about each ticker the video names. Never the transcript or the video itself.
+    /// GET /v1/videos. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="channel">Only videos of this channel: its name (any case) or its channel id.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="minScore">Only videos whose own score is at least this, 0 to 10.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), score. A minus sign sorts high to low; videos without a score come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPagedOfDtoSocApiVideo> ListAsync(QueSocApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPagedOfDtoSocApiVideo>("GET", FinQuery.Path("v1/videos", ("qry", FinQuery.Json(qry ?? new QueSocApiVideoList()))), null, null, cancellationToken);
+    public Task<ApiPageOfVideoRow> VideosAsync(string? syms = null, string? channel = null, string? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ApiPageOfVideoRow>("GET", FinQuery.Path("v1/videos", ("syms", syms), ("channel", channel), ("since", since), ("minScore", minScore), ("sort", sort), ("page", page), ("size", size)), null, null, cancellationToken);
 
     /// <summary>
-    /// Reads every page of ListAsync, advancing PageNo from the one in qry (1 when unset). It stops after the last page
-    /// the paging block names, or at the first empty page, which it does not yield. The qry you pass is not changed.
+    /// Reads every page of VideosAsync, advancing page from the one you pass (1 when unset). It stops after the last
+    /// page the paging block names, or at the first empty page, which it does not yield.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="channel">Only videos of this channel: its name (any case) or its channel id.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="minScore">Only videos whose own score is at least this, 0 to 10.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), score. A minus sign sorts high to low; videos without a score come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<ResPagedOfDtoSocApiVideo> ListPagesAsync(QueSocApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.ByPageNumber<QueSocApiVideoList, ResPagedOfDtoSocApiVideo, DtoSocApiVideo>(qry ?? new QueSocApiVideoList(),
-            (q, ct) => ListAsync(q, ct),
-            q => q.PageNo, (q, n) => q.PageNo = n, p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
+    public IAsyncEnumerable<ApiPageOfVideoRow> VideosPagesAsync(string? syms = null, string? channel = null, string? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.ByPage<ApiPageOfVideoRow, VideoRow>(page ?? 1,
+            (n, ct) => VideosAsync(syms, channel, since, minScore, sort, n, size, ct),
+            p => p.Data, p => p.Paging?.PageNo, p => p.Paging?.PageCount, cancellationToken);
 
     /// <summary>
-    /// Reads every row of every page of ListPagesAsync, one at a time.
+    /// Reads every row of every page of VideosPagesAsync, one at a time.
     /// </summary>
-    /// <param name="qry">The query object, sent as one JSON-encoded qry value: paging, sorting and this endpoint's filters. Null sends none.</param>
+    /// <param name="syms">Tickers to look up, comma-separated, up to 50, any case. Leave empty for every ticker. Tickers no row carries come back in NotFound.</param>
+    /// <param name="channel">Only videos of this channel: its name (any case) or its channel id.</param>
+    /// <param name="since">Only rows from this time on: a date such as 2026-11-20 or a full UTC time.</param>
+    /// <param name="minScore">Only videos whose own score is at least this, 0 to 10.</param>
+    /// <param name="sort">Field to sort by; a minus sign in front sorts high to low. Fields: published (default, newest first), score. A minus sign sorts high to low; videos without a score come last.</param>
+    /// <param name="page">Page to return, from 1. Default 1.</param>
+    /// <param name="size">Rows per page, 1 to 50. Default 50.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public IAsyncEnumerable<DtoSocApiVideo> ListItemsAsync(QueSocApiVideoList? qry = null, CancellationToken cancellationToken = default)
-        => FinPaging.Items<ResPagedOfDtoSocApiVideo, DtoSocApiVideo>(ListPagesAsync(qry, cancellationToken), p => p.Data);
+    public IAsyncEnumerable<VideoRow> VideosItemsAsync(string? syms = null, string? channel = null, string? since = null, double? minScore = null, string? sort = null, int? page = null, int? size = null, CancellationToken cancellationToken = default)
+        => FinPaging.Items<ApiPageOfVideoRow, VideoRow>(VideosPagesAsync(syms, channel, since, minScore, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// View video. One video with its scores, signals, summary and public link. Transcript and video content are never
-    /// returned. GET /v1/videos/{videoId}. Included in paid plans, for package tiers 2, 3, 4.
+    /// Video. One video with FinSocial's own score, signal and summary and what it read about each ticker the video
+    /// names. Never the transcript or the video itself. GET /v1/videos/{id}. Included in paid plans, for package tiers
+    /// 1, 2, 3, 4.
     /// </summary>
-    /// <param name="videoId">YouTube video identifier, as returned in the VideoId field of the video list.</param>
+    /// <param name="id">The Id of the video, as returned by the video list.</param>
     /// <param name="cancellationToken">Cancels the call.</param>
-    public Task<ResPonseOfListOfDtoSocApiVideo> ViewAsync(string videoId, CancellationToken cancellationToken = default)
-        => _http.SendApiAsync<ResPonseOfListOfDtoSocApiVideo>("GET", FinQuery.Path($"v1/videos/{FinQuery.Segment(videoId)}"), null, null, cancellationToken);
+    public Task<ResPonseOfVideoRow> VideoAsync(string id, CancellationToken cancellationToken = default)
+        => _http.SendApiAsync<ResPonseOfVideoRow>("GET", FinQuery.Path($"v1/videos/{FinQuery.Segment(id)}"), null, null, cancellationToken);
 }
 
 /// <summary>
@@ -646,10 +859,17 @@ public sealed class FinSocialV1Resource
 {
     internal FinSocialV1Resource(FinHttpTransport http)
     {
+        Creators = new V1CreatorsResource(http);
         Markets = new V1MarketsResource(http);
-        Social = new V1SocialResource(http);
+        Posts = new V1PostsResource(http);
+        Pulse = new V1PulseResource(http);
         Videos = new V1VideosResource(http);
     }
+
+    /// <summary>
+    /// Creators.
+    /// </summary>
+    public V1CreatorsResource Creators { get; }
 
     /// <summary>
     /// Markets.
@@ -657,9 +877,14 @@ public sealed class FinSocialV1Resource
     public V1MarketsResource Markets { get; }
 
     /// <summary>
-    /// Social.
+    /// Posts.
     /// </summary>
-    public V1SocialResource Social { get; }
+    public V1PostsResource Posts { get; }
+
+    /// <summary>
+    /// Pulse.
+    /// </summary>
+    public V1PulseResource Pulse { get; }
 
     /// <summary>
     /// Videos.
@@ -674,11 +899,18 @@ public sealed class FinSocialResource
 {
     internal FinSocialResource(FinHttpTransport http)
     {
+        Creators = new CreatorsResource(http);
         Markets = new MarketsResource(http);
-        Social = new SocialResource(http);
+        Posts = new PostsResource(http);
+        Pulse = new PulseResource(http);
         Videos = new VideosResource(http);
         V1 = new FinSocialV1Resource(http);
     }
+
+    /// <summary>
+    /// Creators.
+    /// </summary>
+    public CreatorsResource Creators { get; }
 
     /// <summary>
     /// Markets.
@@ -686,9 +918,14 @@ public sealed class FinSocialResource
     public MarketsResource Markets { get; }
 
     /// <summary>
-    /// Social.
+    /// Posts.
     /// </summary>
-    public SocialResource Social { get; }
+    public PostsResource Posts { get; }
+
+    /// <summary>
+    /// Pulse.
+    /// </summary>
+    public PulseResource Pulse { get; }
 
     /// <summary>
     /// Videos.
