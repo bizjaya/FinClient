@@ -764,7 +764,7 @@ class AssetsV1(rt.Group):
         Lists assets from the asset registry. Filter by exchange, tradability and quote currency;
         page with limit and offset.
 
-        ``GET /v1/assets``. Needs no API key.
+        ``GET /v1/assets``. Currently needs no API key.
 
         Args:
             dax: Exchange key to filter by, for example BIN. Omit to include every exchange.
@@ -816,7 +816,7 @@ class AssetsV1(rt.Group):
 
         Lists the exchange keys with their numeric value and TradingView prefix.
 
-        ``GET /v1/assets/exchanges``. Needs no API key.
+        ``GET /v1/assets/exchanges``. Currently needs no API key.
 
         Returns: the rows.
         """
@@ -829,7 +829,7 @@ class AssetsV1(rt.Group):
 
         Lists the asset classes (for example crypto, forex and stocks) with their numeric values.
 
-        ``GET /v1/assets/types``. Needs no API key.
+        ``GET /v1/assets/types``. Currently needs no API key.
 
         Returns: the rows.
         """
@@ -842,7 +842,7 @@ class AssetsV1(rt.Group):
 
         Returns one asset from the registry by its id.
 
-        ``GET /v1/assets/{id}``. Needs no API key.
+        ``GET /v1/assets/{id}``. Currently needs no API key.
 
         Args:
             id: Asset id, as returned in the id field of the asset list (24-character hexadecimal
@@ -891,7 +891,7 @@ class OhlcvV1(rt.Group):
         Reserved: candles for one symbol over a time range. Candle data is not available yet and the
         endpoint answers 501 Not Implemented.
 
-        ``GET /v1/ohlcv/{symbol}``. Needs no API key.
+        ``GET /v1/ohlcv/{symbol}``. Currently needs no API key.
 
         Args:
             symbol: Trading symbol, for example BTCUSDT.
@@ -1118,7 +1118,7 @@ class TickersV1(rt.Group):
         Lists tickers with last price, 24-hour change and volume. Filter by exchange, quote currency
         and listing state; page with limit and offset.
 
-        ``GET /v1/tickers``. Needs no API key.
+        ``GET /v1/tickers``. Currently needs no API key.
 
         Args:
             dax: Exchange key to filter by, for example BIN. Omit to include every exchange.
@@ -1176,7 +1176,7 @@ class TickersV1(rt.Group):
 
         Finds tickers whose symbol contains the search text, case-insensitive.
 
-        ``GET /v1/tickers/search``. Needs no API key.
+        ``GET /v1/tickers/search``. Currently needs no API key.
 
         Args:
             q: Text to look for inside the ticker symbol. Case-insensitive; matches anywhere in the
@@ -1196,7 +1196,7 @@ class TickersV1(rt.Group):
 
         Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
 
-        ``GET /v1/tickers/{symbol}``. Needs no API key.
+        ``GET /v1/tickers/{symbol}``. Currently needs no API key.
 
         Args:
             symbol: Trading symbol, for example BTCUSDT. Must match exactly.

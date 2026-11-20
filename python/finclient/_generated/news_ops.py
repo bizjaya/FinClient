@@ -878,7 +878,7 @@ class EntitiesV1(rt.Group):
 
         Lists the entity types used by the news data, such as tickers and topics.
 
-        ``GET /v1/entities/types``. Needs no API key.
+        ``GET /v1/entities/types``. Currently needs no API key.
 
         Returns: a page of rows with its paging info.
         """
@@ -895,7 +895,7 @@ class NewsV1(rt.Group):
 
         Returns a paged, filterable feed of news articles with their sentiment and signal grades.
 
-        ``GET /v1/news/all``. Needs no API key.
+        ``GET /v1/news/all``. Currently needs no API key.
 
         Args:
             qry: Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the
@@ -960,7 +960,7 @@ class NewsV1(rt.Group):
 
         Returns one article's full detail, looked up by its checksum.
 
-        ``GET /v1/news/checksum/{checksum}``. Needs no API key.
+        ``GET /v1/news/checksum/{checksum}``. Currently needs no API key.
 
         Args:
             checksum: Checksum of the article, as returned in the checksum field of news results.
@@ -1075,7 +1075,7 @@ class SourcesV1(rt.Group):
         Returns the catalogue of news sources, paged, with optional category, activity and vendor
         filters.
 
-        ``GET /v1/sources``. Needs no API key.
+        ``GET /v1/sources``. Currently needs no API key.
 
         Args:
             qry: Query as one JSON-encoded qry value: paging (pageNo, pageSize, sortBy) and the
@@ -1130,7 +1130,7 @@ class SourcesV1(rt.Group):
 
         Lists the categories a news source can have.
 
-        ``GET /v1/sources/categories``. Needs no API key.
+        ``GET /v1/sources/categories``. Currently needs no API key.
 
         Returns: a page of rows with its paging info.
         """

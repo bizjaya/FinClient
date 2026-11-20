@@ -251,7 +251,7 @@ def billing(op: dict[str, Any]) -> str:
     tiers = op.get("x-fin-tiers") or []
     cost = op.get("x-fin-cost") or 0
     if auth == "none":
-        return "Needs no API key."
+        return "Currently needs no API key."
     if tiers:
         return "Included in paid plans (package tiers " + ", ".join(str(t) for t in tiers) + ")."
     if cost:
