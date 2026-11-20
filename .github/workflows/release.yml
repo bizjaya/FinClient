@@ -1,8 +1,9 @@
 name: Release
 
-# A tag vX.Y.Z on main publishes FinClient to nuget.org and finclient to npmjs.com through trusted publishing: GitHub's
-# OIDC token is exchanged for a short-lived credential, so no long-lived registry key is stored here. Everything is built
-# and tested before anything is published, and the two registries are published back to back.
+# A tag vX.Y.Z on main publishes FinClient to nuget.org, finclient to npmjs.com and finclient to pypi.org through trusted
+# publishing: GitHub's OIDC token is exchanged for a short-lived credential, so no long-lived registry key is stored
+# here. Everything is built and tested before anything is published; NuGet and npm are published back to back, and
+# PyPI follows in its own job (the `pypi` environment is what PyPI's trusted publisher is registered for).
 on:
   push:
     tags:
@@ -23,6 +24,9 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 10.0.x
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
       - uses: actions/setup-node@v7
         with:
           node-version: 22.14.0
@@ -80,7 +84,33 @@ jobs:
           npm run build
           npm pack --dry-run
 
-      # Publishing starts only here, after both packages built and passed their tests.
+      - name: Build, test and pack the Python package
+        shell: bash
+        env:
+          VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          python_version=$(sed -n 's/^version = "\(.*\)"$/\1/p' python/pyproject.toml | head -n 1)
+          if [[ "$python_version" != "$VERSION" ]]; then
+            echo "python/pyproject.toml has '$python_version' but the tag is v$VERSION. Set the version there (PEP 440 for a pre-release) and tag again." >&2
+            exit 1
+          fi
+          cp LICENSE python/LICENSE
+          python -m pip install --upgrade pip
+          python -m pip install --editable "python[dev]"
+          python scripts/generate_python.py
+          git diff --exit-code -- python/finclient/_generated
+          (cd python && ruff check . && mypy && pytest)
+          python -m build python --outdir "$RUNNER_TEMP/python-dist"
+          python -m twine check "$RUNNER_TEMP"/python-dist/*
+
+      - name: Keep the Python distributions for publishing
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-dist
+          path: ${{ runner.temp }}/python-dist/
+          if-no-files-found: error
+
+      # Publishing starts only here, after all three packages built and passed their tests.
       - name: Login to NuGet trusted publishing
         id: nuget-login
         uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2.0
@@ -103,3 +133,23 @@ jobs:
         with:
           name: v${{ steps.version.outputs.value }}
           body_path: ${{ runner.temp }}/release-notes.md
+
+  # PyPI trusted publishing: register this repository, the workflow file release.yml and the environment `pypi` as a
+  # trusted publisher of the finclient project on pypi.org. The job runs after the build job above has built and tested
+  # everything, and a failed upload can be re-run on its own.
+  publish-pypi:
+    name: Publish to PyPI
+    needs: publish
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: python-dist
+          path: dist
+      - name: Publish to pypi.org
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist

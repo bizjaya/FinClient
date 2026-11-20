@@ -6,3 +6,5 @@ if ($LASTEXITCODE -ne 0) { throw 'The .NET DTO generation failed.' }
 if ($LASTEXITCODE -ne 0) { throw 'The TypeScript DTO generation failed.' }
 node (Join-Path $PSScriptRoot 'generate-surface.mjs')
 if ($LASTEXITCODE -ne 0) { throw 'The FinGraph, FinNews and FinSocial resource generation failed.' }
+& python (Join-Path $PSScriptRoot 'generate_python.py')
+if ($LASTEXITCODE -ne 0) { throw 'The Python type generation failed.' }

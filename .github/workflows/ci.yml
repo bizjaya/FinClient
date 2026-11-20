@@ -24,13 +24,17 @@ jobs:
       - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - name: Both packages carry one version, and CHANGELOG.md has its section
+      - name: All packages carry one version, and CHANGELOG.md has its section
         shell: bash
         run: |
           dotnet_version=$(sed -n 's:.*<Version>\(.*\)</Version>.*:\1:p' dotnet/src/FinClient/FinClient.csproj)
           npm_version=$(node -p "require('./typescript/package.json').version")
+          python_version=$(sed -n 's/^version = "\(.*\)"$/\1/p' python/pyproject.toml | head -n 1)
           if [[ -z "$dotnet_version" || "$dotnet_version" != "$npm_version" ]]; then
             echo "FinClient.csproj has '$dotnet_version' but typescript/package.json has '$npm_version'." >&2; exit 1
+          fi
+          if [[ "$python_version" != "$dotnet_version" ]]; then
+            echo "python/pyproject.toml has '$python_version' but FinClient.csproj and typescript/package.json have '$dotnet_version'." >&2; exit 1
           fi
           if ! grep -Eq "^## ${dotnet_version//./\\.}( |$)" CHANGELOG.md; then
             echo "CHANGELOG.md has no '## $dotnet_version' section." >&2; exit 1
@@ -90,6 +94,44 @@ jobs:
         working-directory: typescript
       - run: npm ls --omit=dev
         working-directory: typescript
+
+  python:
+    name: Python ${{ matrix.python }}
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.10", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+          cache-dependency-path: python/pyproject.toml
+      - run: python -m pip install --editable "python[dev]"
+      - name: Generated types and operations match spec/
+        run: python scripts/generate_python.py
+      - name: No generated file changed or appeared
+        shell: bash
+        run: |
+          git diff --exit-code -- python/finclient/_generated
+          test -z "$(git status --porcelain -- python/finclient/_generated)"
+      - run: ruff check .
+        working-directory: python
+      - run: mypy
+        working-directory: python
+      - run: pytest
+        working-directory: python
+      - name: Build the sdist and wheel
+        shell: bash
+        run: |
+          cp LICENSE python/LICENSE
+          python -m build python --outdir "$RUNNER_TEMP/python-dist"
+          ls "$RUNNER_TEMP/python-dist"
 
   # Daily (and on demand): have the live API descriptions of FinCopy, FinGraph, FinNews and FinSocial moved away from
   # spec/? A difference means the SDK needs regenerating and a release. GitHub pauses scheduled workflows after 60 days

@@ -29,6 +29,23 @@
   drift check covers all four documents.
 - A runnable example per service per language.
 
+- Python: the `finclient` package for Python 3.10 and newer, with no runtime dependencies. One `FinClient` reaches FinCopy
+  (`fin.copy`), FinGraph (`fin.graph`), FinNews (`fin.news`) and FinSocial (`fin.social`); each part has its own key,
+  sent as `X-Api-Key` for FinCopy and as `FinUsrKey` for the others, and its own base URL.
+- Python: the FinCopy surface mirrors the TypeScript client in snake_case (accounts, orders, fx, changes, webhooks, the
+  event stream and the webhook signature check).
+- Python: every FinGraph, FinNews and FinSocial operation is reachable, `/api` operations as `fin.<part>.<group>.<operation>()`
+  and `/v1` operations as `fin.<part>.v1.<group>.<operation>()`. A filter object is passed as keyword arguments or a dict
+  and sent as the `qry` parameter; list operations have `_pages` and `_items` iterators that follow `pageNo` or `offset`.
+- Python: typed request and response shapes (`TypedDict` and `Literal`) generated from the four API snapshots in `spec/`
+  by `scripts/generate_python.py`; CI regenerates them and fails on a difference.
+- Python: one exception hierarchy under `FinApiError` (`AuthenticationError`, `InsufficientCreditsError`,
+  `PermissionDeniedError`, `NotFoundError`, `RateLimitError`, `ServerError`), carrying the API's code and the limit
+  fields; retries with backoff on 429 (honouring `Retry-After`) and on 502, 503 and 504 for requests that are safe to repeat.
+- Snapshots of the FinGraph, FinNews and FinSocial API descriptions in `spec/`.
+- The release workflow publishes the Python package to PyPI through trusted publishing, beside NuGet and npm; CI checks
+  that all three packages carry the same version.
+
 ### Changed
 
 - The default error message of `FinApiError` and `FinApiException` is now "The Fin API request failed."

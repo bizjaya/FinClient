@@ -1,0 +1,76 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "finclient"
+version = "0.11.0"
+description = "Official Python client for the FinCopy, FinGraph, FinNews and FinSocial APIs"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "BizJaya TechLab S/B" }]
+keywords = ["finclient", "fincopy", "fingraph", "finnews", "finsocial", "trading", "market-data", "api-client"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Financial and Insurance Industry",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Office/Business :: Financial",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Typing :: Typed",
+]
+# The client has no runtime dependencies: it uses the standard library for HTTP.
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/bizjaya/FinClient"
+Documentation = "https://github.com/bizjaya/FinClient/tree/main/python#readme"
+Repository = "https://github.com/bizjaya/FinClient"
+Issues = "https://github.com/bizjaya/FinClient/issues"
+Changelog = "https://github.com/bizjaya/FinClient/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8,<10",
+  "mypy>=1.11,<3",
+  "ruff>=0.6,<1",
+  "build>=1.2,<2",
+  "twine>=5,<7",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["finclient"]
+
+[tool.hatch.build.targets.sdist]
+include = ["finclient", "tests", "examples", "README.md", "LICENSE", "pyproject.toml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
+files = ["finclient", "examples"]
+
+[[tool.mypy.overrides]]
+module = ["finclient._generated.*", "finclient.copy.*"]
+# Resource methods return what the reply carries; the schema fixes the type, not the runtime.
+warn_return_any = false
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+extend-exclude = ["finclient/_generated", ".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "W"]
