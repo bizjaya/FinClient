@@ -848,16 +848,17 @@ public sealed class V1AssetsResource
         => FinPaging.Items<ApiMktPageOfDtoApiAsset, DtoApiAsset>(ListPagesAsync(exchange, canTrade, quote, sort, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Exchanges Assets. Lists the exchanges FinGraph reads, with their name and numeric value.
-    /// GET /v1/assets/exchanges. Included in paid plans.
+    /// Exchanges. Lists the exchanges FinGraph reads, each with its name and numeric value, for use in the exchange
+    /// filter of the asset, ticker and market lists. GET /v1/assets/exchanges. Included in paid plans.
     /// </summary>
     /// <param name="cancellationToken">Cancels the call.</param>
     public Task<PubV1ListOfPubV1Exchange> ExchangesAsync(CancellationToken cancellationToken = default)
         => _http.SendApiAsync<PubV1ListOfPubV1Exchange>("GET", FinQuery.Path("v1/assets/exchanges"), null, null, cancellationToken);
 
     /// <summary>
-    /// Get Assets. Returns one asset from the registry by its id. GET /v1/assets/{id}. Included in paid plans, for
-    /// package tiers 1, 2, 3, 4.
+    /// Asset detail. Returns one asset from the registry by its id: symbol, exchange, base and quote coin, status and
+    /// what the exchange allows (trading, spot, margin). GET /v1/assets/{id}. Included in paid plans, for package tiers
+    /// 1, 2, 3, 4.
     /// </summary>
     /// <param name="id">Asset id, as returned in the id field of the asset list (24-character hexadecimal string).</param>
     /// <param name="cancellationToken">Cancels the call.</param>
@@ -1169,9 +1170,9 @@ public sealed class V1OhlcvResource
         => _http.SendApiAsync<JsonElement>("GET", FinQuery.Path("v1/ohlcv/batch", ("symbols", symbols), ("timeframe", timeframe)), null, null, cancellationToken);
 
     /// <summary>
-    /// Get Ohlcv. Coming soon: candles for one symbol over a time range. This endpoint is not available yet and answers
-    /// 501 Not Implemented until it is built. GET /v1/ohlcv/{symbol}. Included in paid plans, for package tiers 2, 3,
-    /// 4.
+    /// OHLCV candles. Coming soon: candles for one symbol over a time range. This endpoint is not available yet and
+    /// answers 501 Not Implemented until it is built. GET /v1/ohlcv/{symbol}. Included in paid plans, for package tiers
+    /// 2, 3, 4.
     /// </summary>
     /// <param name="symbol">Trading symbol, for example BTCUSDT.</param>
     /// <param name="timeframe">Candle interval, for example 1d. Default 1d.</param>
@@ -1561,7 +1562,7 @@ public sealed class V1TickersResource
         => FinPaging.Items<ApiMktPageOfDtoApiTickerLite, DtoApiTickerLite>(SearchPagesAsync(q, exchange, page, size, cancellationToken), p => p.Data);
 
     /// <summary>
-    /// Get Tickers. Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
+    /// Ticker detail. Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
     /// GET /v1/tickers/{symbol}. Included in paid plans, for package tiers 1, 2, 3, 4.
     /// </summary>
     /// <param name="symbol">Trading symbol, for example BTCUSDT. Must match exactly.</param>

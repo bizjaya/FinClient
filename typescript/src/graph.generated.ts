@@ -1243,16 +1243,17 @@ export class GraphV1AssetsResource {
   }
 
   /**
-   * Exchanges Assets. Lists the exchanges FinGraph reads, with their name and numeric value.
-   * GET /v1/assets/exchanges. Included in paid plans.
+   * Exchanges. Lists the exchanges FinGraph reads, each with its name and numeric value, for use in the exchange
+   * filter of the asset, ticker and market lists. GET /v1/assets/exchanges. Included in paid plans.
    */
   async exchanges(options: FinRequestOptions = {}): Promise<S["PubV1ListOfPubV1Exchange"]> {
     return this.http.call("GET", "v1/assets/exchanges", {  }, options);
   }
 
   /**
-   * Get Assets. Returns one asset from the registry by its id. GET /v1/assets/{id}. Included in paid plans, for
-   * package tiers 1, 2, 3, 4.
+   * Asset detail. Returns one asset from the registry by its id: symbol, exchange, base and quote coin, status and
+   * what the exchange allows (trading, spot, margin). GET /v1/assets/{id}. Included in paid plans, for package tiers
+   * 1, 2, 3, 4.
    */
   async get(id: string, options: FinRequestOptions = {}): Promise<S["PubV1ItemOfPubV1Asset"]> {
     return this.http.call("GET", `v1/assets/${pathSegment(id)}`, {  }, options);
@@ -1794,9 +1795,9 @@ export class GraphV1OhlcvResource {
   }
 
   /**
-   * Get Ohlcv. Coming soon: candles for one symbol over a time range. This endpoint is not available yet and answers
-   * 501 Not Implemented until it is built. GET /v1/ohlcv/{symbol}. Included in paid plans, for package tiers 2, 3,
-   * 4.
+   * OHLCV candles. Coming soon: candles for one symbol over a time range. This endpoint is not available yet and
+   * answers 501 Not Implemented until it is built. GET /v1/ohlcv/{symbol}. Included in paid plans, for package tiers
+   * 2, 3, 4.
    */
   async get(symbol: string, query: {
     /** Candle interval, for example 1d. Default 1d. */
@@ -2295,7 +2296,7 @@ export class GraphV1TickersResource {
   }
 
   /**
-   * Get Tickers. Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
+   * Ticker detail. Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
    * GET /v1/tickers/{symbol}. Included in paid plans, for package tiers 1, 2, 3, 4.
    */
   async get(symbol: string, options: FinRequestOptions = {}): Promise<S["PubV1ItemOfPubV1TickerDetail"]> {

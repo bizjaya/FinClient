@@ -572,8 +572,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Exchanges Assets
-         * @description Lists the exchanges FinGraph reads, with their name and numeric value.
+         * Exchanges
+         * @description Lists the exchanges FinGraph reads, each with its name and numeric value, for use in the exchange filter of the asset, ticker and market lists.
          */
         get: operations["Pub_AssetsController_Exchanges"];
         put?: never;
@@ -592,8 +592,8 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Assets
-         * @description Returns one asset from the registry by its id.
+         * Asset detail
+         * @description Returns one asset from the registry by its id: symbol, exchange, base and quote coin, status and what the exchange allows (trading, spot, margin).
          */
         get: operations["Pub_AssetsController_Get"];
         put?: never;
@@ -772,7 +772,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Ohlcv
+         * OHLCV candles
          * @description Coming soon: candles for one symbol over a time range. This endpoint is not available yet and answers 501 Not Implemented until it is built.
          */
         get: operations["Pub_OhlcvController_Get"];
@@ -1012,7 +1012,7 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * Get Tickers
+         * Ticker detail
          * @description Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
          */
         get: operations["Pub_TickersController_Get"];

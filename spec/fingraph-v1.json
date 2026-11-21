@@ -3781,8 +3781,8 @@
     "/v1/assets/exchanges": {
       "get": {
         "operationId": "Pub_AssetsController_Exchanges",
-        "summary": "Exchanges Assets",
-        "description": "Lists the exchanges FinGraph reads, with their name and numeric value.",
+        "summary": "Exchanges",
+        "description": "Lists the exchanges FinGraph reads, each with its name and numeric value, for use in the exchange filter of the asset, ticker and market lists.",
         "tags": [
           "Assets"
         ],
@@ -3858,8 +3858,8 @@
     "/v1/assets/{id}": {
       "get": {
         "operationId": "Pub_AssetsController_Get",
-        "summary": "Get Assets",
-        "description": "Returns one asset from the registry by its id.",
+        "summary": "Asset detail",
+        "description": "Returns one asset from the registry by its id: symbol, exchange, base and quote coin, status and what the exchange allows (trading, spot, margin).",
         "tags": [
           "Assets"
         ],
@@ -5203,7 +5203,7 @@
     "/v1/ohlcv/{symbol}": {
       "get": {
         "operationId": "Pub_OhlcvController_Get",
-        "summary": "Get Ohlcv",
+        "summary": "OHLCV candles",
         "description": "Coming soon: candles for one symbol over a time range. This endpoint is not available yet and answers 501 Not Implemented until it is built.",
         "tags": [
           "Ohlcv"
@@ -7043,7 +7043,7 @@
     "/v1/tickers/{symbol}": {
       "get": {
         "operationId": "Pub_TickersController_Get",
-        "summary": "Get Tickers",
+        "summary": "Ticker detail",
         "description": "Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.",
         "tags": [
           "Tickers"
