@@ -1243,9 +1243,10 @@ class AssetsV1(rt.Group):
             exchange=exchange, can_trade=can_trade, quote=quote, sort=sort, page=page, size=size))
 
     def exchanges(self) -> List[t.PubV1Exchange]:
-        """Exchanges Assets
+        """Exchanges
 
-        Lists the exchanges FinGraph reads, with their name and numeric value.
+        Lists the exchanges FinGraph reads, each with its name and numeric value, for use in the
+        exchange filter of the asset, ticker and market lists.
 
         ``GET /v1/assets/exchanges``. Billed 0.5 credits per call.
 
@@ -1256,9 +1257,10 @@ class AssetsV1(rt.Group):
         )
 
     def get(self, id: str) -> t.PubV1Asset:
-        """Get Assets
+        """Asset detail
 
-        Returns one asset from the registry by its id.
+        Returns one asset from the registry by its id: symbol, exchange, base and quote coin, status
+        and what the exchange allows (trading, spot, margin).
 
         ``GET /v1/assets/{id}``. Included in paid plans (package tiers 1, 2, 3, 4).
 
@@ -1735,7 +1737,7 @@ class OhlcvV1(rt.Group):
         to: Optional[str] = None,
         limit: Optional[int] = None,
     ) -> Dict[str, Any]:
-        """Get Ohlcv
+        """OHLCV candles
 
         Coming soon: candles for one symbol over a time range. This endpoint is not available yet
         and answers 501 Not Implemented until it is built.
@@ -2290,7 +2292,7 @@ class TickersV1(rt.Group):
             q=q, exchange=exchange, page=page, size=size))
 
     def get(self, symbol: str) -> t.PubV1TickerDetail:
-        """Get Tickers
+        """Ticker detail
 
         Full detail for one ticker symbol: prices, bid and ask, 24-hour range and volume.
 
