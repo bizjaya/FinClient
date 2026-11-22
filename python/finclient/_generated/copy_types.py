@@ -39,6 +39,66 @@ BrokerServerEnvironment = Literal["Demo", "Live", "Unknown"]
 
 BrokerServerStatus = Literal["Submitted", "Verified", "Retired"]
 
+class _CmdAIBotAdviceDecideRequired(TypedDict):
+    ACNO: int
+
+
+class CmdAIBotAdviceDecide(_CmdAIBotAdviceDecideRequired, total=False):
+    AdviceId: str
+    Accept: bool
+    TrPin: Optional[str]
+
+class _CmdAIBotAdviceUndoRequired(TypedDict):
+    ACNO: int
+
+
+class CmdAIBotAdviceUndo(_CmdAIBotAdviceUndoRequired, total=False):
+    TrPin: Optional[str]
+
+class _CmdAIBotFullAutoSettingsRequired(TypedDict):
+    ACNO: int
+
+
+class CmdAIBotFullAutoSettings(_CmdAIBotFullAutoSettingsRequired, total=False):
+    TrPin: Optional[str]
+    Values: "DtoAIBotValues"
+
+class _CmdAIBotFullAutoStateRequired(TypedDict):
+    ACNO: int
+
+
+class CmdAIBotFullAutoState(_CmdAIBotFullAutoStateRequired, total=False):
+    State: str
+    TrPin: Optional[str]
+
+class _CmdAIBotPairModeRequired(TypedDict):
+    ACNO: int
+
+
+class CmdAIBotPairMode(_CmdAIBotPairModeRequired, total=False):
+    Symbol: str
+    Mode: str
+    TrPin: Optional[str]
+
+class _CmdAIBotPairRulesRequired(TypedDict):
+    ACNO: int
+
+
+class CmdAIBotPairRules(_CmdAIBotPairRulesRequired, total=False):
+    Symbol: str
+    Values: "DtoAIBotValues"
+    SYMSTG: Dict[str, Any]
+    Entry: Dict[str, Any]
+    TrPin: Optional[str]
+    ConfirmClose: bool
+
+class _CmdAIBotRetuneRequired(TypedDict):
+    ACNO: int
+
+
+class CmdAIBotRetune(_CmdAIBotRetuneRequired, total=False):
+    TrPin: Optional[str]
+
 class CmdApiFxsAcctPatch(TypedDict, total=False):
     """Public API settings patch. Account identity comes from the ACNO route. Every field is optional:
     absent leaves it as
@@ -265,6 +325,64 @@ DeployKind = Literal["Provision", "Upgrade", "Rollback", "Remove", "Start", "Sto
 DeployStatus = Literal["Running", "Done", "Failed", "RolledBack"]
 
 DesiredTermState = Literal["Running", "Stopped", "Removed"]
+
+class DtoAIBotFullAuto(TypedDict, total=False):
+    ACNO: int
+    ISNO: int
+    Platform: str
+    StrategyName: str
+    Granted: bool
+    State: str
+    BreakerTripped: bool
+    BreakerReason: Optional[str]
+    Values: "DtoAIBotValues"
+    RetuneValues: "DtoAIBotValues"
+    Pairs: List[Dict[str, Any]]
+    Advice: List[Dict[str, Any]]
+    Decisions: List[Dict[str, Any]]
+
+class DtoAIBotFullAutoDecision(TypedDict, total=False):
+    Id: str
+    ACNO: int
+    LookAt: str
+    Trigger: str
+    Model: str
+    RulesJson: Optional[str]
+    InputTokens: int
+    OutputTokens: int
+    CostUsd: float
+    GuardVerdict: Optional[str]
+    AnswerJson: Optional[str]
+    OrdersWritten: List[Dict[str, Any]]
+
+class DtoAIBotFullAutoDecisionListResPonse(TypedDict, total=False):
+    data: List["DtoAIBotFullAutoDecision"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
+
+class DtoAIBotFullAutoResPonse(TypedDict, total=False):
+    data: "DtoAIBotFullAuto"
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
+
+class DtoAIBotTicketsView(TypedDict, total=False):
+    ACNO: int
+    Pairs: List[Dict[str, Any]]
+    Tickets: List[Dict[str, Any]]
+
+class DtoAIBotTicketsViewResPonse(TypedDict, total=False):
+    data: "DtoAIBotTicketsView"
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
 
 class DtoAIBotValues(TypedDict, total=False):
     """Ordinary per-value edits. There is no account-wide stored switch."""
@@ -561,6 +679,23 @@ class DtoEASymStg(TypedDict, total=False):
     USEDESC: Optional[bool]
     BDMUL: Optional[float]
     SDMUL: Optional[float]
+
+class DtoFcAdviceSummary(TypedDict, total=False):
+    Id: str
+    ACNO: int
+    AskedAt: str
+    Status: str
+    Trigger: str
+    Model: str
+    Note: Optional[str]
+
+class DtoFcAdviceSummaryListResPonse(TypedDict, total=False):
+    data: List["DtoFcAdviceSummary"]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
 
 class DtoFinInstrument(TypedDict, total=False):
     Name: Optional[str]

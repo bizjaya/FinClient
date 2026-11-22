@@ -1004,6 +1004,210 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/fxs/accounts/{acno}/aibot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reads the account AIBot dashboard, settings, pairs, advice and decisions. */
+        get: operations["AIBotView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sets the account AIBot state to Off, Watch or On. */
+        post: operations["AIBotState"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/retune": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retunes the account AIBot values from its strategy. */
+        post: operations["AIBotRetune"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Applies account AIBot settings. */
+        post: operations["AIBotSettings"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/pair-mode": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Sets one pair AIBot mode. */
+        post: operations["AIBotPairMode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/pair-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Applies one pair AIBot rules and settings. */
+        post: operations["AIBotPairRules"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reads the account AIBot tickets and pair modes. */
+        get: operations["AIBotTickets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advise": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Runs AIAdvisor now for the account. */
+        post: operations["AIBotAdvise"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advice": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lists the account AIAdvisor advice. */
+        get: operations["AIBotAdvice"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advice/decide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approves or rejects one AIAdvisor recommendation. */
+        post: operations["AIBotAdviceDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advice/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Undoes the latest AIAdvisor recommendation. */
+        post: operations["AIBotAdviceUndo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lists recorded account AIBot decisions. */
+        get: operations["AIBotDecisions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -3699,6 +3903,247 @@ export interface components {
             Val?: components["schemas"]["Trend"] | null;
             Min?: components["schemas"]["Trend"] | null;
             Max?: components["schemas"]["Trend"] | null;
+        };
+        DtoAIBotFullAuto: {
+            /** Format: int64 */
+            ACNO?: number;
+            /** Format: int32 */
+            ISNO?: number;
+            Platform?: string;
+            StrategyName?: string;
+            Granted?: boolean;
+            State?: string;
+            BreakerTripped?: boolean;
+            BreakerReason?: string | null;
+            Values?: components["schemas"]["DtoAIBotValues"];
+            RetuneValues?: components["schemas"]["DtoAIBotValues"];
+            Pairs?: ({
+                SYM?: string;
+                SYM6?: string;
+                Mode?: string;
+                Flat?: boolean;
+                Values?: components["schemas"]["DtoAIBotValues"];
+                Entry?: {
+                    [key: string]: unknown;
+                };
+                SYMSTG?: {
+                    [key: string]: unknown;
+                };
+                Tickets?: {
+                    [key: string]: unknown;
+                }[];
+                SlHolds?: {
+                    [key: string]: unknown;
+                }[];
+            } & {
+                [key: string]: unknown;
+            })[];
+            Advice?: ({
+                Id?: string;
+                Trigger?: string;
+                /** Format: date-time */
+                AskedAt?: string;
+                Status?: string;
+                Error?: string | null;
+                Model?: string;
+                /** Format: double */
+                CostUsd?: number;
+                Note?: string | null;
+                Pairs?: {
+                    [key: string]: unknown;
+                }[];
+                Changes?: {
+                    [key: string]: unknown;
+                }[];
+            } & {
+                [key: string]: unknown;
+            })[];
+            Decisions?: ({
+                Id?: string;
+                /** Format: int64 */
+                ACNO?: number;
+                /** Format: date-time */
+                LookAt?: string;
+                Trigger?: string;
+                Model?: string;
+                RulesJson?: string | null;
+                InputTokens?: number;
+                OutputTokens?: number;
+                CostUsd?: number;
+                GuardVerdict?: string | null;
+                AnswerJson?: string | null;
+                OrdersWritten?: {
+                    [key: string]: unknown;
+                }[];
+            } & {
+                [key: string]: unknown;
+            })[];
+        } & {
+            [key: string]: unknown;
+        };
+        DtoAIBotTicketsView: {
+            /** Format: int64 */
+            ACNO?: number;
+            Pairs?: ({
+                SYM?: string;
+                Mode?: string;
+            } & {
+                [key: string]: unknown;
+            })[];
+            Tickets?: ({
+                /** Format: int64 */
+                TID?: number;
+                SYM?: string;
+                Side?: string;
+                Lot?: number;
+                OpenPrice?: number;
+                TakeProfitPrice?: number;
+                StopLossPrice?: number;
+                TrailPercent?: number;
+                Manager?: string;
+                Role?: string | null;
+                ExitsSet?: boolean;
+                ExitError?: string | null;
+                Adopted?: boolean;
+                AdoptedHanded?: boolean;
+            } & {
+                [key: string]: unknown;
+            })[];
+        } & {
+            [key: string]: unknown;
+        };
+        DtoFcAdviceSummary: {
+            Id?: string;
+            /** Format: int64 */
+            ACNO?: number;
+            /** Format: date-time */
+            AskedAt?: string;
+            Status?: string;
+            Trigger?: string;
+            Model?: string;
+            Note?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        DtoAIBotFullAutoDecision: {
+            Id?: string;
+            /** Format: int64 */
+            ACNO?: number;
+            /** Format: date-time */
+            LookAt?: string;
+            Trigger?: string;
+            Model?: string;
+            RulesJson?: string | null;
+            InputTokens?: number;
+            OutputTokens?: number;
+            CostUsd?: number;
+            GuardVerdict?: string | null;
+            AnswerJson?: string | null;
+            OrdersWritten?: {
+                [key: string]: unknown;
+            }[];
+        } & {
+            [key: string]: unknown;
+        };
+        CmdAIBotFullAutoState: {
+            /** Format: int64 */
+            ACNO: number;
+            State?: string;
+            TrPin?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        CmdAIBotRetune: {
+            /** Format: int64 */
+            ACNO: number;
+            TrPin?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        CmdAIBotFullAutoSettings: {
+            /** Format: int64 */
+            ACNO: number;
+            TrPin?: string | null;
+            Values?: components["schemas"]["DtoAIBotValues"];
+        } & {
+            [key: string]: unknown;
+        };
+        CmdAIBotPairMode: {
+            /** Format: int64 */
+            ACNO: number;
+            Symbol?: string;
+            Mode?: string;
+            TrPin?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        CmdAIBotPairRules: {
+            /** Format: int64 */
+            ACNO: number;
+            Symbol?: string;
+            Values?: components["schemas"]["DtoAIBotValues"];
+            SYMSTG?: {
+                [key: string]: unknown;
+            };
+            Entry?: {
+                [key: string]: unknown;
+            };
+            TrPin?: string | null;
+            ConfirmClose?: boolean;
+        } & {
+            [key: string]: unknown;
+        };
+        CmdAIBotAdviceDecide: {
+            /** Format: int64 */
+            ACNO: number;
+            AdviceId?: string;
+            Accept?: boolean;
+            TrPin?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        CmdAIBotAdviceUndo: {
+            /** Format: int64 */
+            ACNO: number;
+            TrPin?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        DtoAIBotFullAutoResPonse: {
+            data?: components["schemas"]["DtoAIBotFullAuto"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoAIBotTicketsViewResPonse: {
+            data?: components["schemas"]["DtoAIBotTicketsView"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoFcAdviceSummaryListResPonse: {
+            data?: components["schemas"]["DtoFcAdviceSummary"][];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoAIBotFullAutoDecisionListResPonse: {
+            data?: components["schemas"]["DtoAIBotFullAutoDecision"][];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
         };
     };
     responses: never;
@@ -8781,6 +9226,310 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotState: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CmdAIBotFullAutoState"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotRetune: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CmdAIBotRetune"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotSettings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CmdAIBotFullAutoSettings"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotPairMode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CmdAIBotPairMode"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotPairRules: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CmdAIBotPairRules"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotTickets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotTicketsViewResPonse"];
+                };
+            };
+        };
+    };
+    AIBotAdvise: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotAdvice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFcAdviceSummaryListResPonse"];
+                };
+            };
+        };
+    };
+    AIBotAdviceDecide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CmdAIBotAdviceDecide"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotAdviceUndo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CmdAIBotAdviceUndo"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+        };
+    };
+    AIBotDecisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FinCopy account number (ACNO). */
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoDecisionListResPonse"];
                 };
             };
         };
