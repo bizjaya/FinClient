@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.13.0 (2026-11-22)
+
+### Added
+
+- FinCopy AIBot account routes for reading the dashboard, tickets, advice and decisions; switching state, retuning and saving
+  settings; changing pair mode and rules; requesting advice; approving or rejecting advice; and undoing the latest advice.
+- .NET and TypeScript FinClient methods and generated DTOs for the FinCopy AIBot routes. Writes accept an
+  `Idempotency-Key` through the request options.
+
 ## 0.12.0 (2026-11-21)
 
 This is a breaking change for everyone who calls FinGraph, FinNews or FinSocial: the three services were redesigned, and every

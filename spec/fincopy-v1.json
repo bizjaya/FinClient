@@ -102,6 +102,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberAccountResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -158,16 +168,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberAccountResPaged"
                 }
               }
             }
@@ -214,6 +214,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -270,16 +280,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
                 }
               }
             }
@@ -319,6 +319,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -375,16 +385,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFleetAccountResPonse"
                 }
               }
             }
@@ -409,6 +409,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoDemoAvailabilityResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -465,16 +475,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoDemoAvailabilityResPonse"
                 }
               }
             }
@@ -500,6 +500,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberAccountResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -556,16 +566,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberAccountResPonse"
                 }
               }
             }
@@ -620,6 +620,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -676,16 +686,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -735,6 +735,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoTermAccountResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -791,16 +801,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoTermAccountResPonse"
                 }
               }
             }
@@ -840,6 +840,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoBrokerServerSearchIReadOnlyListResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -896,16 +906,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoBrokerServerSearchIReadOnlyListResPonse"
                 }
               }
             }
@@ -939,6 +939,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiChangeFeedResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -995,16 +1005,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiChangeFeedResPonse"
                 }
               }
             }
@@ -1020,6 +1020,16 @@
         "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\n            so a member session cannot call it.",
         "operationId": "WebhookView",
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiWebhookResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1076,16 +1086,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiWebhookResPonse"
                 }
               }
             }
@@ -1123,6 +1123,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiWebhookResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1179,16 +1189,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiWebhookResPonse"
                 }
               }
             }
@@ -1202,6 +1202,16 @@
         "summary": "Remove this key's webhook. API key only, with the Trade permission.",
         "operationId": "WebhookVoid",
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1258,16 +1268,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResPonse"
                 }
               }
             }
@@ -1283,6 +1283,16 @@
         "summary": "Send a signed test POST (event \"ping\") to this key's webhook. API key only, with the Trade permission.",
         "operationId": "WebhookPing",
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiWebhookPingResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1339,16 +1349,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiWebhookPingResPonse"
                 }
               }
             }
@@ -1364,6 +1364,9 @@
         "summary": "A server-sent event stream of changes on the caller's accounts. Each caller holds up to eight streams; a ninth\n            closes the oldest.",
         "operationId": "Stream",
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1453,9 +1456,6 @@
                 }
               }
             }
-          },
-          "200": {
-            "description": "OK"
           }
         }
       }
@@ -1559,6 +1559,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1615,16 +1625,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
                 }
               }
             }
@@ -1659,6 +1659,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdhResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1715,16 +1725,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdhResPonse"
                 }
               }
             }
@@ -1831,6 +1831,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1887,16 +1897,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
                 }
               }
             }
@@ -1931,6 +1931,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -1987,16 +1997,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrResPonse"
                 }
               }
             }
@@ -2125,6 +2125,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2181,16 +2191,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrResPaged"
                 }
               }
             }
@@ -2319,6 +2319,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2375,16 +2385,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdhResPaged"
                 }
               }
             }
@@ -2424,6 +2424,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoWaitlistStateResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2480,16 +2490,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoWaitlistStateResPonse"
                 }
               }
             }
@@ -2596,6 +2596,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2652,16 +2662,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
                 }
               }
             }
@@ -2696,6 +2696,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPairResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2752,16 +2762,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPairResPonse"
                 }
               }
             }
@@ -2818,6 +2818,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPairResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2874,16 +2884,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPairResPonse"
                 }
               }
             }
@@ -2916,6 +2916,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoPairInstrumentSuggestionsResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -2972,16 +2982,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoPairInstrumentSuggestionsResPonse"
                 }
               }
             }
@@ -3030,6 +3030,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFinInstrumentResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3086,16 +3096,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFinInstrumentResPonse"
                 }
               }
             }
@@ -3216,6 +3216,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3272,16 +3282,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPairResPaged"
                 }
               }
             }
@@ -3323,6 +3323,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfIReadOnlyListResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3379,16 +3389,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfIReadOnlyListResPonse"
                 }
               }
             }
@@ -3414,6 +3414,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3470,16 +3480,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
                 }
               }
             }
@@ -3521,6 +3521,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3577,16 +3587,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
                 }
               }
             }
@@ -3693,6 +3693,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3749,16 +3759,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
                 }
               }
             }
@@ -3865,6 +3865,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -3921,16 +3931,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
                 }
               }
             }
@@ -3963,6 +3963,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4019,16 +4029,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfWindowResPonse"
                 }
               }
             }
@@ -4077,6 +4077,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4133,16 +4143,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPerfBarsResPonse"
                 }
               }
             }
@@ -4168,6 +4168,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAcctResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4224,16 +4234,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAcctResPonse"
                 }
               }
             }
@@ -4281,6 +4281,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAcctResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4337,16 +4347,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAcctResPonse"
                 }
               }
             }
@@ -4372,6 +4372,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsSymbolCatalogResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4428,16 +4438,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsSymbolCatalogResPonse"
                 }
               }
             }
@@ -4485,6 +4485,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4541,16 +4551,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -4584,6 +4584,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsSymbolSpecResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4640,16 +4650,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsSymbolSpecResPonse"
                 }
               }
             }
@@ -4665,6 +4665,16 @@
         "summary": "Reads the signals shown for the enabled symbols across the caller's accounts.",
         "operationId": "Signals",
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoShelfSignalsResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4721,16 +4731,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoShelfSignalsResPonse"
                 }
               }
             }
@@ -4822,6 +4822,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4878,16 +4888,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoMemberActivityResPaged"
                 }
               }
             }
@@ -4937,6 +4937,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgCascadePreviewResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -4993,16 +5003,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgCascadePreviewResPonse"
                 }
               }
             }
@@ -5052,6 +5052,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgCascadeApplyResultResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5108,16 +5118,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgCascadeApplyResultResPonse"
                 }
               }
             }
@@ -5133,6 +5133,16 @@
         "summary": "Lists the strategies the caller can apply: its own and FinCopy's presets.",
         "operationId": "Strategies",
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgIReadOnlyListResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5189,16 +5199,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgIReadOnlyListResPonse"
                 }
               }
             }
@@ -5236,6 +5236,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5292,16 +5302,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
                 }
               }
             }
@@ -5328,6 +5328,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5384,16 +5394,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
                 }
               }
             }
@@ -5442,6 +5442,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5498,16 +5508,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsStgResPonse"
                 }
               }
             }
@@ -5532,6 +5532,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BooleanResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5588,16 +5598,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BooleanResPonse"
                 }
               }
             }
@@ -5647,6 +5647,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5703,16 +5713,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -5812,6 +5812,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5868,16 +5878,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
                 }
               }
             }
@@ -5910,6 +5910,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -5966,16 +5976,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -6008,6 +6008,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6064,16 +6074,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -6106,6 +6106,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6162,16 +6172,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoOperationQueuedResPonse"
                 }
               }
             }
@@ -6271,6 +6271,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6327,16 +6337,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiTermOperationResPaged"
                 }
               }
             }
@@ -6386,6 +6386,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoApiFxsAdoptResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6442,16 +6452,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoApiFxsAdoptResPonse"
                 }
               }
             }
@@ -6477,6 +6477,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6533,16 +6543,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
                 }
               }
             }
@@ -6601,6 +6601,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6657,16 +6667,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrResPonse"
                 }
               }
             }
@@ -6716,6 +6716,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsPreInfoResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6772,16 +6782,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsPreInfoResPonse"
                 }
               }
             }
@@ -6838,6 +6838,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -6894,16 +6904,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -6960,6 +6960,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -7016,16 +7026,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -7082,6 +7082,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -7138,16 +7148,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -7197,6 +7197,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -7253,16 +7263,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoFxsAccountStateResPonse"
                 }
               }
             }
@@ -7288,6 +7288,16 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
+                }
+              }
+            }
+          },
           "400": {
             "description": "Bad Request",
             "content": {
@@ -7347,13 +7357,469 @@
                 }
               }
             }
-          },
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot": {
+      "get": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Reads the account AIBot dashboard, settings, pairs, advice and decisions.",
+        "operationId": "AIBotView",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DtoFxsOrdrIReadOnlyListResPonse"
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/state": {
+      "post": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Sets the account AIBot state to Off, Watch or On.",
+        "operationId": "AIBotState",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAIBotFullAutoState"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/retune": {
+      "post": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Retunes the account AIBot values from its strategy.",
+        "operationId": "AIBotRetune",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAIBotRetune"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/settings": {
+      "post": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Applies account AIBot settings.",
+        "operationId": "AIBotSettings",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAIBotFullAutoSettings"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/pair-mode": {
+      "post": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Sets one pair AIBot mode.",
+        "operationId": "AIBotPairMode",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAIBotPairMode"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/pair-rules": {
+      "post": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Applies one pair AIBot rules and settings.",
+        "operationId": "AIBotPairRules",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAIBotPairRules"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/tickets": {
+      "get": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Reads the account AIBot tickets and pair modes.",
+        "operationId": "AIBotTickets",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotTicketsViewResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/advise": {
+      "post": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Runs AIAdvisor now for the account.",
+        "operationId": "AIBotAdvise",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/advice": {
+      "get": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Lists the account AIAdvisor advice.",
+        "operationId": "AIBotAdvice",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFcAdviceSummaryListResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/advice/decide": {
+      "post": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Approves or rejects one AIAdvisor recommendation.",
+        "operationId": "AIBotAdviceDecide",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAIBotAdviceDecide"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/advice/undo": {
+      "post": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Undoes the latest AIAdvisor recommendation.",
+        "operationId": "AIBotAdviceUndo",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAIBotAdviceUndo"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/fxs/accounts/{acno}/aibot/decisions": {
+      "get": {
+        "tags": [
+          "AIBot"
+        ],
+        "summary": "Lists recorded account AIBot decisions.",
+        "operationId": "AIBotDecisions",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "FinCopy account number (ACNO)."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAIBotFullAutoDecisionListResPonse"
                 }
               }
             }
@@ -15160,6 +15626,654 @@
           }
         },
         "additionalProperties": false
+      },
+      "DtoAIBotFullAuto": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ISNO": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Platform": {
+            "type": "string"
+          },
+          "StrategyName": {
+            "type": "string"
+          },
+          "Granted": {
+            "type": "boolean"
+          },
+          "State": {
+            "type": "string"
+          },
+          "BreakerTripped": {
+            "type": "boolean"
+          },
+          "BreakerReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "Values": {
+            "$ref": "#/components/schemas/DtoAIBotValues"
+          },
+          "RetuneValues": {
+            "$ref": "#/components/schemas/DtoAIBotValues"
+          },
+          "Pairs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "SYM": {
+                  "type": "string"
+                },
+                "SYM6": {
+                  "type": "string"
+                },
+                "Mode": {
+                  "type": "string"
+                },
+                "Flat": {
+                  "type": "boolean"
+                },
+                "Values": {
+                  "$ref": "#/components/schemas/DtoAIBotValues"
+                },
+                "Entry": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                },
+                "SYMSTG": {
+                  "type": "object",
+                  "properties": {},
+                  "additionalProperties": true
+                },
+                "Tickets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                  }
+                },
+                "SlHolds": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "Advice": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string"
+                },
+                "Trigger": {
+                  "type": "string"
+                },
+                "AskedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "Status": {
+                  "type": "string"
+                },
+                "Error": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "Model": {
+                  "type": "string"
+                },
+                "CostUsd": {
+                  "type": "number",
+                  "format": "double"
+                },
+                "Note": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "Pairs": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                  }
+                },
+                "Changes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "Decisions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string"
+                },
+                "ACNO": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "LookAt": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "Trigger": {
+                  "type": "string"
+                },
+                "Model": {
+                  "type": "string"
+                },
+                "RulesJson": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "InputTokens": {
+                  "type": "integer"
+                },
+                "OutputTokens": {
+                  "type": "integer"
+                },
+                "CostUsd": {
+                  "type": "number"
+                },
+                "GuardVerdict": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "AnswerJson": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "OrdersWritten": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {},
+                    "additionalProperties": true
+                  }
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "DtoAIBotTicketsView": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Pairs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "SYM": {
+                  "type": "string"
+                },
+                "Mode": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "Tickets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "TID": {
+                  "type": "integer",
+                  "format": "int64"
+                },
+                "SYM": {
+                  "type": "string"
+                },
+                "Side": {
+                  "type": "string"
+                },
+                "Lot": {
+                  "type": "number"
+                },
+                "OpenPrice": {
+                  "type": "number"
+                },
+                "TakeProfitPrice": {
+                  "type": "number"
+                },
+                "StopLossPrice": {
+                  "type": "number"
+                },
+                "TrailPercent": {
+                  "type": "number"
+                },
+                "Manager": {
+                  "type": "string"
+                },
+                "Role": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "ExitsSet": {
+                  "type": "boolean"
+                },
+                "ExitError": {
+                  "type": "string",
+                  "nullable": true
+                },
+                "Adopted": {
+                  "type": "boolean"
+                },
+                "AdoptedHanded": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "DtoFcAdviceSummary": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string"
+          },
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "AskedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Status": {
+            "type": "string"
+          },
+          "Trigger": {
+            "type": "string"
+          },
+          "Model": {
+            "type": "string"
+          },
+          "Note": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": true
+      },
+      "DtoAIBotFullAutoDecision": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string"
+          },
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "LookAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Trigger": {
+            "type": "string"
+          },
+          "Model": {
+            "type": "string"
+          },
+          "RulesJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "InputTokens": {
+            "type": "integer"
+          },
+          "OutputTokens": {
+            "type": "integer"
+          },
+          "CostUsd": {
+            "type": "number"
+          },
+          "GuardVerdict": {
+            "type": "string",
+            "nullable": true
+          },
+          "AnswerJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "OrdersWritten": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {},
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      },
+      "CmdAIBotFullAutoState": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "State": {
+            "type": "string"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "ACNO"
+        ],
+        "additionalProperties": true
+      },
+      "CmdAIBotRetune": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "ACNO"
+        ],
+        "additionalProperties": true
+      },
+      "CmdAIBotFullAutoSettings": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          },
+          "Values": {
+            "$ref": "#/components/schemas/DtoAIBotValues"
+          }
+        },
+        "required": [
+          "ACNO"
+        ],
+        "additionalProperties": true
+      },
+      "CmdAIBotPairMode": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Symbol": {
+            "type": "string"
+          },
+          "Mode": {
+            "type": "string"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "ACNO"
+        ],
+        "additionalProperties": true
+      },
+      "CmdAIBotPairRules": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Symbol": {
+            "type": "string"
+          },
+          "Values": {
+            "$ref": "#/components/schemas/DtoAIBotValues"
+          },
+          "SYMSTG": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
+          },
+          "Entry": {
+            "type": "object",
+            "properties": {},
+            "additionalProperties": true
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          },
+          "ConfirmClose": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ACNO"
+        ],
+        "additionalProperties": true
+      },
+      "CmdAIBotAdviceDecide": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "AdviceId": {
+            "type": "string"
+          },
+          "Accept": {
+            "type": "boolean"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "ACNO"
+        ],
+        "additionalProperties": true
+      },
+      "CmdAIBotAdviceUndo": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "ACNO"
+        ],
+        "additionalProperties": true
+      },
+      "DtoAIBotFullAutoResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoAIBotFullAuto"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoAIBotTicketsViewResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoAIBotTicketsView"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFcAdviceSummaryListResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFcAdviceSummary"
+            }
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoAIBotFullAutoDecisionListResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoAIBotFullAutoDecision"
+            }
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -15179,10 +16293,10 @@
   },
   "security": [
     {
-      "ApiKey": [ ]
+      "ApiKey": []
     },
     {
-      "MemberSession": [ ]
+      "MemberSession": []
     }
   ],
   "tags": [

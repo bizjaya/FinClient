@@ -93,6 +93,54 @@ export class AccountsResource {
   getSettings(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoFxsAcctResPonse">> {
     return this.http.request("GET", `${accountPath(acno)}/settings`, undefined, options);
   }
+  /** Reads the account AIBot dashboard, including its settings, pairs, advice and decisions. */
+  getAIBot(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("GET", `${accountPath(acno)}/aibot`, undefined, options);
+  }
+  /** Sets the account AIBot state to Off, Watch or On. Writes require options.idempotencyKey. */
+  setAIBotState(acno: number, command: CopyDto<"CmdAIBotFullAutoState">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/state`, command, options);
+  }
+  /** Retunes account AIBot values from its strategy. Writes require options.idempotencyKey. */
+  retuneAIBot(acno: number, command: CopyDto<"CmdAIBotRetune">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/retune`, command, options);
+  }
+  /** Saves account AIBot settings. Writes require options.idempotencyKey. */
+  saveAIBotSettings(acno: number, command: CopyDto<"CmdAIBotFullAutoSettings">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/settings`, command, options);
+  }
+  /** Sets one pair's AIBot mode. Writes require options.idempotencyKey. */
+  setAIBotPairMode(acno: number, command: CopyDto<"CmdAIBotPairMode">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/pair-mode`, command, options);
+  }
+  /** Saves one pair's AIBot rules. Writes require options.idempotencyKey. */
+  saveAIBotPairRules(acno: number, command: CopyDto<"CmdAIBotPairRules">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/pair-rules`, command, options);
+  }
+  /** Reads the account's AIBot tickets and pair modes. */
+  aibotTickets(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotTicketsViewResPonse">> {
+    return this.http.request("GET", `${accountPath(acno)}/aibot/tickets`, undefined, options);
+  }
+  /** Runs AIAdvisor now. Writes require options.idempotencyKey. */
+  adviseAIBotNow(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/advise`, undefined, options);
+  }
+  /** Lists AIAdvisor advice for the account. */
+  aibotAdvice(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoFcAdviceSummaryListResPonse">> {
+    return this.http.request("GET", `${accountPath(acno)}/aibot/advice`, undefined, options);
+  }
+  /** Approves or rejects one AIAdvisor recommendation. Writes require options.idempotencyKey. */
+  decideAIBotAdvice(acno: number, command: CopyDto<"CmdAIBotAdviceDecide">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/advice/decide`, command, options);
+  }
+  /** Undoes the latest AIAdvisor recommendation. Writes require options.idempotencyKey. */
+  undoAIBotAdvice(acno: number, command: CopyDto<"CmdAIBotAdviceUndo">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/advice/undo`, command, options);
+  }
+  /** Lists recorded AIBot decisions for the account. */
+  aibotDecisions(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoDecisionListResPonse">> {
+    return this.http.request("GET", `${accountPath(acno)}/aibot/decisions`, undefined, options);
+  }
   /** Changes account settings. */
   patchSettings(acno: number, command: CopyDto<"CmdApiFxsAcctPatch">, options: FinRequestOptions = {}): Promise<D<"DtoFxsAcctResPonse">> {
     return this.http.request("PATCH", `${accountPath(acno)}/settings`, command, options);
