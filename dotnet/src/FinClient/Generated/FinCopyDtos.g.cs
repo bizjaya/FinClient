@@ -6385,6 +6385,447 @@ namespace Fin.Copy
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAuto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
+        public int? ISNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
+        public string? Platform { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StrategyName")]
+        public string? StrategyName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Granted")]
+        public bool? Granted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("State")]
+        public string? State { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerTripped")]
+        public bool? BreakerTripped { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerReason")]
+        public string? BreakerReason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RetuneValues")]
+        public DtoAIBotValues? RetuneValues { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<Pairs>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Advice")]
+        public System.Collections.Generic.ICollection<Advice>? Advice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Decisions")]
+        public System.Collections.Generic.ICollection<Decisions>? Decisions { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotTicketsView
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<Pairs2>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Tickets")]
+        public System.Collections.Generic.ICollection<Tickets>? Tickets { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFcAdviceSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AskedAt")]
+        public System.DateTimeOffset? AskedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
+        public string? Trigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Note")]
+        public string? Note { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoDecision
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LookAt")]
+        public System.DateTimeOffset? LookAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
+        public string? Trigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RulesJson")]
+        public string? RulesJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("InputTokens")]
+        public int? InputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OutputTokens")]
+        public int? OutputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
+        public double? CostUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("GuardVerdict")]
+        public string? GuardVerdict { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AnswerJson")]
+        public string? AnswerJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OrdersWritten")]
+        public System.Collections.Generic.ICollection<object>? OrdersWritten { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotFullAutoState
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("State")]
+        public string? State { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotRetune
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotFullAutoSettings
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotPairMode
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        public string? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotPairRules
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
+        public object? SYMSTG { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Entry")]
+        public object? Entry { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConfirmClose")]
+        public bool? ConfirmClose { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotAdviceDecide
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceId")]
+        public string? AdviceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Accept")]
+        public bool? Accept { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotAdviceUndo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoAIBotFullAuto? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotTicketsViewResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoAIBotTicketsView? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFcAdviceSummaryListResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoFcAdviceSummary>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoDecisionListResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoAIBotFullAutoDecision>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum DtoFxsPairAIBotMode
     {
 
@@ -6396,6 +6837,222 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"FULL")]
         FULL = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Pairs
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM6")]
+        public string? SYM6 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        public string? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Flat")]
+        public bool? Flat { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Entry")]
+        public object? Entry { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
+        public object? SYMSTG { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Tickets")]
+        public System.Collections.Generic.ICollection<object>? Tickets { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SlHolds")]
+        public System.Collections.Generic.ICollection<object>? SlHolds { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Advice
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
+        public string? Trigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AskedAt")]
+        public System.DateTimeOffset? AskedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Error")]
+        public string? Error { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
+        public double? CostUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Note")]
+        public string? Note { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<object>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Changes")]
+        public System.Collections.Generic.ICollection<object>? Changes { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Decisions
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LookAt")]
+        public System.DateTimeOffset? LookAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
+        public string? Trigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RulesJson")]
+        public string? RulesJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("InputTokens")]
+        public int? InputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OutputTokens")]
+        public int? OutputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
+        public double? CostUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("GuardVerdict")]
+        public string? GuardVerdict { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AnswerJson")]
+        public string? AnswerJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OrdersWritten")]
+        public System.Collections.Generic.ICollection<object>? OrdersWritten { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Pairs2
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        public string? Mode { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class Tickets
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("TID")]
+        public long? TID { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Lot")]
+        public double? Lot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OpenPrice")]
+        public double? OpenPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TakeProfitPrice")]
+        public double? TakeProfitPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StopLossPrice")]
+        public double? StopLossPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrailPercent")]
+        public double? TrailPercent { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Manager")]
+        public string? Manager { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Role")]
+        public string? Role { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExitsSet")]
+        public bool? ExitsSet { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExitError")]
+        public string? ExitError { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Adopted")]
+        public bool? Adopted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdoptedHanded")]
+        public bool? AdoptedHanded { get; set; } = default!;
+
+        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
+
+        [System.Text.Json.Serialization.JsonExtensionData]
+        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
+        {
+            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
+            set { _additionalProperties = value; }
+        }
 
     }
 

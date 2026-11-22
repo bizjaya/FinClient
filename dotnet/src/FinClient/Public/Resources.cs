@@ -97,6 +97,62 @@ public sealed class AccountsResource
     public Task<DtoFxsAcct> GetSettingsAsync(long acno, CancellationToken cancellationToken = default) =>
         _http.SendAsync<DtoFxsAcct>("GET", Account(acno) + "/settings", cancellationToken: cancellationToken);
 
+    /// <summary>Reads the account AIBot dashboard, including its settings, pairs, advice and decisions.</summary>
+    public Task<DtoAIBotFullAuto> GetAIBotAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("GET", Account(acno) + "/aibot", cancellationToken: cancellationToken);
+
+    /// <summary>Sets the account AIBot state to Off, Watch or On. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> SetAIBotStateAsync(long acno, CmdAIBotFullAutoState command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/state", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Retunes account AIBot values from its strategy. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> RetuneAIBotAsync(long acno, CmdAIBotRetune command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/retune", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Saves account AIBot settings. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> SaveAIBotSettingsAsync(long acno, CmdAIBotFullAutoSettings command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/settings", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Sets one pair's AIBot mode. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> SetAIBotPairModeAsync(long acno, CmdAIBotPairMode command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/pair-mode", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Saves one pair's AIBot rules. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> SaveAIBotPairRulesAsync(long acno, CmdAIBotPairRules command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/pair-rules", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Reads the account's AIBot tickets and pair modes.</summary>
+    public Task<DtoAIBotTicketsView> AIBotTicketsAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotTicketsView>("GET", Account(acno) + "/aibot/tickets", cancellationToken: cancellationToken);
+
+    /// <summary>Runs AIAdvisor now. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> AdviseAIBotNowAsync(long acno, string? idempotencyKey = null,
+        CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/advise", idempotencyKey: idempotencyKey, cancellationToken: cancellationToken);
+
+    /// <summary>Lists AIAdvisor advice for the account.</summary>
+    public Task<IReadOnlyList<DtoFcAdviceSummary>> AIBotAdviceAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoFcAdviceSummary>>("GET", Account(acno) + "/aibot/advice", cancellationToken: cancellationToken);
+
+    /// <summary>Approves or rejects one AIAdvisor recommendation. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> DecideAIBotAdviceAsync(long acno, CmdAIBotAdviceDecide command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/advice/decide", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Undoes the latest AIAdvisor recommendation. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> UndoAIBotAdviceAsync(long acno, CmdAIBotAdviceUndo command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/advice/undo", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Lists recorded AIBot decisions for the account.</summary>
+    public Task<IReadOnlyList<DtoAIBotFullAutoDecision>> AIBotDecisionsAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoAIBotFullAutoDecision>>("GET", Account(acno) + "/aibot/decisions", cancellationToken: cancellationToken);
+
     /// <summary>Changes trading settings for one account.</summary>
     public Task<DtoFxsAcct> PatchSettingsAsync(long acno, CmdApiFxsAcctPatch command, string? idempotencyKey = null,
         CancellationToken cancellationToken = default) =>
