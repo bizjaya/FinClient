@@ -190,6 +190,380 @@ namespace Fin.Copy
     }
 
     /// <summary>
+    /// T701 (Q10-C): Accept or Reject a waiting advice.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotAdviceDecide
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceId")]
+        public string? AdviceId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Accept")]
+        public bool? Accept { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// T701 (Q10-C): Undo last advice.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotAdviceUndo
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotFullAutoSettings
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("HedgeOn")]
+        public bool? HedgeOn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ResetDrawdown")]
+        public bool? ResetDrawdown { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TradingHours")]
+        public string? TradingHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumHoldHours")]
+        public double? MaximumHoldHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DayFirmPct")]
+        public double? DayFirmPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DayClosePct")]
+        public double? DayClosePct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdFirmPct")]
+        public double? DdFirmPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdClosePct")]
+        public double? DdClosePct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdMeasure")]
+        public string? DdMeasure { get; set; } = default!;
+
+        /// <summary>
+        /// T709 (Q375-A): most AIBot trades open on one side at once.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OpenPerSide")]
+        public int? OpenPerSide { get; set; } = default!;
+
+        /// <summary>
+        /// T709 (Q396-A): the account's daily loss (ACCSTG.DAYSL); 0 or empty turns it off.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DAYSL")]
+        public double? DAYSL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MAXDDFRC")]
+        public double? MAXDDFRC { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigWarm")]
+        public SigMins? SigWarm { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigHot")]
+        public SigMins? SigHot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EntMode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
+        public TMode? EntMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AvgMode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
+        public TMode? AvgMode { get; set; } = default!;
+
+        /// <summary>
+        /// T709 (Q375-A): risk a trade per side, the account template's and every one of its pairs'; null leaves it.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BRISK")]
+        public double? BRISK { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SRISK")]
+        public double? SRISK { get; set; } = default!;
+
+        /// <summary>
+        /// Minutes between DCA requests or adds on one side; null leaves it.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DCACooloffMins")]
+        public int? DCACooloffMins { get; set; } = default!;
+
+        /// <summary>
+        /// T709: the methods AIBot may choose per side (never COPY), the account template's and every one of its pairs'
+        /// <br/>            (SYMSTG.BALLOWED / SALLOWED); null leaves them.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BALLOWED")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<AMode>? BALLOWED { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SALLOWED")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<AMode>? SALLOWED { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BAMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? BAMODE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SAMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? SAMODE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotPairDefaults")]
+        public FxsAIBotStgPair? AIBotPairDefaults { get; set; } = default!;
+
+        /// <summary>
+        /// Q446-A: the opening lot per side (lots).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BNLOT")]
+        public double? BNLOT { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SNLOT")]
+        public double? SNLOT { get; set; } = default!;
+
+        /// <summary>
+        /// Q446-A: the ladder per side: level gap (% beyond the previous fill), level multiplier, most levels, group gap (%),
+        /// <br/>            group multiplier, most groups.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BLGP")]
+        public double? BLGP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SLGP")]
+        public double? SLGP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BLMUL")]
+        public double? BLMUL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SLMUL")]
+        public double? SLMUL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BLMAX")]
+        public int? BLMAX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SLMAX")]
+        public int? SLMAX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BGGP")]
+        public double? BGGP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SGGP")]
+        public double? SGGP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BGMUL")]
+        public double? BGMUL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SGMUL")]
+        public double? SGMUL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BGMAX")]
+        public int? BGMAX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SGMAX")]
+        public int? SGMAX { get; set; } = default!;
+
+        /// <summary>
+        /// Q446-A: TP per side (% beyond the set's average; 0 = no TP).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BTPP")]
+        public double? BTPP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("STPP")]
+        public double? STPP { get; set; } = default!;
+
+        /// <summary>
+        /// Q446-A: TS per side (% of the TP money) and its on/off (trailing from the TP).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BTSP")]
+        public double? BTSP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("STSP")]
+        public double? STSP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BTRAIL")]
+        public bool? BTRAIL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("STRAIL")]
+        public bool? STRAIL { get; set; } = default!;
+
+        /// <summary>
+        /// Q446-A: FIRR's reward ratio per side (the TP as a multiple of the SL).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BFRATIO")]
+        public double? BFRATIO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SFRATIO")]
+        public double? SFRATIO { get; set; } = default!;
+
+        /// <summary>
+        /// Q446-A: the SL a new trade starts with per side (%); 0 is off (AIBot's fallback SL applies).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BSLP")]
+        public double? BSLP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SSLP")]
+        public double? SSLP { get; set; } = default!;
+
+        /// <summary>
+        /// Q446-A: the hard SL per side (the SL sits on the order at the broker).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BHRSL")]
+        public bool? BHRSL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SHRSL")]
+        public bool? SHRSL { get; set; } = default!;
+
+        /// <summary>
+        /// Q446-A: pending orders (USEPO), descending lots (USEDESC) and its multiple per side (BDMUL / SDMUL, × the opening
+        /// <br/>            lot), and DCAEXP (FinCopy's DCA exponent).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("USEPO")]
+        public bool? USEPO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("USEDESC")]
+        public bool? USEDESC { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BDMUL")]
+        public double? BDMUL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SDMUL")]
+        public double? SDMUL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DCAEXP")]
+        public double? DCAEXP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotFullAutoState
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("State")]
+        public string? State { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// T701 (Q2-B): set one pair's AIBot mode.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotPairMode
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        public string? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// T701 (Q8-A): edit one pair's rules. T709 (Q396-A): the pair's own settings (its per-side TP, SL, TS, opening lot, ladder,
+    /// <br/>            trailing and hard SL, and its EntMode / AvgMode) are sent as a partial SYMSTG, checked as the pair's settings are; the entry
+    /// <br/>            rules keep only the FinNews filter.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotPairRules
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
+        public DtoEASymStg? SYMSTG { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Entry")]
+        public FxsAIBotEntryRules? Entry { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+        /// <summary>
+        /// T709 incident (Q459-A): the member saw the trades this save's SL would close now and confirms it.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ConfirmClose")]
+        public bool? ConfirmClose { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAIBotRetune
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAdvisorSend
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PreviewId")]
+        public string? PreviewId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAdvisorSettings
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Settings")]
+        public FxsAdvisorSettings? Settings { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as
     /// <br/>            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
     /// <br/>            weakest signal (any step of the scale: BUY VSS-VSB, SELL mirrored VSB-VSS) and trend (any step of the scale, or null for Any)
@@ -904,6 +1278,772 @@ namespace Fin.Copy
     }
 
     /// <summary>
+    /// T701 Phase 4: one AIAdvisor answer as the AIBot page shows it.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotAdvice
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Credits")]
+        public double? Credits { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Included")]
+        public bool? Included { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Refunded")]
+        public bool? Refunded { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CreditNote")]
+        public string? CreditNote { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Input")]
+        public string? Input { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ContextJson")]
+        public string? ContextJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RevisitAt")]
+        public System.DateTimeOffset? RevisitAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("InputTokens")]
+        public int? InputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OutputTokens")]
+        public int? OutputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
+        public string? Trigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AskedAt")]
+        public System.DateTimeOffset? AskedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Error")]
+        public string? Error { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
+        public double? CostUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Note")]
+        public string? Note { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<FxsAIBotAdvisorPair>? Pairs { get; set; } = default!;
+
+        /// <summary>
+        /// T709 (Q399-A): changes to the account's signal sets.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Changes")]
+        public System.Collections.Generic.ICollection<FxsAIBotAdvisorChange>? Changes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DecidedAt")]
+        public System.DateTimeOffset? DecidedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DecidedBy")]
+        public string? DecidedBy { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotAdviceIReadOnlyListResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoAIBotAdvice>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotAdviceResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoAIBotAdvice? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAuto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StrategyChanges")]
+        public System.Collections.Generic.ICollection<string>? StrategyChanges { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StrategyChangedAt")]
+        public System.DateTimeOffset? StrategyChangedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RetuneValues")]
+        public DtoAIBotValues? RetuneValues { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
+        public string? Platform { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
+        public int? ISNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StrategyName")]
+        public string? StrategyName { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Granted")]
+        public bool? Granted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("State")]
+        public string? State { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerTripped")]
+        public bool? BreakerTripped { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerReason")]
+        public string? BreakerReason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerTrippedAt")]
+        public System.DateTimeOffset? BreakerTrippedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TradingHours")]
+        public string? TradingHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaximumHoldHours")]
+        public double? MaximumHoldHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DayFirmPct")]
+        public double? DayFirmPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DayClosePct")]
+        public double? DayClosePct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdFirmPct")]
+        public double? DdFirmPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdClosePct")]
+        public double? DdClosePct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DdMeasure")]
+        public string? DdMeasure { get; set; } = default!;
+
+        /// <summary>
+        /// T709 (Q375-A): most AIBot trades open on one side at once (GRID).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OpenPerSide")]
+        public int? OpenPerSide { get; set; } = default!;
+
+        /// <summary>
+        /// T709 (Q396-A): the account's daily loss (ACCSTG.DAYSL): AIBot's Stop new trades at stage; 0 or empty is off.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DAYSL")]
+        public double? DAYSL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MAXDDFRC")]
+        public double? MAXDDFRC { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigCold")]
+        public SigMins? SigCold { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigWarm")]
+        public SigMins? SigWarm { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigHot")]
+        public SigMins? SigHot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SigMode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
+        public TMode? SigMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EntMode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
+        public TMode? EntMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AvgMode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TMode>))]
+        public TMode? AvgMode { get; set; } = default!;
+
+        /// <summary>
+        /// Minutes between the terminal's DCA requests or adds on one side (sent as DCATGMINS).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DCACooloffMins")]
+        public int? DCACooloffMins { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
+        public DtoFxsStgSymStg? SYMSTG { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotPairDefaults")]
+        public FxsAIBotStgPair? AIBotPairDefaults { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdvisorAllowed")]
+        public bool? AdvisorAllowed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdvisorStaff")]
+        public bool? AdvisorStaff { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdvisorBalance")]
+        public double? AdvisorBalance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Advisor")]
+        public FxsAdvisorSettings? Advisor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
+        public string? AdviceMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceTime")]
+        public string? AdviceTime { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceCallsToday")]
+        public int? AdviceCallsToday { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceMaxPerDay")]
+        public int? AdviceMaxPerDay { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LastAdviceAt")]
+        public System.DateTimeOffset? LastAdviceAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CanUndoAdvice")]
+        public bool? CanUndoAdvice { get; set; } = default!;
+
+        /// <summary>
+        /// Advisor is disabled or this account has no Ultra entitlement; AIBot retains its own stance.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AdvisorOff")]
+        public bool? AdvisorOff { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Posture")]
+        public string? Posture { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PostureWhy")]
+        public string? PostureWhy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("HedgeOn")]
+        public bool? HedgeOn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("HourlyRecords")]
+        public System.Collections.Generic.ICollection<DtoAIBotFullAutoDecision>? HourlyRecords { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Strategy")]
+        public DtoFxsStg? Strategy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<DtoAIBotFullAutoPair>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Advice")]
+        public System.Collections.Generic.ICollection<DtoAIBotAdvice>? Advice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Decisions")]
+        public System.Collections.Generic.ICollection<DtoAIBotFullAutoDecision>? Decisions { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Outcomes")]
+        public System.Collections.Generic.ICollection<DtoAIBotFullAutoOutcome>? Outcomes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Lessons")]
+        public System.Collections.Generic.ICollection<DtoAIBotFullAutoLesson>? Lessons { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Playbooks")]
+        public System.Collections.Generic.ICollection<DtoAIBotFullAutoPlaybook>? Playbooks { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoDecision
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LookAt")]
+        public System.DateTimeOffset? LookAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
+        public string? Trigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        /// <summary>
+        /// The rule checks behind the decision, per pair and side (no model call).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("RulesJson")]
+        public string? RulesJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("InputTokens")]
+        public int? InputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OutputTokens")]
+        public int? OutputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
+        public double? CostUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("GuardVerdict")]
+        public string? GuardVerdict { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AnswerJson")]
+        public string? AnswerJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OrdersWritten")]
+        public System.Collections.Generic.ICollection<FxsAIBotOrderLink>? OrdersWritten { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoDecisionListResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoAIBotFullAutoDecision>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoLesson
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Cause")]
+        public string? Cause { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SetupTags")]
+        public System.Collections.Generic.ICollection<string>? SetupTags { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SuggestedRule")]
+        public string? SuggestedRule { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MemberAdvice")]
+        public string? MemberAdvice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ReviewedAt")]
+        public System.DateTimeOffset? ReviewedAt { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoOutcome
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OpenedAt")]
+        public System.DateTimeOffset? OpenedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ClosedAt")]
+        public System.DateTimeOffset? ClosedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pnl")]
+        public double? Pnl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Swap")]
+        public double? Swap { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Commission")]
+        public double? Commission { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DurationSeconds")]
+        public long? DurationSeconds { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CloseReason")]
+        public string? CloseReason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mae")]
+        public double? Mae { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mfe")]
+        public double? Mfe { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SetupTags")]
+        public System.Collections.Generic.ICollection<string>? SetupTags { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Lesson")]
+        public string? Lesson { get; set; } = default!;
+
+        /// <summary>
+        /// T701 (Q7-A): OPENED or MANAGED.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Role")]
+        public string? Role { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoPair
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("PendingStance")]
+        public string? PendingStance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PendingStanceReadings")]
+        public int? PendingStanceReadings { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OwnStance")]
+        public string? OwnStance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StanceSource")]
+        public string? StanceSource { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuyCanUndoTune")]
+        public bool? BuyCanUndoTune { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellCanUndoTune")]
+        public bool? SellCanUndoTune { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DeferredAccountValueKeys")]
+        public System.Collections.Generic.ICollection<string>? DeferredAccountValueKeys { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Values")]
+        public DtoAIBotValues? Values { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuyEntryWait")]
+        public string? BuyEntryWait { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellEntryWait")]
+        public string? SellEntryWait { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM6")]
+        public string? SYM6 { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EN")]
+        public bool? EN { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuyOpenLots")]
+        public double? BuyOpenLots { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellOpenLots")]
+        public double? SellOpenLots { get; set; } = default!;
+
+        /// <summary>
+        /// T709 Q446-A: nothing open on either side (the pair's counts, FxsPairDefaults.NothingOpen), so a settings save
+        /// <br/>            carries the pair defaults it sends to this pair; a pair holding trades keeps its own.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Flat")]
+        public bool? Flat { get; set; } = default!;
+
+        /// <summary>
+        /// T701 (Q2-B): OFF, WATCH (Watch, TP523 Q556-A: recorded only), EXITS (Exits only) or FULL (Full auto).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        public string? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Entry")]
+        public FxsAIBotEntryRules? Entry { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
+        public DtoEASymStg? SYMSTG { get; set; } = default!;
+
+        /// <summary>
+        /// AIBot's own stance, overridden by live enabled Advisor advice for a selected pair.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Stance")]
+        public string? Stance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StanceUntil")]
+        public System.DateTimeOffset? StanceUntil { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StanceWhy")]
+        public string? StanceWhy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Condition")]
+        public string? Condition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConditionWhy")]
+        public string? ConditionWhy { get; set; } = default!;
+
+        /// <summary>
+        /// The pair's starting lot (NLOT).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NLOT")]
+        public double? NLOT { get; set; } = default!;
+
+        /// <summary>
+        /// The broker maximum from the existing symbol spec, not a clamp on saved settings.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BrokerMaxLot")]
+        public double? BrokerMaxLot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Tickets")]
+        public System.Collections.Generic.ICollection<DtoAIBotTicket>? Tickets { get; set; } = default!;
+
+        /// <summary>
+        /// T709 incident (Q459-A): the SL changes FinCopy holds back on this pair because they would close open trades at once,
+        /// <br/>            one per side, each with the trades it would close and their P/L now; Confirm (Trading PIN) sends one, Discard puts the side's
+        /// <br/>            settings back to what the EA has.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SlHolds")]
+        public System.Collections.Generic.ICollection<FxsSlHold>? SlHolds { get; set; } = default!;
+
+        /// <summary>
+        /// T709 incident (Q460-C): the open trades on each side AIBot does not own (trades FinCopy does not own, adopted ones not
+        /// <br/>            handed over, Telegram copies, tickets taken back). While a side holds any, it takes no SL; Hand to AIBot hands them over.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BuySlOff")]
+        public int? BuySlOff { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellSlOff")]
+        public int? SellSlOff { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoPlaybook
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Version")]
+        public string? Version { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("State")]
+        public string? State { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trades")]
+        public long? Trades { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Expectancy")]
+        public double? Expectancy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ProfitFactor")]
+        public double? ProfitFactor { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DrawdownPct")]
+        public double? DrawdownPct { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Rules")]
+        public string? Rules { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceToLoosen")]
+        public string? AdviceToLoosen { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CreatedAt")]
+        public System.DateTimeOffset? CreatedAt { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotFullAutoResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoAIBotFullAuto? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotPairModeRow
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        public string? Mode { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// T701 (Q5-B, Q6-A): an open ticket and who manages its exits.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotTicket
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("TID")]
+        public long? TID { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Lot")]
+        public double? Lot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OpenPrice")]
+        public double? OpenPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TakeProfitPrice")]
+        public double? TakeProfitPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StopLossPrice")]
+        public double? StopLossPrice { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrailPercent")]
+        public double? TrailPercent { get; set; } = default!;
+
+        /// <summary>
+        /// AIBOT, MEMBER (the member took it back), SIGNAL (a Telegram copy, never managed) or OFF (the pair is Off).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Manager")]
+        public string? Manager { get; set; } = default!;
+
+        /// <summary>
+        /// OPENED when AIBot opened it, MANAGED when AIBot set its exits.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Role")]
+        public string? Role { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExitsSet")]
+        public bool? ExitsSet { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExitError")]
+        public string? ExitError { get; set; } = default!;
+
+        /// <summary>
+        /// T709: FinCopy adopted this trade from outside; true until Let AIBot manage hands it over.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Adopted")]
+        public bool? Adopted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdoptedHanded")]
+        public bool? AdoptedHanded { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// T701: the account's pairs with their AIBot mode and the open tickets, for the trade lists and trade window.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotTicketsView
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<DtoAIBotPairModeRow>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Tickets")]
+        public System.Collections.Generic.ICollection<DtoAIBotTicket>? Tickets { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotTicketsViewResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoAIBotTicketsView? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotValueCounts
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Fixed")]
+        public int? Fixed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Range")]
+        public int? Range { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Strategy")]
+        public int? Strategy { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// Ordinary per-value edits. There is no account-wide stored switch.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -927,6 +2067,63 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("NewsFilter")]
         public BooleanBotPick? NewsFilter { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvisorPreview
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuiltAt")]
+        public System.DateTimeOffset? BuiltAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExpiresAt")]
+        public System.DateTimeOffset? ExpiresAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Input")]
+        public string? Input { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ContextJson")]
+        public string? ContextJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstimatedInputTokens")]
+        public int? EstimatedInputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstimatedCostUsd")]
+        public double? EstimatedCostUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstimateNote")]
+        public string? EstimateNote { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvisorPreviewResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoAdvisorPreview? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
 
     }
 
@@ -1685,6 +2882,15 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("SHRSL")]
         public bool? SHRSL { get; set; } = default!;
 
+        /// <summary>
+        /// TP529: BUY/SELL break-even requests, bound to the named broker tickets. Not editable settings.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BBE")]
+        public System.Collections.Generic.ICollection<long>? BBE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SBE")]
+        public System.Collections.Generic.ICollection<long>? SBE { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("T646B")]
         public bool? T646B { get; set; } = default!;
 
@@ -1744,6 +2950,88 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// One ask in the member's AIBot history. Refunded: its credits came back (a failed run, or a plan the check refused);
+    /// <br/>            ApiCredits and AiCredits still say what it was charged. Staff: asked by a staff member, so nothing was charged (T703 Q48-B).
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFcAdviceSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Use")]
+        public string? Use { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        public string? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Stage")]
+        public string? Stage { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Call")]
+        public string? Call { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Outcome")]
+        public string? Outcome { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ApiCredits")]
+        public double? ApiCredits { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AiCredits")]
+        public double? AiCredits { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CreatedAt")]
+        public System.DateTimeOffset? CreatedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Confidence")]
+        public double? Confidence { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotMode")]
+        public string? AIBotMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ValidationNote")]
+        public string? ValidationNote { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Refunded")]
+        public bool? Refunded { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Staff")]
+        public bool? Staff { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFcAdviceSummaryListResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoFcAdviceSummary>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoFinInstrument
     {
@@ -1792,6 +3080,9 @@ namespace Fin.Copy
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoFleetAccount
     {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Shared")]
+        public long? Shared { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Account")]
         public DtoTermAccount? Account { get; set; } = default!;
@@ -1986,8 +3277,26 @@ namespace Fin.Copy
     public partial class DtoFxsAcct
     {
 
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotHedgeOn")]
+        public bool? AIBotHedgeOn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotPosture")]
+        public string? AIBotPosture { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotPostureWhy")]
+        public string? AIBotPostureWhy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBotPostureHour")]
+        public System.DateTimeOffset? AIBotPostureHour { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("Values")]
         public DtoAIBotValues? Values { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Shared")]
+        public long? Shared { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Advisor")]
+        public FxsAdvisorSettings? Advisor { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
         public long? ACNO { get; set; } = default!;
@@ -2144,6 +3453,12 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("LatencySampleAt")]
         public System.DateTimeOffset? LatencySampleAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EnBoard")]
+        public bool? EnBoard { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BoardHandle")]
+        public string? BoardHandle { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Virtual")]
         public bool? Virtual { get; set; } = default!;
@@ -2975,7 +4290,7 @@ namespace Fin.Copy
         public bool? EN { get; set; } = default!;
 
         /// <summary>
-        /// Read-only AIBot mode: OFF (Off), EXITS (Exits only), FULL (Full auto). Set through AIBot, never /v1.
+        /// Read-only AIBot mode: OFF (Off), WATCH (Watch), EXITS (Exits only), FULL (Full auto). Set through AIBot, never /v1.
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("AIBotMode")]
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DtoFxsPairAIBotMode>))]
@@ -4112,6 +5427,21 @@ namespace Fin.Copy
         public int? PairCount { get; set; } = default!;
 
         /// <summary>
+        /// Read-only member account facts; unavailable totals stay null, mixed currencies are never added.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Equity")]
+        public double? Equity { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LifetimePnl")]
+        public double? LifetimePnl { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Currency")]
+        public string? Currency { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Platforms")]
+        public string? Platforms { get; set; } = default!;
+
+        /// <summary>
         /// T709 Q412-A: the picture's file name in FinCopy's media folder (null: none, the screens show the initials).
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("PicFile")]
@@ -4301,8 +5631,8 @@ namespace Fin.Copy
 
     /// <summary>
     /// What a cascade would change on one account. TP496 Q285-A: AIBotLimits lists the AIBot limits it writes,
-    /// <br/>            AIBotLimitsRefused names why none are written, AdviceTimeAlso lists the member's other AIBot
-    /// <br/>            accounts that take the same advice time (one per member, TP513 Q267-A).
+    /// <br/>            AIBotLimitsRefused names why none are written. AI Advisor settings and advice time remain per account;
+    /// <br/>            the cascade does not change them and AdviceTimeAlso is empty.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoFxsStgCascadePreview
@@ -4915,9 +6245,64 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// Read-only AIBot and trade-mode summary projected onto a member account row.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoMemberAIBotSummary
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Posture")]
+        public string? Posture { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("State")]
+        public string? State { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Granted")]
+        public bool? Granted { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
+        public string? AdviceMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerTripped")]
+        public bool? BreakerTripped { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BreakerReason")]
+        public string? BreakerReason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EntryMode")]
+        public string? EntryMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DcaMode")]
+        public string? DcaMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SignalMode")]
+        public string? SignalMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ValueCounts")]
+        public DtoAIBotValueCounts? ValueCounts { get; set; } = default!;
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoMemberAccount
     {
+
+        [System.Text.Json.Serialization.JsonPropertyName("AIBot")]
+        public DtoMemberAIBotSummary? AIBot { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ShareRole")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FxsShareRole>))]
+        public FxsShareRole? ShareRole { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OwnerName")]
+        public string? OwnerName { get; set; } = default!;
+
+        /// <summary>
+        /// Who has access to this account: filled only on a row the caller owns, empty on a row shared with the caller.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Shares")]
+        public System.Collections.Generic.ICollection<DtoMemberShare>? Shares { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Fleet")]
         public DtoFleetAccount? Fleet { get; set; } = default!;
@@ -5041,6 +6426,22 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("errors")]
         public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoMemberShare
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Name")]
+        public string? Name { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Email")]
+        public string? Email { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Role")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FxsShareRole>))]
+        public FxsShareRole? Role { get; set; } = default!;
 
     }
 
@@ -5253,9 +6654,6 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("Capabilities")]
         public System.Collections.Generic.ICollection<string>? Capabilities { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("FeedPreference")]
-        public string? FeedPreference { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("DesiredState")]
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DesiredTermState>))]
         public DesiredTermState? DesiredState { get; set; } = default!;
@@ -5440,27 +6838,6 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("HealthySinceAt")]
         public System.DateTimeOffset? HealthySinceAt { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("FeedCoolingUntil")]
-        public System.DateTimeOffset? FeedCoolingUntil { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FeedColour")]
-        public string? FeedColour { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FeedLastSnapshotAt")]
-        public System.DateTimeOffset? FeedLastSnapshotAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FeedSymbols")]
-        public int? FeedSymbols { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FeedStoredAt")]
-        public System.DateTimeOffset? FeedStoredAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FeedStoredSymbols")]
-        public int? FeedStoredSymbols { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("FeedLastError")]
-        public string? FeedLastError { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("StaleHeartbeatRestarts")]
         public int? StaleHeartbeatRestarts { get; set; } = default!;
 
@@ -5566,6 +6943,93 @@ namespace Fin.Copy
     }
 
     /// <summary>
+    /// One setting AIAdvisor wants changed, old to new. FC.Com.Doms.FxsAIBotAdvisorChange.Refused holds the reason the code refused it.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAIBotAdvisorChange
+    {
+
+        /// <summary>
+        /// A pair's: EXIT.TPP, EXIT.SLP, EXIT.TSP, ENTRY.NewsFilter, AMODE.BUY, AMODE.SELL or a pair setting: NLOT, LGP, GGP,
+        /// <br/>            LMAX, GMAX, LMUL, GMUL. The account's (T709, Q399-A): WARM.BuySig, WARM.SellSig, WARM.BuyTrd, WARM.SellTrd, WARM.Conf,
+        /// <br/>            WARM.Score, and HOT.BuySig, HOT.SellSig, HOT.BuyTrd, HOT.SellTrd, HOT.Conf (HOT has no score).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Field")]
+        public string? Field { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Old")]
+        public string? Old { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("New")]
+        public string? New { get; set; } = default!;
+
+        /// <summary>
+        /// SHARPEN or LOOSEN.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Direction")]
+        public string? Direction { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Why")]
+        public string? Why { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Refused")]
+        public string? Refused { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAIBotAdvisorPair
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM6")]
+        public string? SYM6 { get; set; } = default!;
+
+        /// <summary>
+        /// TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Condition")]
+        public string? Condition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConditionWhy")]
+        public string? ConditionWhy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Stance")]
+        public string? Stance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StanceWhy")]
+        public string? StanceWhy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StanceUntil")]
+        public System.DateTimeOffset? StanceUntil { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NarrowingApplied")]
+        public bool? NarrowingApplied { get; set; } = default!;
+
+        /// <summary>
+        /// The FinGraph reading in this advice's input, retained when Ask-First is accepted later.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SignalSide")]
+        public string? SignalSide { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceBand")]
+        public string? ConfidenceBand { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Changes")]
+        public System.Collections.Generic.ICollection<FxsAIBotAdvisorChange>? Changes { get; set; } = default!;
+
+        /// <summary>
+        /// TP523 Q556-A: the pair was on Watch: this part of the advice is shown and never applied (its stance and changes),
+        /// <br/>            as an account on Watch gets WATCH advice; Undo last advice leaves it alone too.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Watch")]
+        public bool? Watch { get; set; } = default!;
+
+    }
+
+    /// <summary>
     /// T701 (Q8-A): when Full auto opens a side on a FinGraph reading change. T709 (Q378-A, Q385-A): the signal, trend,
     /// <br/>            confidence and score minimums moved into the account's signal sets (FxsAcct.SigWarm, read through the shared SigMinsHlp.Passes);
     /// <br/>            the pair keeps only the FinNews filter.
@@ -5579,6 +7043,30 @@ namespace Fin.Copy
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("NewsFilter")]
         public bool? NewsFilter { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Value fields copied into AI audit records without depending on the mutable live account document.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAIBotOrderLink
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("AutoDecisionId")]
+        public string? AutoDecisionId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OrderId")]
+        public string? OrderId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Ticket")]
+        public long? Ticket { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
+        public string? Symbol { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
 
     }
 
@@ -5618,15 +7106,6 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("MaximumHoldHours")]
         public DecRng? MaximumHoldHours { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
-        public string? AdviceMode { get; set; } = default!;
-
-        /// <summary>
-        /// TP513 Q267-A: one per member. A cascade that writes it on an AIBot account writes it on all the member's AIBot accounts.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceTime")]
-        public string? AdviceTime { get; set; } = default!;
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -5664,6 +7143,51 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("PairDefaults")]
         public FxsAIBotStgPair? PairDefaults { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP529: the account's L3 module, independent of the deterministic AIBot settings.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAdvisorSettings
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Enabled")]
+        public bool? Enabled { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceTime")]
+        public string? AdviceTime { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
+        public string? AdviceMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EveryFourHours")]
+        public bool? EveryFourHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PaidReasks")]
+        public bool? PaidReasks { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Manual")]
+        public bool? Manual { get; set; } = default!;
+
+        /// <summary>
+        /// Only opt-outs are stored, so a pair added later starts included.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ExcludedSymbols")]
+        public System.Collections.Generic.ICollection<string>? ExcludedSymbols { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AsksToday")]
+        public int? AsksToday { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DayKey")]
+        public System.DateTimeOffset? DayKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("IncludedUsed")]
+        public bool? IncludedUsed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LastAdviceAt")]
+        public System.DateTimeOffset? LastAdviceAt { get; set; } = default!;
 
     }
 
@@ -5740,12 +7264,6 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("BrokerDayKey")]
         public System.DateTimeOffset? BrokerDayKey { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("LearningCallsToday")]
-        public int? LearningCallsToday { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LearningCallDayKey")]
-        public System.DateTimeOffset? LearningCallDayKey { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("TradingHours")]
         public string? TradingHours { get; set; } = default!;
 
@@ -5773,35 +7291,6 @@ namespace Fin.Copy
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("OpenPerSide")]
         public int? OpenPerSide { get; set; } = default!;
-
-        /// <summary>
-        /// T701 (Q10-C): ASK (Ask me first, the default) or APPLY (Apply advice by itself).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
-        public string? AdviceMode { get; set; } = default!;
-
-        /// <summary>
-        /// TP513 Q267-A: the UTC time of day ("HH:mm") AIAdvisor advises at, one per member (saving it on one AIBot account
-        /// <br/>            saves it on all the member's AIBot accounts). AIAdvisor advises once per member per UTC day, in one call for all of the
-        /// <br/>            member's AIBot accounts, at the earliest of the accounts' times (an account granted later may still hold its own default
-        /// <br/>            until the member saves). A stance lasts until the next such time.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceTime")]
-        public string? AdviceTime { get; set; } = default!;
-
-        /// <summary>
-        /// T703: the member's AIAdvisor calls today (scheduled and Advise now), copied onto each of the member's accounts
-        /// <br/>            when a call is claimed so the AIBot pages can show it. The count the daily cap checks is kept per member, in
-        /// <br/>            fc_auto_attempt (key advise:u{USNO}:{day}).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceCallsToday")]
-        public int? AdviceCallsToday { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceCallDayKey")]
-        public System.DateTimeOffset? AdviceCallDayKey { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastAdviceAt")]
-        public System.DateTimeOffset? LastAdviceAt { get; set; } = default!;
 
         /// <summary>
         /// The applied advice that Undo last advice reverts.
@@ -5946,6 +7435,21 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// An absent or unrecognised role has no trading permission.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum FxsShareRole
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"VIEW")]
+        VIEW = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRADE")]
+        TRADE = 1,
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum FxsSide
     {
@@ -5976,6 +7480,116 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"REJECT")]
         REJECT = 3,
+
+    }
+
+    /// <summary>
+    /// T709 incident (Q459-A): a change of one side's SL that FinCopy holds back because it would close open trades at once. The pair's
+    /// <br/>settings (SYMSTG) keep the new values; the EA keeps getting what it has (the Sent fields) until the member confirms the change
+    /// <br/>with the Trading PIN, discards it (the side's settings go back to what the EA has), or the side holds no trade any more.
+    /// <br/>A record with FC.Com.Doms.FxsSlHold.Confirmed set is the member's go-ahead for exactly these values: the next sync sends them.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsSlHold
+    {
+
+        /// <summary>
+        /// BUY or SELL.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? AMODE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SLP")]
+        public double? SLP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("HRSL")]
+        public bool? HRSL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SentAMODE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AMode>))]
+        public AMode? SentAMODE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SentSLP")]
+        public double? SentSLP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SentHRSL")]
+        public bool? SentHRSL { get; set; } = default!;
+
+        /// <summary>
+        /// Who wrote the change (a name, AIBot, AIAdvisor, an admin, the EA) and when FinCopy held it.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("By")]
+        public string? By { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("At")]
+        public System.DateTimeOffset? At { get; set; } = default!;
+
+        /// <summary>
+        /// When the trades and P/L below were last worked out (null: at FC.Com.Doms.FxsSlHold.At).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("RefreshedAt")]
+        public System.DateTimeOffset? RefreshedAt { get; set; } = default!;
+
+        /// <summary>
+        /// The trades the change would close now, and their P/L now (the price it was checked at).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Trades")]
+        public System.Collections.Generic.ICollection<FxsSlHoldTrade>? Trades { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Profit")]
+        public double? Profit { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Price")]
+        public double? Price { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Confirmed")]
+        public bool? Confirmed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConfirmedBy")]
+        public string? ConfirmedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConfirmedAt")]
+        public System.DateTimeOffset? ConfirmedAt { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One open trade a held SL change would close now.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsSlHoldTrade
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("TID")]
+        public long? TID { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LOT")]
+        public double? LOT { get; set; } = default!;
+
+        /// <summary>
+        /// The fill price and the SL price the change would give it.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("PRC")]
+        public double? PRC { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SLPRC")]
+        public double? SLPRC { get; set; } = default!;
+
+        /// <summary>
+        /// Its P/L now.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("PRO")]
+        public double? PRO { get; set; } = default!;
+
+        /// <summary>
+        /// Who opened it, as FinCopy records it (Outside, Adopted, AIBotAuto, Member ...).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Source")]
+        public string? Source { get; set; } = default!;
 
     }
 
@@ -6385,674 +7999,20 @@ namespace Fin.Copy
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotFullAuto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long? ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
-        public int? ISNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Platform")]
-        public string? Platform { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StrategyName")]
-        public string? StrategyName { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Granted")]
-        public bool? Granted { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("State")]
-        public string? State { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("BreakerTripped")]
-        public bool? BreakerTripped { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("BreakerReason")]
-        public string? BreakerReason { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Values")]
-        public DtoAIBotValues? Values { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RetuneValues")]
-        public DtoAIBotValues? RetuneValues { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
-        public System.Collections.Generic.ICollection<Pairs>? Pairs { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Advice")]
-        public System.Collections.Generic.ICollection<Advice>? Advice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Decisions")]
-        public System.Collections.Generic.ICollection<Decisions>? Decisions { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotTicketsView
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long? ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
-        public System.Collections.Generic.ICollection<Pairs2>? Pairs { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Tickets")]
-        public System.Collections.Generic.ICollection<Tickets>? Tickets { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoFcAdviceSummary
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long? ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AskedAt")]
-        public System.DateTimeOffset? AskedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Status")]
-        public string? Status { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
-        public string? Trigger { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Model")]
-        public string? Model { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Note")]
-        public string? Note { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotFullAutoDecision
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long? ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LookAt")]
-        public System.DateTimeOffset? LookAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
-        public string? Trigger { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Model")]
-        public string? Model { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RulesJson")]
-        public string? RulesJson { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("InputTokens")]
-        public int? InputTokens { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OutputTokens")]
-        public int? OutputTokens { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
-        public double? CostUsd { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("GuardVerdict")]
-        public string? GuardVerdict { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AnswerJson")]
-        public string? AnswerJson { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OrdersWritten")]
-        public System.Collections.Generic.ICollection<object>? OrdersWritten { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotFullAutoState
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("State")]
-        public string? State { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotRetune
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotFullAutoSettings
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Values")]
-        public DtoAIBotValues? Values { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotPairMode
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
-        public string? Mode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotPairRules
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Symbol")]
-        public string? Symbol { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Values")]
-        public DtoAIBotValues? Values { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
-        public object? SYMSTG { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Entry")]
-        public object? Entry { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfirmClose")]
-        public bool? ConfirmClose { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotAdviceDecide
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceId")]
-        public string? AdviceId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Accept")]
-        public bool? Accept { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotAdviceUndo
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotFullAutoResPonse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoAIBotFullAuto? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotTicketsViewResPonse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoAIBotTicketsView? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoFcAdviceSummaryListResPonse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoFcAdviceSummary>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotFullAutoDecisionListResPonse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoAIBotFullAutoDecision>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum DtoFxsPairAIBotMode
     {
 
         [System.Runtime.Serialization.EnumMember(Value = @"OFF")]
         OFF = 0,
 
+        [System.Runtime.Serialization.EnumMember(Value = @"WATCH")]
+        WATCH = 1,
+
         [System.Runtime.Serialization.EnumMember(Value = @"EXITS")]
-        EXITS = 1,
+        EXITS = 2,
 
         [System.Runtime.Serialization.EnumMember(Value = @"FULL")]
-        FULL = 2,
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Pairs
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
-        public string? SYM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SYM6")]
-        public string? SYM6 { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
-        public string? Mode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Flat")]
-        public bool? Flat { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Values")]
-        public DtoAIBotValues? Values { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Entry")]
-        public object? Entry { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SYMSTG")]
-        public object? SYMSTG { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Tickets")]
-        public System.Collections.Generic.ICollection<object>? Tickets { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SlHolds")]
-        public System.Collections.Generic.ICollection<object>? SlHolds { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Advice
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
-        public string? Trigger { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AskedAt")]
-        public System.DateTimeOffset? AskedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Status")]
-        public string? Status { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Error")]
-        public string? Error { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Model")]
-        public string? Model { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
-        public double? CostUsd { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Note")]
-        public string? Note { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
-        public System.Collections.Generic.ICollection<object>? Pairs { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Changes")]
-        public System.Collections.Generic.ICollection<object>? Changes { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Decisions
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long? ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LookAt")]
-        public System.DateTimeOffset? LookAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
-        public string? Trigger { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Model")]
-        public string? Model { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RulesJson")]
-        public string? RulesJson { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("InputTokens")]
-        public int? InputTokens { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OutputTokens")]
-        public int? OutputTokens { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
-        public double? CostUsd { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("GuardVerdict")]
-        public string? GuardVerdict { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AnswerJson")]
-        public string? AnswerJson { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OrdersWritten")]
-        public System.Collections.Generic.ICollection<object>? OrdersWritten { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Pairs2
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
-        public string? SYM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
-        public string? Mode { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class Tickets
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("TID")]
-        public long? TID { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
-        public string? SYM { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Side")]
-        public string? Side { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Lot")]
-        public double? Lot { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OpenPrice")]
-        public double? OpenPrice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TakeProfitPrice")]
-        public double? TakeProfitPrice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StopLossPrice")]
-        public double? StopLossPrice { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrailPercent")]
-        public double? TrailPercent { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Manager")]
-        public string? Manager { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Role")]
-        public string? Role { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ExitsSet")]
-        public bool? ExitsSet { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ExitError")]
-        public string? ExitError { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Adopted")]
-        public bool? Adopted { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdoptedHanded")]
-        public bool? AdoptedHanded { get; set; } = default!;
-
-        private System.Collections.Generic.IDictionary<string, object>? _additionalProperties;
-
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+        FULL = 3,
 
     }
 

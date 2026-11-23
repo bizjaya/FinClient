@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.14.0 (2026-11-24)
+
+- Add account AI Advisor Preview, Send, settings and history methods in .NET, TypeScript and Python, using the account owner's FinCopy key. FinCopy retains Ultra entitlement, included reviews, credit charging and refunds.
+- Refresh the FinCopy OpenAPI snapshot and generated DTOs for Advisor settings, balance, included-review state, context and payment history, AIBot posture and hourly records. Existing Accept/Decline and Undo methods use the same account service.
+- Python also exposes the account AIBot dashboard, decision record, Accept/Decline and Undo methods.
+
 ## 0.13.0 (2026-11-22)
 
 ### Added
@@ -185,7 +191,7 @@ that FinCopy held twice keep one home. **Breaking:** the removed fields below, a
 ### Changed
 
 - Rename mode 5 to `FIRR` (Fixed Risk/Reward); the numeric identity stays 5.
-- Regenerate both clients from FinCopy’s T709 API document.
+- Regenerate both clients from FinCopyâ€™s T709 API document.
 - Use the shared mode names with codes: DCA Whole Side (DCAW), DCA Per Group (DCAG), Detached Grid (GRID), Contra Offset (CONT), Fixed Risk/Reward (FIRR), Copy Trade (COPY).
 
 ## 0.6.0 (2026-11-12)

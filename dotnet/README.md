@@ -70,6 +70,27 @@ client retries rate limits and transient network/gateway errors while reusing ea
 connection throws `FinApiException` with `ErrorCode` "network". Open it again in a loop, waiting a few seconds between
 attempts. Cancelling the token ends it on every target framework.
 
+## Account AI Advisor
+
+Use the account owner's FinCopy key. These routes are key-only, even when the client also supports member sessions.
+`GetAIBotAsync(acno)` reads Advisor settings, balance, included-review state, latest advice, AIBot posture and hourly records.
+FinCopy enforces the account's Ultra entitlement and handles its included review, extra-review charges and refunds.
+
+```csharp
+var preview = await fin.Copy.Accounts.PreviewAdvisorAsync(acno);
+// Show preview.Input / preview.ContextJson. Closing here sends no Advisor ask.
+var state = await fin.Copy.Accounts.SendAdvisorAsync(acno,
+    new CmdAdvisorSend { ACNO = acno, PreviewId = preview.Id, Kind = "ON_DEMAND" },
+    idempotencyKey: Guid.NewGuid().ToString("N"));
+var history = await fin.Copy.Accounts.AdvisorHistoryAsync(acno);
+```
+
+An empty `PreviewId` asks now. Reuse the same idempotency key when retrying the same write.
+`SaveAdvisorSettingsAsync` saves preferences; counters and timestamps stay server-owned.
+`AdvisorHistoryAsync` returns the latest 100 asks, newest first; `AdvisorHistoryViewAsync` reads one ask within that account.
+History includes the sent context, changes, decision, credits and refunds. Existing `DecideAIBotAdviceAsync` accepts or declines
+advice; `UndoAIBotAdviceAsync` undoes it under FinCopy's current safety rules. No second Advisor or wallet is created by a client.
+
 ## FinGraph, FinNews and FinSocial
 
 FinGraph (markets, screens, closed calls, tickers, candles and statistics), FinNews (news, sentiment, mood, trending, sources and

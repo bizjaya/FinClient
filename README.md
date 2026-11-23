@@ -106,6 +106,18 @@ breaks (a network error); open it again in a loop and wait a few seconds between
 To verify a webhook in TypeScript, import `FinWebhook` from `@bizjaya/finclient/webhook` (Node.js only). In .NET, use
 `Fin.FinWebhook`.
 
+## Account AI Advisor
+
+FinCopy's account Advisor is available with the account owner's key. All clients expose Preview, Send, settings, history and
+history detail: `.NET` `PreviewAdvisorAsync`, `SendAdvisorAsync`, `SaveAdvisorSettingsAsync`, `AdvisorHistoryAsync`,
+`AdvisorHistoryViewAsync`; TypeScript uses the same names in lower camel case without `Async`; Python uses
+`preview_advisor`, `send_advisor`, `save_advisor_settings`, `advisor_history`, `advisor_history_view`.
+
+The AIBot dashboard includes the Advisor balance, preferences, included-review state, latest advice, posture and hourly records.
+Use a stable idempotency key for writes; FinCopy retains Ultra gating, charging, refunds, Accept/Decline and Undo.
+See the [.NET account example](dotnet/README.md#account-ai-advisor). These routes require an API key, including when other
+resources use a member session.
+
 ## FinGraph, FinNews and FinSocial
 
 Beside FinCopy, the same client reaches FinGraph (markets, screens, closed calls, tickers, candles and statistics), FinNews
