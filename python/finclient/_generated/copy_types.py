@@ -39,65 +39,109 @@ BrokerServerEnvironment = Literal["Demo", "Live", "Unknown"]
 
 BrokerServerStatus = Literal["Submitted", "Verified", "Retired"]
 
-class _CmdAIBotAdviceDecideRequired(TypedDict):
+class CmdAIBotAdviceDecide(TypedDict, total=False):
     ACNO: int
-
-
-class CmdAIBotAdviceDecide(_CmdAIBotAdviceDecideRequired, total=False):
-    AdviceId: str
+    AdviceId: Optional[str]
     Accept: bool
     TrPin: Optional[str]
 
-class _CmdAIBotAdviceUndoRequired(TypedDict):
+class CmdAIBotAdviceUndo(TypedDict, total=False):
     ACNO: int
-
-
-class CmdAIBotAdviceUndo(_CmdAIBotAdviceUndoRequired, total=False):
     TrPin: Optional[str]
 
-class _CmdAIBotFullAutoSettingsRequired(TypedDict):
-    ACNO: int
-
-
-class CmdAIBotFullAutoSettings(_CmdAIBotFullAutoSettingsRequired, total=False):
-    TrPin: Optional[str]
+class CmdAIBotFullAutoSettings(TypedDict, total=False):
+    HedgeOn: Optional[bool]
     Values: "DtoAIBotValues"
-
-class _CmdAIBotFullAutoStateRequired(TypedDict):
+    ResetDrawdown: bool
     ACNO: int
-
-
-class CmdAIBotFullAutoState(_CmdAIBotFullAutoStateRequired, total=False):
-    State: str
+    TradingHours: Optional[str]
+    MaximumHoldHours: float
+    DayFirmPct: float
+    DayClosePct: float
+    DdFirmPct: float
+    DdClosePct: float
+    DdMeasure: Optional[str]
+    OpenPerSide: int
+    DAYSL: Optional[float]
+    MAXDDFRC: Optional[float]
+    SigWarm: "SigMins"
+    SigHot: "SigMins"
+    EntMode: "TMode"
+    AvgMode: "TMode"
+    BRISK: Optional[float]
+    SRISK: Optional[float]
+    DCACooloffMins: Optional[int]
+    """Minutes between DCA requests or adds on one side; null leaves it."""
+    BALLOWED: Optional[List["AMode"]]
+    SALLOWED: Optional[List["AMode"]]
+    BAMODE: "AMode"
+    SAMODE: "AMode"
+    AIBotPairDefaults: "FxsAIBotStgPair"
+    BNLOT: Optional[float]
+    SNLOT: Optional[float]
+    BLGP: Optional[float]
+    SLGP: Optional[float]
+    BLMUL: Optional[float]
+    SLMUL: Optional[float]
+    BLMAX: Optional[int]
+    SLMAX: Optional[int]
+    BGGP: Optional[float]
+    SGGP: Optional[float]
+    BGMUL: Optional[float]
+    SGMUL: Optional[float]
+    BGMAX: Optional[int]
+    SGMAX: Optional[int]
+    BTPP: Optional[float]
+    STPP: Optional[float]
+    BTSP: Optional[float]
+    STSP: Optional[float]
+    BTRAIL: Optional[bool]
+    STRAIL: Optional[bool]
+    BFRATIO: Optional[float]
+    SFRATIO: Optional[float]
+    BSLP: Optional[float]
+    SSLP: Optional[float]
+    BHRSL: Optional[bool]
+    SHRSL: Optional[bool]
+    USEPO: Optional[bool]
+    USEDESC: Optional[bool]
+    BDMUL: Optional[float]
+    SDMUL: Optional[float]
+    DCAEXP: Optional[float]
     TrPin: Optional[str]
 
-class _CmdAIBotPairModeRequired(TypedDict):
+class CmdAIBotFullAutoState(TypedDict, total=False):
     ACNO: int
-
-
-class CmdAIBotPairMode(_CmdAIBotPairModeRequired, total=False):
-    Symbol: str
-    Mode: str
+    State: Optional[str]
     TrPin: Optional[str]
 
-class _CmdAIBotPairRulesRequired(TypedDict):
+class CmdAIBotPairMode(TypedDict, total=False):
     ACNO: int
+    Symbol: Optional[str]
+    Mode: Optional[str]
+    TrPin: Optional[str]
 
-
-class CmdAIBotPairRules(_CmdAIBotPairRulesRequired, total=False):
-    Symbol: str
+class CmdAIBotPairRules(TypedDict, total=False):
     Values: "DtoAIBotValues"
-    SYMSTG: Dict[str, Any]
-    Entry: Dict[str, Any]
+    ACNO: int
+    Symbol: Optional[str]
+    SYMSTG: "DtoEASymStg"
+    Entry: "FxsAIBotEntryRules"
     TrPin: Optional[str]
     ConfirmClose: bool
 
-class _CmdAIBotRetuneRequired(TypedDict):
+class CmdAIBotRetune(TypedDict, total=False):
     ACNO: int
-
-
-class CmdAIBotRetune(_CmdAIBotRetuneRequired, total=False):
     TrPin: Optional[str]
+
+class CmdAdvisorSend(TypedDict, total=False):
+    ACNO: int
+    PreviewId: Optional[str]
+    Kind: Optional[str]
+
+class CmdAdvisorSettings(TypedDict, total=False):
+    ACNO: int
+    Settings: "FxsAdvisorSettings"
 
 class CmdApiFxsAcctPatch(TypedDict, total=False):
     """Public API settings patch. Account identity comes from the ACNO route. Every field is optional:
@@ -326,42 +370,198 @@ DeployStatus = Literal["Running", "Done", "Failed", "RolledBack"]
 
 DesiredTermState = Literal["Running", "Stopped", "Removed"]
 
-class DtoAIBotFullAuto(TypedDict, total=False):
-    ACNO: int
-    ISNO: int
-    Platform: str
-    StrategyName: str
-    Granted: bool
-    State: str
-    BreakerTripped: bool
-    BreakerReason: Optional[str]
-    Values: "DtoAIBotValues"
-    RetuneValues: "DtoAIBotValues"
-    Pairs: List[Dict[str, Any]]
-    Advice: List[Dict[str, Any]]
-    Decisions: List[Dict[str, Any]]
-
-class DtoAIBotFullAutoDecision(TypedDict, total=False):
-    Id: str
-    ACNO: int
-    LookAt: str
-    Trigger: str
-    Model: str
-    RulesJson: Optional[str]
+class DtoAIBotAdvice(TypedDict, total=False):
+    Credits: float
+    Included: bool
+    Refunded: bool
+    CreditNote: Optional[str]
+    Input: Optional[str]
+    ContextJson: Optional[str]
+    Kind: Optional[str]
+    RevisitAt: Optional[str]
     InputTokens: int
     OutputTokens: int
+    Id: Optional[str]
+    Trigger: Optional[str]
+    AskedAt: str
+    Status: Optional[str]
+    Error: Optional[str]
+    Model: Optional[str]
     CostUsd: float
-    GuardVerdict: Optional[str]
-    AnswerJson: Optional[str]
-    OrdersWritten: List[Dict[str, Any]]
+    Note: Optional[str]
+    Pairs: Optional[List["FxsAIBotAdvisorPair"]]
+    Changes: Optional[List["FxsAIBotAdvisorChange"]]
+    DecidedAt: Optional[str]
+    DecidedBy: Optional[str]
 
-class DtoAIBotFullAutoDecisionListResPonse(TypedDict, total=False):
-    data: List["DtoAIBotFullAutoDecision"]
+class DtoAIBotAdviceIReadOnlyListResPonse(TypedDict, total=False):
+    data: Optional[List["DtoAIBotAdvice"]]
     code: int
     isOk: bool
     message: Optional[str]
     errors: Optional[List[str]]
     chksum: Optional[str]
+
+class DtoAIBotAdviceResPonse(TypedDict, total=False):
+    data: "DtoAIBotAdvice"
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
+
+class DtoAIBotFullAuto(TypedDict, total=False):
+    Values: "DtoAIBotValues"
+    StrategyChanges: Optional[List[str]]
+    StrategyChangedAt: Optional[str]
+    RetuneValues: "DtoAIBotValues"
+    Platform: Optional[str]
+    ACNO: int
+    ISNO: int
+    StrategyName: Optional[str]
+    Granted: bool
+    State: Optional[str]
+    BreakerTripped: bool
+    BreakerReason: Optional[str]
+    BreakerTrippedAt: Optional[str]
+    TradingHours: Optional[str]
+    MaximumHoldHours: float
+    DayFirmPct: float
+    DayClosePct: float
+    DdFirmPct: float
+    DdClosePct: float
+    DdMeasure: Optional[str]
+    OpenPerSide: int
+    DAYSL: Optional[float]
+    MAXDDFRC: Optional[float]
+    SigCold: "SigMins"
+    SigWarm: "SigMins"
+    SigHot: "SigMins"
+    SigMode: "TMode"
+    EntMode: "TMode"
+    AvgMode: "TMode"
+    DCACooloffMins: int
+    """Minutes between the terminal's DCA requests or adds on one side (sent as DCATGMINS)."""
+    SYMSTG: "DtoFxsStgSymStg"
+    AIBotPairDefaults: "FxsAIBotStgPair"
+    AdvisorAllowed: bool
+    AdvisorStaff: bool
+    AdvisorBalance: float
+    Advisor: "FxsAdvisorSettings"
+    AdviceMode: Optional[str]
+    AdviceTime: Optional[str]
+    AdviceCallsToday: int
+    AdviceMaxPerDay: int
+    LastAdviceAt: Optional[str]
+    CanUndoAdvice: bool
+    AdvisorOff: bool
+    """Advisor is disabled or this account has no Ultra entitlement; AIBot retains its own stance."""
+    Posture: Optional[str]
+    PostureWhy: Optional[str]
+    HedgeOn: bool
+    HourlyRecords: Optional[List["DtoAIBotFullAutoDecision"]]
+    Strategy: "DtoFxsStg"
+    Pairs: Optional[List["DtoAIBotFullAutoPair"]]
+    Advice: Optional[List["DtoAIBotAdvice"]]
+    Decisions: Optional[List["DtoAIBotFullAutoDecision"]]
+    Outcomes: Optional[List["DtoAIBotFullAutoOutcome"]]
+    Lessons: Optional[List["DtoAIBotFullAutoLesson"]]
+    Playbooks: Optional[List["DtoAIBotFullAutoPlaybook"]]
+
+class DtoAIBotFullAutoDecision(TypedDict, total=False):
+    Id: Optional[str]
+    ACNO: int
+    LookAt: str
+    Trigger: Optional[str]
+    Model: Optional[str]
+    RulesJson: Optional[str]
+    """The rule checks behind the decision, per pair and side (no model call)."""
+    InputTokens: int
+    OutputTokens: int
+    CostUsd: float
+    GuardVerdict: Optional[str]
+    AnswerJson: Optional[str]
+    OrdersWritten: Optional[List["FxsAIBotOrderLink"]]
+
+class DtoAIBotFullAutoDecisionListResPonse(TypedDict, total=False):
+    data: Optional[List["DtoAIBotFullAutoDecision"]]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
+
+class DtoAIBotFullAutoLesson(TypedDict, total=False):
+    SYM: Optional[str]
+    Cause: Optional[str]
+    SetupTags: Optional[List[str]]
+    SuggestedRule: Optional[str]
+    MemberAdvice: Optional[str]
+    ReviewedAt: str
+
+class DtoAIBotFullAutoOutcome(TypedDict, total=False):
+    Id: Optional[str]
+    SYM: Optional[str]
+    Side: Optional[str]
+    OpenedAt: Optional[str]
+    ClosedAt: str
+    Pnl: float
+    Swap: float
+    Commission: float
+    DurationSeconds: int
+    CloseReason: Optional[str]
+    Mae: float
+    Mfe: float
+    SetupTags: Optional[List[str]]
+    Lesson: Optional[str]
+    Role: Optional[str]
+
+class DtoAIBotFullAutoPair(TypedDict, total=False):
+    PendingStance: Optional[str]
+    PendingStanceReadings: int
+    OwnStance: Optional[str]
+    StanceSource: Optional[str]
+    BuyCanUndoTune: bool
+    SellCanUndoTune: bool
+    DeferredAccountValueKeys: Optional[List[str]]
+    Values: "DtoAIBotValues"
+    BuyEntryWait: Optional[str]
+    SellEntryWait: Optional[str]
+    SYM: Optional[str]
+    SYM6: Optional[str]
+    EN: bool
+    BuyOpenLots: float
+    SellOpenLots: float
+    Flat: bool
+    Mode: Optional[str]
+    Entry: "FxsAIBotEntryRules"
+    SYMSTG: "DtoEASymStg"
+    Stance: Optional[str]
+    """AIBot's own stance, overridden by live enabled Advisor advice for a selected pair."""
+    StanceUntil: Optional[str]
+    StanceWhy: Optional[str]
+    Condition: Optional[str]
+    ConditionWhy: Optional[str]
+    NLOT: Optional[float]
+    """The pair's starting lot (NLOT)."""
+    BrokerMaxLot: Optional[float]
+    """The broker maximum from the existing symbol spec, not a clamp on saved settings."""
+    Tickets: Optional[List["DtoAIBotTicket"]]
+    SlHolds: Optional[List["FxsSlHold"]]
+    BuySlOff: int
+    SellSlOff: int
+
+class DtoAIBotFullAutoPlaybook(TypedDict, total=False):
+    Id: Optional[str]
+    Version: Optional[str]
+    State: Optional[str]
+    Trades: int
+    Expectancy: float
+    ProfitFactor: float
+    DrawdownPct: float
+    Rules: Optional[str]
+    AdviceToLoosen: Optional[str]
+    CreatedAt: str
 
 class DtoAIBotFullAutoResPonse(TypedDict, total=False):
     data: "DtoAIBotFullAuto"
@@ -371,10 +571,34 @@ class DtoAIBotFullAutoResPonse(TypedDict, total=False):
     errors: Optional[List[str]]
     chksum: Optional[str]
 
+class DtoAIBotPairModeRow(TypedDict, total=False):
+    SYM: Optional[str]
+    Mode: Optional[str]
+
+class DtoAIBotTicket(TypedDict, total=False):
+    TID: int
+    SYM: Optional[str]
+    Side: Optional[str]
+    Lot: float
+    OpenPrice: float
+    TakeProfitPrice: float
+    StopLossPrice: float
+    TrailPercent: float
+    Manager: Optional[str]
+    """AIBOT, MEMBER (the member took it back), SIGNAL (a Telegram copy, never managed) or OFF (the
+    pair is Off).
+    """
+    Role: Optional[str]
+    """OPENED when AIBot opened it, MANAGED when AIBot set its exits."""
+    ExitsSet: bool
+    ExitError: Optional[str]
+    Adopted: bool
+    AdoptedHanded: bool
+
 class DtoAIBotTicketsView(TypedDict, total=False):
     ACNO: int
-    Pairs: List[Dict[str, Any]]
-    Tickets: List[Dict[str, Any]]
+    Pairs: Optional[List["DtoAIBotPairModeRow"]]
+    Tickets: Optional[List["DtoAIBotTicket"]]
 
 class DtoAIBotTicketsViewResPonse(TypedDict, total=False):
     data: "DtoAIBotTicketsView"
@@ -384,6 +608,11 @@ class DtoAIBotTicketsViewResPonse(TypedDict, total=False):
     errors: Optional[List[str]]
     chksum: Optional[str]
 
+class DtoAIBotValueCounts(TypedDict, total=False):
+    Fixed: int
+    Range: int
+    Strategy: int
+
 class DtoAIBotValues(TypedDict, total=False):
     """Ordinary per-value edits. There is no account-wide stored switch."""
     Numbers: Optional[Dict[str, "BotDec"]]
@@ -392,6 +621,25 @@ class DtoAIBotValues(TypedDict, total=False):
     Confidence: Optional[Dict[str, "ConfidenceBotStep"]]
     Methods: Optional[Dict[str, "AModeBotPick"]]
     NewsFilter: "BooleanBotPick"
+
+class DtoAdvisorPreview(TypedDict, total=False):
+    Id: Optional[str]
+    BuiltAt: str
+    ExpiresAt: str
+    Model: Optional[str]
+    Input: Optional[str]
+    ContextJson: Optional[str]
+    EstimatedInputTokens: int
+    EstimatedCostUsd: Optional[float]
+    EstimateNote: Optional[str]
+
+class DtoAdvisorPreviewResPonse(TypedDict, total=False):
+    data: "DtoAdvisorPreview"
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
 
 class DtoApiChange(TypedDict, total=False):
     """One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say
@@ -660,6 +908,8 @@ class DtoEASymStg(TypedDict, total=False):
     STSP: Optional[float]
     BHRSL: Optional[bool]
     SHRSL: Optional[bool]
+    BBE: Optional[List[int]]
+    SBE: Optional[List[int]]
     T646B: Optional[bool]
     T646S: Optional[bool]
     LOGEXP: Optional[float]
@@ -681,16 +931,25 @@ class DtoEASymStg(TypedDict, total=False):
     SDMUL: Optional[float]
 
 class DtoFcAdviceSummary(TypedDict, total=False):
-    Id: str
+    Id: Optional[str]
     ACNO: int
-    AskedAt: str
-    Status: str
-    Trigger: str
-    Model: str
-    Note: Optional[str]
+    Use: Optional[str]
+    Symbol: Optional[str]
+    Status: Optional[str]
+    Stage: Optional[str]
+    Call: Optional[str]
+    Outcome: Optional[str]
+    ApiCredits: float
+    AiCredits: float
+    CreatedAt: str
+    Confidence: Optional[float]
+    AIBotMode: Optional[str]
+    ValidationNote: Optional[str]
+    Refunded: bool
+    Staff: bool
 
 class DtoFcAdviceSummaryListResPonse(TypedDict, total=False):
-    data: List["DtoFcAdviceSummary"]
+    data: Optional[List["DtoFcAdviceSummary"]]
     code: int
     isOk: bool
     message: Optional[str]
@@ -713,6 +972,7 @@ class DtoFinInstrumentResPonse(TypedDict, total=False):
     chksum: Optional[str]
 
 class DtoFleetAccount(TypedDict, total=False):
+    Shared: int
     Account: "DtoTermAccount"
     Terminal: "DtoTermTerminal"
     BrokerServer: "DtoBrokerServer"
@@ -784,7 +1044,13 @@ class DtoFxsAccountType(TypedDict, total=False):
 DtoFxsAcct = TypedDict(
     "DtoFxsAcct",
     {
+        "AIBotHedgeOn": bool,
+        "AIBotPosture": Optional[str],
+        "AIBotPostureWhy": Optional[str],
+        "AIBotPostureHour": Optional[str],
         "Values": "DtoAIBotValues",
+        "Shared": int,
+        "Advisor": "FxsAdvisorSettings",
         "ACNO": int,
         "USNO": int,
         "TermAccountIdText": Optional[str],
@@ -835,6 +1101,8 @@ DtoFxsAcct = TypedDict(
         "LastPingMs": Optional[float],
         "AvgLatencyMs": Optional[float],
         "LatencySampleAt": Optional[str],
+        "EnBoard": bool,
+        "BoardHandle": Optional[str],
         "Virtual": bool,
         "EN": bool,
         "ISNO": int,
@@ -1109,7 +1377,7 @@ DtoFxsPair = TypedDict(
         "SYM6": Optional[str],
         "ExternalRef": Optional[str],
         "EN": bool,
-        "AIBotMode": Optional[Literal["OFF", "EXITS", "FULL"]],
+        "AIBotMode": Optional[Literal["OFF", "WATCH", "EXITS", "FULL"]],
         "BID": Optional[float],
         "ASK": Optional[float],
         "CMP": Optional[float],
@@ -1492,6 +1760,11 @@ class DtoFxsStg(TypedDict, total=False):
     StgLog: Optional[List[str]]
     AccountCount: int
     PairCount: int
+    Equity: Optional[float]
+    """Read-only member account facts; unavailable totals stay null, mixed currencies are never added."""
+    LifetimePnl: Optional[float]
+    Currency: Optional[str]
+    Platforms: Optional[str]
     PicFile: Optional[str]
     PicUrl: Optional[str]
     Rank: "DtoFxsStgRank"
@@ -1751,7 +2024,27 @@ class DtoFxsSymbolSpecResPonse(TypedDict, total=False):
     errors: Optional[List[str]]
     chksum: Optional[str]
 
+class DtoMemberAIBotSummary(TypedDict, total=False):
+    """Read-only AIBot and trade-mode summary projected onto a member account row."""
+    Posture: Optional[str]
+    State: Optional[str]
+    Granted: bool
+    AdviceMode: Optional[str]
+    BreakerTripped: bool
+    BreakerReason: Optional[str]
+    EntryMode: Optional[str]
+    DcaMode: Optional[str]
+    SignalMode: Optional[str]
+    ValueCounts: "DtoAIBotValueCounts"
+
 class DtoMemberAccount(TypedDict, total=False):
+    AIBot: "DtoMemberAIBotSummary"
+    ShareRole: "FxsShareRole"
+    OwnerName: Optional[str]
+    Shares: Optional[List["DtoMemberShare"]]
+    """Who has access to this account: filled only on a row the caller owns, empty on a row shared with
+    the caller.
+    """
     Fleet: "DtoFleetAccount"
     State: "DtoFxsAccountState"
 
@@ -1793,6 +2086,11 @@ class DtoMemberActivityResPaged(TypedDict, total=False):
     isOk: bool
     message: Optional[str]
     errors: Optional[List[str]]
+
+class DtoMemberShare(TypedDict, total=False):
+    Name: Optional[str]
+    Email: Optional[str]
+    Role: "FxsShareRole"
 
 class DtoOperationQueued(TypedDict, total=False):
     OperationId: Optional[str]
@@ -1865,7 +2163,6 @@ class DtoTermAccount(TypedDict, total=False):
     TerminalId: Optional[str]
     Login: Optional[str]
     Capabilities: Optional[List[str]]
-    FeedPreference: Optional[str]
     DesiredState: "DesiredTermState"
     Kind: "TermAccountKind"
     ExpiresAt: Optional[str]
@@ -1926,13 +2223,6 @@ class DtoTermTerminal(TypedDict, total=False):
     LastBrokerVerifiedStartAt: Optional[str]
     LastBrokerFailureStartAt: Optional[str]
     HealthySinceAt: Optional[str]
-    FeedCoolingUntil: Optional[str]
-    FeedColour: Optional[str]
-    FeedLastSnapshotAt: Optional[str]
-    FeedSymbols: int
-    FeedStoredAt: Optional[str]
-    FeedStoredSymbols: int
-    FeedLastError: Optional[str]
     StaleHeartbeatRestarts: int
     PriceLagRestartDayUtc: Optional[str]
     PriceLagRestartsToday: int
@@ -1968,9 +2258,47 @@ class DtoWaitlistStateResPonse(TypedDict, total=False):
     errors: Optional[List[str]]
     chksum: Optional[str]
 
+class FxsAIBotAdvisorChange(TypedDict, total=False):
+    """One setting AIAdvisor wants changed, old to new. FC.Com.Doms.FxsAIBotAdvisorChange.Refused holds
+    the reason the code refused it.
+    """
+    Field: Optional[str]
+    Old: Optional[str]
+    New: Optional[str]
+    Direction: Optional[str]
+    """SHARPEN or LOOSEN."""
+    Why: Optional[str]
+    Refused: Optional[str]
+
+class FxsAIBotAdvisorPair(TypedDict, total=False):
+    SYM: Optional[str]
+    SYM6: Optional[str]
+    Condition: Optional[str]
+    """TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK."""
+    ConditionWhy: Optional[str]
+    Stance: Optional[str]
+    StanceWhy: Optional[str]
+    StanceUntil: Optional[str]
+    NarrowingApplied: bool
+    SignalSide: Optional[str]
+    """The FinGraph reading in this advice's input, retained when Ask-First is accepted later."""
+    ConfidenceBand: Optional[str]
+    Changes: Optional[List["FxsAIBotAdvisorChange"]]
+    Watch: bool
+
 class FxsAIBotEntryRules(TypedDict, total=False):
     NewsFilter: bool
     """Skip a side that FinNews of the last 24 hours on the pair's currencies leans against."""
+
+class FxsAIBotOrderLink(TypedDict, total=False):
+    """Value fields copied into AI audit records without depending on the mutable live account
+    document.
+    """
+    AutoDecisionId: Optional[str]
+    OrderId: Optional[str]
+    Ticket: int
+    Symbol: Optional[str]
+    Side: Optional[str]
 
 class FxsAIBotPreferences(TypedDict, total=False):
     Horizon: Optional[str]
@@ -1980,8 +2308,6 @@ class FxsAIBotStgLimits(TypedDict, total=False):
     OpenPerSide: "DecRng"
     TradingHours: Optional[str]
     MaximumHoldHours: "DecRng"
-    AdviceMode: Optional[str]
-    AdviceTime: Optional[str]
 
 class FxsAIBotStgPair(TypedDict, total=False):
     Mode: Optional[str]
@@ -1993,6 +2319,20 @@ class FxsAIBotStrategy(TypedDict, total=False):
     PlaybookVersionId: Optional[str]
     Limits: "FxsAIBotStgLimits"
     PairDefaults: "FxsAIBotStgPair"
+
+class FxsAdvisorSettings(TypedDict, total=False):
+    Enabled: bool
+    AdviceTime: Optional[str]
+    AdviceMode: Optional[str]
+    EveryFourHours: bool
+    PaidReasks: bool
+    Manual: bool
+    ExcludedSymbols: Optional[List[str]]
+    """Only opt-outs are stored, so a pair added later starts included."""
+    AsksToday: int
+    DayKey: Optional[str]
+    IncludedUsed: bool
+    LastAdviceAt: Optional[str]
 
 FxsCloseReason = Literal["UNK", "TP", "SL", "TS", "GTP", "API", "EA", "MAN", "SO", "RBL", "DAY"]
 """Why a leg closed, as the EA reports it (`CRSN`)."""
@@ -2007,8 +2347,6 @@ class FxsFullAutoSettings(TypedDict, total=False):
     BreakerTrippedAt: Optional[str]
     BrokerDayKey: Optional[str]
     """Broker-local day key used to reset the daily loss breaker across a date boundary."""
-    LearningCallsToday: int
-    LearningCallDayKey: Optional[str]
     TradingHours: Optional[str]
     MaximumHoldHours: float
     DayFirmPct: float
@@ -2017,11 +2355,6 @@ class FxsFullAutoSettings(TypedDict, total=False):
     DdClosePct: float
     DdMeasure: Optional[str]
     OpenPerSide: int
-    AdviceMode: Optional[str]
-    AdviceTime: Optional[str]
-    AdviceCallsToday: int
-    AdviceCallDayKey: Optional[str]
-    LastAdviceAt: Optional[str]
     UndoAdviceId: Optional[str]
     """The applied advice that Undo last advice reverts."""
 
@@ -2037,9 +2370,46 @@ FxsPlatform = Literal["NONE", "MT4", "MT5"]
 
 FxsRiskLev = Literal["LOW", "MID", "HIGH"]
 
+FxsShareRole = Literal["VIEW", "TRADE"]
+"""An absent or unrecognised role has no trading permission."""
+
 FxsSide = Literal["NONE", "BUY", "SELL"]
 
 FxsSignalStatus = Literal["NONE", "ALERT", "ACCEPT", "REJECT"]
+
+class FxsSlHold(TypedDict, total=False):
+    Side: Optional[str]
+    """BUY or SELL."""
+    AMODE: "AMode"
+    SLP: Optional[float]
+    HRSL: Optional[bool]
+    SentAMODE: "AMode"
+    SentSLP: Optional[float]
+    SentHRSL: Optional[bool]
+    By: Optional[str]
+    """Who wrote the change (a name, AIBot, AIAdvisor, an admin, the EA) and when FinCopy held it."""
+    At: str
+    RefreshedAt: Optional[str]
+    """When the trades and P/L below were last worked out (null: at FC.Com.Doms.FxsSlHold.At)."""
+    Trades: Optional[List["FxsSlHoldTrade"]]
+    """The trades the change would close now, and their P/L now (the price it was checked at)."""
+    Profit: float
+    Price: float
+    Confirmed: bool
+    ConfirmedBy: Optional[str]
+    ConfirmedAt: Optional[str]
+
+class FxsSlHoldTrade(TypedDict, total=False):
+    """One open trade a held SL change would close now."""
+    TID: int
+    LOT: float
+    PRC: float
+    """The fill price and the SL price the change would give it."""
+    SLPRC: float
+    PRO: float
+    """Its P/L now."""
+    Source: Optional[str]
+    """Who opened it, as FinCopy records it (Outside, Adopted, AIBotAuto, Member ...)."""
 
 FxsStatus = Literal["NONE", "READY", "ACTIVE", "PENDING", "OFFLINE", "PAUSED", "PROBLEM"]
 

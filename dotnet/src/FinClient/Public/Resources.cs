@@ -101,6 +101,29 @@ public sealed class AccountsResource
     public Task<DtoAIBotFullAuto> GetAIBotAsync(long acno, CancellationToken cancellationToken = default) =>
         _http.SendAsync<DtoAIBotFullAuto>("GET", Account(acno) + "/aibot", cancellationToken: cancellationToken);
 
+    /// <summary>Previews an account Advisor ask (ON_DEMAND or PLAN). Does not send or spend Advisor credits.</summary>
+    public Task<DtoAdvisorPreview> PreviewAdvisorAsync(long acno, string? kind = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAdvisorPreview>("GET", Query(Account(acno) + "/aibot/advisor/preview", null, ("kind", kind)), cancellationToken: cancellationToken);
+
+    /// <summary>Sends a preview or, with an empty PreviewId, asks now. FinCopy handles Ultra, credits and refunds.
+    /// Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> SendAdvisorAsync(long acno, CmdAdvisorSend command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("POST", Account(acno) + "/aibot/advisor/send", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Saves Advisor preferences; counters and included-review state remain server-owned. Requires a stable Idempotency-Key.</summary>
+    public Task<DtoAIBotFullAuto> SaveAdvisorSettingsAsync(long acno, CmdAdvisorSettings command,
+        string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotFullAuto>("PUT", Account(acno) + "/aibot/advisor/settings", command, idempotencyKey, cancellationToken);
+
+    /// <summary>Reads the account's latest 100 Advisor asks, newest first, including sent context and payment results.</summary>
+    public Task<IReadOnlyList<DtoAIBotAdvice>> AdvisorHistoryAsync(long acno, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<IReadOnlyList<DtoAIBotAdvice>>("GET", Account(acno) + "/aibot/advisor/history", cancellationToken: cancellationToken);
+
+    /// <summary>Reads a single Advisor ask within the account; another account's id is not found.</summary>
+    public Task<DtoAIBotAdvice> AdvisorHistoryViewAsync(long acno, string id, CancellationToken cancellationToken = default) =>
+        _http.SendAsync<DtoAIBotAdvice>("GET", Account(acno) + "/aibot/advisor/history/" + FinQuery.Segment(id), cancellationToken: cancellationToken);
+
     /// <summary>Sets the account AIBot state to Off, Watch or On. Requires a stable Idempotency-Key.</summary>
     public Task<DtoAIBotFullAuto> SetAIBotStateAsync(long acno, CmdAIBotFullAutoState command,
         string? idempotencyKey = null, CancellationToken cancellationToken = default) =>
