@@ -97,6 +97,27 @@ export class AccountsResource {
   getAIBot(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
     return this.http.request("GET", `${accountPath(acno)}/aibot`, undefined, options);
   }
+  /** Previews an account Advisor ask without sending or spending Advisor credits. */
+  previewAdvisor(acno: number, kind: "ON_DEMAND" | "PLAN" = "ON_DEMAND", options: FinRequestOptions = {}): Promise<D<"DtoAdvisorPreviewResPonse">> {
+    return this.http.request("GET", `${accountPath(acno)}/aibot/advisor/preview?kind=${encodeURIComponent(kind)}`, undefined, options);
+  }
+  /** Sends a preview or asks now with an empty PreviewId. FinCopy handles Ultra, credits and refunds. Requires options.idempotencyKey. */
+  sendAdvisor(acno: number, command: CopyDto<"CmdAdvisorSend">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/aibot/advisor/send`, command, options);
+  }
+  /** Saves Advisor preferences; counters and included-review state remain server-owned. Requires options.idempotencyKey. */
+  saveAdvisorSettings(acno: number, command: CopyDto<"CmdAdvisorSettings">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
+    return this.http.request("PUT", `${accountPath(acno)}/aibot/advisor/settings`, command, options);
+  }
+  /** Latest 100 Advisor asks, newest first, including sent context and payment results. */
+  advisorHistory(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotAdviceIReadOnlyListResPonse">> {
+    return this.http.request("GET", `${accountPath(acno)}/aibot/advisor/history`, undefined, options);
+  }
+  /** One Advisor ask within this account; another account's id is not found. */
+  advisorHistoryView(acno: number, id: string, options: FinRequestOptions = {}): Promise<D<"DtoAIBotAdviceResPonse">> {
+    if (!id) throw new TypeError("id must not be empty.");
+    return this.http.request("GET", `${accountPath(acno)}/aibot/advisor/history/${encodeURIComponent(id)}`, undefined, options);
+  }
   /** Sets the account AIBot state to Off, Watch or On. Writes require options.idempotencyKey. */
   setAIBotState(acno: number, command: CopyDto<"CmdAIBotFullAutoState">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
     return this.http.request("POST", `${accountPath(acno)}/aibot/state`, command, options);

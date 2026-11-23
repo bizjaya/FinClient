@@ -313,6 +313,302 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/fxs/accounts/{acno}/aibot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read the account's AIBot and AI Advisor settings and state: advice time, apply mode, paid switches,
+         *                 today's asks, included review, AI Advisor balance, latest advice, posture and hourly records.
+         *                 The balance and all Advisor charging belong to FinCopy; no second wallet or Advisor is used.
+         */
+        get: operations["AIBotView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advisor/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Build the next AI Advisor ask for this account without sending it. Kind is ON_DEMAND or PLAN.
+         *                 Preview research is paid by FinCopy; closing the preview sends no Advisor ask and charges no Advisor credits.
+         *                 The preview belongs to this key owner and account and expires in fifteen minutes. Ultra required.
+         */
+        get: operations["AdvisorPreview"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advisor/send": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Send the previewed ask, or ask now with an empty PreviewId. Uses FinCopy's Ultra gate, daily included
+         *                 review, AI Advisor credits and failure refunds. ACNO must match the route. Trade key and Idempotency-Key required.
+         */
+        post: operations["AdvisorSend"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advisor/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Save the account's AI Advisor preferences (including Advise on via ExcludedSymbols). Server-owned counters,
+         *                 included-review state and timestamps are ignored, as on the member screen. ACNO must match the route.
+         *                 Trade key and Idempotency-Key required; only the account owner's key may save.
+         */
+        put: operations["AdvisorSettings"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advisor/history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The account's latest 100 AI Advisor asks, newest first, with the exact sent context, changes,
+         *                 decisions, included-review use, charges and refunds. The first item is the latest advice.
+         */
+        get: operations["AdvisorHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advisor/history/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** One AI Advisor ask, including its sent context. An id from any other account is not found. */
+        get: operations["AdvisorHistoryView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AIBotState"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/retune": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AIBotRetune"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AIBotSettings"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/pair-mode": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AIBotPairMode"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/pair-rules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AIBotPairRules"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/tickets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AIBotTickets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advise": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AIBotAdvise"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advice/decide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AIBotAdviceDecide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advice/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["AIBotAdviceUndo"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/advice": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AIBotAdvice"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/aibot/decisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["AIBotDecisions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/fxs/waitlist/join": {
         parameters: {
             query?: never;
@@ -866,7 +1162,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** HYBRID DCA proposals waiting for an answer. */
+        /** Ask-First DCA proposals waiting for an answer. */
         get: operations["AccountDcaQueue"];
         put?: never;
         post?: never;
@@ -885,7 +1181,7 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Accept or reject a HYBRID DCA proposal. Needs the Trade permission. */
+        /** Accept or reject an Ask-First DCA proposal. Needs the Trade permission. */
         post: operations["AccountDcaAnswer"];
         delete?: never;
         options?: never;
@@ -992,214 +1288,10 @@ export interface paths {
             cookie?: never;
         };
         /**
-         * HYBRID DCA proposals waiting for an answer, across the caller's accounts, newest first. For a signed-in member
+         * Ask-First DCA proposals waiting for an answer, across the caller's accounts, newest first. For a signed-in member
          *                 session each row says whether the member's trading PIN must be entered to answer it.
          */
         get: operations["Dca"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Reads the account AIBot dashboard, settings, pairs, advice and decisions. */
-        get: operations["AIBotView"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/state": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Sets the account AIBot state to Off, Watch or On. */
-        post: operations["AIBotState"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/retune": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Retunes the account AIBot values from its strategy. */
-        post: operations["AIBotRetune"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Applies account AIBot settings. */
-        post: operations["AIBotSettings"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/pair-mode": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Sets one pair AIBot mode. */
-        post: operations["AIBotPairMode"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/pair-rules": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Applies one pair AIBot rules and settings. */
-        post: operations["AIBotPairRules"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/tickets": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Reads the account AIBot tickets and pair modes. */
-        get: operations["AIBotTickets"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advise": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Runs AIAdvisor now for the account. */
-        post: operations["AIBotAdvise"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advice": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Lists the account AIAdvisor advice. */
-        get: operations["AIBotAdvice"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advice/decide": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Approves or rejects one AIAdvisor recommendation. */
-        post: operations["AIBotAdviceDecide"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advice/undo": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Undoes the latest AIAdvisor recommendation. */
-        post: operations["AIBotAdviceUndo"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/decisions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Lists recorded account AIBot decisions. */
-        get: operations["AIBotDecisions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1251,6 +1343,203 @@ export interface components {
         BrokerServerEnvironment: "Demo" | "Live" | "Unknown";
         /** @enum {string} */
         BrokerServerStatus: "Submitted" | "Verified" | "Retired";
+        /** @description T701 (Q10-C): Accept or Reject a waiting advice. */
+        CmdAIBotAdviceDecide: {
+            /** Format: int64 */
+            ACNO?: number;
+            AdviceId?: string | null;
+            Accept?: boolean;
+            TrPin?: string | null;
+        };
+        /** @description T701 (Q10-C): Undo last advice. */
+        CmdAIBotAdviceUndo: {
+            /** Format: int64 */
+            ACNO?: number;
+            TrPin?: string | null;
+        };
+        CmdAIBotFullAutoSettings: {
+            HedgeOn?: boolean | null;
+            Values?: components["schemas"]["DtoAIBotValues"];
+            ResetDrawdown?: boolean;
+            /** Format: int64 */
+            ACNO?: number;
+            TradingHours?: string | null;
+            /** Format: double */
+            MaximumHoldHours?: number;
+            /** Format: double */
+            DayFirmPct?: number;
+            /** Format: double */
+            DayClosePct?: number;
+            /** Format: double */
+            DdFirmPct?: number;
+            /** Format: double */
+            DdClosePct?: number;
+            DdMeasure?: string | null;
+            /**
+             * Format: int32
+             * @description T709 (Q375-A): most AIBot trades open on one side at once.
+             */
+            OpenPerSide?: number;
+            /**
+             * Format: double
+             * @description T709 (Q396-A): the account's daily loss (ACCSTG.DAYSL); 0 or empty turns it off.
+             */
+            DAYSL?: number | null;
+            /** Format: double */
+            MAXDDFRC?: number | null;
+            SigWarm?: components["schemas"]["SigMins"];
+            SigHot?: components["schemas"]["SigMins"];
+            EntMode?: components["schemas"]["TMode"];
+            AvgMode?: components["schemas"]["TMode"];
+            /**
+             * Format: double
+             * @description T709 (Q375-A): risk a trade per side, the account template's and every one of its pairs'; null leaves it.
+             */
+            BRISK?: number | null;
+            /** Format: double */
+            SRISK?: number | null;
+            /**
+             * Format: int32
+             * @description Minutes between DCA requests or adds on one side; null leaves it.
+             */
+            DCACooloffMins?: number | null;
+            /**
+             * @description T709: the methods AIBot may choose per side (never COPY), the account template's and every one of its pairs'
+             *                 (SYMSTG.BALLOWED / SALLOWED); null leaves them.
+             */
+            BALLOWED?: components["schemas"]["AMode"][] | null;
+            SALLOWED?: components["schemas"]["AMode"][] | null;
+            BAMODE?: components["schemas"]["AMode"];
+            SAMODE?: components["schemas"]["AMode"];
+            AIBotPairDefaults?: components["schemas"]["FxsAIBotStgPair"];
+            /**
+             * Format: double
+             * @description Q446-A: the opening lot per side (lots).
+             */
+            BNLOT?: number | null;
+            /** Format: double */
+            SNLOT?: number | null;
+            /**
+             * Format: double
+             * @description Q446-A: the ladder per side: level gap (% beyond the previous fill), level multiplier, most levels, group gap (%),
+             *                 group multiplier, most groups.
+             */
+            BLGP?: number | null;
+            /** Format: double */
+            SLGP?: number | null;
+            /** Format: double */
+            BLMUL?: number | null;
+            /** Format: double */
+            SLMUL?: number | null;
+            /** Format: int32 */
+            BLMAX?: number | null;
+            /** Format: int32 */
+            SLMAX?: number | null;
+            /** Format: double */
+            BGGP?: number | null;
+            /** Format: double */
+            SGGP?: number | null;
+            /** Format: double */
+            BGMUL?: number | null;
+            /** Format: double */
+            SGMUL?: number | null;
+            /** Format: int32 */
+            BGMAX?: number | null;
+            /** Format: int32 */
+            SGMAX?: number | null;
+            /**
+             * Format: double
+             * @description Q446-A: TP per side (% beyond the set's average; 0 = no TP).
+             */
+            BTPP?: number | null;
+            /** Format: double */
+            STPP?: number | null;
+            /**
+             * Format: double
+             * @description Q446-A: TS per side (% of the TP money) and its on/off (trailing from the TP).
+             */
+            BTSP?: number | null;
+            /** Format: double */
+            STSP?: number | null;
+            BTRAIL?: boolean | null;
+            STRAIL?: boolean | null;
+            /**
+             * Format: double
+             * @description Q446-A: FIRR's reward ratio per side (the TP as a multiple of the SL).
+             */
+            BFRATIO?: number | null;
+            /** Format: double */
+            SFRATIO?: number | null;
+            /**
+             * Format: double
+             * @description Q446-A: the SL a new trade starts with per side (%); 0 is off (AIBot's fallback SL applies).
+             */
+            BSLP?: number | null;
+            /** Format: double */
+            SSLP?: number | null;
+            /** @description Q446-A: the hard SL per side (the SL sits on the order at the broker). */
+            BHRSL?: boolean | null;
+            SHRSL?: boolean | null;
+            /**
+             * @description Q446-A: pending orders (USEPO), descending lots (USEDESC) and its multiple per side (BDMUL / SDMUL, × the opening
+             *                 lot), and DCAEXP (FinCopy's DCA exponent).
+             */
+            USEPO?: boolean | null;
+            USEDESC?: boolean | null;
+            /** Format: double */
+            BDMUL?: number | null;
+            /** Format: double */
+            SDMUL?: number | null;
+            /** Format: double */
+            DCAEXP?: number | null;
+            TrPin?: string | null;
+        };
+        CmdAIBotFullAutoState: {
+            /** Format: int64 */
+            ACNO?: number;
+            State?: string | null;
+            TrPin?: string | null;
+        };
+        /** @description T701 (Q2-B): set one pair's AIBot mode. */
+        CmdAIBotPairMode: {
+            /** Format: int64 */
+            ACNO?: number;
+            Symbol?: string | null;
+            Mode?: string | null;
+            TrPin?: string | null;
+        };
+        /**
+         * @description T701 (Q8-A): edit one pair's rules. T709 (Q396-A): the pair's own settings (its per-side TP, SL, TS, opening lot, ladder,
+         *                 trailing and hard SL, and its EntMode / AvgMode) are sent as a partial SYMSTG, checked as the pair's settings are; the entry
+         *                 rules keep only the FinNews filter.
+         */
+        CmdAIBotPairRules: {
+            Values?: components["schemas"]["DtoAIBotValues"];
+            /** Format: int64 */
+            ACNO?: number;
+            Symbol?: string | null;
+            SYMSTG?: components["schemas"]["DtoEASymStg"];
+            Entry?: components["schemas"]["FxsAIBotEntryRules"];
+            TrPin?: string | null;
+            /** @description T709 incident (Q459-A): the member saw the trades this save's SL would close now and confirms it. */
+            ConfirmClose?: boolean;
+        };
+        CmdAIBotRetune: {
+            /** Format: int64 */
+            ACNO?: number;
+            TrPin?: string | null;
+        };
+        CmdAdvisorSend: {
+            /** Format: int64 */
+            ACNO?: number;
+            PreviewId?: string | null;
+            Kind?: string | null;
+        };
+        CmdAdvisorSettings: {
+            /** Format: int64 */
+            ACNO?: number;
+            Settings?: components["schemas"]["FxsAdvisorSettings"];
+        };
         /**
          * @description Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as
          *                 stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the
@@ -1512,6 +1801,345 @@ export interface components {
         DeployStatus: "Running" | "Done" | "Failed" | "RolledBack";
         /** @enum {string} */
         DesiredTermState: "Running" | "Stopped" | "Removed";
+        /** @description T701 Phase 4: one AIAdvisor answer as the AIBot page shows it. */
+        DtoAIBotAdvice: {
+            /** Format: double */
+            Credits?: number;
+            Included?: boolean;
+            Refunded?: boolean;
+            CreditNote?: string | null;
+            Input?: string | null;
+            ContextJson?: string | null;
+            Kind?: string | null;
+            /** Format: date-time */
+            RevisitAt?: string | null;
+            /** Format: int32 */
+            InputTokens?: number;
+            /** Format: int32 */
+            OutputTokens?: number;
+            Id?: string | null;
+            Trigger?: string | null;
+            /** Format: date-time */
+            AskedAt?: string;
+            Status?: string | null;
+            Error?: string | null;
+            Model?: string | null;
+            /** Format: double */
+            CostUsd?: number;
+            Note?: string | null;
+            Pairs?: components["schemas"]["FxsAIBotAdvisorPair"][] | null;
+            /** @description T709 (Q399-A): changes to the account's signal sets. */
+            Changes?: components["schemas"]["FxsAIBotAdvisorChange"][] | null;
+            /** Format: date-time */
+            DecidedAt?: string | null;
+            DecidedBy?: string | null;
+        };
+        DtoAIBotAdviceIReadOnlyListResPonse: {
+            data?: components["schemas"]["DtoAIBotAdvice"][] | null;
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoAIBotAdviceResPonse: {
+            data?: components["schemas"]["DtoAIBotAdvice"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoAIBotFullAuto: {
+            Values?: components["schemas"]["DtoAIBotValues"];
+            StrategyChanges?: string[] | null;
+            /** Format: date-time */
+            StrategyChangedAt?: string | null;
+            RetuneValues?: components["schemas"]["DtoAIBotValues"];
+            Platform?: string | null;
+            /** Format: int64 */
+            ACNO?: number;
+            /** Format: int32 */
+            ISNO?: number;
+            StrategyName?: string | null;
+            Granted?: boolean;
+            State?: string | null;
+            BreakerTripped?: boolean;
+            BreakerReason?: string | null;
+            /** Format: date-time */
+            BreakerTrippedAt?: string | null;
+            TradingHours?: string | null;
+            /** Format: double */
+            MaximumHoldHours?: number;
+            /** Format: double */
+            DayFirmPct?: number;
+            /** Format: double */
+            DayClosePct?: number;
+            /** Format: double */
+            DdFirmPct?: number;
+            /** Format: double */
+            DdClosePct?: number;
+            DdMeasure?: string | null;
+            /**
+             * Format: int32
+             * @description T709 (Q375-A): most AIBot trades open on one side at once (GRID).
+             */
+            OpenPerSide?: number;
+            /**
+             * Format: double
+             * @description T709 (Q396-A): the account's daily loss (ACCSTG.DAYSL): AIBot's Stop new trades at stage; 0 or empty is off.
+             */
+            DAYSL?: number | null;
+            /** Format: double */
+            MAXDDFRC?: number | null;
+            SigCold?: components["schemas"]["SigMins"];
+            SigWarm?: components["schemas"]["SigMins"];
+            SigHot?: components["schemas"]["SigMins"];
+            SigMode?: components["schemas"]["TMode"];
+            EntMode?: components["schemas"]["TMode"];
+            AvgMode?: components["schemas"]["TMode"];
+            /**
+             * Format: int32
+             * @description Minutes between the terminal's DCA requests or adds on one side (sent as DCATGMINS).
+             */
+            DCACooloffMins?: number;
+            SYMSTG?: components["schemas"]["DtoFxsStgSymStg"];
+            AIBotPairDefaults?: components["schemas"]["FxsAIBotStgPair"];
+            AdvisorAllowed?: boolean;
+            AdvisorStaff?: boolean;
+            /** Format: double */
+            AdvisorBalance?: number;
+            Advisor?: components["schemas"]["FxsAdvisorSettings"];
+            AdviceMode?: string | null;
+            AdviceTime?: string | null;
+            /** Format: int32 */
+            AdviceCallsToday?: number;
+            /** Format: int32 */
+            AdviceMaxPerDay?: number;
+            /** Format: date-time */
+            LastAdviceAt?: string | null;
+            CanUndoAdvice?: boolean;
+            /** @description Advisor is disabled or this account has no Ultra entitlement; AIBot retains its own stance. */
+            AdvisorOff?: boolean;
+            Posture?: string | null;
+            PostureWhy?: string | null;
+            HedgeOn?: boolean;
+            HourlyRecords?: components["schemas"]["DtoAIBotFullAutoDecision"][] | null;
+            Strategy?: components["schemas"]["DtoFxsStg"];
+            Pairs?: components["schemas"]["DtoAIBotFullAutoPair"][] | null;
+            Advice?: components["schemas"]["DtoAIBotAdvice"][] | null;
+            Decisions?: components["schemas"]["DtoAIBotFullAutoDecision"][] | null;
+            Outcomes?: components["schemas"]["DtoAIBotFullAutoOutcome"][] | null;
+            Lessons?: components["schemas"]["DtoAIBotFullAutoLesson"][] | null;
+            Playbooks?: components["schemas"]["DtoAIBotFullAutoPlaybook"][] | null;
+        };
+        DtoAIBotFullAutoDecision: {
+            Id?: string | null;
+            /** Format: int64 */
+            ACNO?: number;
+            /** Format: date-time */
+            LookAt?: string;
+            Trigger?: string | null;
+            Model?: string | null;
+            /** @description The rule checks behind the decision, per pair and side (no model call). */
+            RulesJson?: string | null;
+            /** Format: int32 */
+            InputTokens?: number;
+            /** Format: int32 */
+            OutputTokens?: number;
+            /** Format: double */
+            CostUsd?: number;
+            GuardVerdict?: string | null;
+            AnswerJson?: string | null;
+            OrdersWritten?: components["schemas"]["FxsAIBotOrderLink"][] | null;
+        };
+        DtoAIBotFullAutoDecisionListResPonse: {
+            data?: components["schemas"]["DtoAIBotFullAutoDecision"][] | null;
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoAIBotFullAutoLesson: {
+            SYM?: string | null;
+            Cause?: string | null;
+            SetupTags?: string[] | null;
+            SuggestedRule?: string | null;
+            MemberAdvice?: string | null;
+            /** Format: date-time */
+            ReviewedAt?: string;
+        };
+        DtoAIBotFullAutoOutcome: {
+            Id?: string | null;
+            SYM?: string | null;
+            Side?: string | null;
+            /** Format: date-time */
+            OpenedAt?: string | null;
+            /** Format: date-time */
+            ClosedAt?: string;
+            /** Format: double */
+            Pnl?: number;
+            /** Format: double */
+            Swap?: number;
+            /** Format: double */
+            Commission?: number;
+            /** Format: int64 */
+            DurationSeconds?: number;
+            CloseReason?: string | null;
+            /** Format: double */
+            Mae?: number;
+            /** Format: double */
+            Mfe?: number;
+            SetupTags?: string[] | null;
+            Lesson?: string | null;
+            /** @description T701 (Q7-A): OPENED or MANAGED. */
+            Role?: string | null;
+        };
+        DtoAIBotFullAutoPair: {
+            PendingStance?: string | null;
+            /** Format: int32 */
+            PendingStanceReadings?: number;
+            OwnStance?: string | null;
+            StanceSource?: string | null;
+            BuyCanUndoTune?: boolean;
+            SellCanUndoTune?: boolean;
+            DeferredAccountValueKeys?: string[] | null;
+            Values?: components["schemas"]["DtoAIBotValues"];
+            BuyEntryWait?: string | null;
+            SellEntryWait?: string | null;
+            SYM?: string | null;
+            SYM6?: string | null;
+            EN?: boolean;
+            /** Format: double */
+            BuyOpenLots?: number;
+            /** Format: double */
+            SellOpenLots?: number;
+            /**
+             * @description T709 Q446-A: nothing open on either side (the pair's counts, FxsPairDefaults.NothingOpen), so a settings save
+             *                 carries the pair defaults it sends to this pair; a pair holding trades keeps its own.
+             */
+            Flat?: boolean;
+            /** @description T701 (Q2-B): OFF, WATCH (Watch, TP523 Q556-A: recorded only), EXITS (Exits only) or FULL (Full auto). */
+            Mode?: string | null;
+            Entry?: components["schemas"]["FxsAIBotEntryRules"];
+            SYMSTG?: components["schemas"]["DtoEASymStg"];
+            /** @description AIBot's own stance, overridden by live enabled Advisor advice for a selected pair. */
+            Stance?: string | null;
+            /** Format: date-time */
+            StanceUntil?: string | null;
+            StanceWhy?: string | null;
+            Condition?: string | null;
+            ConditionWhy?: string | null;
+            /**
+             * Format: double
+             * @description The pair's starting lot (NLOT).
+             */
+            NLOT?: number | null;
+            /**
+             * Format: double
+             * @description The broker maximum from the existing symbol spec, not a clamp on saved settings.
+             */
+            BrokerMaxLot?: number | null;
+            Tickets?: components["schemas"]["DtoAIBotTicket"][] | null;
+            /**
+             * @description T709 incident (Q459-A): the SL changes FinCopy holds back on this pair because they would close open trades at once,
+             *                 one per side, each with the trades it would close and their P/L now; Confirm (Trading PIN) sends one, Discard puts the side's
+             *                 settings back to what the EA has.
+             */
+            SlHolds?: components["schemas"]["FxsSlHold"][] | null;
+            /**
+             * Format: int32
+             * @description T709 incident (Q460-C): the open trades on each side AIBot does not own (trades FinCopy does not own, adopted ones not
+             *                 handed over, Telegram copies, tickets taken back). While a side holds any, it takes no SL; Hand to AIBot hands them over.
+             */
+            BuySlOff?: number;
+            /** Format: int32 */
+            SellSlOff?: number;
+        };
+        DtoAIBotFullAutoPlaybook: {
+            Id?: string | null;
+            Version?: string | null;
+            State?: string | null;
+            /** Format: int64 */
+            Trades?: number;
+            /** Format: double */
+            Expectancy?: number;
+            /** Format: double */
+            ProfitFactor?: number;
+            /** Format: double */
+            DrawdownPct?: number;
+            Rules?: string | null;
+            AdviceToLoosen?: string | null;
+            /** Format: date-time */
+            CreatedAt?: string;
+        };
+        DtoAIBotFullAutoResPonse: {
+            data?: components["schemas"]["DtoAIBotFullAuto"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoAIBotPairModeRow: {
+            SYM?: string | null;
+            Mode?: string | null;
+        };
+        /** @description T701 (Q5-B, Q6-A): an open ticket and who manages its exits. */
+        DtoAIBotTicket: {
+            /** Format: int64 */
+            TID?: number;
+            SYM?: string | null;
+            Side?: string | null;
+            /** Format: double */
+            Lot?: number;
+            /** Format: double */
+            OpenPrice?: number;
+            /** Format: double */
+            TakeProfitPrice?: number;
+            /** Format: double */
+            StopLossPrice?: number;
+            /** Format: double */
+            TrailPercent?: number;
+            /** @description AIBOT, MEMBER (the member took it back), SIGNAL (a Telegram copy, never managed) or OFF (the pair is Off). */
+            Manager?: string | null;
+            /** @description OPENED when AIBot opened it, MANAGED when AIBot set its exits. */
+            Role?: string | null;
+            ExitsSet?: boolean;
+            ExitError?: string | null;
+            /** @description T709: FinCopy adopted this trade from outside; true until Let AIBot manage hands it over. */
+            Adopted?: boolean;
+            AdoptedHanded?: boolean;
+        };
+        /** @description T701: the account's pairs with their AIBot mode and the open tickets, for the trade lists and trade window. */
+        DtoAIBotTicketsView: {
+            /** Format: int64 */
+            ACNO?: number;
+            Pairs?: components["schemas"]["DtoAIBotPairModeRow"][] | null;
+            Tickets?: components["schemas"]["DtoAIBotTicket"][] | null;
+        };
+        DtoAIBotTicketsViewResPonse: {
+            data?: components["schemas"]["DtoAIBotTicketsView"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        DtoAIBotValueCounts: {
+            /** Format: int32 */
+            Fixed?: number;
+            /** Format: int32 */
+            Range?: number;
+            /** Format: int32 */
+            Strategy?: number;
+        };
         /** @description Ordinary per-value edits. There is no account-wide stored switch. */
         DtoAIBotValues: {
             Numbers?: {
@@ -1530,6 +2158,30 @@ export interface components {
                 [key: string]: components["schemas"]["AModeBotPick"];
             } | null;
             NewsFilter?: components["schemas"]["BooleanBotPick"];
+        };
+        DtoAdvisorPreview: {
+            Id?: string | null;
+            /** Format: date-time */
+            BuiltAt?: string;
+            /** Format: date-time */
+            ExpiresAt?: string;
+            Model?: string | null;
+            Input?: string | null;
+            ContextJson?: string | null;
+            /** Format: int32 */
+            EstimatedInputTokens?: number;
+            /** Format: double */
+            EstimatedCostUsd?: number | null;
+            EstimateNote?: string | null;
+        };
+        DtoAdvisorPreviewResPonse: {
+            data?: components["schemas"]["DtoAdvisorPreview"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
         };
         /**
          * @description One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to
@@ -1854,6 +2506,9 @@ export interface components {
             STSP?: number | null;
             BHRSL?: boolean | null;
             SHRSL?: boolean | null;
+            /** @description TP529: BUY/SELL break-even requests, bound to the named broker tickets. Not editable settings. */
+            BBE?: number[] | null;
+            SBE?: number[] | null;
             T646B?: boolean | null;
             T646S?: boolean | null;
             /** Format: double */
@@ -1890,6 +2545,42 @@ export interface components {
             /** Format: double */
             SDMUL?: number | null;
         };
+        /**
+         * @description One ask in the member's AIBot history. Refunded: its credits came back (a failed run, or a plan the check refused);
+         *                 ApiCredits and AiCredits still say what it was charged. Staff: asked by a staff member, so nothing was charged (T703 Q48-B).
+         */
+        DtoFcAdviceSummary: {
+            Id?: string | null;
+            /** Format: int64 */
+            ACNO?: number;
+            Use?: string | null;
+            Symbol?: string | null;
+            Status?: string | null;
+            Stage?: string | null;
+            Call?: string | null;
+            Outcome?: string | null;
+            /** Format: double */
+            ApiCredits?: number;
+            /** Format: double */
+            AiCredits?: number;
+            /** Format: date-time */
+            CreatedAt?: string;
+            /** Format: double */
+            Confidence?: number | null;
+            AIBotMode?: string | null;
+            ValidationNote?: string | null;
+            Refunded?: boolean;
+            Staff?: boolean;
+        };
+        DtoFcAdviceSummaryListResPonse: {
+            data?: components["schemas"]["DtoFcAdviceSummary"][] | null;
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
         DtoFinInstrument: {
             Name?: string | null;
             AssetClass?: string | null;
@@ -1907,6 +2598,8 @@ export interface components {
             chksum?: string | null;
         };
         DtoFleetAccount: {
+            /** Format: int64 */
+            Shared?: number;
             Account?: components["schemas"]["DtoTermAccount"];
             Terminal?: components["schemas"]["DtoTermTerminal"];
             BrokerServer?: components["schemas"]["DtoBrokerServer"];
@@ -1989,7 +2682,15 @@ export interface components {
             FifoClose?: boolean;
         };
         DtoFxsAcct: {
+            AIBotHedgeOn?: boolean;
+            AIBotPosture?: string | null;
+            AIBotPostureWhy?: string | null;
+            /** Format: date-time */
+            AIBotPostureHour?: string | null;
             Values?: components["schemas"]["DtoAIBotValues"];
+            /** Format: int64 */
+            Shared?: number;
+            Advisor?: components["schemas"]["FxsAdvisorSettings"];
             /** Format: int64 */
             ACNO?: number;
             /** Format: int64 */
@@ -2064,6 +2765,8 @@ export interface components {
             AvgLatencyMs?: number | null;
             /** Format: date-time */
             LatencySampleAt?: string | null;
+            EnBoard?: boolean;
+            BoardHandle?: string | null;
             Virtual?: boolean;
             EN?: boolean;
             /** Format: int32 */
@@ -2458,10 +3161,10 @@ export interface components {
             ExternalRef?: string | null;
             EN?: boolean;
             /**
-             * @description Read-only AIBot mode: OFF (Off), EXITS (Exits only), FULL (Full auto). Set through AIBot, never /v1.
+             * @description Read-only AIBot mode: OFF (Off), WATCH (Watch), EXITS (Exits only), FULL (Full auto). Set through AIBot, never /v1.
              * @enum {string|null}
              */
-            readonly AIBotMode?: "OFF" | "EXITS" | "FULL" | null;
+            readonly AIBotMode?: "OFF" | "WATCH" | "EXITS" | "FULL" | null;
             /** Format: double */
             BID?: number | null;
             /** Format: double */
@@ -3052,6 +3755,15 @@ export interface components {
             AccountCount?: number;
             /** Format: int32 */
             PairCount?: number;
+            /**
+             * Format: double
+             * @description Read-only member account facts; unavailable totals stay null, mixed currencies are never added.
+             */
+            Equity?: number | null;
+            /** Format: double */
+            LifetimePnl?: number | null;
+            Currency?: string | null;
+            Platforms?: string | null;
             /** @description T709 Q412-A: the picture's file name in FinCopy's media folder (null: none, the screens show the initials). */
             PicFile?: string | null;
             /** @description T709 Q412-A: the picture's path on the API's origin (`/media/stg/<file>`); null when there is none. */
@@ -3130,8 +3842,8 @@ export interface components {
         };
         /**
          * @description What a cascade would change on one account. TP496 Q285-A: AIBotLimits lists the AIBot limits it writes,
-         *                 AIBotLimitsRefused names why none are written, AdviceTimeAlso lists the member's other AIBot
-         *                 accounts that take the same advice time (one per member, TP513 Q267-A).
+         *                 AIBotLimitsRefused names why none are written. AI Advisor settings and advice time remain per account;
+         *                 the cascade does not change them and AdviceTimeAlso is empty.
          */
         DtoFxsStgCascadePreview: {
             /** Format: int32 */
@@ -3410,7 +4122,25 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        /** @description Read-only AIBot and trade-mode summary projected onto a member account row. */
+        DtoMemberAIBotSummary: {
+            Posture?: string | null;
+            State?: string | null;
+            Granted?: boolean;
+            AdviceMode?: string | null;
+            BreakerTripped?: boolean;
+            BreakerReason?: string | null;
+            EntryMode?: string | null;
+            DcaMode?: string | null;
+            SignalMode?: string | null;
+            ValueCounts?: components["schemas"]["DtoAIBotValueCounts"];
+        };
         DtoMemberAccount: {
+            AIBot?: components["schemas"]["DtoMemberAIBotSummary"];
+            ShareRole?: components["schemas"]["FxsShareRole"];
+            OwnerName?: string | null;
+            /** @description Who has access to this account: filled only on a row the caller owns, empty on a row shared with the caller. */
+            Shares?: components["schemas"]["DtoMemberShare"][] | null;
             Fleet?: components["schemas"]["DtoFleetAccount"];
             State?: components["schemas"]["DtoFxsAccountState"];
         };
@@ -3462,6 +4192,11 @@ export interface components {
             readonly isOk?: boolean;
             message?: string | null;
             errors?: string[] | null;
+        };
+        DtoMemberShare: {
+            Name?: string | null;
+            Email?: string | null;
+            Role?: components["schemas"]["FxsShareRole"];
         };
         DtoOperationQueued: {
             /** @description The queued terminal operation; null when nothing needed doing. */
@@ -3547,7 +4282,6 @@ export interface components {
             TerminalId?: string | null;
             Login?: string | null;
             Capabilities?: string[] | null;
-            FeedPreference?: string | null;
             DesiredState?: components["schemas"]["DesiredTermState"];
             Kind?: components["schemas"]["TermAccountKind"];
             /** Format: date-time */
@@ -3637,18 +4371,6 @@ export interface components {
             LastBrokerFailureStartAt?: string | null;
             /** Format: date-time */
             HealthySinceAt?: string | null;
-            /** Format: date-time */
-            FeedCoolingUntil?: string | null;
-            FeedColour?: string | null;
-            /** Format: date-time */
-            FeedLastSnapshotAt?: string | null;
-            /** Format: int32 */
-            FeedSymbols?: number;
-            /** Format: date-time */
-            FeedStoredAt?: string | null;
-            /** Format: int32 */
-            FeedStoredSymbols?: number;
-            FeedLastError?: string | null;
             /** Format: int32 */
             StaleHeartbeatRestarts?: number;
             /** Format: date-time */
@@ -3693,6 +4415,42 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        /** @description One setting AIAdvisor wants changed, old to new. FC.Com.Doms.FxsAIBotAdvisorChange.Refused holds the reason the code refused it. */
+        FxsAIBotAdvisorChange: {
+            /**
+             * @description A pair's: EXIT.TPP, EXIT.SLP, EXIT.TSP, ENTRY.NewsFilter, AMODE.BUY, AMODE.SELL or a pair setting: NLOT, LGP, GGP,
+             *                 LMAX, GMAX, LMUL, GMUL. The account's (T709, Q399-A): WARM.BuySig, WARM.SellSig, WARM.BuyTrd, WARM.SellTrd, WARM.Conf,
+             *                 WARM.Score, and HOT.BuySig, HOT.SellSig, HOT.BuyTrd, HOT.SellTrd, HOT.Conf (HOT has no score).
+             */
+            Field?: string | null;
+            Old?: string | null;
+            New?: string | null;
+            /** @description SHARPEN or LOOSEN. */
+            Direction?: string | null;
+            Why?: string | null;
+            Refused?: string | null;
+        };
+        FxsAIBotAdvisorPair: {
+            SYM?: string | null;
+            SYM6?: string | null;
+            /** @description TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK. */
+            Condition?: string | null;
+            ConditionWhy?: string | null;
+            Stance?: string | null;
+            StanceWhy?: string | null;
+            /** Format: date-time */
+            StanceUntil?: string | null;
+            NarrowingApplied?: boolean;
+            /** @description The FinGraph reading in this advice's input, retained when Ask-First is accepted later. */
+            SignalSide?: string | null;
+            ConfidenceBand?: string | null;
+            Changes?: components["schemas"]["FxsAIBotAdvisorChange"][] | null;
+            /**
+             * @description TP523 Q556-A: the pair was on Watch: this part of the advice is shown and never applied (its stance and changes),
+             *                 as an account on Watch gets WATCH advice; Undo last advice leaves it alone too.
+             */
+            Watch?: boolean;
+        };
         /**
          * @description T701 (Q8-A): when Full auto opens a side on a FinGraph reading change. T709 (Q378-A, Q385-A): the signal, trend,
          *                 confidence and score minimums moved into the account's signal sets (FxsAcct.SigWarm, read through the shared SigMinsHlp.Passes);
@@ -3701,6 +4459,15 @@ export interface components {
         FxsAIBotEntryRules: {
             /** @description Skip a side that FinNews of the last 24 hours on the pair's currencies leans against. */
             NewsFilter?: boolean;
+        };
+        /** @description Value fields copied into AI audit records without depending on the mutable live account document. */
+        FxsAIBotOrderLink: {
+            AutoDecisionId?: string | null;
+            OrderId?: string | null;
+            /** Format: int64 */
+            Ticket?: number;
+            Symbol?: string | null;
+            Side?: string | null;
         };
         /** @description The advisor horizon and allowed exit types. The side method alone decides SL versus ladder (Q461-A). */
         FxsAIBotPreferences: {
@@ -3719,9 +4486,6 @@ export interface components {
             OpenPerSide?: components["schemas"]["DecRng"];
             TradingHours?: string | null;
             MaximumHoldHours?: components["schemas"]["DecRng"];
-            AdviceMode?: string | null;
-            /** @description TP513 Q267-A: one per member. A cascade that writes it on an AIBot account writes it on all the member's AIBot accounts. */
-            AdviceTime?: string | null;
         };
         FxsAIBotStgPair: {
             Mode?: string | null;
@@ -3738,6 +4502,24 @@ export interface components {
             PlaybookVersionId?: string | null;
             Limits?: components["schemas"]["FxsAIBotStgLimits"];
             PairDefaults?: components["schemas"]["FxsAIBotStgPair"];
+        };
+        /** @description TP529: the account's L3 module, independent of the deterministic AIBot settings. */
+        FxsAdvisorSettings: {
+            Enabled?: boolean;
+            AdviceTime?: string | null;
+            AdviceMode?: string | null;
+            EveryFourHours?: boolean;
+            PaidReasks?: boolean;
+            Manual?: boolean;
+            /** @description Only opt-outs are stored, so a pair added later starts included. */
+            ExcludedSymbols?: string[] | null;
+            /** Format: int32 */
+            AsksToday?: number;
+            /** Format: date-time */
+            DayKey?: string | null;
+            IncludedUsed?: boolean;
+            /** Format: date-time */
+            LastAdviceAt?: string | null;
         };
         /**
          * @description Why a leg closed, as the EA reports it (`CRSN`).
@@ -3760,10 +4542,6 @@ export interface components {
              * @description Broker-local day key used to reset the daily loss breaker across a date boundary.
              */
             BrokerDayKey?: string | null;
-            /** Format: int32 */
-            LearningCallsToday?: number;
-            /** Format: date-time */
-            LearningCallDayKey?: string | null;
             TradingHours?: string | null;
             /** Format: double */
             MaximumHoldHours?: number;
@@ -3782,26 +4560,6 @@ export interface components {
              *                 own). It counts on a GRID side; every other method opens only on a flat side.
              */
             OpenPerSide?: number;
-            /** @description T701 (Q10-C): ASK (Ask me first, the default) or APPLY (Apply advice by itself). */
-            AdviceMode?: string | null;
-            /**
-             * @description TP513 Q267-A: the UTC time of day ("HH:mm") AIAdvisor advises at, one per member (saving it on one AIBot account
-             *                 saves it on all the member's AIBot accounts). AIAdvisor advises once per member per UTC day, in one call for all of the
-             *                 member's AIBot accounts, at the earliest of the accounts' times (an account granted later may still hold its own default
-             *                 until the member saves). A stance lasts until the next such time.
-             */
-            AdviceTime?: string | null;
-            /**
-             * Format: int32
-             * @description T703: the member's AIAdvisor calls today (scheduled and Advise now), copied onto each of the member's accounts
-             *                 when a call is claimed so the AIBot pages can show it. The count the daily cap checks is kept per member, in
-             *                 fc_auto_attempt (key advise:u{USNO}:{day}).
-             */
-            AdviceCallsToday?: number;
-            /** Format: date-time */
-            AdviceCallDayKey?: string | null;
-            /** Format: date-time */
-            LastAdviceAt?: string | null;
             /** @description The applied advice that Undo last advice reverts. */
             UndoAdviceId?: string | null;
         };
@@ -3817,10 +4575,73 @@ export interface components {
         FxsPlatform: "NONE" | "MT4" | "MT5";
         /** @enum {string} */
         FxsRiskLev: "LOW" | "MID" | "HIGH";
+        /**
+         * @description An absent or unrecognised role has no trading permission.
+         * @enum {string}
+         */
+        FxsShareRole: "VIEW" | "TRADE";
         /** @enum {string} */
         FxsSide: "NONE" | "BUY" | "SELL";
         /** @enum {string} */
         FxsSignalStatus: "NONE" | "ALERT" | "ACCEPT" | "REJECT";
+        /**
+         * @description T709 incident (Q459-A): a change of one side's SL that FinCopy holds back because it would close open trades at once. The pair's
+         *     settings (SYMSTG) keep the new values; the EA keeps getting what it has (the Sent fields) until the member confirms the change
+         *     with the Trading PIN, discards it (the side's settings go back to what the EA has), or the side holds no trade any more.
+         *     A record with FC.Com.Doms.FxsSlHold.Confirmed set is the member's go-ahead for exactly these values: the next sync sends them.
+         */
+        FxsSlHold: {
+            /** @description BUY or SELL. */
+            Side?: string | null;
+            AMODE?: components["schemas"]["AMode"];
+            /** Format: double */
+            SLP?: number | null;
+            HRSL?: boolean | null;
+            SentAMODE?: components["schemas"]["AMode"];
+            /** Format: double */
+            SentSLP?: number | null;
+            SentHRSL?: boolean | null;
+            /** @description Who wrote the change (a name, AIBot, AIAdvisor, an admin, the EA) and when FinCopy held it. */
+            By?: string | null;
+            /** Format: date-time */
+            At?: string;
+            /**
+             * Format: date-time
+             * @description When the trades and P/L below were last worked out (null: at FC.Com.Doms.FxsSlHold.At).
+             */
+            RefreshedAt?: string | null;
+            /** @description The trades the change would close now, and their P/L now (the price it was checked at). */
+            Trades?: components["schemas"]["FxsSlHoldTrade"][] | null;
+            /** Format: double */
+            Profit?: number;
+            /** Format: double */
+            Price?: number;
+            Confirmed?: boolean;
+            ConfirmedBy?: string | null;
+            /** Format: date-time */
+            ConfirmedAt?: string | null;
+        };
+        /** @description One open trade a held SL change would close now. */
+        FxsSlHoldTrade: {
+            /** Format: int64 */
+            TID?: number;
+            /** Format: double */
+            LOT?: number;
+            /**
+             * Format: double
+             * @description The fill price and the SL price the change would give it.
+             */
+            PRC?: number;
+            /** Format: double */
+            SLPRC?: number;
+            /**
+             * Format: double
+             * @description Its P/L now.
+             */
+            PRO?: number;
+            /** @description Who opened it, as FinCopy records it (Outside, Adopted, AIBotAuto, Member ...). */
+            Source?: string | null;
+        };
         /** @enum {string} */
         FxsStatus: "NONE" | "READY" | "ACTIVE" | "PENDING" | "OFFLINE" | "PAUSED" | "PROBLEM";
         ObjectResPonse: {
@@ -3903,247 +4724,6 @@ export interface components {
             Val?: components["schemas"]["Trend"] | null;
             Min?: components["schemas"]["Trend"] | null;
             Max?: components["schemas"]["Trend"] | null;
-        };
-        DtoAIBotFullAuto: {
-            /** Format: int64 */
-            ACNO?: number;
-            /** Format: int32 */
-            ISNO?: number;
-            Platform?: string;
-            StrategyName?: string;
-            Granted?: boolean;
-            State?: string;
-            BreakerTripped?: boolean;
-            BreakerReason?: string | null;
-            Values?: components["schemas"]["DtoAIBotValues"];
-            RetuneValues?: components["schemas"]["DtoAIBotValues"];
-            Pairs?: ({
-                SYM?: string;
-                SYM6?: string;
-                Mode?: string;
-                Flat?: boolean;
-                Values?: components["schemas"]["DtoAIBotValues"];
-                Entry?: {
-                    [key: string]: unknown;
-                };
-                SYMSTG?: {
-                    [key: string]: unknown;
-                };
-                Tickets?: {
-                    [key: string]: unknown;
-                }[];
-                SlHolds?: {
-                    [key: string]: unknown;
-                }[];
-            } & {
-                [key: string]: unknown;
-            })[];
-            Advice?: ({
-                Id?: string;
-                Trigger?: string;
-                /** Format: date-time */
-                AskedAt?: string;
-                Status?: string;
-                Error?: string | null;
-                Model?: string;
-                /** Format: double */
-                CostUsd?: number;
-                Note?: string | null;
-                Pairs?: {
-                    [key: string]: unknown;
-                }[];
-                Changes?: {
-                    [key: string]: unknown;
-                }[];
-            } & {
-                [key: string]: unknown;
-            })[];
-            Decisions?: ({
-                Id?: string;
-                /** Format: int64 */
-                ACNO?: number;
-                /** Format: date-time */
-                LookAt?: string;
-                Trigger?: string;
-                Model?: string;
-                RulesJson?: string | null;
-                InputTokens?: number;
-                OutputTokens?: number;
-                CostUsd?: number;
-                GuardVerdict?: string | null;
-                AnswerJson?: string | null;
-                OrdersWritten?: {
-                    [key: string]: unknown;
-                }[];
-            } & {
-                [key: string]: unknown;
-            })[];
-        } & {
-            [key: string]: unknown;
-        };
-        DtoAIBotTicketsView: {
-            /** Format: int64 */
-            ACNO?: number;
-            Pairs?: ({
-                SYM?: string;
-                Mode?: string;
-            } & {
-                [key: string]: unknown;
-            })[];
-            Tickets?: ({
-                /** Format: int64 */
-                TID?: number;
-                SYM?: string;
-                Side?: string;
-                Lot?: number;
-                OpenPrice?: number;
-                TakeProfitPrice?: number;
-                StopLossPrice?: number;
-                TrailPercent?: number;
-                Manager?: string;
-                Role?: string | null;
-                ExitsSet?: boolean;
-                ExitError?: string | null;
-                Adopted?: boolean;
-                AdoptedHanded?: boolean;
-            } & {
-                [key: string]: unknown;
-            })[];
-        } & {
-            [key: string]: unknown;
-        };
-        DtoFcAdviceSummary: {
-            Id?: string;
-            /** Format: int64 */
-            ACNO?: number;
-            /** Format: date-time */
-            AskedAt?: string;
-            Status?: string;
-            Trigger?: string;
-            Model?: string;
-            Note?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        DtoAIBotFullAutoDecision: {
-            Id?: string;
-            /** Format: int64 */
-            ACNO?: number;
-            /** Format: date-time */
-            LookAt?: string;
-            Trigger?: string;
-            Model?: string;
-            RulesJson?: string | null;
-            InputTokens?: number;
-            OutputTokens?: number;
-            CostUsd?: number;
-            GuardVerdict?: string | null;
-            AnswerJson?: string | null;
-            OrdersWritten?: {
-                [key: string]: unknown;
-            }[];
-        } & {
-            [key: string]: unknown;
-        };
-        CmdAIBotFullAutoState: {
-            /** Format: int64 */
-            ACNO: number;
-            State?: string;
-            TrPin?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        CmdAIBotRetune: {
-            /** Format: int64 */
-            ACNO: number;
-            TrPin?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        CmdAIBotFullAutoSettings: {
-            /** Format: int64 */
-            ACNO: number;
-            TrPin?: string | null;
-            Values?: components["schemas"]["DtoAIBotValues"];
-        } & {
-            [key: string]: unknown;
-        };
-        CmdAIBotPairMode: {
-            /** Format: int64 */
-            ACNO: number;
-            Symbol?: string;
-            Mode?: string;
-            TrPin?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        CmdAIBotPairRules: {
-            /** Format: int64 */
-            ACNO: number;
-            Symbol?: string;
-            Values?: components["schemas"]["DtoAIBotValues"];
-            SYMSTG?: {
-                [key: string]: unknown;
-            };
-            Entry?: {
-                [key: string]: unknown;
-            };
-            TrPin?: string | null;
-            ConfirmClose?: boolean;
-        } & {
-            [key: string]: unknown;
-        };
-        CmdAIBotAdviceDecide: {
-            /** Format: int64 */
-            ACNO: number;
-            AdviceId?: string;
-            Accept?: boolean;
-            TrPin?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        CmdAIBotAdviceUndo: {
-            /** Format: int64 */
-            ACNO: number;
-            TrPin?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        DtoAIBotFullAutoResPonse: {
-            data?: components["schemas"]["DtoAIBotFullAuto"];
-            /** Format: int32 */
-            code?: number;
-            readonly isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        DtoAIBotTicketsViewResPonse: {
-            data?: components["schemas"]["DtoAIBotTicketsView"];
-            /** Format: int32 */
-            code?: number;
-            readonly isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        DtoFcAdviceSummaryListResPonse: {
-            data?: components["schemas"]["DtoFcAdviceSummary"][];
-            /** Format: int32 */
-            code?: number;
-            readonly isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        DtoAIBotFullAutoDecisionListResPonse: {
-            data?: components["schemas"]["DtoAIBotFullAutoDecision"][];
-            /** Format: int32 */
-            code?: number;
-            readonly isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
         };
     };
     responses: never;
@@ -4954,7 +5534,10 @@ export interface operations {
     WebhookSet: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5035,7 +5618,10 @@ export interface operations {
     WebhookVoid: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5109,7 +5695,10 @@ export interface operations {
     WebhookPing: {
         parameters: {
             query?: never;
-            header?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -5702,6 +6291,1394 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DtoFxsOrdhResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorPreview: {
+        parameters: {
+            query?: {
+                kind?: string;
+            };
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAdvisorPreviewResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorSend: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAdvisorSend"];
+                "application/json": components["schemas"]["CmdAdvisorSend"];
+                "text/json": components["schemas"]["CmdAdvisorSend"];
+                "application/*+json": components["schemas"]["CmdAdvisorSend"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorSettings: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAdvisorSettings"];
+                "application/json": components["schemas"]["CmdAdvisorSettings"];
+                "text/json": components["schemas"]["CmdAdvisorSettings"];
+                "application/*+json": components["schemas"]["CmdAdvisorSettings"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorHistory: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotAdviceIReadOnlyListResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorHistoryView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotAdviceResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotState: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAIBotFullAutoState"];
+                "application/json": components["schemas"]["CmdAIBotFullAutoState"];
+                "text/json": components["schemas"]["CmdAIBotFullAutoState"];
+                "application/*+json": components["schemas"]["CmdAIBotFullAutoState"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotRetune: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAIBotRetune"];
+                "application/json": components["schemas"]["CmdAIBotRetune"];
+                "text/json": components["schemas"]["CmdAIBotRetune"];
+                "application/*+json": components["schemas"]["CmdAIBotRetune"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotSettings: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAIBotFullAutoSettings"];
+                "application/json": components["schemas"]["CmdAIBotFullAutoSettings"];
+                "text/json": components["schemas"]["CmdAIBotFullAutoSettings"];
+                "application/*+json": components["schemas"]["CmdAIBotFullAutoSettings"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotPairMode: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAIBotPairMode"];
+                "application/json": components["schemas"]["CmdAIBotPairMode"];
+                "text/json": components["schemas"]["CmdAIBotPairMode"];
+                "application/*+json": components["schemas"]["CmdAIBotPairMode"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotPairRules: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAIBotPairRules"];
+                "application/json": components["schemas"]["CmdAIBotPairRules"];
+                "text/json": components["schemas"]["CmdAIBotPairRules"];
+                "application/*+json": components["schemas"]["CmdAIBotPairRules"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotTickets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotTicketsViewResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotAdvise: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotAdviceDecide: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAIBotAdviceDecide"];
+                "application/json": components["schemas"]["CmdAIBotAdviceDecide"];
+                "text/json": components["schemas"]["CmdAIBotAdviceDecide"];
+                "application/*+json": components["schemas"]["CmdAIBotAdviceDecide"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotAdviceUndo: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAIBotAdviceUndo"];
+                "application/json": components["schemas"]["CmdAIBotAdviceUndo"];
+                "text/json": components["schemas"]["CmdAIBotAdviceUndo"];
+                "application/*+json": components["schemas"]["CmdAIBotAdviceUndo"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotAdvice: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFcAdviceSummaryListResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AIBotDecisions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAIBotFullAutoDecisionListResPonse"];
                 };
             };
             /** @description Bad Request */
@@ -9226,310 +11203,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
-    AIBotView: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotState: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdAIBotFullAutoState"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotRetune: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdAIBotRetune"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotSettings: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdAIBotFullAutoSettings"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotPairMode: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdAIBotPairMode"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotPairRules: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdAIBotPairRules"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotTickets: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotTicketsViewResPonse"];
-                };
-            };
-        };
-    };
-    AIBotAdvise: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotAdvice: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoFcAdviceSummaryListResPonse"];
-                };
-            };
-        };
-    };
-    AIBotAdviceDecide: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdAIBotAdviceDecide"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotAdviceUndo: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["CmdAIBotAdviceUndo"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-        };
-    };
-    AIBotDecisions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description FinCopy account number (ACNO). */
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoDecisionListResPonse"];
                 };
             };
         };
