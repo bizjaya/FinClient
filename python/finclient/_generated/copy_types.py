@@ -12,6 +12,14 @@ class AModeBotPick(TypedDict, total=False):
     Val: "AMode"
     Opts: Optional[List["AMode"]]
 
+AdvAskStatus = Literal["QUEUED", "RESEARCH", "THINKING", "READY", "APPLIED", "ACCEPTED", "PARTLY", "DECLINED", "EXPIRED", "FAILED", "CANCELLED", "UNDONE", "WATCH"]
+
+AdvChargeBasis = Literal["INCLUDED", "FLAT", "SIZE"]
+
+AdvDecision = Literal["NONE", "ACCEPT", "DECLINE", "AUTO", "NARROWED"]
+
+AdvTilt = Literal["DEFENSIVE", "BALANCED", "OFFENSIVE"]
+
 class BooleanBotPick(TypedDict, total=False):
     Mode: "BotValMode"
     Mode_: "BotValMode"
@@ -38,16 +46,6 @@ BotValMode = Literal["FIXED", "RANGE", "STRAT"]
 BrokerServerEnvironment = Literal["Demo", "Live", "Unknown"]
 
 BrokerServerStatus = Literal["Submitted", "Verified", "Retired"]
-
-class CmdAIBotAdviceDecide(TypedDict, total=False):
-    ACNO: int
-    AdviceId: Optional[str]
-    Accept: bool
-    TrPin: Optional[str]
-
-class CmdAIBotAdviceUndo(TypedDict, total=False):
-    ACNO: int
-    TrPin: Optional[str]
 
 class CmdAIBotFullAutoSettings(TypedDict, total=False):
     HedgeOn: Optional[bool]
@@ -95,8 +93,14 @@ class CmdAIBotFullAutoSettings(TypedDict, total=False):
     STPP: Optional[float]
     BTSP: Optional[float]
     STSP: Optional[float]
+    BADDCAP: Optional[float]
+    SADDCAP: Optional[float]
     BTRAIL: Optional[bool]
     STRAIL: Optional[bool]
+    BETAP: Optional[float]
+    SETAP: Optional[float]
+    BETDP: Optional[float]
+    SETDP: Optional[float]
     BFRATIO: Optional[float]
     SFRATIO: Optional[float]
     BSLP: Optional[float]
@@ -108,6 +112,13 @@ class CmdAIBotFullAutoSettings(TypedDict, total=False):
     BDMUL: Optional[float]
     SDMUL: Optional[float]
     DCAEXP: Optional[float]
+    DYMAX: Optional[int]
+    DYTGT: Optional[float]
+    DYCAP: Optional[float]
+    DYSTEP: Optional[float]
+    DYCOOL: Optional[int]
+    DYGATE: "DynGate"
+    DYSIDE: "DynSide"
     TrPin: Optional[str]
 
 class CmdAIBotFullAutoState(TypedDict, total=False):
@@ -134,14 +145,39 @@ class CmdAIBotRetune(TypedDict, total=False):
     ACNO: int
     TrPin: Optional[str]
 
-class CmdAdvisorSend(TypedDict, total=False):
+class CmdAdvAskMake(TypedDict, total=False):
+    """AskMake: send an ask. With a PreviewId the ask sends that preview's pairs and pays its charge;
+    without one it is
+    priced now. Returns at once with the ask (QUEUED); the runner answers it.
+    """
     ACNO: int
-    PreviewId: Optional[str]
     Kind: Optional[str]
+    PreviewId: Optional[str]
+    Syms: Optional[List[str]]
+    """The ticked pairs; null: the scheduled selection. Must match the preview's when a PreviewId is
+    given.
+    """
+    SaveSelection: bool
+    """Keep this selection for scheduled asks (stored as Advisor.ExcludedSymbols, the pairs left out)."""
 
-class CmdAdvisorSettings(TypedDict, total=False):
+class CmdAdvAskPtch(TypedDict, total=False):
     ACNO: int
-    Settings: "FxsAdvisorSettings"
+    AskId: Optional[str]
+    Cancel: bool
+    """Cancel the ask while it is QUEUED (refunded). Pairs and Account are ignored."""
+    Pairs: Optional[List["DtoAdvPairDecision"]]
+    Account: "AdvDecision"
+    TrPin: Optional[str]
+
+class CmdAdvAskRset(TypedDict, total=False):
+    """AskRset: undo the last applied answer (FxsAcct.Advisor.UndoAskId)."""
+    ACNO: int
+    TrPin: Optional[str]
+
+class CmdAdvStgEdit(TypedDict, total=False):
+    """StgEdit: save the account's Advisor settings."""
+    ACNO: int
+    Settings: "DtoAdvStg"
 
 class CmdApiFxsAcctPatch(TypedDict, total=False):
     """Public API settings patch. Account identity comes from the ACNO route. Every field is optional:
@@ -268,6 +304,7 @@ class CmdFxsPairInstrumentConfirm(TypedDict, total=False):
 class CmdFxsStgAIBot(TypedDict, total=False):
     Limits: "FxsAIBotStgLimits"
     PairDefaults: "FxsAIBotStgPair"
+    Camp: "FxsCamp"
 
 class CmdFxsStgMake(TypedDict, total=False):
     StratName: Optional[str]
@@ -370,46 +407,6 @@ DeployStatus = Literal["Running", "Done", "Failed", "RolledBack"]
 
 DesiredTermState = Literal["Running", "Stopped", "Removed"]
 
-class DtoAIBotAdvice(TypedDict, total=False):
-    Credits: float
-    Included: bool
-    Refunded: bool
-    CreditNote: Optional[str]
-    Input: Optional[str]
-    ContextJson: Optional[str]
-    Kind: Optional[str]
-    RevisitAt: Optional[str]
-    InputTokens: int
-    OutputTokens: int
-    Id: Optional[str]
-    Trigger: Optional[str]
-    AskedAt: str
-    Status: Optional[str]
-    Error: Optional[str]
-    Model: Optional[str]
-    CostUsd: float
-    Note: Optional[str]
-    Pairs: Optional[List["FxsAIBotAdvisorPair"]]
-    Changes: Optional[List["FxsAIBotAdvisorChange"]]
-    DecidedAt: Optional[str]
-    DecidedBy: Optional[str]
-
-class DtoAIBotAdviceIReadOnlyListResPonse(TypedDict, total=False):
-    data: Optional[List["DtoAIBotAdvice"]]
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
-
-class DtoAIBotAdviceResPonse(TypedDict, total=False):
-    data: "DtoAIBotAdvice"
-    code: int
-    isOk: bool
-    message: Optional[str]
-    errors: Optional[List[str]]
-    chksum: Optional[str]
-
 class DtoAIBotFullAuto(TypedDict, total=False):
     Values: "DtoAIBotValues"
     StrategyChanges: Optional[List[str]]
@@ -444,25 +441,15 @@ class DtoAIBotFullAuto(TypedDict, total=False):
     """Minutes between the terminal's DCA requests or adds on one side (sent as DCATGMINS)."""
     SYMSTG: "DtoFxsStgSymStg"
     AIBotPairDefaults: "FxsAIBotStgPair"
-    AdvisorAllowed: bool
-    AdvisorStaff: bool
-    AdvisorBalance: float
-    Advisor: "FxsAdvisorSettings"
-    AdviceMode: Optional[str]
-    AdviceTime: Optional[str]
-    AdviceCallsToday: int
-    AdviceMaxPerDay: int
-    LastAdviceAt: Optional[str]
-    CanUndoAdvice: bool
-    AdvisorOff: bool
-    """Advisor is disabled or this account has no Ultra entitlement; AIBot retains its own stance."""
+    AdvisorLine: "DtoAdvLine"
     Posture: Optional[str]
     PostureWhy: Optional[str]
+    DynmRefusal: Optional[str]
+    DynmOwed: float
     HedgeOn: bool
     HourlyRecords: Optional[List["DtoAIBotFullAutoDecision"]]
     Strategy: "DtoFxsStg"
     Pairs: Optional[List["DtoAIBotFullAutoPair"]]
-    Advice: Optional[List["DtoAIBotAdvice"]]
     Decisions: Optional[List["DtoAIBotFullAutoDecision"]]
     Outcomes: Optional[List["DtoAIBotFullAutoOutcome"]]
     Lessons: Optional[List["DtoAIBotFullAutoLesson"]]
@@ -515,6 +502,7 @@ class DtoAIBotFullAutoOutcome(TypedDict, total=False):
     SetupTags: Optional[List[str]]
     Lesson: Optional[str]
     Role: Optional[str]
+    DynStep: Optional[int]
 
 class DtoAIBotFullAutoPair(TypedDict, total=False):
     PendingStance: Optional[str]
@@ -542,6 +530,7 @@ class DtoAIBotFullAutoPair(TypedDict, total=False):
     StanceWhy: Optional[str]
     Condition: Optional[str]
     ConditionWhy: Optional[str]
+    Advised: Optional[List["FxsAIBotAdvised"]]
     NLOT: Optional[float]
     """The pair's starting lot (NLOT)."""
     BrokerMaxLot: Optional[float]
@@ -550,6 +539,8 @@ class DtoAIBotFullAutoPair(TypedDict, total=False):
     SlHolds: Optional[List["FxsSlHold"]]
     BuySlOff: int
     SellSlOff: int
+    Dyn: "FxsAIBotDynLedger"
+    DynLine: Optional[str]
 
 class DtoAIBotFullAutoPlaybook(TypedDict, total=False):
     Id: Optional[str]
@@ -621,25 +612,194 @@ class DtoAIBotValues(TypedDict, total=False):
     Confidence: Optional[Dict[str, "ConfidenceBotStep"]]
     Methods: Optional[Dict[str, "AModeBotPick"]]
     NewsFilter: "BooleanBotPick"
+    TrendGuard: "TrendGuardBotPick"
+    TaGuard: "TaGuardBotPick"
+    Switches: Optional[Dict[str, "BooleanBotPick"]]
+    Camp: "FxsCampBotPick"
+    DYGATE: "DynGateBotPick"
+    DYSIDE: "DynSideBotPick"
 
-class DtoAdvisorPreview(TypedDict, total=False):
-    Id: Optional[str]
+class DtoAdvAskPreview(TypedDict, total=False):
+    """The Review step: the sections and their sizes, the exact text, the charge, and the staff
+    estimate when the viewer
+    may see it. Send with its PreviewId within 15 minutes; the charge Send takes is this preview's,
+    never more.
+    """
+    PreviewId: Optional[str]
     BuiltAt: str
     ExpiresAt: str
-    Model: Optional[str]
+    ACNO: int
+    Kind: Optional[str]
+    Syms: Optional[List[str]]
+    Chars: int
+    """Characters of the exact text."""
+    Sections: Optional[List["DtoAdvSection"]]
+    """What Advisor reads, section by section, in order. Each names where its readable view is: a key
+    of ContextJson
+    (Ask, Account, MarketClimate, Readings, News, MayChange), one pair (Account.Pairs[SYM]), or the
+    instructions (the text of
+    Input around ContextJson).
+    """
     Input: Optional[str]
+    """The exact text Advisor reads."""
     ContextJson: Optional[str]
-    EstimatedInputTokens: int
-    EstimatedCostUsd: Optional[float]
-    EstimateNote: Optional[str]
+    """The readable context inside Input."""
+    Charge: "DtoAdvCharge"
+    Estimate: "DtoAdvEstimate"
+    ShowCost: bool
 
-class DtoAdvisorPreviewResPonse(TypedDict, total=False):
-    data: "DtoAdvisorPreview"
+class DtoAdvAskPreviewResPonse(TypedDict, total=False):
+    data: "DtoAdvAskPreview"
     code: int
     isOk: bool
     message: Optional[str]
     errors: Optional[List[str]]
     chksum: Optional[str]
+
+class DtoAdvCharge(TypedDict, total=False):
+    Basis: "AdvChargeBasis"
+    Credits: float
+    Included: bool
+    Staff: bool
+    """Staff are never charged."""
+    Balance: float
+    """The member's Advisor credits now."""
+    AsksToday: int
+    Ceiling: int
+    IncludedAt: Optional[str]
+    """When today's included ask was used; null while it is still free."""
+    Words: Optional[str]
+    """One line for the member: "Included: the first ask of the day", "25 Advisor credits"."""
+
+class DtoAdvEstimate(TypedDict, total=False):
+    PromptKey: Optional[str]
+    PromptVer: int
+    ExtCall: bool
+    Route: Optional[str]
+    Provider: Optional[str]
+    Model: Optional[str]
+    MaxOutTok: int
+    Chars: int
+    EstInTok: int
+    EstOutTok: int
+    OutSample: int
+    """How many completed asks the output estimate averaged (0: the 2,500 default)."""
+    InUsdPerM: float
+    OutUsdPerM: float
+    InUsd: float
+    OutUsd: float
+    EstUsd: float
+    """The model cost, input and output."""
+    ResearchUsd: float
+    TotalUsd: float
+    Markup: float
+    CreditUsd: float
+    RawCredits: float
+    SizeCredits: int
+    WireBytes: int
+    """Bytes the request takes on the wire to FinApi, and FinApi's body limit."""
+    BodyLimit: int
+
+class DtoAdvLine(TypedDict, total=False):
+    On: bool
+    """Advisor is enabled and the account's plan allows it."""
+    Mode: Optional[str]
+    """ASK (Ask-First) or APPLY (Auto-Apply)."""
+    Manual: bool
+    Status: "AdvAskStatus"
+    NewestAskId: Optional[str]
+    NewestAt: Optional[str]
+    Waiting: int
+    LastAppliedAt: Optional[str]
+
+class DtoAdvPairDecision(TypedDict, total=False):
+    SYM: Optional[str]
+    Decision: "AdvDecision"
+
+class DtoAdvPairRow(TypedDict, total=False):
+    """Step 1's row: one pair AIBot trades on the account."""
+    SYM: Optional[str]
+    SYM6: Optional[str]
+    Mode: Optional[str]
+    """AIBot's mode on the pair: OFF, WATCH, EXITS or FULL."""
+    BuyMethod: Optional[str]
+    SellMethod: Optional[str]
+    Stance: Optional[str]
+    StanceUntil: Optional[str]
+    Condition: Optional[str]
+    SignalSide: Optional[str]
+    """The reading the pair's stance came from: BUY, SELL or NONE, and its confidence band."""
+    ConfidenceBand: Optional[str]
+    OpenTrades: int
+    LastAction: Optional[str]
+    """AIBot's last refusal or action on the pair, when it has one."""
+    Scheduled: bool
+    """The pair is in the scheduled selection (not in Advisor.ExcludedSymbols)."""
+    Sendable: bool
+    """Advisor can send this pair (AIBot is Watch, Exits only or Full auto on it)."""
+
+class DtoAdvSection(TypedDict, total=False):
+    """One section of an ask. Key: ask, account, climate, readings, news, pair, may, instructions."""
+    Key: Optional[str]
+    Title: Optional[str]
+    Chars: int
+    SYM: Optional[str]
+    """The pair of a "pair" section; null otherwise."""
+
+class DtoAdvState(TypedDict, total=False):
+    """StgView: what the Advisor page needs about one account before an ask: the settings, the
+    entitlement, the credits and
+    the day's count, the pairs to tick, the running task and the newest answer.
+    """
+    ACNO: int
+    Login: Optional[str]
+    Allowed: bool
+    """The account's plan allows Advisor (Ultra), or the viewer is staff."""
+    Staff: bool
+    OffReason: Optional[str]
+    """Why Advisor cannot run on this account; null when it can."""
+    Settings: "DtoAdvStg"
+    Balance: float
+    AsksToday: int
+    Ceiling: int
+    IncludedUsed: bool
+    IncludedAt: Optional[str]
+    LastAdviceAt: Optional[str]
+    NextScheduledAt: Optional[str]
+    """When the next scheduled ask is due (UTC); null when Manual or off."""
+    UndoAskId: Optional[str]
+    ShowCost: bool
+    CostMarkup: float
+    CreditUsd: float
+    Pairs: Optional[List["DtoAdvPairRow"]]
+    Running: "DtoFxsAdvAsk"
+    Newest: "DtoFxsAdvAsk"
+    Waiting: int
+
+class DtoAdvStateResPonse(TypedDict, total=False):
+    data: "DtoAdvState"
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
+
+class DtoAdvStg(TypedDict, total=False):
+    """The member's Advisor settings (FxsAcct.Advisor): what StgEdit writes. Counters and times are
+    never taken from it.
+    """
+    Enabled: bool
+    AdviceTime: Optional[str]
+    """When the day's included ask runs, UTC, HH:mm."""
+    AdviceMode: Optional[str]
+    """ASK (Ask-First) or APPLY (Auto-Apply)."""
+    EveryFourHours: bool
+    PaidReasks: bool
+    Manual: bool
+    ExcludedSymbols: Optional[List[str]]
+    """The pairs left out of scheduled asks."""
+    NotifyEmail: bool
+    NotifyBot: bool
 
 class DtoApiChange(TypedDict, total=False):
     """One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say
@@ -906,6 +1066,12 @@ class DtoEASymStg(TypedDict, total=False):
     SSLP: Optional[float]
     BTSP: Optional[float]
     STSP: Optional[float]
+    BADDCAP: Optional[float]
+    SADDCAP: Optional[float]
+    BETAP: Optional[float]
+    SETAP: Optional[float]
+    BETDP: Optional[float]
+    SETDP: Optional[float]
     BHRSL: Optional[bool]
     SHRSL: Optional[bool]
     BBE: Optional[List[int]]
@@ -929,6 +1095,13 @@ class DtoEASymStg(TypedDict, total=False):
     USEDESC: Optional[bool]
     BDMUL: Optional[float]
     SDMUL: Optional[float]
+    DYMAX: Optional[int]
+    DYTGT: Optional[float]
+    DYCAP: Optional[float]
+    DYSTEP: Optional[float]
+    DYCOOL: Optional[int]
+    DYGATE: "DynGate"
+    DYSIDE: "DynSide"
 
 class DtoFcAdviceSummary(TypedDict, total=False):
     Id: Optional[str]
@@ -1148,6 +1321,84 @@ class DtoFxsAcctResPonse(TypedDict, total=False):
     errors: Optional[List[str]]
     chksum: Optional[str]
 
+class DtoFxsAdvAsk(TypedDict, total=False):
+    Id: Optional[str]
+    """The ask's id."""
+    USNO: int
+    ACNO: int
+    ISNO: int
+    Trigger: Optional[str]
+    AskedAt: str
+    Status: "AdvAskStatus"
+    Status_: "AdvAskStatus"
+    QueuedAt: Optional[str]
+    StartedAt: Optional[str]
+    AnsweredAt: Optional[str]
+    ExpiresAt: Optional[str]
+    NotifiedAt: Optional[str]
+    Notified: Optional[List[str]]
+    Error: Optional[str]
+    FinApiJobId: Optional[str]
+    Note: Optional[str]
+    TriggerSym: Optional[str]
+    DecidedAt: Optional[str]
+    DecidedBy: Optional[str]
+    Input: Optional[str]
+    ContextJson: Optional[str]
+    RevisitAt: Optional[str]
+    SentSyms: Optional[List[str]]
+    PromptKey: Optional[str]
+    PromptVer: Optional[int]
+    EstChars: int
+    EstInTok: Optional[int]
+    EstOutTok: Optional[int]
+    EstUsd: Optional[float]
+    WireBytes: Optional[int]
+    ResearchUsd: Optional[float]
+    Pairs: Optional[List["FxsAdvAskPair"]]
+    Changes: Optional[List["FxsAdvChange"]]
+    Tilt: "AdvTilt"
+    Tilt_: "AdvTilt"
+    Sources: Optional[List["FxsAdvSource"]]
+    Credits: float
+    Included: bool
+    Refunded: bool
+    CreditNote: Optional[str]
+    ChargeBasis: "AdvChargeBasis"
+    ChargeBasis_: "AdvChargeBasis"
+    Model: Optional[str]
+    InputTokens: Optional[int]
+    OutputTokens: Optional[int]
+    CostUsd: Optional[float]
+    ShowCost: bool
+    CanDecide: bool
+    """This is the account's newest READY answer, not expired: its pairs and account block can be
+    accepted or declined.
+    """
+    CanCancel: bool
+    """QUEUED: the member may still cancel it (refunded)."""
+    CanUndo: bool
+    """This is the answer Undo reverts (FxsAcct.Advisor.UndoAskId)."""
+    AnswerSecs: Optional[int]
+    """Seconds from QueuedAt to AnsweredAt, for History's "answered in"; null while it runs."""
+
+class DtoFxsAdvAskResPaged(TypedDict, total=False):
+    data: Optional[List["DtoFxsAdvAsk"]]
+    paging: "ResPage"
+    grps: Optional[Dict[str, List["ResGrp"]]]
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+
+class DtoFxsAdvAskResPonse(TypedDict, total=False):
+    data: "DtoFxsAdvAsk"
+    code: int
+    isOk: bool
+    message: Optional[str]
+    errors: Optional[List[str]]
+    chksum: Optional[str]
+
 class DtoFxsBook(TypedDict, total=False):
     CNT: Optional[int]
     TLOT: Optional[float]
@@ -1241,6 +1492,7 @@ class DtoFxsOrdh(TypedDict, total=False):
     AIBotAuto: bool
     AIBotRole: Optional[str]
     PlannedHoldMins: Optional[int]
+    DynStep: Optional[int]
     EXP: int
     EXPRC: bool
     CreatedAt: str
@@ -1331,6 +1583,7 @@ class DtoFxsOrdr(TypedDict, total=False):
     AIBotAuto: bool
     AIBotRole: Optional[str]
     PlannedHoldMins: Optional[int]
+    DynStep: Optional[int]
     EXP: int
     EXPRC: bool
     CreatedAt: str
@@ -1912,6 +2165,12 @@ class DtoFxsStgSymRng(TypedDict, total=False):
     SSLP: "DecRng"
     BTSP: "DecRng"
     STSP: "DecRng"
+    BADDCAP: "DecRng"
+    SADDCAP: "DecRng"
+    BETAP: "DecRng"
+    SETAP: "DecRng"
+    BETDP: "DecRng"
+    SETDP: "DecRng"
     BHRSL: Optional[bool]
     SHRSL: Optional[bool]
     LOGEXP: "DecRng"
@@ -1931,6 +2190,13 @@ class DtoFxsStgSymRng(TypedDict, total=False):
     USEDESC: Optional[bool]
     BDMUL: "DecRng"
     SDMUL: "DecRng"
+    DYMAX: "DecRng"
+    DYTGT: "DecRng"
+    DYCAP: "DecRng"
+    DYSTEP: "DecRng"
+    DYCOOL: "DecRng"
+    DYGATE: "DynGate"
+    DYSIDE: "DynSide"
 
 class DtoFxsStgSymStg(TypedDict, total=False):
     """Wire twin of the account symbol template. This type deliberately has no BSON attributes."""
@@ -1959,6 +2225,12 @@ class DtoFxsStgSymStg(TypedDict, total=False):
     SSLP: Optional[float]
     BTSP: Optional[float]
     STSP: Optional[float]
+    BADDCAP: Optional[float]
+    SADDCAP: Optional[float]
+    BETAP: Optional[float]
+    SETAP: Optional[float]
+    BETDP: Optional[float]
+    SETDP: Optional[float]
     BHRSL: Optional[bool]
     SHRSL: Optional[bool]
     LOGEXP: Optional[float]
@@ -1978,6 +2250,13 @@ class DtoFxsStgSymStg(TypedDict, total=False):
     USEDESC: Optional[bool]
     BDMUL: Optional[float]
     SDMUL: Optional[float]
+    DYMAX: Optional[int]
+    DYTGT: Optional[float]
+    DYCAP: Optional[float]
+    DYSTEP: Optional[float]
+    DYCOOL: Optional[int]
+    DYGATE: "DynGate"
+    DYSIDE: "DynSide"
 
 class DtoFxsSymbolCatalog(TypedDict, total=False):
     TerminalId: Optional[str]
@@ -2258,37 +2537,73 @@ class DtoWaitlistStateResPonse(TypedDict, total=False):
     errors: Optional[List[str]]
     chksum: Optional[str]
 
-class FxsAIBotAdvisorChange(TypedDict, total=False):
-    """One setting AIAdvisor wants changed, old to new. FC.Com.Doms.FxsAIBotAdvisorChange.Refused holds
-    the reason the code refused it.
-    """
+DynEnd = Literal["TP", "RECOVERED", "STEPS", "CAP", "MAXLOT", "RESET", "MEMBER"]
+
+DynGate = Literal["GUARD", "NOW", "STRONG"]
+
+class DynGateBotPick(TypedDict, total=False):
+    Mode: "BotValMode"
+    Mode_: "BotValMode"
+    Val: "DynGate"
+    Opts: Optional[List["DynGate"]]
+
+DynSide = Literal["READING", "OTHER"]
+
+class DynSideBotPick(TypedDict, total=False):
+    Mode: "BotValMode"
+    Mode_: "BotValMode"
+    Val: "DynSide"
+    Opts: Optional[List["DynSide"]]
+
+class FxsAIBotAdvised(TypedDict, total=False):
     Field: Optional[str]
-    Old: Optional[str]
-    New: Optional[str]
-    Direction: Optional[str]
-    """SHARPEN or LOOSEN."""
-    Why: Optional[str]
-    Refused: Optional[str]
+    Value: Optional[str]
+    AskId: Optional[str]
+    At: str
 
-class FxsAIBotAdvisorPair(TypedDict, total=False):
-    SYM: Optional[str]
-    SYM6: Optional[str]
-    Condition: Optional[str]
-    """TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK."""
-    ConditionWhy: Optional[str]
-    Stance: Optional[str]
-    StanceWhy: Optional[str]
-    StanceUntil: Optional[str]
-    NarrowingApplied: bool
-    SignalSide: Optional[str]
-    """The FinGraph reading in this advice's input, retained when Ask-First is accepted later."""
-    ConfidenceBand: Optional[str]
-    Changes: Optional[List["FxsAIBotAdvisorChange"]]
-    Watch: bool
+class FxsAIBotDynLedger(TypedDict, total=False):
+    Step: int
+    """The step the ledger is on, 1 to DYMAX."""
+    Side: Optional[str]
+    """The side of the open or last step: BUY or SELL."""
+    BaseLot: float
+    """Step 1's lot, sized like FIRR (equity × risk a trade at its SL): a step cut below it writes the
+    ledger off.
+    """
+    BaseRisk: float
+    """R: step 1's loss at its SL, in the account's currency (a step wins back the ledger + DYTGT × R,
+    and loses at most
+    DYSTEP × R at its SL).
+    """
+    Owed: float
+    """What the ledger owes: its steps' closed losses not yet won back (profit, swap and commission), 0
+    or more.
+    """
+    Peak: float
+    """The most the ledger has owed."""
+    OpenedAt: str
+    LedgerAt: Optional[str]
+    """When the ledger first owed (step 1's loss)."""
+    LastClosedAt: Optional[str]
+    """When the last step closed."""
+    NextAfter: Optional[str]
+    """After a close that left the ledger owing, the earliest time the next step may open (the close +
+    DYCOOL); null while
+    a step is open or queued, and once the ledger closed.
+    """
+    LastTicket: int
+    """The current or last step's ticket (0 until the broker filled it)."""
+    Partial: int
+    """How many steps were cut to fit DYSTEP, DYCAP or the broker's largest lot (each wins back only
+    part of the ledger).
+    """
+    ClosedAt: Optional[str]
+    """When the ledger closed; null while it runs."""
+    EndReason: "DynEnd"
+    EndReason_: "DynEnd"
+    WaitWhy: Optional[str]
 
-class FxsAIBotEntryRules(TypedDict, total=False):
-    NewsFilter: bool
-    """Skip a side that FinNews of the last 24 hours on the pair's currencies leans against."""
+FxsAIBotEntryRules = TypedDict("FxsAIBotEntryRules", {"NewsFilter": bool, "TrendGuard": "TrendGuard", "TaGuard": "TaGuard"}, total=False)
 
 class FxsAIBotOrderLink(TypedDict, total=False):
     """Value fields copied into AI audit records without depending on the mutable live account
@@ -2319,6 +2634,59 @@ class FxsAIBotStrategy(TypedDict, total=False):
     PlaybookVersionId: Optional[str]
     Limits: "FxsAIBotStgLimits"
     PairDefaults: "FxsAIBotStgPair"
+    Camp: "FxsCamp"
+
+class FxsAdvAskPair(TypedDict, total=False):
+    SYM: Optional[str]
+    SYM6: Optional[str]
+    Condition: Optional[str]
+    """TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK."""
+    ConditionWhy: Optional[str]
+    SignalSide: Optional[str]
+    """The FinGraph reading in this ask's input, kept when Ask-First is accepted later."""
+    ConfidenceBand: Optional[str]
+    Watch: bool
+    StanceBefore: Optional[str]
+    """The stance in force on the pair when the answer came (the folded card's "now -> proposed")."""
+    Stance: Optional[str]
+    """Which new entries the stance allows: BOTH, BUY_ONLY, SELL_ONLY or STAY_OUT."""
+    StanceWhy: Optional[str]
+    StanceUntil: Optional[str]
+    """When the stance ends: 24 hours at most after the ask."""
+    Decision: "AdvDecision"
+    Decision_: "AdvDecision"
+    DecidedAt: Optional[str]
+    DecidedBy: Optional[str]
+    """The owner or a Trader (their sign-in), or Advisor itself (AUTO and NARROWED)."""
+    ModeChange: Optional[str]
+    ModeBefore: Optional[str]
+    """The pair's mode when the ask was answered (what Undo and Decline put back)."""
+    ModeWhy: Optional[str]
+    Changes: Optional[List["FxsAdvChange"]]
+
+class FxsAdvChange(TypedDict, total=False):
+    """One value Advisor wants changed, old to new (was FxsAIBotAdvisorChange).
+    FC.Com.Doms.FxsAdvChange.Refused holds the reason the
+    code refused it.
+    """
+    Field: Optional[str]
+    Old: Optional[str]
+    New: Optional[str]
+    Direction: Optional[str]
+    """SHARPEN or LOOSEN."""
+    Why: Optional[str]
+    Refused: Optional[str]
+    Decision: "AdvDecision"
+    Decision_: "AdvDecision"
+
+class FxsAdvSource(TypedDict, total=False):
+    Title: Optional[str]
+    Site: Optional[str]
+    Url: Optional[str]
+    At: Optional[str]
+    """When the page was published, when the research knows it."""
+    SYM: Optional[str]
+    """The pair it was read for; null for the whole market."""
 
 class FxsAdvisorSettings(TypedDict, total=False):
     Enabled: bool
@@ -2333,6 +2701,17 @@ class FxsAdvisorSettings(TypedDict, total=False):
     DayKey: Optional[str]
     IncludedUsed: bool
     LastAdviceAt: Optional[str]
+    NotifyEmail: bool
+    NotifyBot: bool
+    UndoAskId: Optional[str]
+
+FxsCamp = Literal["DEFENSIVE", "AGGRESSIVE"]
+
+class FxsCampBotPick(TypedDict, total=False):
+    Mode: "BotValMode"
+    Mode_: "BotValMode"
+    Val: "FxsCamp"
+    Opts: Optional[List["FxsCamp"]]
 
 FxsCloseReason = Literal["UNK", "TP", "SL", "TS", "GTP", "API", "EA", "MAN", "SO", "RBL", "DAY", "ETRAIL"]
 """Why a leg closed, as the EA reports it (`CRSN`)."""
@@ -2355,8 +2734,6 @@ class FxsFullAutoSettings(TypedDict, total=False):
     DdClosePct: float
     DdMeasure: Optional[str]
     OpenPerSide: int
-    UndoAdviceId: Optional[str]
-    """The applied advice that Undo last advice reverts."""
 
 FxsOrderAction = Literal["NEW", "AVL", "AVG", "CLO", "CLA", "CLG", "STP", "CSL", "MOD", "RBL"]
 
@@ -2474,6 +2851,14 @@ TMode = Literal["NONE", "AUTO", "HYBRID", "MANUAL"]
 
 TRDSRC = Literal["ANY", "API", "TRM"]
 
+TaGuard = Literal["TV", "TRENDS", "FGRATE"]
+
+class TaGuardBotPick(TypedDict, total=False):
+    Mode: "BotValMode"
+    Mode_: "BotValMode"
+    Val: "TaGuard"
+    Opts: Optional[List["TaGuard"]]
+
 TermAccountKind = Literal["Customer", "Demo"]
 
 TerminalConnectionState = Literal["Unknown", "Connected", "Disconnected", "NeedsAddress", "LoginFailed", "CredentialsMissing"]
@@ -2486,3 +2871,11 @@ class TrendBotStep(TypedDict, total=False):
     Val: Optional["Trend"]
     Min: Optional["Trend"]
     Max: Optional["Trend"]
+
+TrendGuard = Literal["METHOD", "ON", "OFF"]
+
+class TrendGuardBotPick(TypedDict, total=False):
+    Mode: "BotValMode"
+    Mode_: "BotValMode"
+    Val: "TrendGuard"
+    Opts: Optional[List["TrendGuard"]]

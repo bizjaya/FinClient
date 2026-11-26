@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Iterator, List, Optional, Union
+from typing import Iterator, List, Optional, Sequence, Union
 
 from .._encode import seg
 from .._generated import copy_types as t
@@ -86,46 +86,73 @@ class AccountsResource(Group):
         """Read AIBot posture, hourly records and Advisor settings, balance and latest advice."""
         return self._service.data("GET", f"{account_path(acno)}/aibot")
 
-    def preview_advisor(self, acno: int, kind: str = "ON_DEMAND") -> t.DtoAdvisorPreview:
-        """Preview an ON_DEMAND or PLAN ask without sending or spending Advisor credits."""
-        return self._service.data("GET", f"{account_path(acno)}/aibot/advisor/preview", query=[("kind", kind)])
+    def preview_advisor(
+        self, acno: int, kind: Optional[str] = None, symbols: Optional[Sequence[str]] = None
+    ) -> t.DtoAdvAskPreview:
+        """Advisor's Review step: what the next ask would send and what it costs.
+
+        ``kind`` is ON_DEMAND (ask now, the server's default) or PLAN (let AI choose); ``symbols`` are the pairs to send
+        (none: the scheduled selection). Nothing is sent or charged; the preview expires in fifteen minutes."""
+        return self._service.data(
+            "GET", f"{account_path(acno)}/advisor/preview", query=[("kind", kind), ("syms", list(symbols or ()))])
 
     def send_advisor(
-        self, acno: int, command: t.CmdAdvisorSend, *, idempotency_key: Optional[str] = None
-    ) -> t.DtoAIBotFullAuto:
-        """Send a preview or ask now with an empty PreviewId. FinCopy handles Ultra, credits and refunds."""
+        self, acno: int, command: t.CmdAdvAskMake, *, idempotency_key: Optional[str] = None
+    ) -> t.DtoFxsAdvAsk:
+        """Send an Advisor ask, with a PreviewId from :meth:`preview_advisor` or without one (priced now).
+
+        It returns at once with the ask QUEUED; read it again with :meth:`advisor_history_view` for its answer.
+        Requires a trade key."""
         return self._service.data(
-            "POST", f"{account_path(acno)}/aibot/advisor/send", body=command, idempotency_key=idempotency_key)
+            "POST", f"{account_path(acno)}/advisor/asks", body=command, idempotency_key=idempotency_key)
+
+    def get_advisor_settings(self, acno: int) -> t.DtoAdvState:
+        """Read the account's Advisor state: settings, entitlement, credits, today's asks, the running ask and the
+        newest answer."""
+        return self._service.data("GET", f"{account_path(acno)}/advisor/settings")
 
     def save_advisor_settings(
-        self, acno: int, command: t.CmdAdvisorSettings, *, idempotency_key: Optional[str] = None
-    ) -> t.DtoAIBotFullAuto:
-        """Save preferences; counters and included-review state remain server-owned."""
-        return self._service.data(
-            "PUT", f"{account_path(acno)}/aibot/advisor/settings", body=command, idempotency_key=idempotency_key)
+        self, acno: int, command: t.CmdAdvStgEdit, *, idempotency_key: Optional[str] = None
+    ) -> t.DtoAdvState:
+        """Save the account's Advisor settings and return its Advisor state.
 
-    def advisor_history(self, acno: int) -> List[t.DtoAIBotAdvice]:
-        """Latest 100 Advisor asks, newest first, including sent context and payment results."""
-        return self._service.data("GET", f"{account_path(acno)}/aibot/advisor/history")
-
-    def advisor_history_view(self, acno: int, advice_id: str) -> t.DtoAIBotAdvice:
-        """Read one Advisor ask within this account; another account's id is not found."""
+        Only the account owner's trade key may save."""
         return self._service.data(
-            "GET", f"{account_path(acno)}/aibot/advisor/history/{seg(require_text(advice_id, 'advice_id'))}")
+            "PUT", f"{account_path(acno)}/advisor/settings", body=command, idempotency_key=idempotency_key)
 
-    def decide_aibot_advice(
-        self, acno: int, command: t.CmdAIBotAdviceDecide, *, idempotency_key: Optional[str] = None
-    ) -> t.DtoAIBotFullAuto:
-        """Accept or decline account Advisor advice. A trade key is the owner's standing consent."""
-        return self._service.data(
-            "POST", f"{account_path(acno)}/aibot/advice/decide", body=command, idempotency_key=idempotency_key)
+    def advisor_history(self, acno: int, page: Optional[PageQuery] = None) -> Page[t.DtoFxsAdvAsk]:
+        """The account's Advisor asks, newest first, with their answers, decisions and charges (not the text sent)."""
+        return self._service.page("GET", f"{account_path(acno)}/advisor/asks", query=page_pairs(page))
 
-    def undo_aibot_advice(
-        self, acno: int, command: t.CmdAIBotAdviceUndo, *, idempotency_key: Optional[str] = None
-    ) -> t.DtoAIBotFullAuto:
-        """Undo the account's last applied advice, subject to FinCopy's current safety checks."""
+    def advisor_history_pages(self, acno: int, page: Optional[PageQuery] = None) -> Iterator[Page[t.DtoFxsAdvAsk]]:
+        """Yield every page of :meth:`advisor_history`."""
+        return iterate_pages(lambda q: self.advisor_history(acno, q), page)
+
+    def advisor_history_view(self, acno: int, ask_id: str, *, sent: bool = False) -> t.DtoFxsAdvAsk:
+        """Read one Advisor ask within this account; another account's id is not found.
+
+        ``sent`` adds the exact text and the readable context the ask sent."""
         return self._service.data(
-            "POST", f"{account_path(acno)}/aibot/advice/undo", body=command, idempotency_key=idempotency_key)
+            "GET", f"{account_path(acno)}/advisor/asks/{seg(require_text(ask_id, 'ask_id'))}",
+            query=[("sent", True if sent else None)])
+
+    def decide_advisor(
+        self, acno: int, ask_id: str, command: t.CmdAdvAskPtch, *, idempotency_key: Optional[str] = None
+    ) -> t.DtoFxsAdvAsk:
+        """Accept or decline the newest waiting answer pair by pair (Pairs) and its account block (Account).
+
+        Or cancel an ask that is still queued (Cancel; refunded). A pair left out stays as it is.
+        Requires a trade key."""
+        return self._service.data(
+            "PATCH", f"{account_path(acno)}/advisor/asks/{seg(require_text(ask_id, 'ask_id'))}", body=command,
+            idempotency_key=idempotency_key)
+
+    def undo_advisor(
+        self, acno: int, command: t.CmdAdvAskRset, *, idempotency_key: Optional[str] = None
+    ) -> t.DtoFxsAdvAsk:
+        """Undo the last applied Advisor answer: what it changed goes back. Requires a trade key."""
+        return self._service.data(
+            "POST", f"{account_path(acno)}/advisor/undo", body=command, idempotency_key=idempotency_key)
 
     def aibot_decisions(self, acno: int) -> List[t.DtoAIBotFullAutoDecision]:
         """Read the account's AIBot decision record."""

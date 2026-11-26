@@ -2156,7 +2156,7 @@ class StatsV1(rt.Group):
 
         Per-exchange ticker count, average 24-hour price change and total quote volume.
 
-        ``GET /v1/stats/aggregate``. No credit charge.
+        ``GET /v1/stats/aggregate``. Billed 1 credit per call.
 
         Returns: the rows.
         """
