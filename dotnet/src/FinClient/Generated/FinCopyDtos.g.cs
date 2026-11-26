@@ -28,6 +28,10 @@ namespace Fin.Copy
 
     
 
+    /// <summary>
+    /// TP545: DYNM (the dynamic martingale) keeps REVM's number 7, so EA 2.43 and later run each of its steps as FIRR, per
+    /// <br/>            ticket, with no EA change.
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum AMode
     {
@@ -77,6 +81,118 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("Opts")]
         // TODO(system.text.json): Add ItemConverterType with enum converter when supported
         public System.Collections.Generic.ICollection<AMode>? Opts { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP538 §2.2: where one Advisor ask is. Stored as a number with its string twin (FxsAdvAsk.Status / Status_).
+    /// <br/>            QUEUED, RESEARCH and THINKING are the task; READY waits on the member (Ask-First); the rest are its end.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum AdvAskStatus
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"QUEUED")]
+        QUEUED = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"RESEARCH")]
+        RESEARCH = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"THINKING")]
+        THINKING = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"READY")]
+        READY = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"APPLIED")]
+        APPLIED = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ACCEPTED")]
+        ACCEPTED = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"PARTLY")]
+        PARTLY = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DECLINED")]
+        DECLINED = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"EXPIRED")]
+        EXPIRED = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FAILED")]
+        FAILED = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"CANCELLED")]
+        CANCELLED = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"UNDONE")]
+        UNDONE = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"WATCH")]
+        WATCH = 12,
+
+    }
+
+    /// <summary>
+    /// TP538 Q849-B: how an ask's charge was worked out. INCLUDED: the day's included ask (free). FLAT: a fixed price
+    /// <br/>            (Let AI choose keeps its credit action's price). SIZE: the estimate × AdvCostMarkup ÷ AdvCreditUsd, rounded up.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum AdvChargeBasis
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"INCLUDED")]
+        INCLUDED = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FLAT")]
+        FLAT = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"SIZE")]
+        SIZE = 2,
+
+    }
+
+    /// <summary>
+    /// TP538 Q848-A: what became of one pair's part of an answer, or of its account block. AUTO: applied by itself
+    /// <br/>            (Auto-Apply). NARROWED: a narrowing stance or a lower AIBot mode applied at once under Ask-First, the rest still waiting.
+    /// <br/>            NONE: waiting, or a Watch pair.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum AdvDecision
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NONE")]
+        NONE = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ACCEPT")]
+        ACCEPT = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DECLINE")]
+        DECLINE = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AUTO")]
+        AUTO = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NARROWED")]
+        NARROWED = 4,
+
+    }
+
+    /// <summary>
+    /// TP538 Q854-A: how an answer leans overall. A label, not a setting: nothing reads it but the page.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum AdvTilt
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DEFENSIVE")]
+        DEFENSIVE = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"BALANCED")]
+        BALANCED = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OFFENSIVE")]
+        OFFENSIVE = 2,
 
     }
 
@@ -189,42 +305,6 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"Retired")]
         Retired = 2,
-
-    }
-
-    /// <summary>
-    /// T701 (Q10-C): Accept or Reject a waiting advice.
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotAdviceDecide
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long? ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceId")]
-        public string? AdviceId { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Accept")]
-        public bool? Accept { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
-
-    }
-
-    /// <summary>
-    /// T701 (Q10-C): Undo last advice.
-    /// </summary>
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAIBotAdviceUndo
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
-        public long? ACNO { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
-        public string? TrPin { get; set; } = default!;
 
     }
 
@@ -399,11 +479,33 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("STSP")]
         public double? STSP { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("BADDCAP")]
+        public double? BADDCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SADDCAP")]
+        public double? SADDCAP { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("BTRAIL")]
         public bool? BTRAIL { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("STRAIL")]
         public bool? STRAIL { get; set; } = default!;
+
+        /// <summary>
+        /// TP545 (TP538 Q914-A): the early trail per side, % of the set's TP distance: the start (BETAP / SETAP; 0 = off) and
+        /// <br/>            the distance the SL field then trails by (BETDP / SETDP). No TP, no early trail.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BETAP")]
+        public double? BETAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SETAP")]
+        public double? SETAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BETDP")]
+        public double? BETDP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SETDP")]
+        public double? SETDP { get; set; } = default!;
 
         /// <summary>
         /// Q446-A: FIRR's reward ratio per side (the TP as a multiple of the SL).
@@ -450,6 +552,34 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("DCAEXP")]
         public double? DCAEXP { get; set; } = default!;
+
+        /// <summary>
+        /// TP545: DYNM's ledger values, one per pair: the most steps a ledger, the recovery target (× R), the ledger's cap (%
+        /// <br/>            of equity), the most a step may lose at its SL (× R), the cool-off after a close that leaves it owing (minutes), the
+        /// <br/>            strength gate and the side rule.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DYMAX")]
+        public int? DYMAX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYTGT")]
+        public double? DYTGT { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYCAP")]
+        public double? DYCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSTEP")]
+        public double? DYSTEP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYCOOL")]
+        public int? DYCOOL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYGATE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynGate>))]
+        public DynGate? DYGATE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSIDE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynSide>))]
+        public DynSide? DYSIDE { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
         public string? TrPin { get; set; } = default!;
@@ -539,30 +669,96 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// AskMake: send an ask. With a PreviewId the ask sends that preview's pairs and pays its charge; without one it is
+    /// <br/>            priced now. Returns at once with the ask (QUEUED); the runner answers it.
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAdvisorSend
+    public partial class CmdAdvAskMake
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
         public long? ACNO { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("PreviewId")]
-        public string? PreviewId { get; set; } = default!;
-
         [System.Text.Json.Serialization.JsonPropertyName("Kind")]
         public string? Kind { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("PreviewId")]
+        public string? PreviewId { get; set; } = default!;
+
+        /// <summary>
+        /// The ticked pairs; null: the scheduled selection. Must match the preview's when a PreviewId is given.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Syms")]
+        public System.Collections.Generic.ICollection<string>? Syms { get; set; } = default!;
+
+        /// <summary>
+        /// Keep this selection for scheduled asks (stored as Advisor.ExcludedSymbols, the pairs left out).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SaveSelection")]
+        public bool? SaveSelection { get; set; } = default!;
+
     }
 
+    /// <summary>
+    /// AskPtch: decide an answer pair by pair and its account block (Q848-A), or cancel a QUEUED ask. Anything accepted
+    /// <br/>            needs the Trading PIN (the member routes); a pair left out of Pairs stays as it is.
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CmdAdvisorSettings
+    public partial class CmdAdvAskPtch
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AskId")]
+        public string? AskId { get; set; } = default!;
+
+        /// <summary>
+        /// Cancel the ask while it is QUEUED (refunded). Pairs and Account are ignored.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Cancel")]
+        public bool? Cancel { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<DtoAdvPairDecision>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Account")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvDecision>))]
+        public AdvDecision? Account { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// AskRset: undo the last applied answer (FxsAcct.Advisor.UndoAskId).
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAdvAskRset
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrPin")]
+        public string? TrPin { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// StgEdit: save the account's Advisor settings.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CmdAdvStgEdit
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
         public long? ACNO { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Settings")]
-        public FxsAdvisorSettings? Settings { get; set; } = default!;
+        public DtoAdvStg? Settings { get; set; } = default!;
 
     }
 
@@ -921,6 +1117,10 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("PairDefaults")]
         public FxsAIBotStgPair? PairDefaults { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Camp")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FxsCamp>))]
+        public FxsCamp? Camp { get; set; } = default!;
 
     }
 
@@ -1281,128 +1481,61 @@ namespace Fin.Copy
     }
 
     /// <summary>
-    /// T701 Phase 4: one AIAdvisor answer as the AIBot page shows it.
+    /// TP545: the next DYNM step's size, per side the side rule (DYSIDE) allows, BUY first.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotAdvice
+    public partial class DtoAIBotDynNext
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Credits")]
-        public double? Credits { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("SideRule")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynSide>))]
+        public DynSide? SideRule { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Included")]
-        public bool? Included { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Sides")]
+        public System.Collections.Generic.ICollection<DtoAIBotDynNextSide>? Sides { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Refunded")]
-        public bool? Refunded { get; set; } = default!;
+    }
 
-        [System.Text.Json.Serialization.JsonPropertyName("CreditNote")]
-        public string? CreditNote { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Input")]
-        public string? Input { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ContextJson")]
-        public string? ContextJson { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
-        public string? Kind { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("RevisitAt")]
-        public System.DateTimeOffset? RevisitAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("InputTokens")]
-        public int? InputTokens { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("OutputTokens")]
-        public int? OutputTokens { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
-        public string? Trigger { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AskedAt")]
-        public System.DateTimeOffset? AskedAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Status")]
-        public string? Status { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Error")]
-        public string? Error { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Model")]
-        public string? Model { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
-        public double? CostUsd { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Note")]
-        public string? Note { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
-        public System.Collections.Generic.ICollection<FxsAIBotAdvisorPair>? Pairs { get; set; } = default!;
+    /// <summary>
+    /// TP545: one side's next DYNM step as FxsDynm.SizeStep sizes it now.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotDynNextSide
+    {
 
         /// <summary>
-        /// T709 (Q399-A): changes to the account's signal sets.
+        /// BUY or SELL.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Changes")]
-        public System.Collections.Generic.ICollection<FxsAIBotAdvisorChange>? Changes { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DecidedAt")]
-        public System.DateTimeOffset? DecidedAt { get; set; } = default!;
+        /// <summary>
+        /// The lot, rounded to the broker's lot step; 0 when it cannot be sized now (Why says why).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Lot")]
+        public double? Lot { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("DecidedBy")]
-        public string? DecidedBy { get; set; } = default!;
+        /// <summary>
+        /// The step's own loss at its SL, in the account's currency.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("StepLoss")]
+        public double? StepLoss { get; set; } = default!;
 
-    }
+        /// <summary>
+        /// Cut to DYSTEP, the ledger cap or the broker's largest lot: a win wins back only part of the ledger.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Partial")]
+        public bool? Partial { get; set; } = default!;
 
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotAdviceIReadOnlyListResPonse
-    {
+        [System.Text.Json.Serialization.JsonPropertyName("End")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynEnd>))]
+        public DynEnd? End { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public System.Collections.Generic.ICollection<DtoAIBotAdvice>? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAIBotAdviceResPonse
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoAIBotAdvice? Data { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("code")]
-        public int? Code { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
-        public bool? IsOk { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("message")]
-        public string? Message { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("errors")]
-        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
-        public string? Chksum { get; set; } = default!;
+        /// <summary>
+        /// How the lot was reached, or why it cannot be sized now.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Why")]
+        public string? Why { get; set; } = default!;
 
     }
 
@@ -1518,47 +1651,28 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("AIBotPairDefaults")]
         public FxsAIBotStgPair? AIBotPairDefaults { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("AdvisorAllowed")]
-        public bool? AdvisorAllowed { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdvisorStaff")]
-        public bool? AdvisorStaff { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdvisorBalance")]
-        public double? AdvisorBalance { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Advisor")]
-        public FxsAdvisorSettings? Advisor { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
-        public string? AdviceMode { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceTime")]
-        public string? AdviceTime { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceCallsToday")]
-        public int? AdviceCallsToday { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("AdviceMaxPerDay")]
-        public int? AdviceMaxPerDay { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("LastAdviceAt")]
-        public System.DateTimeOffset? LastAdviceAt { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("CanUndoAdvice")]
-        public bool? CanUndoAdvice { get; set; } = default!;
-
-        /// <summary>
-        /// Advisor is disabled or this account has no Ultra entitlement; AIBot retains its own stance.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("AdvisorOff")]
-        public bool? AdvisorOff { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("AdvisorLine")]
+        public DtoAdvLine? AdvisorLine { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Posture")]
         public string? Posture { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("PostureWhy")]
         public string? PostureWhy { get; set; } = default!;
+
+        /// <summary>
+        /// TP545 (Q936-A, TP538 Q859-B): why this account may not choose DYNM (not a demo account while DYNM on real accounts
+        /// <br/>            is off, or a terminal below EA 2.43), or null when it may.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DynmRefusal")]
+        public string? DynmRefusal { get; set; } = default!;
+
+        /// <summary>
+        /// TP545 (Q932-A): what the account's running DYNM ledgers owe in all (the sum of its pairs' Dyn.Owed): a read model,
+        /// <br/>            each pair keeps its own ledger.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DynmOwed")]
+        public double? DynmOwed { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("HedgeOn")]
         public bool? HedgeOn { get; set; } = default!;
@@ -1571,9 +1685,6 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
         public System.Collections.Generic.ICollection<DtoAIBotFullAutoPair>? Pairs { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Advice")]
-        public System.Collections.Generic.ICollection<DtoAIBotAdvice>? Advice { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("Decisions")]
         public System.Collections.Generic.ICollection<DtoAIBotFullAutoDecision>? Decisions { get; set; } = default!;
@@ -1734,6 +1845,12 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("Role")]
         public string? Role { get; set; } = default!;
 
+        /// <summary>
+        /// TP545: the DYNM step this trade was; null for every other method.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DynStep")]
+        public int? DynStep { get; set; } = default!;
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -1823,6 +1940,13 @@ namespace Fin.Copy
         public string? ConditionWhy { get; set; } = default!;
 
         /// <summary>
+        /// TP538: the pair's fields Advisor set that still hold Advisor's value (the AIBot page marks them "Set by Advisor"),
+        /// <br/>            with the answer that set them.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Advised")]
+        public System.Collections.Generic.ICollection<FxsAIBotAdvised>? Advised { get; set; } = default!;
+
+        /// <summary>
         /// The pair's starting lot (NLOT).
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("NLOT")]
@@ -1854,6 +1978,15 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SellSlOff")]
         public int? SellSlOff { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Dyn")]
+        public FxsAIBotDynLedger? Dyn { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DynLine")]
+        public string? DynLine { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DynNext")]
+        public DtoAIBotDynNext? DynNext { get; set; } = default!;
 
     }
 
@@ -2071,14 +2204,41 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("NewsFilter")]
         public BooleanBotPick? NewsFilter { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("TrendGuard")]
+        public TrendGuardBotPick? TrendGuard { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TaGuard")]
+        public TaGuardBotPick? TaGuard { get; set; } = default!;
+
+        /// <summary>
+        /// TP545 (Q930-A): on / off values with a state, by field path: SYMSTG.BTRAIL and SYMSTG.STRAIL, each side's TP / TS
+        /// <br/>            switch (on: the TP arms a TS, no broker TP; off: a hard TP). Fixed: only the member; My range (Opts) or Strategy: Advisor
+        /// <br/>            and AIBot (by the camp or the posture) may flip it.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Switches")]
+        public System.Collections.Generic.IDictionary<string, BooleanBotPick>? Switches { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Camp")]
+        public FxsCampBotPick? Camp { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYGATE")]
+        public DynGateBotPick? DYGATE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSIDE")]
+        public DynSideBotPick? DYSIDE { get; set; } = default!;
+
     }
 
+    /// <summary>
+    /// The Review step: the sections and their sizes, the exact text, the charge, and the staff estimate when the viewer
+    /// <br/>            may see it. Send with its PreviewId within 15 minutes; the charge Send takes is this preview's, never more.
+    /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAdvisorPreview
+    public partial class DtoAdvAskPreview
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("Id")]
-        public string? Id { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("PreviewId")]
+        public string? PreviewId { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("BuiltAt")]
         public System.DateTimeOffset? BuiltAt { get; set; } = default!;
@@ -2086,32 +2246,58 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("ExpiresAt")]
         public System.DateTimeOffset? ExpiresAt { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("Model")]
-        public string? Model { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("Kind")]
+        public string? Kind { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Syms")]
+        public System.Collections.Generic.ICollection<string>? Syms { get; set; } = default!;
+
+        /// <summary>
+        /// Characters of the exact text.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Chars")]
+        public int? Chars { get; set; } = default!;
+
+        /// <summary>
+        /// What Advisor reads, section by section, in order. Each names where its readable view is: a key of ContextJson
+        /// <br/>            (Ask, Account, MarketClimate, Readings, News, MayChange), one pair (Account.Pairs[SYM]), or the instructions (the text of
+        /// <br/>            Input around ContextJson).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sections")]
+        public System.Collections.Generic.ICollection<DtoAdvSection>? Sections { get; set; } = default!;
+
+        /// <summary>
+        /// The exact text Advisor reads.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("Input")]
         public string? Input { get; set; } = default!;
 
+        /// <summary>
+        /// The readable context inside Input.
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("ContextJson")]
         public string? ContextJson { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("EstimatedInputTokens")]
-        public int? EstimatedInputTokens { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Charge")]
+        public DtoAdvCharge? Charge { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("EstimatedCostUsd")]
-        public double? EstimatedCostUsd { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Estimate")]
+        public DtoAdvEstimate? Estimate { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("EstimateNote")]
-        public string? EstimateNote { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("ShowCost")]
+        public bool? ShowCost { get; set; } = default!;
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class DtoAdvisorPreviewResPonse
+    public partial class DtoAdvAskPreviewResPonse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("data")]
-        public DtoAdvisorPreview? Data { get; set; } = default!;
+        public DtoAdvAskPreview? Data { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("code")]
         public int? Code { get; set; } = default!;
@@ -2127,6 +2313,451 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("chksum")]
         public string? Chksum { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// What an ask costs the member (Q849-B): the day's included ask is free; an extra ask is priced by size; a Let AI
+    /// <br/>            choose plan keeps its credit action's price.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvCharge
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Basis")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvChargeBasis>))]
+        public AdvChargeBasis? Basis { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Credits")]
+        public double? Credits { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Included")]
+        public bool? Included { get; set; } = default!;
+
+        /// <summary>
+        /// Staff are never charged.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Staff")]
+        public bool? Staff { get; set; } = default!;
+
+        /// <summary>
+        /// The member's Advisor credits now.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Balance")]
+        public double? Balance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AsksToday")]
+        public int? AsksToday { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Ceiling")]
+        public int? Ceiling { get; set; } = default!;
+
+        /// <summary>
+        /// When today's included ask was used; null while it is still free.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("IncludedAt")]
+        public System.DateTimeOffset? IncludedAt { get; set; } = default!;
+
+        /// <summary>
+        /// One line for the member: "Included: the first ask of the day", "25 Advisor credits".
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Words")]
+        public string? Words { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The staff panel's estimate (Q849-B, Q850-C): input tokens = characters ÷ 4; expected output = the average output of
+    /// <br/>            this account's last 10 completed asks (2,500 when there are none); the prompt's model prices from FinCopy's key price list;
+    /// <br/>            plus the research cap. Credits = ceil(TotalUsd × Markup ÷ CreditUsd).
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvEstimate
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("PromptKey")]
+        public string? PromptKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PromptVer")]
+        public int? PromptVer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExtCall")]
+        public bool? ExtCall { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Route")]
+        public string? Route { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Provider")]
+        public string? Provider { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("MaxOutTok")]
+        public int? MaxOutTok { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Chars")]
+        public int? Chars { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstInTok")]
+        public int? EstInTok { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstOutTok")]
+        public int? EstOutTok { get; set; } = default!;
+
+        /// <summary>
+        /// How many completed asks the output estimate averaged (0: the 2,500 default).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OutSample")]
+        public int? OutSample { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("InUsdPerM")]
+        public double? InUsdPerM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OutUsdPerM")]
+        public double? OutUsdPerM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("InUsd")]
+        public double? InUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OutUsd")]
+        public double? OutUsd { get; set; } = default!;
+
+        /// <summary>
+        /// The model cost, input and output.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("EstUsd")]
+        public double? EstUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ResearchUsd")]
+        public double? ResearchUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TotalUsd")]
+        public double? TotalUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Markup")]
+        public double? Markup { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CreditUsd")]
+        public double? CreditUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RawCredits")]
+        public double? RawCredits { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SizeCredits")]
+        public int? SizeCredits { get; set; } = default!;
+
+        /// <summary>
+        /// Bytes the request takes on the wire to FinApi, and FinApi's body limit.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("WireBytes")]
+        public int? WireBytes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BodyLimit")]
+        public int? BodyLimit { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The AIBot page's one Advisor line (TP538 §2.1): mode, newest status, waiting count, last applied time.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvLine
+    {
+
+        /// <summary>
+        /// Advisor is enabled and the account's plan allows it.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("On")]
+        public bool? On { get; set; } = default!;
+
+        /// <summary>
+        /// ASK (Ask-First) or APPLY (Auto-Apply).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        public string? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Manual")]
+        public bool? Manual { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvAskStatus>))]
+        public AdvAskStatus? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NewestAskId")]
+        public string? NewestAskId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NewestAt")]
+        public System.DateTimeOffset? NewestAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Waiting")]
+        public int? Waiting { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LastAppliedAt")]
+        public System.DateTimeOffset? LastAppliedAt { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvPairDecision
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Decision")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvDecision>))]
+        public AdvDecision? Decision { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// Step 1's row: one pair AIBot trades on the account.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvPairRow
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM6")]
+        public string? SYM6 { get; set; } = default!;
+
+        /// <summary>
+        /// AIBot's mode on the pair: OFF, WATCH, EXITS or FULL.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        public string? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BuyMethod")]
+        public string? BuyMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SellMethod")]
+        public string? SellMethod { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Stance")]
+        public string? Stance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StanceUntil")]
+        public System.DateTimeOffset? StanceUntil { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Condition")]
+        public string? Condition { get; set; } = default!;
+
+        /// <summary>
+        /// The reading the pair's stance came from: BUY, SELL or NONE, and its confidence band.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SignalSide")]
+        public string? SignalSide { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceBand")]
+        public string? ConfidenceBand { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OpenTrades")]
+        public int? OpenTrades { get; set; } = default!;
+
+        /// <summary>
+        /// AIBot's last refusal or action on the pair, when it has one.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LastAction")]
+        public string? LastAction { get; set; } = default!;
+
+        /// <summary>
+        /// The pair is in the scheduled selection (not in Advisor.ExcludedSymbols).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Scheduled")]
+        public bool? Scheduled { get; set; } = default!;
+
+        /// <summary>
+        /// Advisor can send this pair (AIBot is Watch, Exits only or Full auto on it).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Sendable")]
+        public bool? Sendable { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One section of an ask. Key: ask, account, climate, readings, news, pair, may, instructions.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvSection
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Key")]
+        public string? Key { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Title")]
+        public string? Title { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Chars")]
+        public int? Chars { get; set; } = default!;
+
+        /// <summary>
+        /// The pair of a "pair" section; null otherwise.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// StgView: what the Advisor page needs about one account before an ask: the settings, the entitlement, the credits and
+    /// <br/>            the day's count, the pairs to tick, the running task and the newest answer.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvState
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Login")]
+        public string? Login { get; set; } = default!;
+
+        /// <summary>
+        /// The account's plan allows Advisor (Ultra), or the viewer is staff.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Allowed")]
+        public bool? Allowed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Staff")]
+        public bool? Staff { get; set; } = default!;
+
+        /// <summary>
+        /// Why Advisor cannot run on this account; null when it can.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OffReason")]
+        public string? OffReason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Settings")]
+        public DtoAdvStg? Settings { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Balance")]
+        public double? Balance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AsksToday")]
+        public int? AsksToday { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Ceiling")]
+        public int? Ceiling { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("IncludedUsed")]
+        public bool? IncludedUsed { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("IncludedAt")]
+        public System.DateTimeOffset? IncludedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("LastAdviceAt")]
+        public System.DateTimeOffset? LastAdviceAt { get; set; } = default!;
+
+        /// <summary>
+        /// When the next scheduled ask is due (UTC); null when Manual or off.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NextScheduledAt")]
+        public System.DateTimeOffset? NextScheduledAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("UndoAskId")]
+        public string? UndoAskId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ShowCost")]
+        public bool? ShowCost { get; set; } = default!;
+
+        /// <summary>
+        /// Q849-B: the size price's parts, for the page's "about N credits" lines.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("CostMarkup")]
+        public double? CostMarkup { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CreditUsd")]
+        public double? CreditUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<DtoAdvPairRow>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Running")]
+        public DtoFxsAdvAsk? Running { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Newest")]
+        public DtoFxsAdvAsk? Newest { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Waiting")]
+        public int? Waiting { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvStateResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoAdvState? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// The member's Advisor settings (FxsAcct.Advisor): what StgEdit writes. Counters and times are never taken from it.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAdvStg
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Enabled")]
+        public bool? Enabled { get; set; } = default!;
+
+        /// <summary>
+        /// When the day's included ask runs, UTC, HH:mm.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceTime")]
+        public string? AdviceTime { get; set; } = default!;
+
+        /// <summary>
+        /// ASK (Ask-First) or APPLY (Auto-Apply).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AdviceMode")]
+        public string? AdviceMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EveryFourHours")]
+        public bool? EveryFourHours { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PaidReasks")]
+        public bool? PaidReasks { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Manual")]
+        public bool? Manual { get; set; } = default!;
+
+        /// <summary>
+        /// The pairs left out of scheduled asks.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ExcludedSymbols")]
+        public System.Collections.Generic.ICollection<string>? ExcludedSymbols { get; set; } = default!;
+
+        /// <summary>
+        /// Q851-A: email the member when an answer is ready, applied or failed.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotifyEmail")]
+        public bool? NotifyEmail { get; set; } = default!;
+
+        /// <summary>
+        /// Q851-A: tell the member on the FinCopy bot (Telegram).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotifyBot")]
+        public bool? NotifyBot { get; set; } = default!;
 
     }
 
@@ -2879,6 +3510,27 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("STSP")]
         public double? STSP { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("BADDCAP")]
+        public double? BADDCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SADDCAP")]
+        public double? SADDCAP { get; set; } = default!;
+
+        /// <summary>
+        /// TP545: the early trail (start, distance; % of the TP distance). The sync sends them to EA 2.44 or later only.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BETAP")]
+        public double? BETAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SETAP")]
+        public double? SETAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BETDP")]
+        public double? BETDP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SETDP")]
+        public double? SETDP { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("BHRSL")]
         public bool? BHRSL { get; set; } = default!;
 
@@ -2950,6 +3602,32 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SDMUL")]
         public double? SDMUL { get; set; } = default!;
+
+        /// <summary>
+        /// TP545: DYNM's ledger values (one per pair); FinCopy's own, never on the EA's wire.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DYMAX")]
+        public int? DYMAX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYTGT")]
+        public double? DYTGT { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYCAP")]
+        public double? DYCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSTEP")]
+        public double? DYSTEP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYCOOL")]
+        public int? DYCOOL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYGATE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynGate>))]
+        public DynGate? DYGATE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSIDE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynSide>))]
+        public DynSide? DYSIDE { get; set; } = default!;
 
     }
 
@@ -3589,6 +4267,248 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// TP538: one Advisor ask as the member and public APIs return it. The list never carries Input and ContextJson; the
+    /// <br/>            one-ask view carries them only on request. The model and cost fields are null unless the viewer may see the staff panel
+    /// <br/>            (Q850-C: staff always, members while FcStg.AdvShowModelCost is on); a null field is left off the wire.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsAdvAsk
+    {
+
+        /// <summary>
+        /// The ask's id.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Id")]
+        public string? Id { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("USNO")]
+        public long? USNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ACNO")]
+        public long? ACNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ISNO")]
+        public int? ISNO { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Trigger")]
+        public string? Trigger { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AskedAt")]
+        public System.DateTimeOffset? AskedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Status")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvAskStatus>))]
+        public AdvAskStatus? Status { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Status_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvAskStatus>))]
+        public AdvAskStatus? Status_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("QueuedAt")]
+        public System.DateTimeOffset? QueuedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StartedAt")]
+        public System.DateTimeOffset? StartedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AnsweredAt")]
+        public System.DateTimeOffset? AnsweredAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ExpiresAt")]
+        public System.DateTimeOffset? ExpiresAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("NotifiedAt")]
+        public System.DateTimeOffset? NotifiedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Notified")]
+        public System.Collections.Generic.ICollection<string>? Notified { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Error")]
+        public string? Error { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("FinApiJobId")]
+        public string? FinApiJobId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Note")]
+        public string? Note { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TriggerSym")]
+        public string? TriggerSym { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DecidedAt")]
+        public System.DateTimeOffset? DecidedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DecidedBy")]
+        public string? DecidedBy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Input")]
+        public string? Input { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ContextJson")]
+        public string? ContextJson { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("RevisitAt")]
+        public System.DateTimeOffset? RevisitAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SentSyms")]
+        public System.Collections.Generic.ICollection<string>? SentSyms { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PromptKey")]
+        public string? PromptKey { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("PromptVer")]
+        public int? PromptVer { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstChars")]
+        public int? EstChars { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstInTok")]
+        public int? EstInTok { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstOutTok")]
+        public int? EstOutTok { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EstUsd")]
+        public double? EstUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("WireBytes")]
+        public int? WireBytes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ResearchUsd")]
+        public double? ResearchUsd { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Pairs")]
+        public System.Collections.Generic.ICollection<FxsAdvAskPair>? Pairs { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Changes")]
+        public System.Collections.Generic.ICollection<FxsAdvChange>? Changes { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Tilt")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvTilt>))]
+        public AdvTilt? Tilt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Tilt_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvTilt>))]
+        public AdvTilt? Tilt_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Sources")]
+        public System.Collections.Generic.ICollection<FxsAdvSource>? Sources { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Credits")]
+        public double? Credits { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Included")]
+        public bool? Included { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Refunded")]
+        public bool? Refunded { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CreditNote")]
+        public string? CreditNote { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ChargeBasis")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvChargeBasis>))]
+        public AdvChargeBasis? ChargeBasis { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ChargeBasis_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvChargeBasis>))]
+        public AdvChargeBasis? ChargeBasis_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Model")]
+        public string? Model { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("InputTokens")]
+        public int? InputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("OutputTokens")]
+        public int? OutputTokens { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("CostUsd")]
+        public double? CostUsd { get; set; } = default!;
+
+        /// <summary>
+        /// The viewer may see the model and cost panel (Q850-C). False: every model and cost field above is null.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ShowCost")]
+        public bool? ShowCost { get; set; } = default!;
+
+        /// <summary>
+        /// This is the account's newest READY answer, not expired: its pairs and account block can be accepted or declined.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("CanDecide")]
+        public bool? CanDecide { get; set; } = default!;
+
+        /// <summary>
+        /// QUEUED: the member may still cancel it (refunded).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("CanCancel")]
+        public bool? CanCancel { get; set; } = default!;
+
+        /// <summary>
+        /// This is the answer Undo reverts (FxsAcct.Advisor.UndoAskId).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("CanUndo")]
+        public bool? CanUndo { get; set; } = default!;
+
+        /// <summary>
+        /// Seconds from QueuedAt to AnsweredAt, for History's "answered in"; null while it runs.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("AnswerSecs")]
+        public int? AnswerSecs { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsAdvAskResPaged
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public System.Collections.Generic.ICollection<DtoFxsAdvAsk>? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("paging")]
+        public ResPage? Paging { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("grps")]
+        public System.Collections.Generic.IDictionary<string, System.Collections.Generic.ICollection<ResGrp>>? Grps { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsAdvAskResPonse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("data")]
+        public DtoFxsAdvAsk? Data { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("code")]
+        public int? Code { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("isOk")]
+        public bool? IsOk { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("message")]
+        public string? Message { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("errors")]
+        public System.Collections.Generic.ICollection<string>? Errors { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("chksum")]
+        public string? Chksum { get; set; } = default!;
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoFxsBook
     {
@@ -3878,6 +4798,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("PlannedHoldMins")]
         public int? PlannedHoldMins { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("DynStep")]
+        public int? DynStep { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("EXP")]
         public long? EXP { get; set; } = default!;
 
@@ -4156,6 +5079,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("PlannedHoldMins")]
         public int? PlannedHoldMins { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("DynStep")]
+        public int? DynStep { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("EXP")]
         public long? EXP { get; set; } = default!;
 
@@ -4298,6 +5224,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("AIBotMode")]
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DtoFxsPairAIBotMode>))]
         public DtoFxsPairAIBotMode? AIBotMode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Dyn")]
+        public DtoFxsPairDyn? Dyn { get; set; } = default!;
 
         [System.Text.Json.Serialization.JsonPropertyName("BID")]
         public double? BID { get; set; } = default!;
@@ -4597,6 +5526,55 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SyncMkAt")]
         public System.DateTimeOffset? SyncMkAt { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP545 (Q932-A, prototype round 54's Pairs list 2.3.2): a pair's running DYNM ledger in a few read-only facts, on the pair the
+    /// <br/>lists serve (DtoFxsPair.Dyn on /v1/fxs/pairs and the member's pair view). Built from FxsAIBotPair.Dyn by FxsDynm.PairSummary;
+    /// <br/>null where no ledger is open (none has run, or it closed). It is a read model: nothing writes it back.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsPairDyn
+    {
+
+        /// <summary>
+        /// What the ledger owes: its steps' closed losses not yet won back, 0 or more.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Owed")]
+        public double? Owed { get; set; } = default!;
+
+        /// <summary>
+        /// The step the ledger is on: the open step, or the next one while it waits (1 to DYMAX).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Step")]
+        public int? Step { get; set; } = default!;
+
+        /// <summary>
+        /// DYMAX: the most steps a ledger may hold before it is written off.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Max")]
+        public int? Max { get; set; } = default!;
+
+        /// <summary>
+        /// The side of the open or last step: BUY or SELL.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        /// <summary>
+        /// A step is open now (its trade is at the broker or queued); false while the ledger waits for its next step.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("StepOpen")]
+        public bool? StepOpen { get; set; } = default!;
+
+        /// <summary>
+        /// Why the next step waits, in the member's words: the cool-off until a time, the pair off Full auto (Q951-A), or the
+        /// <br/>            reason the last rules pass wrote (the posture, the Defensive camp, the record, the gate, the room ...). Null while a step is
+        /// <br/>            open, or before any pass has said why.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Wait")]
+        public string? Wait { get; set; } = default!;
 
     }
 
@@ -5907,6 +6885,24 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("STSP")]
         public DecRng? STSP { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("BADDCAP")]
+        public DecRng? BADDCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SADDCAP")]
+        public DecRng? SADDCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BETAP")]
+        public DecRng? BETAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SETAP")]
+        public DecRng? SETAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BETDP")]
+        public DecRng? BETDP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SETDP")]
+        public DecRng? SETDP { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("BHRSL")]
         public bool? BHRSL { get; set; } = default!;
 
@@ -5963,6 +6959,29 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SDMUL")]
         public DecRng? SDMUL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYMAX")]
+        public DecRng? DYMAX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYTGT")]
+        public DecRng? DYTGT { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYCAP")]
+        public DecRng? DYCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSTEP")]
+        public DecRng? DYSTEP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYCOOL")]
+        public DecRng? DYCOOL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYGATE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynGate>))]
+        public DynGate? DYGATE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSIDE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynSide>))]
+        public DynSide? DYSIDE { get; set; } = default!;
 
     }
 
@@ -6054,6 +7073,24 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("STSP")]
         public double? STSP { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("BADDCAP")]
+        public double? BADDCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SADDCAP")]
+        public double? SADDCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BETAP")]
+        public double? BETAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SETAP")]
+        public double? SETAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("BETDP")]
+        public double? BETDP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SETDP")]
+        public double? SETDP { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("BHRSL")]
         public bool? BHRSL { get; set; } = default!;
 
@@ -6110,6 +7147,32 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SDMUL")]
         public double? SDMUL { get; set; } = default!;
+
+        /// <summary>
+        /// TP545: DYNM's ledger values (one per pair); FinCopy's own, never on the EA's wire.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DYMAX")]
+        public int? DYMAX { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYTGT")]
+        public double? DYTGT { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYCAP")]
+        public double? DYCAP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSTEP")]
+        public double? DYSTEP { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYCOOL")]
+        public int? DYCOOL { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYGATE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynGate>))]
+        public DynGate? DYGATE { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DYSIDE")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynSide>))]
+        public DynSide? DYSIDE { get; set; } = default!;
 
     }
 
@@ -6946,89 +8009,246 @@ namespace Fin.Copy
     }
 
     /// <summary>
-    /// One setting AIAdvisor wants changed, old to new. FC.Com.Doms.FxsAIBotAdvisorChange.Refused holds the reason the code refused it.
+    /// TP545 (Q933-A): why a DYNM ledger closed (FxsAIBotPair.Dyn.EndReason). TP: step 1 reached its TP and nothing was owed;
+    /// <br/>            RECOVERED: the steps won back what the ledger owed; STEPS: written off at DYMAX steps; CAP: written off when the next step could
+    /// <br/>            not fit DYCAP % of equity at step 1's lot; MAXLOT: written off when the broker's largest lot is below step 1's lot; RESET: the
+    /// <br/>            member reset it; MEMBER: the member changed the pair's method away from DYNM (the pair off Full auto only makes it wait). A written-off
+    /// <br/>            ledger (every end but TP and RECOVERED) leaves the symbol waiting 4 hours before its next step 1.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class FxsAIBotAdvisorChange
+    public enum DynEnd
     {
 
-        /// <summary>
-        /// A pair's: EXIT.TPP, EXIT.SLP, EXIT.TSP, ENTRY.NewsFilter, AMODE.BUY, AMODE.SELL or a pair setting: NLOT, LGP, GGP,
-        /// <br/>            LMAX, GMAX, LMUL, GMUL. The account's (T709, Q399-A): WARM.BuySig, WARM.SellSig, WARM.BuyTrd, WARM.SellTrd, WARM.Conf,
-        /// <br/>            WARM.Score, and HOT.BuySig, HOT.SellSig, HOT.BuyTrd, HOT.SellTrd, HOT.Conf (HOT has no score).
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Field")]
-        public string? Field { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"TP")]
+        TP = 0,
 
-        [System.Text.Json.Serialization.JsonPropertyName("Old")]
-        public string? Old { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"RECOVERED")]
+        RECOVERED = 1,
 
-        [System.Text.Json.Serialization.JsonPropertyName("New")]
-        public string? New { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"STEPS")]
+        STEPS = 2,
 
-        /// <summary>
-        /// SHARPEN or LOOSEN.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Direction")]
-        public string? Direction { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"CAP")]
+        CAP = 3,
 
-        [System.Text.Json.Serialization.JsonPropertyName("Why")]
-        public string? Why { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"MAXLOT")]
+        MAXLOT = 4,
 
-        [System.Text.Json.Serialization.JsonPropertyName("Refused")]
-        public string? Refused { get; set; } = default!;
+        [System.Runtime.Serialization.EnumMember(Value = @"RESET")]
+        RESET = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"MEMBER")]
+        MEMBER = 6,
+
+    }
+
+    /// <summary>
+    /// TP545 (DYGATE): the strength gate a DYNM recovery step waits for, on the side it would trade. GUARD: the account's WARM
+    /// <br/>            set for that side and the Trend guard; NOW (the default): GUARD, and FinGraph's signal at B / S or stronger with its 41-minute
+    /// <br/>            move that way; STRONG: FinGraph's own directional strength (TP545 §3, c2's research), not built yet: a value that chooses it is
+    /// <br/>            refused until it is.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum DynGate
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"GUARD")]
+        GUARD = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"NOW")]
+        NOW = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"STRONG")]
+        STRONG = 2,
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class FxsAIBotAdvisorPair
+    public partial class DynGateBotPick
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
-        public string? SYM { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
 
-        [System.Text.Json.Serialization.JsonPropertyName("SYM6")]
-        public string? SYM6 { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynGate>))]
+        public DynGate? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Opts")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<DynGate>? Opts { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP545 (Q931-A, DYSIDE): which side a DYNM recovery step may take. READING (the default, Q931-A): whichever side the
+    /// <br/>            strength gate passes, the same side again included (BUY judged first); OTHER: only the side opposite the last step (REVM's
+    /// <br/>            rule, the replay's control).
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum DynSide
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"READING")]
+        READING = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OTHER")]
+        OTHER = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DynSideBotPick
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynSide>))]
+        public DynSide? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Opts")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<DynSide>? Opts { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP538: one value Advisor set on a pair (FxsAdvChange.Field and its New), and the answer that set it.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAIBotAdvised
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Field")]
+        public string? Field { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Value")]
+        public string? Value { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("AskId")]
+        public string? AskId { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("At")]
+        public System.DateTimeOffset? At { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP545 (Q932-A): one DYNM ledger on a pair: the money its steps have lost and not won back. AIBot writes it when step 1
+    /// <br/>            opens, on each step's close, when it waits (once per reason) and when it closes; the rules pass, the pair's view and the hourly
+    /// <br/>            record read it. FC.Com.Doms.FxsAIBotDynLedger.Step is the step the ledger is on: the open step, or after a close that left it owing the next
+    /// <br/>            one, awaited while FC.Com.Doms.FxsAIBotDynLedger.NextAfter is set (its side is chosen when it opens, Q931-A).
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAIBotDynLedger
+    {
 
         /// <summary>
-        /// TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK.
+        /// The step the ledger is on, 1 to DYMAX.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Condition")]
-        public string? Condition { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConditionWhy")]
-        public string? ConditionWhy { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Stance")]
-        public string? Stance { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StanceWhy")]
-        public string? StanceWhy { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("StanceUntil")]
-        public System.DateTimeOffset? StanceUntil { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("NarrowingApplied")]
-        public bool? NarrowingApplied { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Step")]
+        public int? Step { get; set; } = default!;
 
         /// <summary>
-        /// The FinGraph reading in this advice's input, retained when Ask-First is accepted later.
+        /// The side of the open or last step: BUY or SELL.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("SignalSide")]
-        public string? SignalSide { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceBand")]
-        public string? ConfidenceBand { get; set; } = default!;
-
-        [System.Text.Json.Serialization.JsonPropertyName("Changes")]
-        public System.Collections.Generic.ICollection<FxsAIBotAdvisorChange>? Changes { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
 
         /// <summary>
-        /// TP523 Q556-A: the pair was on Watch: this part of the advice is shown and never applied (its stance and changes),
-        /// <br/>            as an account on Watch gets WATCH advice; Undo last advice leaves it alone too.
+        /// Step 1's lot, sized like FIRR (equity × risk a trade at its SL): a step cut below it writes the ledger off.
         /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("Watch")]
-        public bool? Watch { get; set; } = default!;
+        [System.Text.Json.Serialization.JsonPropertyName("BaseLot")]
+        public double? BaseLot { get; set; } = default!;
+
+        /// <summary>
+        /// R: step 1's loss at its SL, in the account's currency (a step wins back the ledger + DYTGT × R, and loses at most
+        /// <br/>            DYSTEP × R at its SL).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("BaseRisk")]
+        public double? BaseRisk { get; set; } = default!;
+
+        /// <summary>
+        /// What the ledger owes: its steps' closed losses not yet won back (profit, swap and commission), 0 or more.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Owed")]
+        public double? Owed { get; set; } = default!;
+
+        /// <summary>
+        /// The most the ledger has owed.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Peak")]
+        public double? Peak { get; set; } = default!;
+
+        /// <summary>
+        /// When step 1 opened (or the TP545 conversion seeded the ledger): the ledger's identity on every conditional write.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("OpenedAt")]
+        public System.DateTimeOffset? OpenedAt { get; set; } = default!;
+
+        /// <summary>
+        /// When the ledger first owed (step 1's loss).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LedgerAt")]
+        public System.DateTimeOffset? LedgerAt { get; set; } = default!;
+
+        /// <summary>
+        /// When the last step closed.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LastClosedAt")]
+        public System.DateTimeOffset? LastClosedAt { get; set; } = default!;
+
+        /// <summary>
+        /// After a close that left the ledger owing, the earliest time the next step may open (the close + DYCOOL); null while
+        /// <br/>            a step is open or queued, and once the ledger closed.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NextAfter")]
+        public System.DateTimeOffset? NextAfter { get; set; } = default!;
+
+        /// <summary>
+        /// The current or last step's ticket (0 until the broker filled it).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("LastTicket")]
+        public long? LastTicket { get; set; } = default!;
+
+        /// <summary>
+        /// How many steps were cut to fit DYSTEP, DYCAP or the broker's largest lot (each wins back only part of the ledger).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Partial")]
+        public int? Partial { get; set; } = default!;
+
+        /// <summary>
+        /// When the ledger closed; null while it runs.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ClosedAt")]
+        public System.DateTimeOffset? ClosedAt { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EndReason")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynEnd>))]
+        public DynEnd? EndReason { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("EndReason_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynEnd>))]
+        public DynEnd? EndReason_ { get; set; } = default!;
+
+        /// <summary>
+        /// Q934-A: the reason the next step last waited for (the posture, the account, the pair's record, the gate ...), so
+        /// <br/>            AIBOT_DYN_WAIT is written once per reason, not on every pass; cleared when a step opens or closes.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("WaitWhy")]
+        public string? WaitWhy { get; set; } = default!;
 
     }
 
@@ -7046,6 +8266,14 @@ namespace Fin.Copy
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("NewsFilter")]
         public bool? NewsFilter { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TrendGuard")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TrendGuard>))]
+        public TrendGuard? TrendGuard { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("TaGuard")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TaGuard>))]
+        public TaGuard? TaGuard { get; set; } = default!;
 
     }
 
@@ -7147,10 +8375,186 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("PairDefaults")]
         public FxsAIBotStgPair? PairDefaults { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("Camp")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FxsCamp>))]
+        public FxsCamp? Camp { get; set; } = default!;
+
     }
 
     /// <summary>
-    /// TP529: the account's L3 module, independent of the deterministic AIBot settings.
+    /// TP538 (Q848-A): one pair's answer inside an ask (was FxsAIBotAdvisorPair). Its changes follow its Decision.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAdvAskPair
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("SYM6")]
+        public string? SYM6 { get; set; } = default!;
+
+        /// <summary>
+        /// TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Condition")]
+        public string? Condition { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConditionWhy")]
+        public string? ConditionWhy { get; set; } = default!;
+
+        /// <summary>
+        /// The FinGraph reading in this ask's input, kept when Ask-First is accepted later.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SignalSide")]
+        public string? SignalSide { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ConfidenceBand")]
+        public string? ConfidenceBand { get; set; } = default!;
+
+        /// <summary>
+        /// TP523 Q556-A: the pair was on Watch: shown, never applied.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Watch")]
+        public bool? Watch { get; set; } = default!;
+
+        /// <summary>
+        /// The stance in force on the pair when the answer came (the folded card's "now -&gt; proposed").
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("StanceBefore")]
+        public string? StanceBefore { get; set; } = default!;
+
+        /// <summary>
+        /// Which new entries the stance allows: BOTH, BUY_ONLY, SELL_ONLY or STAY_OUT.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Stance")]
+        public string? Stance { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("StanceWhy")]
+        public string? StanceWhy { get; set; } = default!;
+
+        /// <summary>
+        /// When the stance ends: 24 hours at most after the ask.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("StanceUntil")]
+        public System.DateTimeOffset? StanceUntil { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Decision")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvDecision>))]
+        public AdvDecision? Decision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Decision_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvDecision>))]
+        public AdvDecision? Decision_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DecidedAt")]
+        public System.DateTimeOffset? DecidedAt { get; set; } = default!;
+
+        /// <summary>
+        /// The owner or a Trader (their sign-in), or Advisor itself (AUTO and NARROWED).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("DecidedBy")]
+        public string? DecidedBy { get; set; } = default!;
+
+        /// <summary>
+        /// TP538 Q853-A: the pair's AIBot mode Advisor proposes (WATCH, EXITS or FULL); null: no change. Lowering it applies
+        /// <br/>            at once like a narrowing stance; raising it waits for Accept, even under Auto-Apply.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ModeChange")]
+        public string? ModeChange { get; set; } = default!;
+
+        /// <summary>
+        /// The pair's mode when the ask was answered (what Undo and Decline put back).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("ModeBefore")]
+        public string? ModeBefore { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("ModeWhy")]
+        public string? ModeWhy { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Changes")]
+        public System.Collections.Generic.ICollection<FxsAdvChange>? Changes { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// One value Advisor wants changed, old to new (was FxsAIBotAdvisorChange). FC.Com.Doms.FxsAdvChange.Refused holds the reason the
+    /// <br/>            code refused it.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAdvChange
+    {
+
+        /// <summary>
+        /// A pair's: BTPP, STPP, BSLP, SSLP, BTSP, STSP, ENTRY.NEWSFILTER, AMODE.BUY, AMODE.SELL, NLOT, LGP, GGP, LMAX, GMAX,
+        /// <br/>            LMUL, GMUL, a pair value (BRISK …) or (Q853-A) BADDCAP / SADDCAP, the per-side add cap. The account's: WARM.* and HOT.*,
+        /// <br/>            an account number, or (Q853-A) HEDGE, the account's hedge switch.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Field")]
+        public string? Field { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Old")]
+        public string? Old { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("New")]
+        public string? New { get; set; } = default!;
+
+        /// <summary>
+        /// SHARPEN or LOOSEN.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Direction")]
+        public string? Direction { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Why")]
+        public string? Why { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Refused")]
+        public string? Refused { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Decision")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvDecision>))]
+        public AdvDecision? Decision { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Decision_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<AdvDecision>))]
+        public AdvDecision? Decision_ { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP538 Q852-A: one web page the ask's research read.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsAdvSource
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Title")]
+        public string? Title { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Site")]
+        public string? Site { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Url")]
+        public string? Url { get; set; } = default!;
+
+        /// <summary>
+        /// When the page was published, when the research knows it.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("At")]
+        public System.DateTimeOffset? At { get; set; } = default!;
+
+        /// <summary>
+        /// The pair it was read for; null for the whole market.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("SYM")]
+        public string? SYM { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP529: the account's L3 module, independent of the deterministic AIBot settings. TP538: it also holds the member's
+    /// <br/>            notice switches (Q851-A) and the answer Undo reverts (moved from FullAuto.UndoAdviceId, so AIBot's block keeps no Advisor
+    /// <br/>            field).
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class FxsAdvisorSettings
@@ -7191,6 +8595,62 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("LastAdviceAt")]
         public System.DateTimeOffset? LastAdviceAt { get; set; } = default!;
+
+        /// <summary>
+        /// TP538 Q851-A: email the member when an answer is ready, applied or failed. On by default.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotifyEmail")]
+        public bool? NotifyEmail { get; set; } = default!;
+
+        /// <summary>
+        /// TP538 Q851-A: tell the member on the FinCopy bot (Telegram). On by default.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("NotifyBot")]
+        public bool? NotifyBot { get; set; } = default!;
+
+        /// <summary>
+        /// TP538: the applied answer Undo reverts (an fc_adv_ask id); null when there is none.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("UndoAskId")]
+        public string? UndoAskId { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP545 (Q928-C, Q929-A, Q948-A): the account's camp, a value with its state (Fixed or Strategy, never My range). Each moves the values
+    /// <br/>            its preset names (FxsCamps.Preset) that are not Fixed; AIBot's posture (MANAGE, DEFEND) may only push it toward Defensive.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum FxsCamp
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"DEFENSIVE")]
+        DEFENSIVE = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"AGGRESSIVE")]
+        AGGRESSIVE = 1,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class FxsCampBotPick
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<FxsCamp>))]
+        public FxsCamp? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Opts")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<FxsCamp>? Opts { get; set; } = default!;
 
     }
 
@@ -7297,12 +8757,6 @@ namespace Fin.Copy
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("OpenPerSide")]
         public int? OpenPerSide { get; set; } = default!;
-
-        /// <summary>
-        /// The applied advice that Undo last advice reverts.
-        /// </summary>
-        [System.Text.Json.Serialization.JsonPropertyName("UndoAdviceId")]
-        public string? UndoAdviceId { get; set; } = default!;
 
     }
 
@@ -7909,6 +9363,49 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// TP545 (Q939-A): what the Trend guard reads beside FinGraph's medium and long trends (TA-Guard). TV: TradingView's
+    /// <br/>            moving-average rating must agree too, where TradingView rates the pair (today's behaviour, and the default until a replay shows
+    /// <br/>            otherwise); TRENDS: FinGraph's trends only; FGRATE: FinGraph's own technical ratings must agree too, stored and validated but
+    /// <br/>            not available yet (FinGraph serves no ratings), so it reads as FinGraph's trends only until it does.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TaGuard
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TV")]
+        TV = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"TRENDS")]
+        TRENDS = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"FGRATE")]
+        FGRATE = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TaGuardBotPick
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TaGuard>))]
+        public TaGuard? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Opts")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<TaGuard>? Opts { get; set; } = default!;
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum TermAccountKind
     {
@@ -8001,6 +9498,49 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonPropertyName("Max")]
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<Trend>))]
         public Trend? Max { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP538 (Q873-A): the Trend guard, an AIBot entry rule for every method: a new entry opens only when FinGraph's medium
+    /// <br/>            and long trends agree in the side's direction at High or above and TradingView's moving-average rating agrees (FinGraph alone
+    /// <br/>            where there is no rating, Q874-A). METHOD: on for FIRR and DYNM, off for WDCA, GDCA, GRID and CONT (the default); ON: on for
+    /// <br/>            every method; OFF: off for every method.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum TrendGuard
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"METHOD")]
+        METHOD = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ON")]
+        ON = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"OFF")]
+        OFF = 2,
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class TrendGuardBotPick
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Mode_")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<BotValMode>))]
+        public BotValMode? Mode_ { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Val")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<TrendGuard>))]
+        public TrendGuard? Val { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Opts")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<TrendGuard>? Opts { get; set; } = default!;
 
     }
 

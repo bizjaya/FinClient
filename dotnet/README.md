@@ -73,23 +73,25 @@ attempts. Cancelling the token ends it on every target framework.
 ## Account AI Advisor
 
 Use the account owner's FinCopy key. These routes are key-only, even when the client also supports member sessions.
-`GetAIBotAsync(acno)` reads Advisor settings, balance, included-review state, latest advice, AIBot posture and hourly records.
-FinCopy enforces the account's Ultra entitlement and handles its included review, extra-review charges and refunds.
+`GetAdvisorSettingsAsync(acno)` reads the Advisor state: settings, entitlement, credits and today's asks, the pairs an ask can
+send, the running ask and the newest answer. FinCopy enforces the account's Ultra entitlement and handles its included ask,
+extra-ask charges and refunds.
 
 ```csharp
-var preview = await fin.Copy.Accounts.PreviewAdvisorAsync(acno);
-// Show preview.Input / preview.ContextJson. Closing here sends no Advisor ask.
-var state = await fin.Copy.Accounts.SendAdvisorAsync(acno,
-    new CmdAdvisorSend { ACNO = acno, PreviewId = preview.Id, Kind = "ON_DEMAND" },
+var preview = await fin.Copy.Accounts.PreviewAdvisorAsync(acno, "ON_DEMAND", ["EURUSD", "XAUUSD"]);
+// Show preview.Sections / preview.Input and preview.Charge. Closing here sends no Advisor ask.
+var ask = await fin.Copy.Accounts.SendAdvisorAsync(acno,
+    new CmdAdvAskMake { ACNO = acno, PreviewId = preview.PreviewId, Kind = "ON_DEMAND" },
     idempotencyKey: Guid.NewGuid().ToString("N"));
-var history = await fin.Copy.Accounts.AdvisorHistoryAsync(acno);
+// ask.Status is QUEUED; read it again (or follow the change feed) for the answer.
+var answered = await fin.Copy.Accounts.AdvisorHistoryViewAsync(acno, ask.Id!);
 ```
 
-An empty `PreviewId` asks now. Reuse the same idempotency key when retrying the same write.
-`SaveAdvisorSettingsAsync` saves preferences; counters and timestamps stay server-owned.
-`AdvisorHistoryAsync` returns the latest 100 asks, newest first; `AdvisorHistoryViewAsync` reads one ask within that account.
-History includes the sent context, changes, decision, credits and refunds. Existing `DecideAIBotAdviceAsync` accepts or declines
-advice; `UndoAIBotAdviceAsync` undoes it under FinCopy's current safety rules. No second Advisor or wallet is created by a client.
+Without a `PreviewId` the ask is priced when sent. Reuse the same idempotency key when retrying the same write.
+`AdvisorHistoryAsync` pages the asks, newest first, without the text sent; `AdvisorHistoryViewAsync(acno, id, sent: true)` adds
+it. `DecideAdvisorAsync` accepts or declines the newest waiting answer pair by pair and its account block, or cancels an ask
+that is still queued; `UndoAdvisorAsync` puts back what the last applied answer changed. `SaveAdvisorSettingsAsync` saves the
+settings; counters and timestamps stay server-owned. No second Advisor or wallet is created by a client.
 
 ## FinGraph, FinNews and FinSocial
 

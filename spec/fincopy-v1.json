@@ -178,7 +178,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.\r\n            Send an Idempotency-Key: a retry with the same key returns the account the first call made or reconnected. ExternalRef is your own id\r\n            for the account. Needs the Trade permission.",
+        "summary": "Add a hosted account for the key's owner. It waits for approval and a hosted instance, as on the member screens.\n            Send an Idempotency-Key: a retry with the same key returns the account the first call made or reconnected. ExternalRef is your own id\n            for the account. Needs the Trade permission.",
         "operationId": "AccountMake",
         "parameters": [
           {
@@ -576,7 +576,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Disconnect the hosted terminal from this account. The terminal is stopped and removed, its broker password is\r\n            forgotten, and its seat is freed. A customer account, its settings and trade history remain so the login can be restored later;\r\n            a free demo's account and terminal records are deleted.\r\n            Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. The Idempotency-Key header is\r\n            required; a retry with the same key returns the same operation id. Needs\r\n            the Trade permission. A signed-in member session also needs its trading PIN when the account requires one.",
+        "summary": "Disconnect the hosted terminal from this account. The terminal is stopped and removed, its broker password is\n            forgotten, and its seat is freed. A customer account, its settings and trade history remain so the login can be restored later;\n            a free demo's account and terminal records are deleted.\n            Open orders stay at the broker; virtual TP, SL and TS stop working while no terminal runs. The Idempotency-Key header is\n            required; a retry with the same key returns the same operation id. Needs\n            the Trade permission. A signed-in member session also needs its trading PIN when the account requires one.",
         "operationId": "AccountRemove",
         "parameters": [
           {
@@ -698,7 +698,7 @@
         "tags": [
           "Accounts"
         ],
-        "summary": "Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the\r\n            account is added. It comes back on the account and on every change-feed row. Needs the Trade permission.",
+        "summary": "Set your own id for the account (for example your portfolio number); an empty value clears it. Works before the\n            account is added. It comes back on the account and on every change-feed row. Needs the Trade permission.",
         "operationId": "AccountExternalRef",
         "parameters": [
           {
@@ -913,12 +913,1028 @@
         }
       }
     },
+    "/v1/fxs/accounts/{acno}/advisor/preview": {
+      "get": {
+        "tags": [
+          "Advisor"
+        ],
+        "summary": "Advisor's Review step for this account: what the next ask would send (its sections, sizes and exact text) and\n            what it costs. Kind is ON_DEMAND (Ask now) or PLAN (Let AI choose); Syms are the pairs to send (empty: the scheduled\n            selection). Nothing is sent or charged; FinCopy pays the preview's market research. The preview expires in fifteen\n            minutes. Ultra required.",
+        "operationId": "AdvisorAskSrch",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "syms",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAdvAskPreviewResPonse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": [ ]
+          }
+        ]
+      }
+    },
+    "/v1/fxs/accounts/{acno}/advisor/asks": {
+      "post": {
+        "tags": [
+          "Advisor"
+        ],
+        "summary": "Send an ask, with a PreviewId from the preview or without one (priced now). It returns at once with the ask\n            QUEUED; read it again (or follow the change feed) for its answer, usually in two to six minutes. The day's first ask is\n            included; an extra ask is priced by its size and never charged more than its preview showed; a failed or cancelled ask\n            is refunded. ACNO must match the route. Trade key and Idempotency-Key required.",
+        "operationId": "AdvisorAskMake",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Stable key for one write. Retrying the same request returns its original result.",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskMake"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskMake"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskMake"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskMake"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAdvAskResPonse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": [ ]
+          }
+        ]
+      },
+      "get": {
+        "tags": [
+          "Advisor"
+        ],
+        "summary": "The account's Advisor asks, newest first, with their answers, decisions and charges (without the text sent).",
+        "operationId": "AdvisorAskList",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "PageNo",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Draw",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "Sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Srch",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "SortBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "SrchBy",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "name": "Include",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAdvAskResPaged"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": [ ]
+          }
+        ]
+      }
+    },
+    "/v1/fxs/accounts/{acno}/advisor/asks/{id}": {
+      "get": {
+        "tags": [
+          "Advisor"
+        ],
+        "summary": "One Advisor ask. sent=true adds the exact text and the readable context it sent. An id from any other account\n            is not found.",
+        "operationId": "AdvisorAskView",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sent",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAdvAskResPonse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": [ ]
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Advisor"
+        ],
+        "summary": "Accept or decline the newest waiting answer pair by pair (Pairs) and its account block (Account), or cancel an\n            ask that is still queued (Cancel; refunded). A pair left out stays as it is. ACNO must match the route. Trade key and\n            Idempotency-Key required.",
+        "operationId": "AdvisorAskPtch",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Stable key for one write. Retrying the same request returns its original result.",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskPtch"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskPtch"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskPtch"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskPtch"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAdvAskResPonse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": [ ]
+          }
+        ]
+      }
+    },
+    "/v1/fxs/accounts/{acno}/advisor/undo": {
+      "post": {
+        "tags": [
+          "Advisor"
+        ],
+        "summary": "Undo the last applied Advisor answer: what it changed goes back. ACNO must match the route. Trade key and\n            Idempotency-Key required.",
+        "operationId": "AdvisorAskRset",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Stable key for one write. Retrying the same request returns its original result.",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskRset"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskRset"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskRset"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvAskRset"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoFxsAdvAskResPonse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": [ ]
+          }
+        ]
+      }
+    },
+    "/v1/fxs/accounts/{acno}/advisor/settings": {
+      "get": {
+        "tags": [
+          "Advisor"
+        ],
+        "summary": "The account's Advisor state: its settings, the entitlement, the credits and today's asks, the pairs an ask can\n            send, the running ask and the newest answer.",
+        "operationId": "AdvisorStgView",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAdvStateResPonse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": [ ]
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "Advisor"
+        ],
+        "summary": "Save the account's Advisor settings: on or off, the advice time (UTC) and mode (ASK or APPLY), the pairs left out\n            of scheduled asks, the every-4-hours and paid re-asks, and the email and FinCopy bot notices. ACNO must match the route.\n            Trade key and Idempotency-Key required; only the account owner's key may save.",
+        "operationId": "AdvisorStgEdit",
+        "parameters": [
+          {
+            "name": "acno",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "description": "Stable key for one write. Retrying the same request returns its original result.",
+            "required": true,
+            "schema": {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvStgEdit"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvStgEdit"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvStgEdit"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CmdAdvStgEdit"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectResPonse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DtoAdvStateResPonse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "ApiKey": [ ]
+          }
+        ]
+      }
+    },
     "/v1/changes": {
       "get": {
         "tags": [
           "Following changes"
         ],
-        "summary": "What changed on the key owner's accounts, oldest first: Account (each sync and each settings change),\r\n            Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and\r\n            close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without\r\n            a cursor: that returns no rows and a cursor at \"now\", so read the accounts once, then follow the feed. Keep the\r\n            returned cursor and call again while `More` is true. The feed runs about ten seconds behind FinCopy's writes, so a\r\n            write still finishing is read on a later call. `take` is 1 to 1000 (default 500).",
+        "summary": "What changed on the key owner's accounts, oldest first: Account (each sync and each settings change),\n            Terminal, Pair, Order (queued, picked up, filled, refused, a HYBRID proposal and its answer) and History (settled, and\n            close details arriving later). Each row names the record and its ids; re-read it when you need all of it. Start without\n            a cursor: that returns no rows and a cursor at \"now\", so read the accounts once, then follow the feed. Keep the\n            returned cursor and call again while `More` is true. The feed runs about ten seconds behind FinCopy's writes, so a\n            write still finishing is read on a later call. `take` is 1 to 1000 (default 500).",
         "operationId": "Changes",
         "parameters": [
           {
@@ -1017,7 +2033,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\r\n            so a member session cannot call it.",
+        "summary": "This key's webhook, if one is set (the secret is never shown again). API key only: a webhook belongs to a key,\n            so a member session cannot call it.",
         "operationId": "WebhookView",
         "responses": {
           "400": {
@@ -1101,7 +2117,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\r\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\r\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\r\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\r\n            the webhook again makes a new secret and restarts it from now. API key only, with the Trade permission.",
+        "summary": "Set this key's webhook: an HTTPS address on port 443 that resolves to public addresses only. FinCopy then POSTs\n            the change feed to it (event \"changes\": Changes, Cursor, More), at least once and oldest first, retrying with back-off\n            and stopping after 20 failures in a row; a retry may repeat rows, and each row is safe to apply twice. Each POST carries X-FinCopy-Timestamp (Unix seconds) and X-FinCopy-Signature:\n            \"sha256=\" + lowercase hex of HMAC-SHA256(secret, timestamp + \".\" + raw body). The secret is in this reply only. Setting\n            the webhook again makes a new secret and restarts it from now. API key only, with the Trade permission.",
         "operationId": "WebhookSet",
         "parameters": [
           {
@@ -1420,7 +2436,7 @@
         "tags": [
           "Following changes"
         ],
-        "summary": "A server-sent event stream of changes on the caller's accounts. Each caller holds up to eight streams; a ninth\r\n            closes the oldest.",
+        "summary": "A server-sent event stream of changes on the caller's accounts. Each caller holds up to eight streams; a ninth\n            closes the oldest.",
         "operationId": "Stream",
         "responses": {
           "400": {
@@ -2456,7 +3472,7 @@
         "tags": [
           "Other"
         ],
-        "summary": "Read the account's AIBot and AI Advisor settings and state: advice time, apply mode, paid switches,\r\n            today's asks, included review, AI Advisor balance, latest advice, posture and hourly records.\r\n            The balance and all Advisor charging belong to FinCopy; no second wallet or Advisor is used.",
+        "summary": "Read the account's AIBot and AI Advisor settings and state: advice time, apply mode, paid switches,\n            today's asks, included review, AI Advisor balance, latest advice, posture and hourly records.\n            The balance and all Advisor charging belong to FinCopy; no second wallet or Advisor is used.",
         "operationId": "AIBotView",
         "parameters": [
           {
@@ -2535,571 +3551,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ApiKey": [ ]
-          }
-        ]
-      }
-    },
-    "/v1/fxs/accounts/{acno}/aibot/advisor/preview": {
-      "get": {
-        "tags": [
-          "Other"
-        ],
-        "summary": "Build the next AI Advisor ask for this account without sending it. Kind is ON_DEMAND or PLAN.\r\n            Preview research is paid by FinCopy; closing the preview sends no Advisor ask and charges no Advisor credits.\r\n            The preview belongs to this key owner and account and expires in fifteen minutes. Ultra required.",
-        "operationId": "AdvisorPreview",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "kind",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoAdvisorPreviewResPonse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ApiKey": [ ]
-          }
-        ]
-      }
-    },
-    "/v1/fxs/accounts/{acno}/aibot/advisor/send": {
-      "post": {
-        "tags": [
-          "Other"
-        ],
-        "summary": "Send the previewed ask, or ask now with an empty PreviewId. Uses FinCopy's Ultra gate, daily included\r\n            review, AI Advisor credits and failure refunds. ACNO must match the route. Trade key and Idempotency-Key required.",
-        "operationId": "AdvisorSend",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Stable key for one write. Retrying the same request returns its original result.",
-            "required": true,
-            "schema": {
-              "maxLength": 120,
-              "minLength": 1,
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAdvisorSend"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAdvisorSend"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAdvisorSend"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAdvisorSend"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ApiKey": [ ]
-          }
-        ]
-      }
-    },
-    "/v1/fxs/accounts/{acno}/aibot/advisor/settings": {
-      "put": {
-        "tags": [
-          "Other"
-        ],
-        "summary": "Save the account's AI Advisor preferences (including Advise on via ExcludedSymbols). Server-owned counters,\r\n            included-review state and timestamps are ignored, as on the member screen. ACNO must match the route.\r\n            Trade key and Idempotency-Key required; only the account owner's key may save.",
-        "operationId": "AdvisorSettings",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Stable key for one write. Retrying the same request returns its original result.",
-            "required": true,
-            "schema": {
-              "maxLength": 120,
-              "minLength": 1,
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAdvisorSettings"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAdvisorSettings"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAdvisorSettings"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAdvisorSettings"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ApiKey": [ ]
-          }
-        ]
-      }
-    },
-    "/v1/fxs/accounts/{acno}/aibot/advisor/history": {
-      "get": {
-        "tags": [
-          "Other"
-        ],
-        "summary": "The account's latest 100 AI Advisor asks, newest first, with the exact sent context, changes,\r\n            decisions, included-review use, charges and refunds. The first item is the latest advice.",
-        "operationId": "AdvisorHistory",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoAIBotAdviceIReadOnlyListResPonse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ApiKey": [ ]
-          }
-        ]
-      }
-    },
-    "/v1/fxs/accounts/{acno}/aibot/advisor/history/{id}": {
-      "get": {
-        "tags": [
-          "Other"
-        ],
-        "summary": "One AI Advisor ask, including its sent context. An id from any other account is not found.",
-        "operationId": "AdvisorHistoryView",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoAIBotAdviceResPonse"
                 }
               }
             }
@@ -3857,372 +4308,6 @@
         ]
       }
     },
-    "/v1/fxs/accounts/{acno}/aibot/advise": {
-      "post": {
-        "tags": [
-          "Other"
-        ],
-        "operationId": "AIBotAdvise",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Stable key for one write. Retrying the same request returns its original result.",
-            "required": true,
-            "schema": {
-              "maxLength": 120,
-              "minLength": 1,
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ApiKey": [ ]
-          }
-        ]
-      }
-    },
-    "/v1/fxs/accounts/{acno}/aibot/advice/decide": {
-      "post": {
-        "tags": [
-          "Other"
-        ],
-        "operationId": "AIBotAdviceDecide",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Stable key for one write. Retrying the same request returns its original result.",
-            "required": true,
-            "schema": {
-              "maxLength": 120,
-              "minLength": 1,
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAIBotAdviceDecide"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAIBotAdviceDecide"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAIBotAdviceDecide"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAIBotAdviceDecide"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ApiKey": [ ]
-          }
-        ]
-      }
-    },
-    "/v1/fxs/accounts/{acno}/aibot/advice/undo": {
-      "post": {
-        "tags": [
-          "Other"
-        ],
-        "operationId": "AIBotAdviceUndo",
-        "parameters": [
-          {
-            "name": "acno",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "Idempotency-Key",
-            "in": "header",
-            "description": "Stable key for one write. Retrying the same request returns its original result.",
-            "required": true,
-            "schema": {
-              "maxLength": 120,
-              "minLength": 1,
-              "type": "string"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json-patch+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAIBotAdviceUndo"
-              }
-            },
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAIBotAdviceUndo"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAIBotAdviceUndo"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/CmdAIBotAdviceUndo"
-              }
-            }
-          }
-        },
-        "responses": {
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "Conflict",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "429": {
-            "description": "Too Many Requests",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ObjectResPonse"
-                }
-              }
-            }
-          },
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DtoAIBotFullAutoResPonse"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "ApiKey": [ ]
-          }
-        ]
-      }
-    },
     "/v1/fxs/accounts/{acno}/aibot/advice": {
       "get": {
         "tags": [
@@ -4793,7 +4878,7 @@
         "tags": [
           "Pairs"
         ],
-        "summary": "Change one symbol's settings (SYMSTG, the DCA gates, ExternalRef), as the member screens do. Needs the Trade\r\n            permission.",
+        "summary": "Change one symbol's settings (SYMSTG, the DCA gates, ExternalRef), as the member screens do. Needs the Trade\n            permission.",
         "operationId": "AccountPairSettings",
         "parameters": [
           {
@@ -5964,7 +6049,7 @@
         "tags": [
           "Performance and activity"
         ],
-        "summary": "The last 30 days by currency book (real and demo apart) across the caller's accounts: equity, today's\r\n            change, realised profit, 7- and 30-day growth, and each account's share. `acno` narrows it to one account;\r\n            `demo` to demo (true) or real (false) accounts.",
+        "summary": "The last 30 days by currency book (real and demo apart) across the caller's accounts: equity, today's\n            change, realised profit, 7- and 30-day growth, and each account's share. `acno` narrows it to one account;\n            `demo` to demo (true) or real (false) accounts.",
         "operationId": "PerformanceWindow",
         "parameters": [
           {
@@ -6062,7 +6147,7 @@
         "tags": [
           "Performance and activity"
         ],
-        "summary": "Daily performance bars across the caller's accounts, per account and per currency book, between two\r\n            dates (UTC). `acno` narrows it to one account; `demo` to demo (true) or real (false) accounts.",
+        "summary": "Daily performance bars across the caller's accounts, per account and per currency book, between two\n            dates (UTC). `acno` narrows it to one account; `demo` to demo (true) or real (false) accounts.",
         "operationId": "PerformanceBars",
         "parameters": [
           {
@@ -6176,7 +6261,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the\r\n            account is added; until its first sync, live account data is empty.",
+        "summary": "The account's trading record: its settings (ACCSTG, the symbol template SYMSTG), mode and money. Exists from the\n            account is added; until its first sync, live account data is empty.",
         "operationId": "AccountFxs",
         "parameters": [
           {
@@ -6265,7 +6350,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Change the account's settings, as the member screens do, its three signal sets included; every change is written\r\n            to the account log. Needs the Trade permission. A member session that sends a signal set (SigCold, SigWarm or SigHot) gives\r\n            its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.",
+        "summary": "Change the account's settings, as the member screens do, its three signal sets included; every change is written\n            to the account log. Needs the Trade permission. A member session that sends a signal set (SigCold, SigWarm or SigHot) gives\n            its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not.",
         "operationId": "AccountSettings",
         "parameters": [
           {
@@ -6469,7 +6554,7 @@
         "tags": [
           "Settings and symbols"
         ],
-        "summary": "Add and/or remove symbols from the account's enabled list (at most 64, using broker names). The server\r\n            applies the changes to its current list, so a stale picker cannot replace a concurrent change. Needs Trade permission.",
+        "summary": "Add and/or remove symbols from the account's enabled list (at most 64, using broker names). The server\n            applies the changes to its current list, so a stale picker cannot replace a concurrent change. Needs Trade permission.",
         "operationId": "AccountSymbolsEdit",
         "parameters": [
           {
@@ -6921,7 +7006,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\r\n            one of your own or a FinCopy preset (list them with the strategies route). EA settings only: a strategy's AIBot settings\r\n            never travel through this API. Needs the Trade permission on the account.",
+        "summary": "What applying a strategy to this account would change, per symbol, without changing anything. The strategy is\n            one of your own or a FinCopy preset (list them with the strategies route). EA settings only: a strategy's AIBot settings\n            never travel through this API. Needs the Trade permission on the account.",
         "operationId": "AccountStrategyPreview",
         "parameters": [
           {
@@ -7036,7 +7121,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\r\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. A strategy's AIBot\r\n            settings never travel this way: AIBot is managed in FinCopy. Needs the Trade permission on the account.",
+        "summary": "Apply a strategy (one of your own or a FinCopy preset) to this account: the account and its symbols take the strategy's settings, and a\n            side that holds orders keeps what it must keep. The reply counts what changed and what was held. A strategy's AIBot\n            settings never travel this way: AIBot is managed in FinCopy. Needs the Trade permission on the account.",
         "operationId": "AccountStrategyApply",
         "parameters": [
           {
@@ -7425,7 +7510,7 @@
         "tags": [
           "Strategies"
         ],
-        "summary": "Changes one of the caller's own strategies; omitted fields keep their values. FinCopy's presets cannot be\r\n            changed. Needs the Trade permission.",
+        "summary": "Changes one of the caller's own strategies; omitted fields keep their values. FinCopy's presets cannot be\n            changed. Needs the Trade permission.",
         "operationId": "StrategyPatch",
         "parameters": [
           {
@@ -7911,7 +7996,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Start the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\r\n            Returns the operation id.",
+        "summary": "Start the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\n            Returns the operation id.",
         "operationId": "AccountStart",
         "parameters": [
           {
@@ -8009,7 +8094,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Stop the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\r\n            Returns the operation id.",
+        "summary": "Stop the account's hosted terminal. The Idempotency-Key header is required. Needs the Trade permission.\n            Returns the operation id.",
         "operationId": "AccountStop",
         "parameters": [
           {
@@ -8107,7 +8192,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "Restart the account's hosted terminal (a terminal never set up is started). The Idempotency-Key header is\r\n            required. Needs the Trade permission. Returns the operation id.",
+        "summary": "Restart the account's hosted terminal (a terminal never set up is started). The Idempotency-Key header is\n            required. Needs the Trade permission. Returns the operation id.",
         "operationId": "AccountRestart",
         "parameters": [
           {
@@ -8205,7 +8290,7 @@
         "tags": [
           "Terminal"
         ],
-        "summary": "The newest terminal operations (start, stop, restart, set-up, removal) across the caller's accounts, newest\r\n            first.",
+        "summary": "The newest terminal operations (start, stop, restart, set-up, removal) across the caller's accounts, newest\n            first.",
         "operationId": "Operations",
         "parameters": [
           {
@@ -8370,7 +8455,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Adopt open trades: every market position on the account that was opened outside FinCopy becomes FinCopy's own, keeping\r\n            its ticket, lot, price and open time. FinCopy enables each trade's pair within the plan's pair limit (oldest trade first); a pair\r\n            that does not fit is refused whole and listed with its tickets. The broker TP and SL a trade holds are kept until its side gets\r\n            an add or the symbol's TP or SL settings change. Send Preview true to see what would happen without writing anything. Send an\r\n            Idempotency-Key: a retry returns the first answer. Needs the Trade permission and an EA of 2.38 or later.",
+        "summary": "Adopt open trades: every market position on the account that was opened outside FinCopy becomes FinCopy's own, keeping\n            its ticket, lot, price and open time. FinCopy enables each trade's pair within the plan's pair limit (oldest trade first); a pair\n            that does not fit is refused whole and listed with its tickets. The broker TP and SL a trade holds are kept until its side gets\n            an add or the symbol's TP or SL settings change. Send Preview true to see what would happen without writing anything. Send an\n            Idempotency-Key: a retry returns the first answer. Needs the Trade permission and an EA of 2.38 or later.",
         "operationId": "AdoptOpenTrades",
         "parameters": [
           {
@@ -8700,7 +8785,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings. For a signed-in\r\n            member session it also says whether the member's trading PIN must be entered (a key never needs one).",
+        "summary": "The facts a trade ticket needs for one symbol: price, lot limits, the side's books and settings. For a signed-in\n            member session it also says whether the member's trading PIN must be entered (a key never needs one).",
         "operationId": "AccountTradePreInfo",
         "parameters": [
           {
@@ -8815,7 +8900,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. The Idempotency-Key header is\r\n            required. Needs the Trade permission.",
+        "summary": "Make one FXS action (NEW, AVL, AVG, CLO, CLA, CLG, STP, CSL) on one side. The Idempotency-Key header is\n            required. Needs the Trade permission.",
         "operationId": "AccountTradeMake",
         "parameters": [
           {
@@ -9296,7 +9381,7 @@
         "tags": [
           "Trading"
         ],
-        "summary": "Ask-First DCA proposals waiting for an answer, across the caller's accounts, newest first. For a signed-in member\r\n            session each row says whether the member's trading PIN must be entered to answer it.",
+        "summary": "Ask-First DCA proposals waiting for an answer, across the caller's accounts, newest first. For a signed-in member\n            session each row says whether the member's trading PIN must be entered to answer it.",
         "operationId": "Dca",
         "parameters": [
           {
@@ -9396,7 +9481,8 @@
           "COPY",
           "DYNM"
         ],
-        "type": "string"
+        "type": "string",
+        "description": "TP545: DYNM (the dynamic martingale) keeps REVM's number 7, so EA 2.43 and later run each of its steps as FIRR, per\n            ticket, with no EA change."
       },
       "AModeBotPick": {
         "type": "object",
@@ -9419,6 +9505,54 @@
           }
         },
         "additionalProperties": false
+      },
+      "AdvAskStatus": {
+        "enum": [
+          "QUEUED",
+          "RESEARCH",
+          "THINKING",
+          "READY",
+          "APPLIED",
+          "ACCEPTED",
+          "PARTLY",
+          "DECLINED",
+          "EXPIRED",
+          "FAILED",
+          "CANCELLED",
+          "UNDONE",
+          "WATCH"
+        ],
+        "type": "string",
+        "description": "TP538 §2.2: where one Advisor ask is. Stored as a number with its string twin (FxsAdvAsk.Status / Status_).\n            QUEUED, RESEARCH and THINKING are the task; READY waits on the member (Ask-First); the rest are its end."
+      },
+      "AdvChargeBasis": {
+        "enum": [
+          "INCLUDED",
+          "FLAT",
+          "SIZE"
+        ],
+        "type": "string",
+        "description": "TP538 Q849-B: how an ask's charge was worked out. INCLUDED: the day's included ask (free). FLAT: a fixed price\n            (Let AI choose keeps its credit action's price). SIZE: the estimate × AdvCostMarkup ÷ AdvCreditUsd, rounded up."
+      },
+      "AdvDecision": {
+        "enum": [
+          "NONE",
+          "ACCEPT",
+          "DECLINE",
+          "AUTO",
+          "NARROWED"
+        ],
+        "type": "string",
+        "description": "TP538 Q848-A: what became of one pair's part of an answer, or of its account block. AUTO: applied by itself\n            (Auto-Apply). NARROWED: a narrowing stance or a lower AIBot mode applied at once under Ask-First, the rest still waiting.\n            NONE: waiting, or a Watch pair."
+      },
+      "AdvTilt": {
+        "enum": [
+          "DEFENSIVE",
+          "BALANCED",
+          "OFFENSIVE"
+        ],
+        "type": "string",
+        "description": "TP538 Q854-A: how an answer leans overall. A label, not a setting: nothing reads it but the page."
       },
       "BooleanBotPick": {
         "type": "object",
@@ -9524,43 +9658,6 @@
         ],
         "type": "string"
       },
-      "CmdAIBotAdviceDecide": {
-        "type": "object",
-        "properties": {
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "AdviceId": {
-            "type": "string",
-            "nullable": true
-          },
-          "Accept": {
-            "type": "boolean"
-          },
-          "TrPin": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "T701 (Q10-C): Accept or Reject a waiting advice."
-      },
-      "CmdAIBotAdviceUndo": {
-        "type": "object",
-        "properties": {
-          "ACNO": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "TrPin": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false,
-        "description": "T701 (Q10-C): Undo last advice."
-      },
       "CmdAIBotFullAutoSettings": {
         "type": "object",
         "properties": {
@@ -9656,7 +9753,7 @@
             "items": {
               "$ref": "#/components/schemas/AMode"
             },
-            "description": "T709: the methods AIBot may choose per side (never COPY), the account template's and every one of its pairs'\r\n            (SYMSTG.BALLOWED / SALLOWED); null leaves them.",
+            "description": "T709: the methods AIBot may choose per side (never COPY), the account template's and every one of its pairs'\n            (SYMSTG.BALLOWED / SALLOWED); null leaves them.",
             "nullable": true
           },
           "SALLOWED": {
@@ -9688,7 +9785,7 @@
           },
           "BLGP": {
             "type": "number",
-            "description": "Q446-A: the ladder per side: level gap (% beyond the previous fill), level multiplier, most levels, group gap (%),\r\n            group multiplier, most groups.",
+            "description": "Q446-A: the ladder per side: level gap (% beyond the previous fill), level multiplier, most levels, group gap (%),\n            group multiplier, most groups.",
             "format": "double",
             "nullable": true
           },
@@ -9769,12 +9866,43 @@
             "format": "double",
             "nullable": true
           },
+          "BADDCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SADDCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "BTRAIL": {
             "type": "boolean",
             "nullable": true
           },
           "STRAIL": {
             "type": "boolean",
+            "nullable": true
+          },
+          "BETAP": {
+            "type": "number",
+            "description": "TP545 (TP538 Q914-A): the early trail per side, % of the set's TP distance: the start (BETAP / SETAP; 0 = off) and\n            the distance the SL field then trails by (BETDP / SETDP). No TP, no early trail.",
+            "format": "double",
+            "nullable": true
+          },
+          "SETAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BETDP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SETDP": {
+            "type": "number",
+            "format": "double",
             "nullable": true
           },
           "BFRATIO": {
@@ -9810,7 +9938,7 @@
           },
           "USEPO": {
             "type": "boolean",
-            "description": "Q446-A: pending orders (USEPO), descending lots (USEDESC) and its multiple per side (BDMUL / SDMUL, × the opening\r\n            lot), and DCAEXP (FinCopy's DCA exponent).",
+            "description": "Q446-A: pending orders (USEPO), descending lots (USEDESC) and its multiple per side (BDMUL / SDMUL, × the opening\n            lot), and DCAEXP (FinCopy's DCA exponent).",
             "nullable": true
           },
           "USEDESC": {
@@ -9831,6 +9959,38 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "DYMAX": {
+            "type": "integer",
+            "description": "TP545: DYNM's ledger values, one per pair: the most steps a ledger, the recovery target (× R), the ledger's cap (%\n            of equity), the most a step may lose at its SL (× R), the cool-off after a close that leaves it owing (minutes), the\n            strength gate and the side rule.",
+            "format": "int32",
+            "nullable": true
+          },
+          "DYTGT": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYSTEP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYCOOL": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "DYGATE": {
+            "$ref": "#/components/schemas/DynGate"
+          },
+          "DYSIDE": {
+            "$ref": "#/components/schemas/DynSide"
           },
           "TrPin": {
             "type": "string",
@@ -9910,7 +10070,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "T701 (Q8-A): edit one pair's rules. T709 (Q396-A): the pair's own settings (its per-side TP, SL, TS, opening lot, ladder,\r\n            trailing and hard SL, and its EntMode / AvgMode) are sent as a partial SYMSTG, checked as the pair's settings are; the entry\r\n            rules keep only the FinNews filter."
+        "description": "T701 (Q8-A): edit one pair's rules. T709 (Q396-A): the pair's own settings (its per-side TP, SL, TS, opening lot, ladder,\n            trailing and hard SL, and its EntMode / AvgMode) are sent as a partial SYMSTG, checked as the pair's settings are; the entry\n            rules keep only the FinNews filter."
       },
       "CmdAIBotRetune": {
         "type": "object",
@@ -9926,25 +10086,86 @@
         },
         "additionalProperties": false
       },
-      "CmdAdvisorSend": {
+      "CmdAdvAskMake": {
         "type": "object",
         "properties": {
           "ACNO": {
             "type": "integer",
             "format": "int64"
           },
+          "Kind": {
+            "type": "string",
+            "nullable": true
+          },
           "PreviewId": {
             "type": "string",
             "nullable": true
           },
-          "Kind": {
+          "Syms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The ticked pairs; null: the scheduled selection. Must match the preview's when a PreviewId is given.",
+            "nullable": true
+          },
+          "SaveSelection": {
+            "type": "boolean",
+            "description": "Keep this selection for scheduled asks (stored as Advisor.ExcludedSymbols, the pairs left out)."
+          }
+        },
+        "additionalProperties": false,
+        "description": "AskMake: send an ask. With a PreviewId the ask sends that preview's pairs and pays its charge; without one it is\n            priced now. Returns at once with the ask (QUEUED); the runner answers it."
+      },
+      "CmdAdvAskPtch": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "AskId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Cancel": {
+            "type": "boolean",
+            "description": "Cancel the ask while it is QUEUED (refunded). Pairs and Account are ignored."
+          },
+          "Pairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoAdvPairDecision"
+            },
+            "nullable": true
+          },
+          "Account": {
+            "$ref": "#/components/schemas/AdvDecision"
+          },
+          "TrPin": {
             "type": "string",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "AskPtch: decide an answer pair by pair and its account block (Q848-A), or cancel a QUEUED ask. Anything accepted\n            needs the Trading PIN (the member routes); a pair left out of Pairs stays as it is."
       },
-      "CmdAdvisorSettings": {
+      "CmdAdvAskRset": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "TrPin": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "AskRset: undo the last applied answer (FxsAcct.Advisor.UndoAskId)."
+      },
+      "CmdAdvStgEdit": {
         "type": "object",
         "properties": {
           "ACNO": {
@@ -9952,10 +10173,11 @@
             "format": "int64"
           },
           "Settings": {
-            "$ref": "#/components/schemas/FxsAdvisorSettings"
+            "$ref": "#/components/schemas/DtoAdvStg"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "StgEdit: save the account's Advisor settings."
       },
       "CmdApiFxsAcctPatch": {
         "type": "object",
@@ -10004,7 +10226,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as\r\n            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the\r\n            weakest signal (any step of the scale: BUY VSS-VSB, SELL mirrored VSB-VSS) and trend (any step of the scale, or null for Any)\r\n            accepted, the lowest confidence, and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own\r\n            AIBot settings are, and a change is written to the account log. A member session (the member's screens) that sends any of the\r\n            three sets gives its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not."
+        "description": "Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as\n            stored. SigCold, SigWarm and SigHot are the account's own signal sets (COLD, WARM and HOT), each replaced whole: per side the\n            weakest signal (any step of the scale: BUY VSS-VSB, SELL mirrored VSB-VSS) and trend (any step of the scale, or null for Any)\n            accepted, the lowest confidence, and on COLD and WARM a minimum score 0-10 (HOT has none). Each is checked as the member's own\n            AIBot settings are, and a change is written to the account log. A member session (the member's screens) that sends any of the\n            three sets gives its Trading PIN in TrPin, as the member's own AIBot settings do; an API key does not."
       },
       "CmdApiFxsAdopt": {
         "type": "object",
@@ -10014,7 +10236,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "T709 (Q257-A): press \"Adopt open trades\" for the account in the route. Preview returns what would happen and writes\r\n            nothing. Send an Idempotency-Key: a second press with the same key returns the first answer."
+        "description": "T709 (Q257-A): press \"Adopt open trades\" for the account in the route. Preview returns what would happen and writes\n            nothing. Send an Idempotency-Key: a second press with the same key returns the first answer."
       },
       "CmdApiFxsHedgeMake": {
         "type": "object",
@@ -10321,7 +10543,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Edit one ticket's own exits (MOD). TrailPercent is the ticket's own TS, % of its TP money (T701 Q3-A): null keeps\r\n            the ticket's current TS (while it keeps a TP), 0 clears it."
+        "description": "Edit one ticket's own exits (MOD). TrailPercent is the ticket's own TS, % of its TP money (T701 Q3-A): null keeps\n            the ticket's current TS (while it keeps a TP), 0 clears it."
       },
       "CmdFxsPairInstrumentConfirm": {
         "type": "object",
@@ -10356,10 +10578,13 @@
           },
           "PairDefaults": {
             "$ref": "#/components/schemas/FxsAIBotStgPair"
+          },
+          "Camp": {
+            "$ref": "#/components/schemas/FxsCamp"
           }
         },
         "additionalProperties": false,
-        "description": "TP496 Q285-A: a strategy's AIBot settings as a save sends them. Sent, its two parts replace the strategy's limits and\r\n            pair defaults (a null part or a null field is then not part of the strategy and never travels); not sent, both stay as they are.\r\n            T709: Protection (SL or DCA, the ladder) is the strategy's preference; null leaves it."
+        "description": "TP496 Q285-A: a strategy's AIBot settings as a save sends them. Sent, its two parts replace the strategy's limits and\n            pair defaults (a null part or a null field is then not part of the strategy and never travels); not sent, both stay as they are.\n            T709: Protection (SL or DCA, the ladder) is the strategy's preference; null leaves it."
       },
       "CmdFxsStgMake": {
         "type": "object",
@@ -10475,7 +10700,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Edits a strategy: each field sent replaces the stored one (a range whole; a set whole). Clear names\r\n            the nullable ranges to empty (back to \"not part of the strategy\"): ACCSTG.<field> or SYMSTG.<field> of a range field, since a\r\n            null in ACCSTG / SYMSTG means \"unchanged\". TrPin: the member's Trading PIN (the member routes ask it)."
+        "description": "Edits a strategy: each field sent replaces the stored one (a range whole; a set whole). Clear names\n            the nullable ranges to empty (back to \"not part of the strategy\"): ACCSTG.<field> or SYMSTG.<field> of a range field, since a\n            null in ACCSTG / SYMSTG means \"unchanged\". TrPin: the member's Trading PIN (the member routes ask it)."
       },
       "CmdFxsSymbolsEdit": {
         "type": "object",
@@ -10714,175 +10939,56 @@
         ],
         "type": "string"
       },
-      "DtoAIBotAdvice": {
+      "DtoAIBotDynNext": {
         "type": "object",
         "properties": {
-          "Credits": {
-            "type": "number",
-            "format": "double"
+          "SideRule": {
+            "$ref": "#/components/schemas/DynSide"
           },
-          "Included": {
-            "type": "boolean"
-          },
-          "Refunded": {
-            "type": "boolean"
-          },
-          "CreditNote": {
-            "type": "string",
-            "nullable": true
-          },
-          "Input": {
-            "type": "string",
-            "nullable": true
-          },
-          "ContextJson": {
-            "type": "string",
-            "nullable": true
-          },
-          "Kind": {
-            "type": "string",
-            "nullable": true
-          },
-          "RevisitAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "InputTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "OutputTokens": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "Id": {
-            "type": "string",
-            "nullable": true
-          },
-          "Trigger": {
-            "type": "string",
-            "nullable": true
-          },
-          "AskedAt": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "Status": {
-            "type": "string",
-            "nullable": true
-          },
-          "Error": {
-            "type": "string",
-            "nullable": true
-          },
-          "Model": {
-            "type": "string",
-            "nullable": true
-          },
-          "CostUsd": {
-            "type": "number",
-            "format": "double"
-          },
-          "Note": {
-            "type": "string",
-            "nullable": true
-          },
-          "Pairs": {
+          "Sides": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FxsAIBotAdvisorPair"
+              "$ref": "#/components/schemas/DtoAIBotDynNextSide"
             },
-            "nullable": true
-          },
-          "Changes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FxsAIBotAdvisorChange"
-            },
-            "description": "T709 (Q399-A): changes to the account's signal sets.",
-            "nullable": true
-          },
-          "DecidedAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "DecidedBy": {
-            "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "T701 Phase 4: one AIAdvisor answer as the AIBot page shows it."
+        "description": "TP545: the next DYNM step's size, per side the side rule (DYSIDE) allows, BUY first."
       },
-      "DtoAIBotAdviceIReadOnlyListResPonse": {
+      "DtoAIBotDynNextSide": {
         "type": "object",
         "properties": {
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DtoAIBotAdvice"
-            },
+          "Side": {
+            "type": "string",
+            "description": "BUY or SELL.",
             "nullable": true
           },
-          "code": {
-            "type": "integer",
-            "format": "int32"
+          "Lot": {
+            "type": "number",
+            "description": "The lot, rounded to the broker's lot step; 0 when it cannot be sized now (Why says why).",
+            "format": "double"
           },
-          "isOk": {
+          "StepLoss": {
+            "type": "number",
+            "description": "The step's own loss at its SL, in the account's currency.",
+            "format": "double"
+          },
+          "Partial": {
             "type": "boolean",
-            "readOnly": true
+            "description": "Cut to DYSTEP, the ledger cap or the broker's largest lot: a win wins back only part of the ledger."
           },
-          "message": {
+          "End": {
+            "$ref": "#/components/schemas/DynEnd"
+          },
+          "Why": {
             "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "chksum": {
-            "type": "string",
+            "description": "How the lot was reached, or why it cannot be sized now.",
             "nullable": true
           }
         },
-        "additionalProperties": false
-      },
-      "DtoAIBotAdviceResPonse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/DtoAIBotAdvice"
-          },
-          "code": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isOk": {
-            "type": "boolean",
-            "readOnly": true
-          },
-          "message": {
-            "type": "string",
-            "nullable": true
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "chksum": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "TP545: one side's next DYNM step as FxsDynm.SizeStep sizes it now."
       },
       "DtoAIBotFullAuto": {
         "type": "object",
@@ -11013,46 +11119,8 @@
           "AIBotPairDefaults": {
             "$ref": "#/components/schemas/FxsAIBotStgPair"
           },
-          "AdvisorAllowed": {
-            "type": "boolean"
-          },
-          "AdvisorStaff": {
-            "type": "boolean"
-          },
-          "AdvisorBalance": {
-            "type": "number",
-            "format": "double"
-          },
-          "Advisor": {
-            "$ref": "#/components/schemas/FxsAdvisorSettings"
-          },
-          "AdviceMode": {
-            "type": "string",
-            "nullable": true
-          },
-          "AdviceTime": {
-            "type": "string",
-            "nullable": true
-          },
-          "AdviceCallsToday": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "AdviceMaxPerDay": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "LastAdviceAt": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "CanUndoAdvice": {
-            "type": "boolean"
-          },
-          "AdvisorOff": {
-            "type": "boolean",
-            "description": "Advisor is disabled or this account has no Ultra entitlement; AIBot retains its own stance."
+          "AdvisorLine": {
+            "$ref": "#/components/schemas/DtoAdvLine"
           },
           "Posture": {
             "type": "string",
@@ -11061,6 +11129,16 @@
           "PostureWhy": {
             "type": "string",
             "nullable": true
+          },
+          "DynmRefusal": {
+            "type": "string",
+            "description": "TP545 (Q936-A, TP538 Q859-B): why this account may not choose DYNM (not a demo account while DYNM on real accounts\n            is off, or a terminal below EA 2.43), or null when it may.",
+            "nullable": true
+          },
+          "DynmOwed": {
+            "type": "number",
+            "description": "TP545 (Q932-A): what the account's running DYNM ledgers owe in all (the sum of its pairs' Dyn.Owed): a read model,\n            each pair keeps its own ledger.",
+            "format": "double"
           },
           "HedgeOn": {
             "type": "boolean"
@@ -11079,13 +11157,6 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DtoAIBotFullAutoPair"
-            },
-            "nullable": true
-          },
-          "Advice": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/DtoAIBotAdvice"
             },
             "nullable": true
           },
@@ -11314,6 +11385,12 @@
             "type": "string",
             "description": "T701 (Q7-A): OPENED or MANAGED.",
             "nullable": true
+          },
+          "DynStep": {
+            "type": "integer",
+            "description": "TP545: the DYNM step this trade was; null for every other method.",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -11382,7 +11459,7 @@
           },
           "Flat": {
             "type": "boolean",
-            "description": "T709 Q446-A: nothing open on either side (the pair's counts, FxsPairDefaults.NothingOpen), so a settings save\r\n            carries the pair defaults it sends to this pair; a pair holding trades keeps its own."
+            "description": "T709 Q446-A: nothing open on either side (the pair's counts, FxsPairDefaults.NothingOpen), so a settings save\n            carries the pair defaults it sends to this pair; a pair holding trades keeps its own."
           },
           "Mode": {
             "type": "string",
@@ -11417,6 +11494,14 @@
             "type": "string",
             "nullable": true
           },
+          "Advised": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxsAIBotAdvised"
+            },
+            "description": "TP538: the pair's fields Advisor set that still hold Advisor's value (the AIBot page marks them \"Set by Advisor\"),\n            with the answer that set them.",
+            "nullable": true
+          },
           "NLOT": {
             "type": "number",
             "description": "The pair's starting lot (NLOT).",
@@ -11441,17 +11526,27 @@
             "items": {
               "$ref": "#/components/schemas/FxsSlHold"
             },
-            "description": "T709 incident (Q459-A): the SL changes FinCopy holds back on this pair because they would close open trades at once,\r\n            one per side, each with the trades it would close and their P/L now; Confirm (Trading PIN) sends one, Discard puts the side's\r\n            settings back to what the EA has.",
+            "description": "T709 incident (Q459-A): the SL changes FinCopy holds back on this pair because they would close open trades at once,\n            one per side, each with the trades it would close and their P/L now; Confirm (Trading PIN) sends one, Discard puts the side's\n            settings back to what the EA has.",
             "nullable": true
           },
           "BuySlOff": {
             "type": "integer",
-            "description": "T709 incident (Q460-C): the open trades on each side AIBot does not own (trades FinCopy does not own, adopted ones not\r\n            handed over, Telegram copies, tickets taken back). While a side holds any, it takes no SL; Hand to AIBot hands them over.",
+            "description": "T709 incident (Q460-C): the open trades on each side AIBot does not own (trades FinCopy does not own, adopted ones not\n            handed over, Telegram copies, tickets taken back). While a side holds any, it takes no SL; Hand to AIBot hands them over.",
             "format": "int32"
           },
           "SellSlOff": {
             "type": "integer",
             "format": "int32"
+          },
+          "Dyn": {
+            "$ref": "#/components/schemas/FxsAIBotDynLedger"
+          },
+          "DynLine": {
+            "type": "string",
+            "nullable": true
+          },
+          "DynNext": {
+            "$ref": "#/components/schemas/DtoAIBotDynNext"
           }
         },
         "additionalProperties": false
@@ -11726,15 +11821,38 @@
           },
           "NewsFilter": {
             "$ref": "#/components/schemas/BooleanBotPick"
+          },
+          "TrendGuard": {
+            "$ref": "#/components/schemas/TrendGuardBotPick"
+          },
+          "TaGuard": {
+            "$ref": "#/components/schemas/TaGuardBotPick"
+          },
+          "Switches": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BooleanBotPick"
+            },
+            "description": "TP545 (Q930-A): on / off values with a state, by field path: SYMSTG.BTRAIL and SYMSTG.STRAIL, each side's TP / TS\n            switch (on: the TP arms a TS, no broker TP; off: a hard TP). Fixed: only the member; My range (Opts) or Strategy: Advisor\n            and AIBot (by the camp or the posture) may flip it.",
+            "nullable": true
+          },
+          "Camp": {
+            "$ref": "#/components/schemas/FxsCampBotPick"
+          },
+          "DYGATE": {
+            "$ref": "#/components/schemas/DynGateBotPick"
+          },
+          "DYSIDE": {
+            "$ref": "#/components/schemas/DynSideBotPick"
           }
         },
         "additionalProperties": false,
         "description": "Ordinary per-value edits. There is no account-wide stored switch."
       },
-      "DtoAdvisorPreview": {
+      "DtoAdvAskPreview": {
         "type": "object",
         "properties": {
-          "Id": {
+          "PreviewId": {
             "type": "string",
             "nullable": true
           },
@@ -11746,39 +11864,62 @@
             "type": "string",
             "format": "date-time"
           },
-          "Model": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Kind": {
             "type": "string",
+            "nullable": true
+          },
+          "Syms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Chars": {
+            "type": "integer",
+            "description": "Characters of the exact text.",
+            "format": "int32"
+          },
+          "Sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoAdvSection"
+            },
+            "description": "What Advisor reads, section by section, in order. Each names where its readable view is: a key of ContextJson\n            (Ask, Account, MarketClimate, Readings, News, MayChange), one pair (Account.Pairs[SYM]), or the instructions (the text of\n            Input around ContextJson).",
             "nullable": true
           },
           "Input": {
             "type": "string",
+            "description": "The exact text Advisor reads.",
             "nullable": true
           },
           "ContextJson": {
             "type": "string",
+            "description": "The readable context inside Input.",
             "nullable": true
           },
-          "EstimatedInputTokens": {
-            "type": "integer",
-            "format": "int32"
+          "Charge": {
+            "$ref": "#/components/schemas/DtoAdvCharge"
           },
-          "EstimatedCostUsd": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
+          "Estimate": {
+            "$ref": "#/components/schemas/DtoAdvEstimate"
           },
-          "EstimateNote": {
-            "type": "string",
-            "nullable": true
+          "ShowCost": {
+            "type": "boolean"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "The Review step: the sections and their sizes, the exact text, the charge, and the staff estimate when the viewer\n            may see it. Send with its PreviewId within 15 minutes; the charge Send takes is this preview's, never more."
       },
-      "DtoAdvisorPreviewResPonse": {
+      "DtoAdvAskPreviewResPonse": {
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/DtoAdvisorPreview"
+            "$ref": "#/components/schemas/DtoAdvAskPreview"
           },
           "code": {
             "type": "integer",
@@ -11805,6 +11946,471 @@
           }
         },
         "additionalProperties": false
+      },
+      "DtoAdvCharge": {
+        "type": "object",
+        "properties": {
+          "Basis": {
+            "$ref": "#/components/schemas/AdvChargeBasis"
+          },
+          "Credits": {
+            "type": "number",
+            "format": "double"
+          },
+          "Included": {
+            "type": "boolean"
+          },
+          "Staff": {
+            "type": "boolean",
+            "description": "Staff are never charged."
+          },
+          "Balance": {
+            "type": "number",
+            "description": "The member's Advisor credits now.",
+            "format": "double"
+          },
+          "AsksToday": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Ceiling": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "IncludedAt": {
+            "type": "string",
+            "description": "When today's included ask was used; null while it is still free.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Words": {
+            "type": "string",
+            "description": "One line for the member: \"Included: the first ask of the day\", \"25 Advisor credits\".",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "What an ask costs the member (Q849-B): the day's included ask is free; an extra ask is priced by size; a Let AI\n            choose plan keeps its credit action's price."
+      },
+      "DtoAdvEstimate": {
+        "type": "object",
+        "properties": {
+          "PromptKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "PromptVer": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ExtCall": {
+            "type": "boolean"
+          },
+          "Route": {
+            "type": "string",
+            "nullable": true
+          },
+          "Provider": {
+            "type": "string",
+            "nullable": true
+          },
+          "Model": {
+            "type": "string",
+            "nullable": true
+          },
+          "MaxOutTok": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Chars": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EstInTok": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EstOutTok": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "OutSample": {
+            "type": "integer",
+            "description": "How many completed asks the output estimate averaged (0: the 2,500 default).",
+            "format": "int32"
+          },
+          "InUsdPerM": {
+            "type": "number",
+            "format": "double"
+          },
+          "OutUsdPerM": {
+            "type": "number",
+            "format": "double"
+          },
+          "InUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "OutUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "EstUsd": {
+            "type": "number",
+            "description": "The model cost, input and output.",
+            "format": "double"
+          },
+          "ResearchUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "TotalUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "Markup": {
+            "type": "number",
+            "format": "double"
+          },
+          "CreditUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "RawCredits": {
+            "type": "number",
+            "format": "double"
+          },
+          "SizeCredits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "WireBytes": {
+            "type": "integer",
+            "description": "Bytes the request takes on the wire to FinApi, and FinApi's body limit.",
+            "format": "int32"
+          },
+          "BodyLimit": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "The staff panel's estimate (Q849-B, Q850-C): input tokens = characters ÷ 4; expected output = the average output of\n            this account's last 10 completed asks (2,500 when there are none); the prompt's model prices from FinCopy's key price list;\n            plus the research cap. Credits = ceil(TotalUsd × Markup ÷ CreditUsd)."
+      },
+      "DtoAdvLine": {
+        "type": "object",
+        "properties": {
+          "On": {
+            "type": "boolean",
+            "description": "Advisor is enabled and the account's plan allows it."
+          },
+          "Mode": {
+            "type": "string",
+            "description": "ASK (Ask-First) or APPLY (Auto-Apply).",
+            "nullable": true
+          },
+          "Manual": {
+            "type": "boolean"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/AdvAskStatus"
+          },
+          "NewestAskId": {
+            "type": "string",
+            "nullable": true
+          },
+          "NewestAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Waiting": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "LastAppliedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "The AIBot page's one Advisor line (TP538 §2.1): mode, newest status, waiting count, last applied time."
+      },
+      "DtoAdvPairDecision": {
+        "type": "object",
+        "properties": {
+          "SYM": {
+            "type": "string",
+            "nullable": true
+          },
+          "Decision": {
+            "$ref": "#/components/schemas/AdvDecision"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoAdvPairRow": {
+        "type": "object",
+        "properties": {
+          "SYM": {
+            "type": "string",
+            "nullable": true
+          },
+          "SYM6": {
+            "type": "string",
+            "nullable": true
+          },
+          "Mode": {
+            "type": "string",
+            "description": "AIBot's mode on the pair: OFF, WATCH, EXITS or FULL.",
+            "nullable": true
+          },
+          "BuyMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "SellMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "Stance": {
+            "type": "string",
+            "nullable": true
+          },
+          "StanceUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Condition": {
+            "type": "string",
+            "nullable": true
+          },
+          "SignalSide": {
+            "type": "string",
+            "description": "The reading the pair's stance came from: BUY, SELL or NONE, and its confidence band.",
+            "nullable": true
+          },
+          "ConfidenceBand": {
+            "type": "string",
+            "nullable": true
+          },
+          "OpenTrades": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "LastAction": {
+            "type": "string",
+            "description": "AIBot's last refusal or action on the pair, when it has one.",
+            "nullable": true
+          },
+          "Scheduled": {
+            "type": "boolean",
+            "description": "The pair is in the scheduled selection (not in Advisor.ExcludedSymbols)."
+          },
+          "Sendable": {
+            "type": "boolean",
+            "description": "Advisor can send this pair (AIBot is Watch, Exits only or Full auto on it)."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Step 1's row: one pair AIBot trades on the account."
+      },
+      "DtoAdvSection": {
+        "type": "object",
+        "properties": {
+          "Key": {
+            "type": "string",
+            "nullable": true
+          },
+          "Title": {
+            "type": "string",
+            "nullable": true
+          },
+          "Chars": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "SYM": {
+            "type": "string",
+            "description": "The pair of a \"pair\" section; null otherwise.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "One section of an ask. Key: ask, account, climate, readings, news, pair, may, instructions."
+      },
+      "DtoAdvState": {
+        "type": "object",
+        "properties": {
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "Login": {
+            "type": "string",
+            "nullable": true
+          },
+          "Allowed": {
+            "type": "boolean",
+            "description": "The account's plan allows Advisor (Ultra), or the viewer is staff."
+          },
+          "Staff": {
+            "type": "boolean"
+          },
+          "OffReason": {
+            "type": "string",
+            "description": "Why Advisor cannot run on this account; null when it can.",
+            "nullable": true
+          },
+          "Settings": {
+            "$ref": "#/components/schemas/DtoAdvStg"
+          },
+          "Balance": {
+            "type": "number",
+            "format": "double"
+          },
+          "AsksToday": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Ceiling": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "IncludedUsed": {
+            "type": "boolean"
+          },
+          "IncludedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastAdviceAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "NextScheduledAt": {
+            "type": "string",
+            "description": "When the next scheduled ask is due (UTC); null when Manual or off.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "UndoAskId": {
+            "type": "string",
+            "nullable": true
+          },
+          "ShowCost": {
+            "type": "boolean"
+          },
+          "CostMarkup": {
+            "type": "number",
+            "description": "Q849-B: the size price's parts, for the page's \"about N credits\" lines.",
+            "format": "double"
+          },
+          "CreditUsd": {
+            "type": "number",
+            "format": "double"
+          },
+          "Pairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoAdvPairRow"
+            },
+            "nullable": true
+          },
+          "Running": {
+            "$ref": "#/components/schemas/DtoFxsAdvAsk"
+          },
+          "Newest": {
+            "$ref": "#/components/schemas/DtoFxsAdvAsk"
+          },
+          "Waiting": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "StgView: what the Advisor page needs about one account before an ask: the settings, the entitlement, the credits and\n            the day's count, the pairs to tick, the running task and the newest answer."
+      },
+      "DtoAdvStateResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoAdvState"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoAdvStg": {
+        "type": "object",
+        "properties": {
+          "Enabled": {
+            "type": "boolean"
+          },
+          "AdviceTime": {
+            "type": "string",
+            "description": "When the day's included ask runs, UTC, HH:mm.",
+            "nullable": true
+          },
+          "AdviceMode": {
+            "type": "string",
+            "description": "ASK (Ask-First) or APPLY (Auto-Apply).",
+            "nullable": true
+          },
+          "EveryFourHours": {
+            "type": "boolean"
+          },
+          "PaidReasks": {
+            "type": "boolean"
+          },
+          "Manual": {
+            "type": "boolean"
+          },
+          "ExcludedSymbols": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The pairs left out of scheduled asks.",
+            "nullable": true
+          },
+          "NotifyEmail": {
+            "type": "boolean",
+            "description": "Q851-A: email the member when an answer is ready, applied or failed."
+          },
+          "NotifyBot": {
+            "type": "boolean",
+            "description": "Q851-A: tell the member on the FinCopy bot (Telegram)."
+          }
+        },
+        "additionalProperties": false,
+        "description": "The member's Advisor settings (FxsAcct.Advisor): what StgEdit writes. Counters and times are never taken from it."
       },
       "DtoApiChange": {
         "type": "object",
@@ -11900,7 +12506,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to\r\n            re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state."
+        "description": "One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to\n            re-read. Order and History rows carry the order's state; Account rows the money; Terminal rows the terminal's state."
       },
       "DtoApiChangeFeed": {
         "type": "object",
@@ -12105,7 +12711,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "What the pair's settings do with one side after adoption (adoption never changes AvgMode): its averaging mode, the next\r\n            level the side would add, the price that add triggers at (a % beyond the newest fill), and whether today's price is already\r\n            past it, so an automatic add would follow at once."
+        "description": "What the pair's settings do with one side after adoption (adoption never changes AvgMode): its averaging mode, the next\n            level the side would add, the price that add triggers at (a % beyond the newest fill), and whether today's price is already\n            past it, so an automatic add would follow at once."
       },
       "DtoApiTermOperation": {
         "type": "object",
@@ -12512,7 +13118,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Demo places that can start now (a prepared terminal and a free slot), and whether this member already\r\n            runs one (one at a time)."
+        "description": "Demo places that can start now (a prepared terminal and a free slot), and whether this member already\n            runs one (one at a time)."
       },
       "DtoDemoAvailabilityResPonse": {
         "type": "object",
@@ -12763,6 +13369,37 @@
             "format": "double",
             "nullable": true
           },
+          "BADDCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SADDCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BETAP": {
+            "type": "number",
+            "description": "TP545: the early trail (start, distance; % of the TP distance). The sync sends them to EA 2.44 or later only.",
+            "format": "double",
+            "nullable": true
+          },
+          "SETAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BETDP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SETDP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "BHRSL": {
             "type": "boolean",
             "nullable": true
@@ -12879,6 +13516,38 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "DYMAX": {
+            "type": "integer",
+            "description": "TP545: DYNM's ledger values (one per pair); FinCopy's own, never on the EA's wire.",
+            "format": "int32",
+            "nullable": true
+          },
+          "DYTGT": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYSTEP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYCOOL": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "DYGATE": {
+            "$ref": "#/components/schemas/DynGate"
+          },
+          "DYSIDE": {
+            "$ref": "#/components/schemas/DynSide"
           }
         },
         "additionalProperties": false,
@@ -12952,7 +13621,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "One ask in the member's AIBot history. Refunded: its credits came back (a failed run, or a plan the check refused);\r\n            ApiCredits and AiCredits still say what it was charged. Staff: asked by a staff member, so nothing was charged (T703 Q48-B)."
+        "description": "One ask in the member's AIBot history. Refunded: its credits came back (a failed run, or a plan the check refused);\n            ApiCredits and AiCredits still say what it was charged. Staff: asked by a staff member, so nothing was charged (T703 Q48-B)."
       },
       "DtoFcAdviceSummaryListResPonse": {
         "type": "object",
@@ -13228,7 +13897,7 @@
           },
           "PairLimit": {
             "type": "integer",
-            "description": "TRD2-B8: the plan's limit of enabled pairs (an admin override wins, else what the last sync worked out from the\r\n            seat's plan); null until the account has synced. The symbols editor refuses a pair over it before saving.",
+            "description": "TRD2-B8: the plan's limit of enabled pairs (an admin override wins, else what the last sync worked out from the\n            seat's plan); null until the account has synced. The symbols editor refuses a pair over it before saving.",
             "format": "int32",
             "nullable": true
           },
@@ -13732,6 +14401,324 @@
         },
         "additionalProperties": false
       },
+      "DtoFxsAdvAsk": {
+        "type": "object",
+        "properties": {
+          "Id": {
+            "type": "string",
+            "description": "The ask's id.",
+            "nullable": true
+          },
+          "USNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ACNO": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "ISNO": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "Trigger": {
+            "type": "string",
+            "nullable": true
+          },
+          "AskedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "Status": {
+            "$ref": "#/components/schemas/AdvAskStatus"
+          },
+          "Status_": {
+            "$ref": "#/components/schemas/AdvAskStatus"
+          },
+          "QueuedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "StartedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "AnsweredAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ExpiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "NotifiedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Notified": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "Error": {
+            "type": "string",
+            "nullable": true
+          },
+          "FinApiJobId": {
+            "type": "string",
+            "nullable": true
+          },
+          "Note": {
+            "type": "string",
+            "nullable": true
+          },
+          "TriggerSym": {
+            "type": "string",
+            "nullable": true
+          },
+          "DecidedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "DecidedBy": {
+            "type": "string",
+            "nullable": true
+          },
+          "Input": {
+            "type": "string",
+            "nullable": true
+          },
+          "ContextJson": {
+            "type": "string",
+            "nullable": true
+          },
+          "RevisitAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "SentSyms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "PromptKey": {
+            "type": "string",
+            "nullable": true
+          },
+          "PromptVer": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "EstChars": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "EstInTok": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "EstOutTok": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "EstUsd": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "WireBytes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ResearchUsd": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "Pairs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxsAdvAskPair"
+            },
+            "nullable": true
+          },
+          "Changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxsAdvChange"
+            },
+            "nullable": true
+          },
+          "Tilt": {
+            "$ref": "#/components/schemas/AdvTilt"
+          },
+          "Tilt_": {
+            "$ref": "#/components/schemas/AdvTilt"
+          },
+          "Sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxsAdvSource"
+            },
+            "nullable": true
+          },
+          "Credits": {
+            "type": "number",
+            "format": "double"
+          },
+          "Included": {
+            "type": "boolean"
+          },
+          "Refunded": {
+            "type": "boolean"
+          },
+          "CreditNote": {
+            "type": "string",
+            "nullable": true
+          },
+          "ChargeBasis": {
+            "$ref": "#/components/schemas/AdvChargeBasis"
+          },
+          "ChargeBasis_": {
+            "$ref": "#/components/schemas/AdvChargeBasis"
+          },
+          "Model": {
+            "type": "string",
+            "nullable": true
+          },
+          "InputTokens": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "OutputTokens": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "CostUsd": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ShowCost": {
+            "type": "boolean",
+            "description": "The viewer may see the model and cost panel (Q850-C). False: every model and cost field above is null."
+          },
+          "CanDecide": {
+            "type": "boolean",
+            "description": "This is the account's newest READY answer, not expired: its pairs and account block can be accepted or declined."
+          },
+          "CanCancel": {
+            "type": "boolean",
+            "description": "QUEUED: the member may still cancel it (refunded)."
+          },
+          "CanUndo": {
+            "type": "boolean",
+            "description": "This is the answer Undo reverts (FxsAcct.Advisor.UndoAskId)."
+          },
+          "AnswerSecs": {
+            "type": "integer",
+            "description": "Seconds from QueuedAt to AnsweredAt, for History's \"answered in\"; null while it runs.",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP538: one Advisor ask as the member and public APIs return it. The list never carries Input and ContextJson; the\n            one-ask view carries them only on request. The model and cost fields are null unless the viewer may see the staff panel\n            (Q850-C: staff always, members while FcStg.AdvShowModelCost is on); a null field is left off the wire."
+      },
+      "DtoFxsAdvAskResPaged": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoFxsAdvAsk"
+            },
+            "nullable": true
+          },
+          "paging": {
+            "$ref": "#/components/schemas/ResPage"
+          },
+          "grps": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ResGrp"
+              }
+            },
+            "nullable": true
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DtoFxsAdvAskResPonse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DtoFxsAdvAsk"
+          },
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isOk": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "chksum": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "DtoFxsBook": {
         "type": "object",
         "properties": {
@@ -14124,6 +15111,11 @@
             "format": "int32",
             "nullable": true
           },
+          "DynStep": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "EXP": {
             "type": "integer",
             "format": "int64"
@@ -14495,6 +15487,11 @@
             "format": "int32",
             "nullable": true
           },
+          "DynStep": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "EXP": {
             "type": "integer",
             "format": "int64"
@@ -14689,6 +15686,9 @@
             "description": "Read-only AIBot mode: OFF (Off), WATCH (Watch), EXITS (Exits only), FULL (Full auto). Set through AIBot, never /v1.",
             "nullable": true,
             "readOnly": true
+          },
+          "Dyn": {
+            "$ref": "#/components/schemas/DtoFxsPairDyn"
           },
           "BID": {
             "type": "number",
@@ -15176,6 +16176,42 @@
         },
         "additionalProperties": false,
         "description": "Wire DTO for a trading pair; it intentionally has no BSON attributes or extra-elements bag."
+      },
+      "DtoFxsPairDyn": {
+        "type": "object",
+        "properties": {
+          "Owed": {
+            "type": "number",
+            "description": "What the ledger owes: its steps' closed losses not yet won back, 0 or more.",
+            "format": "double"
+          },
+          "Step": {
+            "type": "integer",
+            "description": "The step the ledger is on: the open step, or the next one while it waits (1 to DYMAX).",
+            "format": "int32"
+          },
+          "Max": {
+            "type": "integer",
+            "description": "DYMAX: the most steps a ledger may hold before it is written off.",
+            "format": "int32"
+          },
+          "Side": {
+            "type": "string",
+            "description": "The side of the open or last step: BUY or SELL.",
+            "nullable": true
+          },
+          "StepOpen": {
+            "type": "boolean",
+            "description": "A step is open now (its trade is at the broker or queued); false while the ledger waits for its next step."
+          },
+          "Wait": {
+            "type": "string",
+            "description": "Why the next step waits, in the member's words: the cool-off until a time, the pair off Full auto (Q951-A), or the\n            reason the last rules pass wrote (the posture, the Defensive camp, the record, the gate, the room ...). Null while a step is\n            open, or before any pass has said why.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP545 (Q932-A, prototype round 54's Pairs list 2.3.2): a pair's running DYNM ledger in a few read-only facts, on the pair the\nlists serve (DtoFxsPair.Dyn on /v1/fxs/pairs and the member's pair view). Built from FxsAIBotPair.Dyn by FxsDynm.PairSummary;\nnull where no ledger is open (none has run, or it closed). It is a read model: nothing writes it back."
       },
       "DtoFxsPairResPaged": {
         "type": "object",
@@ -16554,7 +17590,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "One pair in a cascade preview. TP496 Q285-A: AIBot lists the AIBot mode, exit template and entry rule\r\n            changes; AIBotRefused names why the pair's AIBot mode is not changed; ToFullAuto marks a pair\r\n            the cascade puts on Full auto."
+        "description": "One pair in a cascade preview. TP496 Q285-A: AIBot lists the AIBot mode, exit template and entry rule\n            changes; AIBotRefused names why the pair's AIBot mode is not changed; ToFullAuto marks a pair\n            the cascade puts on Full auto."
       },
       "DtoFxsStgCascadePreview": {
         "type": "object",
@@ -16637,7 +17673,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "What a cascade would change on one account. TP496 Q285-A: AIBotLimits lists the AIBot limits it writes,\r\n            AIBotLimitsRefused names why none are written. AI Advisor settings and advice time remain per account;\r\n            the cascade does not change them and AdviceTimeAlso is empty."
+        "description": "What a cascade would change on one account. TP496 Q285-A: AIBotLimits lists the AIBot limits it writes,\n            AIBotLimitsRefused names why none are written. AI Advisor settings and advice time remain per account;\n            the cascade does not change them and AdviceTimeAlso is empty."
       },
       "DtoFxsStgCascadePreviewResPonse": {
         "type": "object",
@@ -16775,7 +17811,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "T709 Q411-A: a strategy's ranking as the strategy list and view routes return it (see FC.Com.Doms.IFxsStgRank).\r\n            Score null reads \"New\"."
+        "description": "T709 Q411-A: a strategy's ranking as the strategy list and view routes return it (see FC.Com.Doms.IFxsStgRank).\n            Score null reads \"New\"."
       },
       "DtoFxsStgResPonse": {
         "type": "object",
@@ -16902,6 +17938,24 @@
           "STSP": {
             "$ref": "#/components/schemas/DecRng"
           },
+          "BADDCAP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SADDCAP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BETAP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SETAP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "BETDP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "SETDP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
           "BHRSL": {
             "type": "boolean",
             "nullable": true
@@ -16961,10 +18015,31 @@
           },
           "SDMUL": {
             "$ref": "#/components/schemas/DecRng"
+          },
+          "DYMAX": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "DYTGT": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "DYCAP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "DYSTEP": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "DYCOOL": {
+            "$ref": "#/components/schemas/DecRng"
+          },
+          "DYGATE": {
+            "$ref": "#/components/schemas/DynGate"
+          },
+          "DYSIDE": {
+            "$ref": "#/components/schemas/DynSide"
           }
         },
         "additionalProperties": false,
-        "description": "T709: wire twin of a strategy's symbol template with ranges (FxsStgSymRng). This type deliberately has no BSON\r\n            attributes; the ranges are BizJaya.Core's shared DecRng."
+        "description": "T709: wire twin of a strategy's symbol template with ranges (FxsStgSymRng). This type deliberately has no BSON\n            attributes; the ranges are BizJaya.Core's shared DecRng."
       },
       "DtoFxsStgSymStg": {
         "type": "object",
@@ -17083,6 +18158,36 @@
             "format": "double",
             "nullable": true
           },
+          "BADDCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SADDCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BETAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SETAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "BETDP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "SETDP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
           "BHRSL": {
             "type": "boolean",
             "nullable": true
@@ -17174,6 +18279,38 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "DYMAX": {
+            "type": "integer",
+            "description": "TP545: DYNM's ledger values (one per pair); FinCopy's own, never on the EA's wire.",
+            "format": "int32",
+            "nullable": true
+          },
+          "DYTGT": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYCAP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYSTEP": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "DYCOOL": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "DYGATE": {
+            "$ref": "#/components/schemas/DynGate"
+          },
+          "DYSIDE": {
+            "$ref": "#/components/schemas/DynSide"
           }
         },
         "additionalProperties": false,
@@ -17781,7 +18918,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's\r\n            (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names."
+        "description": "FinGraph's current FXS reading for one symbol on the member's accounts. The codes are FinGraph's\n            (Signal VSS … VSB, Trend VSD … VSU, Confidence None … VHigh), sent as their names."
       },
       "DtoShelfSignals": {
         "type": "object",
@@ -18269,97 +19406,189 @@
         },
         "additionalProperties": false
       },
-      "FxsAIBotAdvisorChange": {
+      "DynEnd": {
+        "enum": [
+          "TP",
+          "RECOVERED",
+          "STEPS",
+          "CAP",
+          "MAXLOT",
+          "RESET",
+          "MEMBER"
+        ],
+        "type": "string",
+        "description": "TP545 (Q933-A): why a DYNM ledger closed (FxsAIBotPair.Dyn.EndReason). TP: step 1 reached its TP and nothing was owed;\n            RECOVERED: the steps won back what the ledger owed; STEPS: written off at DYMAX steps; CAP: written off when the next step could\n            not fit DYCAP % of equity at step 1's lot; MAXLOT: written off when the broker's largest lot is below step 1's lot; RESET: the\n            member reset it; MEMBER: the member changed the pair's method away from DYNM (the pair off Full auto only makes it wait). A written-off\n            ledger (every end but TP and RECOVERED) leaves the symbol waiting 4 hours before its next step 1."
+      },
+      "DynGate": {
+        "enum": [
+          "GUARD",
+          "NOW",
+          "STRONG"
+        ],
+        "type": "string",
+        "description": "TP545 (DYGATE): the strength gate a DYNM recovery step waits for, on the side it would trade. GUARD: the account's WARM\n            set for that side and the Trend guard; NOW (the default): GUARD, and FinGraph's signal at B / S or stronger with its 41-minute\n            move that way; STRONG: FinGraph's own directional strength (TP545 §3, c2's research), not built yet: a value that chooses it is\n            refused until it is."
+      },
+      "DynGateBotPick": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "$ref": "#/components/schemas/DynGate"
+          },
+          "Opts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DynGate"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DynSide": {
+        "enum": [
+          "READING",
+          "OTHER"
+        ],
+        "type": "string",
+        "description": "TP545 (Q931-A, DYSIDE): which side a DYNM recovery step may take. READING (the default, Q931-A): whichever side the\n            strength gate passes, the same side again included (BUY judged first); OTHER: only the side opposite the last step (REVM's\n            rule, the replay's control)."
+      },
+      "DynSideBotPick": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "$ref": "#/components/schemas/DynSide"
+          },
+          "Opts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DynSide"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "FxsAIBotAdvised": {
         "type": "object",
         "properties": {
           "Field": {
             "type": "string",
-            "description": "A pair's: EXIT.TPP, EXIT.SLP, EXIT.TSP, ENTRY.NewsFilter, AMODE.BUY, AMODE.SELL or a pair setting: NLOT, LGP, GGP,\r\n            LMAX, GMAX, LMUL, GMUL. The account's (T709, Q399-A): WARM.BuySig, WARM.SellSig, WARM.BuyTrd, WARM.SellTrd, WARM.Conf,\r\n            WARM.Score, and HOT.BuySig, HOT.SellSig, HOT.BuyTrd, HOT.SellTrd, HOT.Conf (HOT has no score).",
             "nullable": true
           },
-          "Old": {
+          "Value": {
             "type": "string",
             "nullable": true
           },
-          "New": {
+          "AskId": {
             "type": "string",
             "nullable": true
           },
-          "Direction": {
+          "At": {
             "type": "string",
-            "description": "SHARPEN or LOOSEN.",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP538: one value Advisor set on a pair (FxsAdvChange.Field and its New), and the answer that set it."
+      },
+      "FxsAIBotDynLedger": {
+        "type": "object",
+        "properties": {
+          "Step": {
+            "type": "integer",
+            "description": "The step the ledger is on, 1 to DYMAX.",
+            "format": "int32"
+          },
+          "Side": {
+            "type": "string",
+            "description": "The side of the open or last step: BUY or SELL.",
             "nullable": true
           },
-          "Why": {
+          "BaseLot": {
+            "type": "number",
+            "description": "Step 1's lot, sized like FIRR (equity × risk a trade at its SL): a step cut below it writes the ledger off.",
+            "format": "double"
+          },
+          "BaseRisk": {
+            "type": "number",
+            "description": "R: step 1's loss at its SL, in the account's currency (a step wins back the ledger + DYTGT × R, and loses at most\n            DYSTEP × R at its SL).",
+            "format": "double"
+          },
+          "Owed": {
+            "type": "number",
+            "description": "What the ledger owes: its steps' closed losses not yet won back (profit, swap and commission), 0 or more.",
+            "format": "double"
+          },
+          "Peak": {
+            "type": "number",
+            "description": "The most the ledger has owed.",
+            "format": "double"
+          },
+          "OpenedAt": {
             "type": "string",
+            "description": "When step 1 opened (or the TP545 conversion seeded the ledger): the ledger's identity on every conditional write.",
+            "format": "date-time"
+          },
+          "LedgerAt": {
+            "type": "string",
+            "description": "When the ledger first owed (step 1's loss).",
+            "format": "date-time",
             "nullable": true
           },
-          "Refused": {
+          "LastClosedAt": {
             "type": "string",
+            "description": "When the last step closed.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "NextAfter": {
+            "type": "string",
+            "description": "After a close that left the ledger owing, the earliest time the next step may open (the close + DYCOOL); null while\n            a step is open or queued, and once the ledger closed.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "LastTicket": {
+            "type": "integer",
+            "description": "The current or last step's ticket (0 until the broker filled it).",
+            "format": "int64"
+          },
+          "Partial": {
+            "type": "integer",
+            "description": "How many steps were cut to fit DYSTEP, DYCAP or the broker's largest lot (each wins back only part of the ledger).",
+            "format": "int32"
+          },
+          "ClosedAt": {
+            "type": "string",
+            "description": "When the ledger closed; null while it runs.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "EndReason": {
+            "$ref": "#/components/schemas/DynEnd"
+          },
+          "EndReason_": {
+            "$ref": "#/components/schemas/DynEnd"
+          },
+          "WaitWhy": {
+            "type": "string",
+            "description": "Q934-A: the reason the next step last waited for (the posture, the account, the pair's record, the gate ...), so\n            AIBOT_DYN_WAIT is written once per reason, not on every pass; cleared when a step opens or closes.",
             "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "One setting AIAdvisor wants changed, old to new. FC.Com.Doms.FxsAIBotAdvisorChange.Refused holds the reason the code refused it."
-      },
-      "FxsAIBotAdvisorPair": {
-        "type": "object",
-        "properties": {
-          "SYM": {
-            "type": "string",
-            "nullable": true
-          },
-          "SYM6": {
-            "type": "string",
-            "nullable": true
-          },
-          "Condition": {
-            "type": "string",
-            "description": "TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK.",
-            "nullable": true
-          },
-          "ConditionWhy": {
-            "type": "string",
-            "nullable": true
-          },
-          "Stance": {
-            "type": "string",
-            "nullable": true
-          },
-          "StanceWhy": {
-            "type": "string",
-            "nullable": true
-          },
-          "StanceUntil": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "NarrowingApplied": {
-            "type": "boolean"
-          },
-          "SignalSide": {
-            "type": "string",
-            "description": "The FinGraph reading in this advice's input, retained when Ask-First is accepted later.",
-            "nullable": true
-          },
-          "ConfidenceBand": {
-            "type": "string",
-            "nullable": true
-          },
-          "Changes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FxsAIBotAdvisorChange"
-            },
-            "nullable": true
-          },
-          "Watch": {
-            "type": "boolean",
-            "description": "TP523 Q556-A: the pair was on Watch: this part of the advice is shown and never applied (its stance and changes),\r\n            as an account on Watch gets WATCH advice; Undo last advice leaves it alone too."
-          }
-        },
-        "additionalProperties": false
+        "description": "TP545 (Q932-A): one DYNM ledger on a pair: the money its steps have lost and not won back. AIBot writes it when step 1\n            opens, on each step's close, when it waits (once per reason) and when it closes; the rules pass, the pair's view and the hourly\n            record read it. FC.Com.Doms.FxsAIBotDynLedger.Step is the step the ledger is on: the open step, or after a close that left it owing the next\n            one, awaited while FC.Com.Doms.FxsAIBotDynLedger.NextAfter is set (its side is chosen when it opens, Q931-A)."
       },
       "FxsAIBotEntryRules": {
         "type": "object",
@@ -18367,10 +19596,16 @@
           "NewsFilter": {
             "type": "boolean",
             "description": "Skip a side that FinNews of the last 24 hours on the pair's currencies leans against."
+          },
+          "TrendGuard": {
+            "$ref": "#/components/schemas/TrendGuard"
+          },
+          "TaGuard": {
+            "$ref": "#/components/schemas/TaGuard"
           }
         },
         "additionalProperties": false,
-        "description": "T701 (Q8-A): when Full auto opens a side on a FinGraph reading change. T709 (Q378-A, Q385-A): the signal, trend,\r\n            confidence and score minimums moved into the account's signal sets (FxsAcct.SigWarm, read through the shared SigMinsHlp.Passes);\r\n            the pair keeps only the FinNews filter."
+        "description": "T701 (Q8-A): when Full auto opens a side on a FinGraph reading change. T709 (Q378-A, Q385-A): the signal, trend,\n            confidence and score minimums moved into the account's signal sets (FxsAcct.SigWarm, read through the shared SigMinsHlp.Passes);\n            the pair keeps only the FinNews filter."
       },
       "FxsAIBotOrderLink": {
         "type": "object",
@@ -18432,7 +19667,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "TP496 Q285-A: the AIBot limits a strategy carries to the accounts on it, the fields of FC.Com.Doms.FxsFullAutoSettings\r\n            a member edits on the AIBot page. Never the switch (State), the grant, the breaker's state or a counter: those stay each\r\n            account's. A null field is not part of the strategy and never travels; a cascade writes only the fields the strategy holds.\r\n            T709: the numbers are ranges (Q387-A), a cascade sends each one's Def (Q389-A); the risk dial and its ceiling are gone (Q375-A);\r\n            FC.Com.Doms.FxsAIBotStgLimits.OpenPerSide is the dial step's \"most open per side\" standing on its own. The daily loss is ACCSTG.DAYSL, the\r\n            field the EA reads (Q396-A)."
+        "description": "TP496 Q285-A: the AIBot limits a strategy carries to the accounts on it, the fields of FC.Com.Doms.FxsFullAutoSettings\n            a member edits on the AIBot page. Never the switch (State), the grant, the breaker's state or a counter: those stay each\n            account's. A null field is not part of the strategy and never travels; a cascade writes only the fields the strategy holds.\n            T709: the numbers are ranges (Q387-A), a cascade sends each one's Def (Q389-A); the risk dial and its ceiling are gone (Q375-A);\n            FC.Com.Doms.FxsAIBotStgLimits.OpenPerSide is the dial step's \"most open per side\" standing on its own. The daily loss is ACCSTG.DAYSL, the\n            field the EA reads (Q396-A)."
       },
       "FxsAIBotStgPair": {
         "type": "object",
@@ -18466,10 +19701,176 @@
           },
           "PairDefaults": {
             "$ref": "#/components/schemas/FxsAIBotStgPair"
+          },
+          "Camp": {
+            "$ref": "#/components/schemas/FxsCamp"
           }
         },
         "additionalProperties": false,
-        "description": "A strategy's AIBot block. FC.Com.Doms.FxsAIBotStrategy.Preferences are the New bot wizard's policy boundaries for the model, not a\r\n            trade plan. TP496 Q285-A: FC.Com.Doms.FxsAIBotStrategy.Limits and FC.Com.Doms.FxsAIBotStrategy.PairDefaults are the AIBot settings the strategy carries to\r\n            its accounts and their pairs through a cascade, as its ACCSTG and SYMSTG carry the EA settings."
+        "description": "A strategy's AIBot block. FC.Com.Doms.FxsAIBotStrategy.Preferences are the New bot wizard's policy boundaries for the model, not a\n            trade plan. TP496 Q285-A: FC.Com.Doms.FxsAIBotStrategy.Limits and FC.Com.Doms.FxsAIBotStrategy.PairDefaults are the AIBot settings the strategy carries to\n            its accounts and their pairs through a cascade, as its ACCSTG and SYMSTG carry the EA settings."
+      },
+      "FxsAdvAskPair": {
+        "type": "object",
+        "properties": {
+          "SYM": {
+            "type": "string",
+            "nullable": true
+          },
+          "SYM6": {
+            "type": "string",
+            "nullable": true
+          },
+          "Condition": {
+            "type": "string",
+            "description": "TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK.",
+            "nullable": true
+          },
+          "ConditionWhy": {
+            "type": "string",
+            "nullable": true
+          },
+          "SignalSide": {
+            "type": "string",
+            "description": "The FinGraph reading in this ask's input, kept when Ask-First is accepted later.",
+            "nullable": true
+          },
+          "ConfidenceBand": {
+            "type": "string",
+            "nullable": true
+          },
+          "Watch": {
+            "type": "boolean",
+            "description": "TP523 Q556-A: the pair was on Watch: shown, never applied."
+          },
+          "StanceBefore": {
+            "type": "string",
+            "description": "The stance in force on the pair when the answer came (the folded card's \"now -> proposed\").",
+            "nullable": true
+          },
+          "Stance": {
+            "type": "string",
+            "description": "Which new entries the stance allows: BOTH, BUY_ONLY, SELL_ONLY or STAY_OUT.",
+            "nullable": true
+          },
+          "StanceWhy": {
+            "type": "string",
+            "nullable": true
+          },
+          "StanceUntil": {
+            "type": "string",
+            "description": "When the stance ends: 24 hours at most after the ask.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "Decision": {
+            "$ref": "#/components/schemas/AdvDecision"
+          },
+          "Decision_": {
+            "$ref": "#/components/schemas/AdvDecision"
+          },
+          "DecidedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "DecidedBy": {
+            "type": "string",
+            "description": "The owner or a Trader (their sign-in), or Advisor itself (AUTO and NARROWED).",
+            "nullable": true
+          },
+          "ModeChange": {
+            "type": "string",
+            "description": "TP538 Q853-A: the pair's AIBot mode Advisor proposes (WATCH, EXITS or FULL); null: no change. Lowering it applies\n            at once like a narrowing stance; raising it waits for Accept, even under Auto-Apply.",
+            "nullable": true
+          },
+          "ModeBefore": {
+            "type": "string",
+            "description": "The pair's mode when the ask was answered (what Undo and Decline put back).",
+            "nullable": true
+          },
+          "ModeWhy": {
+            "type": "string",
+            "nullable": true
+          },
+          "Changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxsAdvChange"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP538 (Q848-A): one pair's answer inside an ask (was FxsAIBotAdvisorPair). Its changes follow its Decision."
+      },
+      "FxsAdvChange": {
+        "type": "object",
+        "properties": {
+          "Field": {
+            "type": "string",
+            "description": "A pair's: BTPP, STPP, BSLP, SSLP, BTSP, STSP, ENTRY.NEWSFILTER, AMODE.BUY, AMODE.SELL, NLOT, LGP, GGP, LMAX, GMAX,\n            LMUL, GMUL, a pair value (BRISK …) or (Q853-A) BADDCAP / SADDCAP, the per-side add cap. The account's: WARM.* and HOT.*,\n            an account number, or (Q853-A) HEDGE, the account's hedge switch.",
+            "nullable": true
+          },
+          "Old": {
+            "type": "string",
+            "nullable": true
+          },
+          "New": {
+            "type": "string",
+            "nullable": true
+          },
+          "Direction": {
+            "type": "string",
+            "description": "SHARPEN or LOOSEN.",
+            "nullable": true
+          },
+          "Why": {
+            "type": "string",
+            "nullable": true
+          },
+          "Refused": {
+            "type": "string",
+            "nullable": true
+          },
+          "Decision": {
+            "$ref": "#/components/schemas/AdvDecision"
+          },
+          "Decision_": {
+            "$ref": "#/components/schemas/AdvDecision"
+          }
+        },
+        "additionalProperties": false,
+        "description": "One value Advisor wants changed, old to new (was FxsAIBotAdvisorChange). FC.Com.Doms.FxsAdvChange.Refused holds the reason the\n            code refused it."
+      },
+      "FxsAdvSource": {
+        "type": "object",
+        "properties": {
+          "Title": {
+            "type": "string",
+            "nullable": true
+          },
+          "Site": {
+            "type": "string",
+            "nullable": true
+          },
+          "Url": {
+            "type": "string",
+            "nullable": true
+          },
+          "At": {
+            "type": "string",
+            "description": "When the page was published, when the research knows it.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "SYM": {
+            "type": "string",
+            "description": "The pair it was read for; null for the whole market.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP538 Q852-A: one web page the ask's research read."
       },
       "FxsAdvisorSettings": {
         "type": "object",
@@ -18518,10 +19919,53 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "NotifyEmail": {
+            "type": "boolean",
+            "description": "TP538 Q851-A: email the member when an answer is ready, applied or failed. On by default."
+          },
+          "NotifyBot": {
+            "type": "boolean",
+            "description": "TP538 Q851-A: tell the member on the FinCopy bot (Telegram). On by default."
+          },
+          "UndoAskId": {
+            "type": "string",
+            "description": "TP538: the applied answer Undo reverts (an fc_adv_ask id); null when there is none.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
-        "description": "TP529: the account's L3 module, independent of the deterministic AIBot settings."
+        "description": "TP529: the account's L3 module, independent of the deterministic AIBot settings. TP538: it also holds the member's\n            notice switches (Q851-A) and the answer Undo reverts (moved from FullAuto.UndoAdviceId, so AIBot's block keeps no Advisor\n            field)."
+      },
+      "FxsCamp": {
+        "enum": [
+          "DEFENSIVE",
+          "AGGRESSIVE"
+        ],
+        "type": "string",
+        "description": "TP545 (Q928-C, Q929-A, Q948-A): the account's camp, a value with its state (Fixed or Strategy, never My range). Each moves the values\n            its preset names (FxsCamps.Preset) that are not Fixed; AIBot's posture (MANAGE, DEFEND) may only push it toward Defensive."
+      },
+      "FxsCampBotPick": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "$ref": "#/components/schemas/FxsCamp"
+          },
+          "Opts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FxsCamp"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "FxsCloseReason": {
         "enum": [
@@ -18607,13 +20051,8 @@
           },
           "OpenPerSide": {
             "type": "integer",
-            "description": "T709 (Q375-A): most AIBot trades open on one side at once (the risk dial's \"most open per side\", standing on its\r\n            own). It counts on a GRID side; every other method opens only on a flat side.",
+            "description": "T709 (Q375-A): most AIBot trades open on one side at once (the risk dial's \"most open per side\", standing on its\n            own). It counts on a GRID side; every other method opens only on a flat side.",
             "format": "int32"
-          },
-          "UndoAdviceId": {
-            "type": "string",
-            "description": "The applied advice that Undo last advice reverts.",
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -18783,7 +20222,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "T709 incident (Q459-A): a change of one side's SL that FinCopy holds back because it would close open trades at once. The pair's\r\nsettings (SYMSTG) keep the new values; the EA keeps getting what it has (the Sent fields) until the member confirms the change\r\nwith the Trading PIN, discards it (the side's settings go back to what the EA has), or the side holds no trade any more.\r\nA record with FC.Com.Doms.FxsSlHold.Confirmed set is the member's go-ahead for exactly these values: the next sync sends them."
+        "description": "T709 incident (Q459-A): a change of one side's SL that FinCopy holds back because it would close open trades at once. The pair's\nsettings (SYMSTG) keep the new values; the EA keeps getting what it has (the Sent fields) until the member confirms the change\nwith the Trading PIN, discards it (the side's settings go back to what the EA has), or the side holds no trade any more.\nA record with FC.Com.Doms.FxsSlHold.Confirmed set is the member's go-ahead for exactly these values: the next sync sends them."
       },
       "FxsSlHoldTrade": {
         "type": "object",
@@ -19066,6 +20505,37 @@
         ],
         "type": "string"
       },
+      "TaGuard": {
+        "enum": [
+          "TV",
+          "TRENDS",
+          "FGRATE"
+        ],
+        "type": "string",
+        "description": "TP545 (Q939-A): what the Trend guard reads beside FinGraph's medium and long trends (TA-Guard). TV: TradingView's\n            moving-average rating must agree too, where TradingView rates the pair (today's behaviour, and the default until a replay shows\n            otherwise); TRENDS: FinGraph's trends only; FGRATE: FinGraph's own technical ratings must agree too, stored and validated but\n            not available yet (FinGraph serves no ratings), so it reads as FinGraph's trends only until it does."
+      },
+      "TaGuardBotPick": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "$ref": "#/components/schemas/TaGuard"
+          },
+          "Opts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaGuard"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TermAccountKind": {
         "enum": [
           "Customer",
@@ -19133,6 +20603,37 @@
           }
         },
         "additionalProperties": false
+      },
+      "TrendGuard": {
+        "enum": [
+          "METHOD",
+          "ON",
+          "OFF"
+        ],
+        "type": "string",
+        "description": "TP538 (Q873-A): the Trend guard, an AIBot entry rule for every method: a new entry opens only when FinGraph's medium\n            and long trends agree in the side's direction at High or above and TradingView's moving-average rating agrees (FinGraph alone\n            where there is no rating, Q874-A). METHOD: on for FIRR and DYNM, off for WDCA, GDCA, GRID and CONT (the default); ON: on for\n            every method; OFF: off for every method."
+      },
+      "TrendGuardBotPick": {
+        "type": "object",
+        "properties": {
+          "Mode": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Mode_": {
+            "$ref": "#/components/schemas/BotValMode"
+          },
+          "Val": {
+            "$ref": "#/components/schemas/TrendGuard"
+          },
+          "Opts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrendGuard"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {
@@ -19190,6 +20691,10 @@
     {
       "name": "Strategies",
       "description": "Your strategies and FinCopy's presets: create, change and delete them, and preview or apply one to an account."
+    },
+    {
+      "name": "Advisor",
+      "description": "Advisor reviews an account and proposes changes to AIBot's settings: preview and send an ask, read its answer, accept or decline it pair by pair, undo it, and its settings."
     },
     {
       "name": "Signals and alerts",

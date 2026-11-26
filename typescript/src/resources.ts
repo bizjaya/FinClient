@@ -97,26 +97,54 @@ export class AccountsResource {
   getAIBot(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
     return this.http.request("GET", `${accountPath(acno)}/aibot`, undefined, options);
   }
-  /** Previews an account Advisor ask without sending or spending Advisor credits. */
-  previewAdvisor(acno: number, kind: "ON_DEMAND" | "PLAN" = "ON_DEMAND", options: FinRequestOptions = {}): Promise<D<"DtoAdvisorPreviewResPonse">> {
-    return this.http.request("GET", `${accountPath(acno)}/aibot/advisor/preview?kind=${encodeURIComponent(kind)}`, undefined, options);
+  /**
+   * Advisor's Review step: what the next ask would send (its sections, sizes and exact text) and what it costs. `kind` is
+   * ON_DEMAND (ask now, the server's default) or PLAN (let AI choose); `symbols` are the pairs to send (none: the scheduled
+   * selection). Nothing is sent or charged; the preview expires in fifteen minutes.
+   */
+  previewAdvisor(acno: number, kind?: "ON_DEMAND" | "PLAN", symbols: readonly string[] = [], options: FinRequestOptions = {}): Promise<D<"DtoAdvAskPreviewResPonse">> {
+    const params = new URLSearchParams();
+    if (kind !== undefined) params.set("kind", kind);
+    for (const symbol of symbols) params.append("syms", symbol);
+    const suffix = params.toString();
+    return this.http.request("GET", `${accountPath(acno)}/advisor/preview${suffix ? `?${suffix}` : ""}`, undefined, options);
   }
-  /** Sends a preview or asks now with an empty PreviewId. FinCopy handles Ultra, credits and refunds. Requires options.idempotencyKey. */
-  sendAdvisor(acno: number, command: CopyDto<"CmdAdvisorSend">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
-    return this.http.request("POST", `${accountPath(acno)}/aibot/advisor/send`, command, options);
+  /**
+   * Sends an Advisor ask, with a PreviewId from `previewAdvisor` or without one (priced now). It returns at once with the ask
+   * QUEUED; read it again with `advisorHistoryView` (or follow the change feed) for its answer. FinCopy handles Ultra, credits
+   * and refunds. Requires a trade key and options.idempotencyKey.
+   */
+  sendAdvisor(acno: number, command: CopyDto<"CmdAdvAskMake">, options: FinRequestOptions = {}): Promise<D<"DtoFxsAdvAskResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/advisor/asks`, command, options);
   }
-  /** Saves Advisor preferences; counters and included-review state remain server-owned. Requires options.idempotencyKey. */
-  saveAdvisorSettings(acno: number, command: CopyDto<"CmdAdvisorSettings">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
-    return this.http.request("PUT", `${accountPath(acno)}/aibot/advisor/settings`, command, options);
+  /** The account's Advisor state: its settings, the entitlement, the credits and today's asks, the pairs an ask can send, the running ask and the newest answer. */
+  getAdvisorSettings(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAdvStateResPonse">> {
+    return this.http.request("GET", `${accountPath(acno)}/advisor/settings`, undefined, options);
   }
-  /** Latest 100 Advisor asks, newest first, including sent context and payment results. */
-  advisorHistory(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotAdviceIReadOnlyListResPonse">> {
-    return this.http.request("GET", `${accountPath(acno)}/aibot/advisor/history`, undefined, options);
+  /** Saves the account's Advisor settings and returns its Advisor state. Only the account owner's trade key may save; requires options.idempotencyKey. */
+  saveAdvisorSettings(acno: number, command: CopyDto<"CmdAdvStgEdit">, options: FinRequestOptions = {}): Promise<D<"DtoAdvStateResPonse">> {
+    return this.http.request("PUT", `${accountPath(acno)}/advisor/settings`, command, options);
   }
-  /** One Advisor ask within this account; another account's id is not found. */
-  advisorHistoryView(acno: number, id: string, options: FinRequestOptions = {}): Promise<D<"DtoAIBotAdviceResPonse">> {
+  /** The account's Advisor asks, newest first, with their answers, decisions and charges (without the text sent). */
+  advisorHistory(acno: number, page: FinPageQuery = {}, options: FinRequestOptions = {}): Promise<FinPage<CopyDto<"DtoFxsAdvAsk">>> {
+    return this.http.requestPage("GET", queryPath(`${accountPath(acno)}/advisor/asks`, page), options);
+  }
+  /** One Advisor ask within this account; another account's id is not found. `sent` adds the exact text and the readable context the ask sent. */
+  advisorHistoryView(acno: number, id: string, sent = false, options: FinRequestOptions = {}): Promise<D<"DtoFxsAdvAskResPonse">> {
     if (!id) throw new TypeError("id must not be empty.");
-    return this.http.request("GET", `${accountPath(acno)}/aibot/advisor/history/${encodeURIComponent(id)}`, undefined, options);
+    return this.http.request("GET", queryPath(`${accountPath(acno)}/advisor/asks/${encodeURIComponent(id)}`, undefined, { sent: sent || undefined }), undefined, options);
+  }
+  /**
+   * Accepts or declines the newest waiting answer pair by pair (Pairs) and its account block (Account), or cancels an ask that
+   * is still queued (Cancel; refunded). A pair left out stays as it is. Requires a trade key and options.idempotencyKey.
+   */
+  decideAdvisor(acno: number, id: string, command: CopyDto<"CmdAdvAskPtch">, options: FinRequestOptions = {}): Promise<D<"DtoFxsAdvAskResPonse">> {
+    if (!id) throw new TypeError("id must not be empty.");
+    return this.http.request("PATCH", `${accountPath(acno)}/advisor/asks/${encodeURIComponent(id)}`, command, options);
+  }
+  /** Undoes the last applied Advisor answer: what it changed goes back. Requires a trade key and options.idempotencyKey. */
+  undoAdvisor(acno: number, command: CopyDto<"CmdAdvAskRset">, options: FinRequestOptions = {}): Promise<D<"DtoFxsAdvAskResPonse">> {
+    return this.http.request("POST", `${accountPath(acno)}/advisor/undo`, command, options);
   }
   /** Sets the account AIBot state to Off, Watch or On. Writes require options.idempotencyKey. */
   setAIBotState(acno: number, command: CopyDto<"CmdAIBotFullAutoState">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
@@ -142,21 +170,9 @@ export class AccountsResource {
   aibotTickets(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotTicketsViewResPonse">> {
     return this.http.request("GET", `${accountPath(acno)}/aibot/tickets`, undefined, options);
   }
-  /** Runs AIAdvisor now. Writes require options.idempotencyKey. */
-  adviseAIBotNow(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
-    return this.http.request("POST", `${accountPath(acno)}/aibot/advise`, undefined, options);
-  }
   /** Lists AIAdvisor advice for the account. */
   aibotAdvice(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoFcAdviceSummaryListResPonse">> {
     return this.http.request("GET", `${accountPath(acno)}/aibot/advice`, undefined, options);
-  }
-  /** Approves or rejects one AIAdvisor recommendation. Writes require options.idempotencyKey. */
-  decideAIBotAdvice(acno: number, command: CopyDto<"CmdAIBotAdviceDecide">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
-    return this.http.request("POST", `${accountPath(acno)}/aibot/advice/decide`, command, options);
-  }
-  /** Undoes the latest AIAdvisor recommendation. Writes require options.idempotencyKey. */
-  undoAIBotAdvice(acno: number, command: CopyDto<"CmdAIBotAdviceUndo">, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoResPonse">> {
-    return this.http.request("POST", `${accountPath(acno)}/aibot/advice/undo`, command, options);
   }
   /** Lists recorded AIBot decisions for the account. */
   aibotDecisions(acno: number, options: FinRequestOptions = {}): Promise<D<"DtoAIBotFullAutoDecisionListResPonse">> {
