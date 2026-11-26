@@ -1305,7 +1305,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         /** @enum {string} */
-        AMode: "NONE" | "WDCA" | "GDCA" | "GRID" | "CONT" | "FIRR" | "COPY";
+        AMode: "NONE" | "WDCA" | "GDCA" | "GRID" | "CONT" | "FIRR" | "COPY" | "DYNM";
         AModeBotPick: {
             Mode?: components["schemas"]["BotValMode"];
             Mode_?: components["schemas"]["BotValMode"];
@@ -4525,7 +4525,7 @@ export interface components {
          * @description Why a leg closed, as the EA reports it (`CRSN`).
          * @enum {string}
          */
-        FxsCloseReason: "UNK" | "TP" | "SL" | "TS" | "GTP" | "API" | "EA" | "MAN" | "SO" | "RBL" | "DAY";
+        FxsCloseReason: "UNK" | "TP" | "SL" | "TS" | "GTP" | "API" | "EA" | "MAN" | "SO" | "RBL" | "DAY" | "ETRAIL";
         FxsFullAutoSettings: {
             /** Format: double */
             DdStartBalance?: number;

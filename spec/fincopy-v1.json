@@ -9393,7 +9393,8 @@
           "GRID",
           "CONT",
           "FIRR",
-          "COPY"
+          "COPY",
+          "DYNM"
         ],
         "type": "string"
       },
@@ -18534,7 +18535,8 @@
           "MAN",
           "SO",
           "RBL",
-          "DAY"
+          "DAY",
+          "ETRAIL"
         ],
         "type": "string",
         "description": "Why a leg closed, as the EA reports it (`CRSN`)."

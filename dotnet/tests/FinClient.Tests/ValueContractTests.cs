@@ -27,6 +27,18 @@ public sealed class ValueContractTests
     }
 
     [Fact]
+    public void EarlyTrailCloseAndDynamicMartingaleReadAsTheirOwnMembers()
+    {
+        var order = JsonSerializer.Deserialize<DtoFxsOrdr>("""{"OID":9,"CRSN":"ETRAIL"}""", FinHttpTransport.ReadOptions)!;
+        Assert.Equal(FxsCloseReason.ETRAIL, order.CRSN);
+        var symbol = JsonSerializer.Deserialize<DtoEASymStg>("""{"BAMODE":"DYNM","SAMODE":"DYNM","BALLOWED":["FIRR","DYNM"]}""", FinHttpTransport.ReadOptions)!;
+        Assert.Equal(AMode.DYNM, symbol.BAMODE);
+        Assert.Equal(AMode.DYNM, symbol.SAMODE);
+        Assert.Equal([AMode.FIRR, AMode.DYNM], symbol.BALLOWED);
+        Assert.Contains("\"BAMODE\":\"DYNM\"", JsonSerializer.Serialize(symbol, FinHttpTransport.WriteOptions));
+    }
+
+    [Fact]
     public void AccountAndPairPatchesCarryOrdinaryValueEdits()
     {
         var values = JsonSerializer.Deserialize<DtoAIBotValues>(Native, FinHttpTransport.ReadOptions)!;
