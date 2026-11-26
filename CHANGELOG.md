@@ -49,6 +49,9 @@ This is a breaking change for everyone who calls FinCopy's account Advisor. FinC
 - DYNM's values (`DYMAX`, `DYTGT`, `DYCAP`, `DYSTEP`, `DYCOOL`, `DYGATE` with `DynGate`, `DYSIDE` with `DynSide`) on the same
   types, its ledger (`FxsAIBotDynLedger`, `DynEnd`; `Dyn` and `DynLine` on AIBot pairs, `DynmOwed` and `DynmRefusal` on the
   dashboard) and the ledger step `DynStep` on orders, settled orders and AIBot outcomes.
+- A pair's running DYNM ledger on the pair lists and the pair view: `DtoFxsPair.Dyn`, a read-only `DtoFxsPairDyn` (`Owed`,
+  `Step`, `Max`, `Side`, `StepOpen`, `Wait`), null where no ledger is open. On AIBot pairs, `DynNext` (`DtoAIBotDynNext`: the
+  side rule and, per side it allows, `DtoAIBotDynNextSide` with the next step's `Lot`, `StepLoss`, `Partial`, `End` and `Why`).
 - The camp (`FxsCamp`: `Camp` on a strategy's AIBot block and in the AIBot values), on / off values with a state
   (`DtoAIBotValues.Switches`), and the Trend guard and TA-Guard (`TrendGuard`, `TaGuard` on the entry rules and in the values).
 - The Advisor's own types: `DtoAdvState`, `DtoAdvStg`, `DtoAdvAskPreview`, `DtoFxsAdvAsk`, `CmdAdvAskMake`, `CmdAdvAskPtch`,

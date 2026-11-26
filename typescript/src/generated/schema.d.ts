@@ -1846,6 +1846,31 @@ export interface components {
         DeployStatus: "Running" | "Done" | "Failed" | "RolledBack";
         /** @enum {string} */
         DesiredTermState: "Running" | "Stopped" | "Removed";
+        /** @description TP545: the next DYNM step's size, per side the side rule (DYSIDE) allows, BUY first. */
+        DtoAIBotDynNext: {
+            SideRule?: components["schemas"]["DynSide"];
+            Sides?: components["schemas"]["DtoAIBotDynNextSide"][] | null;
+        };
+        /** @description TP545: one side's next DYNM step as FxsDynm.SizeStep sizes it now. */
+        DtoAIBotDynNextSide: {
+            /** @description BUY or SELL. */
+            Side?: string | null;
+            /**
+             * Format: double
+             * @description The lot, rounded to the broker's lot step; 0 when it cannot be sized now (Why says why).
+             */
+            Lot?: number;
+            /**
+             * Format: double
+             * @description The step's own loss at its SL, in the account's currency.
+             */
+            StepLoss?: number;
+            /** @description Cut to DYSTEP, the ledger cap or the broker's largest lot: a win wins back only part of the ledger. */
+            Partial?: boolean;
+            End?: components["schemas"]["DynEnd"];
+            /** @description How the lot was reached, or why it cannot be sized now. */
+            Why?: string | null;
+        };
         DtoAIBotFullAuto: {
             Values?: components["schemas"]["DtoAIBotValues"];
             StrategyChanges?: string[] | null;
@@ -2060,6 +2085,7 @@ export interface components {
             SellSlOff?: number;
             Dyn?: components["schemas"]["FxsAIBotDynLedger"];
             DynLine?: string | null;
+            DynNext?: components["schemas"]["DtoAIBotDynNext"];
         };
         DtoAIBotFullAutoPlaybook: {
             Id?: string | null;
@@ -3553,6 +3579,7 @@ export interface components {
              * @enum {string|null}
              */
             readonly AIBotMode?: "OFF" | "WATCH" | "EXITS" | "FULL" | null;
+            Dyn?: components["schemas"]["DtoFxsPairDyn"];
             /** Format: double */
             BID?: number | null;
             /** Format: double */
@@ -3740,6 +3767,38 @@ export interface components {
             SyncDt?: string | null;
             /** Format: date-time */
             SyncMkAt?: string | null;
+        };
+        /**
+         * @description TP545 (Q932-A, prototype round 54's Pairs list 2.3.2): a pair's running DYNM ledger in a few read-only facts, on the pair the
+         *     lists serve (DtoFxsPair.Dyn on /v1/fxs/pairs and the member's pair view). Built from FxsAIBotPair.Dyn by FxsDynm.PairSummary;
+         *     null where no ledger is open (none has run, or it closed). It is a read model: nothing writes it back.
+         */
+        DtoFxsPairDyn: {
+            /**
+             * Format: double
+             * @description What the ledger owes: its steps' closed losses not yet won back, 0 or more.
+             */
+            Owed?: number;
+            /**
+             * Format: int32
+             * @description The step the ledger is on: the open step, or the next one while it waits (1 to DYMAX).
+             */
+            Step?: number;
+            /**
+             * Format: int32
+             * @description DYMAX: the most steps a ledger may hold before it is written off.
+             */
+            Max?: number;
+            /** @description The side of the open or last step: BUY or SELL. */
+            Side?: string | null;
+            /** @description A step is open now (its trade is at the broker or queued); false while the ledger waits for its next step. */
+            StepOpen?: boolean;
+            /**
+             * @description Why the next step waits, in the member's words: the cool-off until a time, the pair off Full auto (Q951-A), or the
+             *                 reason the last rules pass wrote (the posture, the Defensive camp, the record, the gate, the room ...). Null while a step is
+             *                 open, or before any pass has said why.
+             */
+            Wait?: string | null;
         };
         DtoFxsPairResPaged: {
             data?: components["schemas"]["DtoFxsPair"][] | null;
@@ -5121,7 +5180,7 @@ export interface components {
             UndoAskId?: string | null;
         };
         /**
-         * @description TP545 (Q928-C, Q929-A): the account's camp, a value with its state (Fixed / My range / Strategy). Each moves the values
+         * @description TP545 (Q928-C, Q929-A, Q948-A): the account's camp, a value with its state (Fixed or Strategy, never My range). Each moves the values
          *                 its preset names (FxsCamps.Preset) that are not Fixed; AIBot's posture (MANAGE, DEFEND) may only push it toward Defensive.
          * @enum {string}
          */

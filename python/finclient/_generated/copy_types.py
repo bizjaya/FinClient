@@ -407,6 +407,25 @@ DeployStatus = Literal["Running", "Done", "Failed", "RolledBack"]
 
 DesiredTermState = Literal["Running", "Stopped", "Removed"]
 
+class DtoAIBotDynNext(TypedDict, total=False):
+    SideRule: "DynSide"
+    Sides: Optional[List["DtoAIBotDynNextSide"]]
+
+class DtoAIBotDynNextSide(TypedDict, total=False):
+    Side: Optional[str]
+    """BUY or SELL."""
+    Lot: float
+    """The lot, rounded to the broker's lot step; 0 when it cannot be sized now (Why says why)."""
+    StepLoss: float
+    """The step's own loss at its SL, in the account's currency."""
+    Partial: bool
+    """Cut to DYSTEP, the ledger cap or the broker's largest lot: a win wins back only part of the
+    ledger.
+    """
+    End: "DynEnd"
+    Why: Optional[str]
+    """How the lot was reached, or why it cannot be sized now."""
+
 class DtoAIBotFullAuto(TypedDict, total=False):
     Values: "DtoAIBotValues"
     StrategyChanges: Optional[List[str]]
@@ -541,6 +560,7 @@ class DtoAIBotFullAutoPair(TypedDict, total=False):
     SellSlOff: int
     Dyn: "FxsAIBotDynLedger"
     DynLine: Optional[str]
+    DynNext: "DtoAIBotDynNext"
 
 class DtoAIBotFullAutoPlaybook(TypedDict, total=False):
     Id: Optional[str]
@@ -1631,6 +1651,7 @@ DtoFxsPair = TypedDict(
         "ExternalRef": Optional[str],
         "EN": bool,
         "AIBotMode": Optional[Literal["OFF", "WATCH", "EXITS", "FULL"]],
+        "Dyn": "DtoFxsPairDyn",
         "BID": Optional[float],
         "ASK": Optional[float],
         "CMP": Optional[float],
@@ -1734,6 +1755,21 @@ DtoFxsPair = TypedDict(
     total=False,
 )
 """Wire DTO for a trading pair; it intentionally has no BSON attributes or extra-elements bag."""
+
+class DtoFxsPairDyn(TypedDict, total=False):
+    Owed: float
+    """What the ledger owes: its steps' closed losses not yet won back, 0 or more."""
+    Step: int
+    """The step the ledger is on: the open step, or the next one while it waits (1 to DYMAX)."""
+    Max: int
+    """DYMAX: the most steps a ledger may hold before it is written off."""
+    Side: Optional[str]
+    """The side of the open or last step: BUY or SELL."""
+    StepOpen: bool
+    """A step is open now (its trade is at the broker or queued); false while the ledger waits for its
+    next step.
+    """
+    Wait: Optional[str]
 
 class DtoFxsPairResPaged(TypedDict, total=False):
     data: Optional[List["DtoFxsPair"]]

@@ -1480,6 +1480,65 @@ namespace Fin.Copy
 
     }
 
+    /// <summary>
+    /// TP545: the next DYNM step's size, per side the side rule (DYSIDE) allows, BUY first.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotDynNext
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("SideRule")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynSide>))]
+        public DynSide? SideRule { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("Sides")]
+        public System.Collections.Generic.ICollection<DtoAIBotDynNextSide>? Sides { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP545: one side's next DYNM step as FxsDynm.SizeStep sizes it now.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoAIBotDynNextSide
+    {
+
+        /// <summary>
+        /// BUY or SELL.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        /// <summary>
+        /// The lot, rounded to the broker's lot step; 0 when it cannot be sized now (Why says why).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Lot")]
+        public double? Lot { get; set; } = default!;
+
+        /// <summary>
+        /// The step's own loss at its SL, in the account's currency.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("StepLoss")]
+        public double? StepLoss { get; set; } = default!;
+
+        /// <summary>
+        /// Cut to DYSTEP, the ledger cap or the broker's largest lot: a win wins back only part of the ledger.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Partial")]
+        public bool? Partial { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("End")]
+        [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DynEnd>))]
+        public DynEnd? End { get; set; } = default!;
+
+        /// <summary>
+        /// How the lot was reached, or why it cannot be sized now.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Why")]
+        public string? Why { get; set; } = default!;
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class DtoAIBotFullAuto
     {
@@ -1925,6 +1984,9 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("DynLine")]
         public string? DynLine { get; set; } = default!;
+
+        [System.Text.Json.Serialization.JsonPropertyName("DynNext")]
+        public DtoAIBotDynNext? DynNext { get; set; } = default!;
 
     }
 
@@ -5163,6 +5225,9 @@ namespace Fin.Copy
         [System.Text.Json.Serialization.JsonConverter(typeof(global::Fin.FinTolerantEnumConverter<DtoFxsPairAIBotMode>))]
         public DtoFxsPairAIBotMode? AIBotMode { get; set; } = default!;
 
+        [System.Text.Json.Serialization.JsonPropertyName("Dyn")]
+        public DtoFxsPairDyn? Dyn { get; set; } = default!;
+
         [System.Text.Json.Serialization.JsonPropertyName("BID")]
         public double? BID { get; set; } = default!;
 
@@ -5461,6 +5526,55 @@ namespace Fin.Copy
 
         [System.Text.Json.Serialization.JsonPropertyName("SyncMkAt")]
         public System.DateTimeOffset? SyncMkAt { get; set; } = default!;
+
+    }
+
+    /// <summary>
+    /// TP545 (Q932-A, prototype round 54's Pairs list 2.3.2): a pair's running DYNM ledger in a few read-only facts, on the pair the
+    /// <br/>lists serve (DtoFxsPair.Dyn on /v1/fxs/pairs and the member's pair view). Built from FxsAIBotPair.Dyn by FxsDynm.PairSummary;
+    /// <br/>null where no ledger is open (none has run, or it closed). It is a read model: nothing writes it back.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class DtoFxsPairDyn
+    {
+
+        /// <summary>
+        /// What the ledger owes: its steps' closed losses not yet won back, 0 or more.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Owed")]
+        public double? Owed { get; set; } = default!;
+
+        /// <summary>
+        /// The step the ledger is on: the open step, or the next one while it waits (1 to DYMAX).
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Step")]
+        public int? Step { get; set; } = default!;
+
+        /// <summary>
+        /// DYMAX: the most steps a ledger may hold before it is written off.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Max")]
+        public int? Max { get; set; } = default!;
+
+        /// <summary>
+        /// The side of the open or last step: BUY or SELL.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Side")]
+        public string? Side { get; set; } = default!;
+
+        /// <summary>
+        /// A step is open now (its trade is at the broker or queued); false while the ledger waits for its next step.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("StepOpen")]
+        public bool? StepOpen { get; set; } = default!;
+
+        /// <summary>
+        /// Why the next step waits, in the member's words: the cool-off until a time, the pair off Full auto (Q951-A), or the
+        /// <br/>            reason the last rules pass wrote (the posture, the Defensive camp, the record, the gate, the room ...). Null while a step is
+        /// <br/>            open, or before any pass has said why.
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("Wait")]
+        public string? Wait { get; set; } = default!;
 
     }
 
@@ -8503,7 +8617,7 @@ namespace Fin.Copy
     }
 
     /// <summary>
-    /// TP545 (Q928-C, Q929-A): the account's camp, a value with its state (Fixed / My range / Strategy). Each moves the values
+    /// TP545 (Q928-C, Q929-A, Q948-A): the account's camp, a value with its state (Fixed or Strategy, never My range). Each moves the values
     /// <br/>            its preset names (FxsCamps.Preset) that are not Fixed; AIBot's posture (MANAGE, DEFEND) may only push it toward Defensive.
     /// </summary>
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]

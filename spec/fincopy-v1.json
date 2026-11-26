@@ -10939,6 +10939,57 @@
         ],
         "type": "string"
       },
+      "DtoAIBotDynNext": {
+        "type": "object",
+        "properties": {
+          "SideRule": {
+            "$ref": "#/components/schemas/DynSide"
+          },
+          "Sides": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DtoAIBotDynNextSide"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP545: the next DYNM step's size, per side the side rule (DYSIDE) allows, BUY first."
+      },
+      "DtoAIBotDynNextSide": {
+        "type": "object",
+        "properties": {
+          "Side": {
+            "type": "string",
+            "description": "BUY or SELL.",
+            "nullable": true
+          },
+          "Lot": {
+            "type": "number",
+            "description": "The lot, rounded to the broker's lot step; 0 when it cannot be sized now (Why says why).",
+            "format": "double"
+          },
+          "StepLoss": {
+            "type": "number",
+            "description": "The step's own loss at its SL, in the account's currency.",
+            "format": "double"
+          },
+          "Partial": {
+            "type": "boolean",
+            "description": "Cut to DYSTEP, the ledger cap or the broker's largest lot: a win wins back only part of the ledger."
+          },
+          "End": {
+            "$ref": "#/components/schemas/DynEnd"
+          },
+          "Why": {
+            "type": "string",
+            "description": "How the lot was reached, or why it cannot be sized now.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP545: one side's next DYNM step as FxsDynm.SizeStep sizes it now."
+      },
       "DtoAIBotFullAuto": {
         "type": "object",
         "properties": {
@@ -11493,6 +11544,9 @@
           "DynLine": {
             "type": "string",
             "nullable": true
+          },
+          "DynNext": {
+            "$ref": "#/components/schemas/DtoAIBotDynNext"
           }
         },
         "additionalProperties": false
@@ -15633,6 +15687,9 @@
             "nullable": true,
             "readOnly": true
           },
+          "Dyn": {
+            "$ref": "#/components/schemas/DtoFxsPairDyn"
+          },
           "BID": {
             "type": "number",
             "format": "double",
@@ -16119,6 +16176,42 @@
         },
         "additionalProperties": false,
         "description": "Wire DTO for a trading pair; it intentionally has no BSON attributes or extra-elements bag."
+      },
+      "DtoFxsPairDyn": {
+        "type": "object",
+        "properties": {
+          "Owed": {
+            "type": "number",
+            "description": "What the ledger owes: its steps' closed losses not yet won back, 0 or more.",
+            "format": "double"
+          },
+          "Step": {
+            "type": "integer",
+            "description": "The step the ledger is on: the open step, or the next one while it waits (1 to DYMAX).",
+            "format": "int32"
+          },
+          "Max": {
+            "type": "integer",
+            "description": "DYMAX: the most steps a ledger may hold before it is written off.",
+            "format": "int32"
+          },
+          "Side": {
+            "type": "string",
+            "description": "The side of the open or last step: BUY or SELL.",
+            "nullable": true
+          },
+          "StepOpen": {
+            "type": "boolean",
+            "description": "A step is open now (its trade is at the broker or queued); false while the ledger waits for its next step."
+          },
+          "Wait": {
+            "type": "string",
+            "description": "Why the next step waits, in the member's words: the cool-off until a time, the pair off Full auto (Q951-A), or the\n            reason the last rules pass wrote (the posture, the Defensive camp, the record, the gate, the room ...). Null while a step is\n            open, or before any pass has said why.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "TP545 (Q932-A, prototype round 54's Pairs list 2.3.2): a pair's running DYNM ledger in a few read-only facts, on the pair the\nlists serve (DtoFxsPair.Dyn on /v1/fxs/pairs and the member's pair view). Built from FxsAIBotPair.Dyn by FxsDynm.PairSummary;\nnull where no ledger is open (none has run, or it closed). It is a read model: nothing writes it back."
       },
       "DtoFxsPairResPaged": {
         "type": "object",
@@ -19850,7 +19943,7 @@
           "AGGRESSIVE"
         ],
         "type": "string",
-        "description": "TP545 (Q928-C, Q929-A): the account's camp, a value with its state (Fixed / My range / Strategy). Each moves the values\n            its preset names (FxsCamps.Preset) that are not Fixed; AIBot's posture (MANAGE, DEFEND) may only push it toward Defensive."
+        "description": "TP545 (Q928-C, Q929-A, Q948-A): the account's camp, a value with its state (Fixed or Strategy, never My range). Each moves the values\n            its preset names (FxsCamps.Preset) that are not Fixed; AIBot's posture (MANAGE, DEFEND) may only push it toward Defensive."
       },
       "FxsCampBotPick": {
         "type": "object",
