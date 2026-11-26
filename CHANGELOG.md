@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.15.0 (2026-11-26)
+
+### Added
+
+- FinCopy close reason `ETRAIL` (Early trail, `FxsCloseReason.ETRAIL = 11` in .NET): the EA's early trail closed the leg before
+  its TP, either at the SL it had moved or by the EA's own close at that level. FinCopy's EA reports it from version 2.44.
+- FinCopy method `DYNM` (the dynamic martingale, `AMode.DYNM = 7` in .NET) in side modes, pending modes, allowed modes and the
+  AIBot method values.
+
+### Upgrading
+
+- Earlier versions read these values as unknown. In .NET a close reason reads `UNK`, and a method reads null on a side or
+  pending mode and `NONE` inside an allowed-modes list; TypeScript and Python pass the string through, outside their types. A
+  `switch` over `AMode` or `FxsCloseReason` that lists every member needs a case for the new one.
+
 ## 0.14.0 (2026-11-24)
 
 - Add account AI Advisor Preview, Send, settings and history methods in .NET, TypeScript and Python, using the account owner's FinCopy key. FinCopy retains Ultra entitlement, included reviews, credit charging and refunds.
