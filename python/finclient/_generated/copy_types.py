@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any, Dict, List, Literal, Optional, TypedDict, Union  # noqa: F401
 
 
-AMode = Literal["NONE", "WDCA", "GDCA", "GRID", "CONT", "FIRR", "COPY"]
+AMode = Literal["NONE", "WDCA", "GDCA", "GRID", "CONT", "FIRR", "COPY", "DYNM"]
 
 class AModeBotPick(TypedDict, total=False):
     Mode: "BotValMode"
@@ -2334,7 +2334,7 @@ class FxsAdvisorSettings(TypedDict, total=False):
     IncludedUsed: bool
     LastAdviceAt: Optional[str]
 
-FxsCloseReason = Literal["UNK", "TP", "SL", "TS", "GTP", "API", "EA", "MAN", "SO", "RBL", "DAY"]
+FxsCloseReason = Literal["UNK", "TP", "SL", "TS", "GTP", "API", "EA", "MAN", "SO", "RBL", "DAY", "ETRAIL"]
 """Why a leg closed, as the EA reports it (`CRSN`)."""
 
 class FxsFullAutoSettings(TypedDict, total=False):

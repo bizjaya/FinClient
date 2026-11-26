@@ -1,3 +1,3 @@
 """The package version. CI keeps it equal to python/pyproject.toml and the .NET and npm packages."""
 
-__version__ = "0.14.0"
+__version__ = "0.15.0"

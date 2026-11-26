@@ -53,6 +53,9 @@ namespace Fin.Copy
         [System.Runtime.Serialization.EnumMember(Value = @"COPY")]
         COPY = 6,
 
+        [System.Runtime.Serialization.EnumMember(Value = @"DYNM")]
+        DYNM = 7,
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -7230,6 +7233,9 @@ namespace Fin.Copy
 
         [System.Runtime.Serialization.EnumMember(Value = @"DAY")]
         DAY = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ETRAIL")]
+        ETRAIL = 11,
 
     }
 
