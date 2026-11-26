@@ -108,13 +108,17 @@ To verify a webhook in TypeScript, import `FinWebhook` from `@bizjaya/finclient/
 
 ## Account AI Advisor
 
-FinCopy's account Advisor is available with the account owner's key. All clients expose Preview, Send, settings, history and
-history detail: `.NET` `PreviewAdvisorAsync`, `SendAdvisorAsync`, `SaveAdvisorSettingsAsync`, `AdvisorHistoryAsync`,
-`AdvisorHistoryViewAsync`; TypeScript uses the same names in lower camel case without `Async`; Python uses
-`preview_advisor`, `send_advisor`, `save_advisor_settings`, `advisor_history`, `advisor_history_view`.
+FinCopy's account Advisor is available with the account owner's key, under `/v1/fxs/accounts/{acno}/advisor`. All clients
+expose the preview, sending an ask, its state and settings, the asks and one ask, the decision and Undo: .NET
+`PreviewAdvisorAsync`, `SendAdvisorAsync`, `GetAdvisorSettingsAsync`, `SaveAdvisorSettingsAsync`, `AdvisorHistoryAsync`,
+`AdvisorHistoryViewAsync`, `DecideAdvisorAsync`, `UndoAdvisorAsync`; TypeScript uses the same names in lower camel case
+without `Async`; Python uses `preview_advisor`, `send_advisor`, `get_advisor_settings`, `save_advisor_settings`,
+`advisor_history`, `advisor_history_view`, `decide_advisor`, `undo_advisor`.
 
-The AIBot dashboard includes the Advisor balance, preferences, included-review state, latest advice, posture and hourly records.
-Use a stable idempotency key for writes; FinCopy retains Ultra gating, charging, refunds, Accept/Decline and Undo.
+An ask returns at once with its status `QUEUED`; read it again, or follow the change feed, for its answer. The Advisor state
+(`GetAdvisorSettingsAsync`) carries the settings, the entitlement, the credits and today's asks, the running ask and the newest
+answer; the AIBot dashboard keeps the posture and hourly records. Use a stable idempotency key for writes; FinCopy retains Ultra
+gating, charging and refunds. 0.16.0 moved these methods to the new routes; see the [CHANGELOG](./CHANGELOG.md#0160-2026-11-26).
 See the [.NET account example](dotnet/README.md#account-ai-advisor). These routes require an API key, including when other
 resources use a member session.
 

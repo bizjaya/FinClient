@@ -6605,8 +6605,8 @@
           }
         ],
         "x-fin-auth": "key",
-        "x-fin-cost": 0,
-        "x-fin-configured-cost": 0,
+        "x-fin-cost": 1,
+        "x-fin-configured-cost": 1,
         "x-fin-tiers": [],
         "x-fin-configured-tiers": [],
         "x-fin-status": "Active",

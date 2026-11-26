@@ -122,6 +122,121 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/fxs/accounts/{acno}/advisor/preview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Advisor's Review step for this account: what the next ask would send (its sections, sizes and exact text) and
+         *                 what it costs. Kind is ON_DEMAND (Ask now) or PLAN (Let AI choose); Syms are the pairs to send (empty: the scheduled
+         *                 selection). Nothing is sent or charged; FinCopy pays the preview's market research. The preview expires in fifteen
+         *                 minutes. Ultra required.
+         */
+        get: operations["AdvisorAskSrch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/advisor/asks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The account's Advisor asks, newest first, with their answers, decisions and charges (without the text sent). */
+        get: operations["AdvisorAskList"];
+        put?: never;
+        /**
+         * Send an ask, with a PreviewId from the preview or without one (priced now). It returns at once with the ask
+         *                 QUEUED; read it again (or follow the change feed) for its answer, usually in two to six minutes. The day's first ask is
+         *                 included; an extra ask is priced by its size and never charged more than its preview showed; a failed or cancelled ask
+         *                 is refunded. ACNO must match the route. Trade key and Idempotency-Key required.
+         */
+        post: operations["AdvisorAskMake"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/advisor/asks/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One Advisor ask. sent=true adds the exact text and the readable context it sent. An id from any other account
+         *                 is not found.
+         */
+        get: operations["AdvisorAskView"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Accept or decline the newest waiting answer pair by pair (Pairs) and its account block (Account), or cancel an
+         *                 ask that is still queued (Cancel; refunded). A pair left out stays as it is. ACNO must match the route. Trade key and
+         *                 Idempotency-Key required.
+         */
+        patch: operations["AdvisorAskPtch"];
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/advisor/undo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Undo the last applied Advisor answer: what it changed goes back. ACNO must match the route. Trade key and
+         *                 Idempotency-Key required.
+         */
+        post: operations["AdvisorAskRset"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/fxs/accounts/{acno}/advisor/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * The account's Advisor state: its settings, the entitlement, the credits and today's asks, the pairs an ask can
+         *                 send, the running ask and the newest answer.
+         */
+        get: operations["AdvisorStgView"];
+        /**
+         * Save the account's Advisor settings: on or off, the advice time (UTC) and mode (ASK or APPLY), the pairs left out
+         *                 of scheduled asks, the every-4-hours and paid re-asks, and the email and FinCopy bot notices. ACNO must match the route.
+         *                 Trade key and Idempotency-Key required; only the account owner's key may save.
+         */
+        put: operations["AdvisorStgEdit"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/changes": {
         parameters: {
             query?: never;
@@ -334,105 +449,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/v1/fxs/accounts/{acno}/aibot/advisor/preview": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Build the next AI Advisor ask for this account without sending it. Kind is ON_DEMAND or PLAN.
-         *                 Preview research is paid by FinCopy; closing the preview sends no Advisor ask and charges no Advisor credits.
-         *                 The preview belongs to this key owner and account and expires in fifteen minutes. Ultra required.
-         */
-        get: operations["AdvisorPreview"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advisor/send": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Send the previewed ask, or ask now with an empty PreviewId. Uses FinCopy's Ultra gate, daily included
-         *                 review, AI Advisor credits and failure refunds. ACNO must match the route. Trade key and Idempotency-Key required.
-         */
-        post: operations["AdvisorSend"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advisor/settings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        /**
-         * Save the account's AI Advisor preferences (including Advise on via ExcludedSymbols). Server-owned counters,
-         *                 included-review state and timestamps are ignored, as on the member screen. ACNO must match the route.
-         *                 Trade key and Idempotency-Key required; only the account owner's key may save.
-         */
-        put: operations["AdvisorSettings"];
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advisor/history": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * The account's latest 100 AI Advisor asks, newest first, with the exact sent context, changes,
-         *                 decisions, included-review use, charges and refunds. The first item is the latest advice.
-         */
-        get: operations["AdvisorHistory"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advisor/history/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One AI Advisor ask, including its sent context. An id from any other account is not found. */
-        get: operations["AdvisorHistoryView"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/fxs/accounts/{acno}/aibot/state": {
         parameters: {
             query?: never;
@@ -523,54 +539,6 @@ export interface paths {
         get: operations["AIBotTickets"];
         put?: never;
         post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advise": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["AIBotAdvise"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advice/decide": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["AIBotAdviceDecide"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/fxs/accounts/{acno}/aibot/advice/undo": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["AIBotAdviceUndo"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1304,7 +1272,11 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        /** @enum {string} */
+        /**
+         * @description TP545: DYNM (the dynamic martingale) keeps REVM's number 7, so EA 2.43 and later run each of its steps as FIRR, per
+         *                 ticket, with no EA change.
+         * @enum {string}
+         */
         AMode: "NONE" | "WDCA" | "GDCA" | "GRID" | "CONT" | "FIRR" | "COPY" | "DYNM";
         AModeBotPick: {
             Mode?: components["schemas"]["BotValMode"];
@@ -1312,6 +1284,30 @@ export interface components {
             Val?: components["schemas"]["AMode"];
             Opts?: components["schemas"]["AMode"][] | null;
         };
+        /**
+         * @description TP538 §2.2: where one Advisor ask is. Stored as a number with its string twin (FxsAdvAsk.Status / Status_).
+         *                 QUEUED, RESEARCH and THINKING are the task; READY waits on the member (Ask-First); the rest are its end.
+         * @enum {string}
+         */
+        AdvAskStatus: "QUEUED" | "RESEARCH" | "THINKING" | "READY" | "APPLIED" | "ACCEPTED" | "PARTLY" | "DECLINED" | "EXPIRED" | "FAILED" | "CANCELLED" | "UNDONE" | "WATCH";
+        /**
+         * @description TP538 Q849-B: how an ask's charge was worked out. INCLUDED: the day's included ask (free). FLAT: a fixed price
+         *                 (Let AI choose keeps its credit action's price). SIZE: the estimate × AdvCostMarkup ÷ AdvCreditUsd, rounded up.
+         * @enum {string}
+         */
+        AdvChargeBasis: "INCLUDED" | "FLAT" | "SIZE";
+        /**
+         * @description TP538 Q848-A: what became of one pair's part of an answer, or of its account block. AUTO: applied by itself
+         *                 (Auto-Apply). NARROWED: a narrowing stance or a lower AIBot mode applied at once under Ask-First, the rest still waiting.
+         *                 NONE: waiting, or a Watch pair.
+         * @enum {string}
+         */
+        AdvDecision: "NONE" | "ACCEPT" | "DECLINE" | "AUTO" | "NARROWED";
+        /**
+         * @description TP538 Q854-A: how an answer leans overall. A label, not a setting: nothing reads it but the page.
+         * @enum {string}
+         */
+        AdvTilt: "DEFENSIVE" | "BALANCED" | "OFFENSIVE";
         BooleanBotPick: {
             Mode?: components["schemas"]["BotValMode"];
             Mode_?: components["schemas"]["BotValMode"];
@@ -1343,20 +1339,6 @@ export interface components {
         BrokerServerEnvironment: "Demo" | "Live" | "Unknown";
         /** @enum {string} */
         BrokerServerStatus: "Submitted" | "Verified" | "Retired";
-        /** @description T701 (Q10-C): Accept or Reject a waiting advice. */
-        CmdAIBotAdviceDecide: {
-            /** Format: int64 */
-            ACNO?: number;
-            AdviceId?: string | null;
-            Accept?: boolean;
-            TrPin?: string | null;
-        };
-        /** @description T701 (Q10-C): Undo last advice. */
-        CmdAIBotAdviceUndo: {
-            /** Format: int64 */
-            ACNO?: number;
-            TrPin?: string | null;
-        };
         CmdAIBotFullAutoSettings: {
             HedgeOn?: boolean | null;
             Values?: components["schemas"]["DtoAIBotValues"];
@@ -1461,8 +1443,24 @@ export interface components {
             BTSP?: number | null;
             /** Format: double */
             STSP?: number | null;
+            /** Format: double */
+            BADDCAP?: number | null;
+            /** Format: double */
+            SADDCAP?: number | null;
             BTRAIL?: boolean | null;
             STRAIL?: boolean | null;
+            /**
+             * Format: double
+             * @description TP545 (TP538 Q914-A): the early trail per side, % of the set's TP distance: the start (BETAP / SETAP; 0 = off) and
+             *                 the distance the SL field then trails by (BETDP / SETDP). No TP, no early trail.
+             */
+            BETAP?: number | null;
+            /** Format: double */
+            SETAP?: number | null;
+            /** Format: double */
+            BETDP?: number | null;
+            /** Format: double */
+            SETDP?: number | null;
             /**
              * Format: double
              * @description Q446-A: FIRR's reward ratio per side (the TP as a multiple of the SL).
@@ -1492,6 +1490,23 @@ export interface components {
             SDMUL?: number | null;
             /** Format: double */
             DCAEXP?: number | null;
+            /**
+             * Format: int32
+             * @description TP545: DYNM's ledger values, one per pair: the most steps a ledger, the recovery target (× R), the ledger's cap (%
+             *                 of equity), the most a step may lose at its SL (× R), the cool-off after a close that leaves it owing (minutes), the
+             *                 strength gate and the side rule.
+             */
+            DYMAX?: number | null;
+            /** Format: double */
+            DYTGT?: number | null;
+            /** Format: double */
+            DYCAP?: number | null;
+            /** Format: double */
+            DYSTEP?: number | null;
+            /** Format: int32 */
+            DYCOOL?: number | null;
+            DYGATE?: components["schemas"]["DynGate"];
+            DYSIDE?: components["schemas"]["DynSide"];
             TrPin?: string | null;
         };
         CmdAIBotFullAutoState: {
@@ -1529,16 +1544,45 @@ export interface components {
             ACNO?: number;
             TrPin?: string | null;
         };
-        CmdAdvisorSend: {
+        /**
+         * @description AskMake: send an ask. With a PreviewId the ask sends that preview's pairs and pays its charge; without one it is
+         *                 priced now. Returns at once with the ask (QUEUED); the runner answers it.
+         */
+        CmdAdvAskMake: {
             /** Format: int64 */
             ACNO?: number;
-            PreviewId?: string | null;
             Kind?: string | null;
+            PreviewId?: string | null;
+            /** @description The ticked pairs; null: the scheduled selection. Must match the preview's when a PreviewId is given. */
+            Syms?: string[] | null;
+            /** @description Keep this selection for scheduled asks (stored as Advisor.ExcludedSymbols, the pairs left out). */
+            SaveSelection?: boolean;
         };
-        CmdAdvisorSettings: {
+        /**
+         * @description AskPtch: decide an answer pair by pair and its account block (Q848-A), or cancel a QUEUED ask. Anything accepted
+         *                 needs the Trading PIN (the member routes); a pair left out of Pairs stays as it is.
+         */
+        CmdAdvAskPtch: {
             /** Format: int64 */
             ACNO?: number;
-            Settings?: components["schemas"]["FxsAdvisorSettings"];
+            AskId?: string | null;
+            /** @description Cancel the ask while it is QUEUED (refunded). Pairs and Account are ignored. */
+            Cancel?: boolean;
+            Pairs?: components["schemas"]["DtoAdvPairDecision"][] | null;
+            Account?: components["schemas"]["AdvDecision"];
+            TrPin?: string | null;
+        };
+        /** @description AskRset: undo the last applied answer (FxsAcct.Advisor.UndoAskId). */
+        CmdAdvAskRset: {
+            /** Format: int64 */
+            ACNO?: number;
+            TrPin?: string | null;
+        };
+        /** @description StgEdit: save the account's Advisor settings. */
+        CmdAdvStgEdit: {
+            /** Format: int64 */
+            ACNO?: number;
+            Settings?: components["schemas"]["DtoAdvStg"];
         };
         /**
          * @description Public API settings patch. Account identity comes from the ACNO route. Every field is optional: absent leaves it as
@@ -1697,6 +1741,7 @@ export interface components {
         CmdFxsStgAIBot: {
             Limits?: components["schemas"]["FxsAIBotStgLimits"];
             PairDefaults?: components["schemas"]["FxsAIBotStgPair"];
+            Camp?: components["schemas"]["FxsCamp"];
         };
         CmdFxsStgMake: {
             StratName?: string | null;
@@ -1801,56 +1846,30 @@ export interface components {
         DeployStatus: "Running" | "Done" | "Failed" | "RolledBack";
         /** @enum {string} */
         DesiredTermState: "Running" | "Stopped" | "Removed";
-        /** @description T701 Phase 4: one AIAdvisor answer as the AIBot page shows it. */
-        DtoAIBotAdvice: {
-            /** Format: double */
-            Credits?: number;
-            Included?: boolean;
-            Refunded?: boolean;
-            CreditNote?: string | null;
-            Input?: string | null;
-            ContextJson?: string | null;
-            Kind?: string | null;
-            /** Format: date-time */
-            RevisitAt?: string | null;
-            /** Format: int32 */
-            InputTokens?: number;
-            /** Format: int32 */
-            OutputTokens?: number;
-            Id?: string | null;
-            Trigger?: string | null;
-            /** Format: date-time */
-            AskedAt?: string;
-            Status?: string | null;
-            Error?: string | null;
-            Model?: string | null;
-            /** Format: double */
-            CostUsd?: number;
-            Note?: string | null;
-            Pairs?: components["schemas"]["FxsAIBotAdvisorPair"][] | null;
-            /** @description T709 (Q399-A): changes to the account's signal sets. */
-            Changes?: components["schemas"]["FxsAIBotAdvisorChange"][] | null;
-            /** Format: date-time */
-            DecidedAt?: string | null;
-            DecidedBy?: string | null;
+        /** @description TP545: the next DYNM step's size, per side the side rule (DYSIDE) allows, BUY first. */
+        DtoAIBotDynNext: {
+            SideRule?: components["schemas"]["DynSide"];
+            Sides?: components["schemas"]["DtoAIBotDynNextSide"][] | null;
         };
-        DtoAIBotAdviceIReadOnlyListResPonse: {
-            data?: components["schemas"]["DtoAIBotAdvice"][] | null;
-            /** Format: int32 */
-            code?: number;
-            readonly isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
-        };
-        DtoAIBotAdviceResPonse: {
-            data?: components["schemas"]["DtoAIBotAdvice"];
-            /** Format: int32 */
-            code?: number;
-            readonly isOk?: boolean;
-            message?: string | null;
-            errors?: string[] | null;
-            chksum?: string | null;
+        /** @description TP545: one side's next DYNM step as FxsDynm.SizeStep sizes it now. */
+        DtoAIBotDynNextSide: {
+            /** @description BUY or SELL. */
+            Side?: string | null;
+            /**
+             * Format: double
+             * @description The lot, rounded to the broker's lot step; 0 when it cannot be sized now (Why says why).
+             */
+            Lot?: number;
+            /**
+             * Format: double
+             * @description The step's own loss at its SL, in the account's currency.
+             */
+            StepLoss?: number;
+            /** @description Cut to DYSTEP, the ledger cap or the broker's largest lot: a win wins back only part of the ledger. */
+            Partial?: boolean;
+            End?: components["schemas"]["DynEnd"];
+            /** @description How the lot was reached, or why it cannot be sized now. */
+            Why?: string | null;
         };
         DtoAIBotFullAuto: {
             Values?: components["schemas"]["DtoAIBotValues"];
@@ -1907,29 +1926,24 @@ export interface components {
             DCACooloffMins?: number;
             SYMSTG?: components["schemas"]["DtoFxsStgSymStg"];
             AIBotPairDefaults?: components["schemas"]["FxsAIBotStgPair"];
-            AdvisorAllowed?: boolean;
-            AdvisorStaff?: boolean;
-            /** Format: double */
-            AdvisorBalance?: number;
-            Advisor?: components["schemas"]["FxsAdvisorSettings"];
-            AdviceMode?: string | null;
-            AdviceTime?: string | null;
-            /** Format: int32 */
-            AdviceCallsToday?: number;
-            /** Format: int32 */
-            AdviceMaxPerDay?: number;
-            /** Format: date-time */
-            LastAdviceAt?: string | null;
-            CanUndoAdvice?: boolean;
-            /** @description Advisor is disabled or this account has no Ultra entitlement; AIBot retains its own stance. */
-            AdvisorOff?: boolean;
+            AdvisorLine?: components["schemas"]["DtoAdvLine"];
             Posture?: string | null;
             PostureWhy?: string | null;
+            /**
+             * @description TP545 (Q936-A, TP538 Q859-B): why this account may not choose DYNM (not a demo account while DYNM on real accounts
+             *                 is off, or a terminal below EA 2.43), or null when it may.
+             */
+            DynmRefusal?: string | null;
+            /**
+             * Format: double
+             * @description TP545 (Q932-A): what the account's running DYNM ledgers owe in all (the sum of its pairs' Dyn.Owed): a read model,
+             *                 each pair keeps its own ledger.
+             */
+            DynmOwed?: number;
             HedgeOn?: boolean;
             HourlyRecords?: components["schemas"]["DtoAIBotFullAutoDecision"][] | null;
             Strategy?: components["schemas"]["DtoFxsStg"];
             Pairs?: components["schemas"]["DtoAIBotFullAutoPair"][] | null;
-            Advice?: components["schemas"]["DtoAIBotAdvice"][] | null;
             Decisions?: components["schemas"]["DtoAIBotFullAutoDecision"][] | null;
             Outcomes?: components["schemas"]["DtoAIBotFullAutoOutcome"][] | null;
             Lessons?: components["schemas"]["DtoAIBotFullAutoLesson"][] | null;
@@ -1998,6 +2012,11 @@ export interface components {
             Lesson?: string | null;
             /** @description T701 (Q7-A): OPENED or MANAGED. */
             Role?: string | null;
+            /**
+             * Format: int32
+             * @description TP545: the DYNM step this trade was; null for every other method.
+             */
+            DynStep?: number | null;
         };
         DtoAIBotFullAutoPair: {
             PendingStance?: string | null;
@@ -2035,6 +2054,11 @@ export interface components {
             Condition?: string | null;
             ConditionWhy?: string | null;
             /**
+             * @description TP538: the pair's fields Advisor set that still hold Advisor's value (the AIBot page marks them "Set by Advisor"),
+             *                 with the answer that set them.
+             */
+            Advised?: components["schemas"]["FxsAIBotAdvised"][] | null;
+            /**
              * Format: double
              * @description The pair's starting lot (NLOT).
              */
@@ -2059,6 +2083,9 @@ export interface components {
             BuySlOff?: number;
             /** Format: int32 */
             SellSlOff?: number;
+            Dyn?: components["schemas"]["FxsAIBotDynLedger"];
+            DynLine?: string | null;
+            DynNext?: components["schemas"]["DtoAIBotDynNext"];
         };
         DtoAIBotFullAutoPlaybook: {
             Id?: string | null;
@@ -2158,30 +2185,272 @@ export interface components {
                 [key: string]: components["schemas"]["AModeBotPick"];
             } | null;
             NewsFilter?: components["schemas"]["BooleanBotPick"];
+            TrendGuard?: components["schemas"]["TrendGuardBotPick"];
+            TaGuard?: components["schemas"]["TaGuardBotPick"];
+            /**
+             * @description TP545 (Q930-A): on / off values with a state, by field path: SYMSTG.BTRAIL and SYMSTG.STRAIL, each side's TP / TS
+             *                 switch (on: the TP arms a TS, no broker TP; off: a hard TP). Fixed: only the member; My range (Opts) or Strategy: Advisor
+             *                 and AIBot (by the camp or the posture) may flip it.
+             */
+            Switches?: {
+                [key: string]: components["schemas"]["BooleanBotPick"];
+            } | null;
+            Camp?: components["schemas"]["FxsCampBotPick"];
+            DYGATE?: components["schemas"]["DynGateBotPick"];
+            DYSIDE?: components["schemas"]["DynSideBotPick"];
         };
-        DtoAdvisorPreview: {
-            Id?: string | null;
+        /**
+         * @description The Review step: the sections and their sizes, the exact text, the charge, and the staff estimate when the viewer
+         *                 may see it. Send with its PreviewId within 15 minutes; the charge Send takes is this preview's, never more.
+         */
+        DtoAdvAskPreview: {
+            PreviewId?: string | null;
             /** Format: date-time */
             BuiltAt?: string;
             /** Format: date-time */
             ExpiresAt?: string;
-            Model?: string | null;
+            /** Format: int64 */
+            ACNO?: number;
+            Kind?: string | null;
+            Syms?: string[] | null;
+            /**
+             * Format: int32
+             * @description Characters of the exact text.
+             */
+            Chars?: number;
+            /**
+             * @description What Advisor reads, section by section, in order. Each names where its readable view is: a key of ContextJson
+             *                 (Ask, Account, MarketClimate, Readings, News, MayChange), one pair (Account.Pairs[SYM]), or the instructions (the text of
+             *                 Input around ContextJson).
+             */
+            Sections?: components["schemas"]["DtoAdvSection"][] | null;
+            /** @description The exact text Advisor reads. */
             Input?: string | null;
+            /** @description The readable context inside Input. */
             ContextJson?: string | null;
-            /** Format: int32 */
-            EstimatedInputTokens?: number;
-            /** Format: double */
-            EstimatedCostUsd?: number | null;
-            EstimateNote?: string | null;
+            Charge?: components["schemas"]["DtoAdvCharge"];
+            Estimate?: components["schemas"]["DtoAdvEstimate"];
+            ShowCost?: boolean;
         };
-        DtoAdvisorPreviewResPonse: {
-            data?: components["schemas"]["DtoAdvisorPreview"];
+        DtoAdvAskPreviewResPonse: {
+            data?: components["schemas"]["DtoAdvAskPreview"];
             /** Format: int32 */
             code?: number;
             readonly isOk?: boolean;
             message?: string | null;
             errors?: string[] | null;
             chksum?: string | null;
+        };
+        /**
+         * @description What an ask costs the member (Q849-B): the day's included ask is free; an extra ask is priced by size; a Let AI
+         *                 choose plan keeps its credit action's price.
+         */
+        DtoAdvCharge: {
+            Basis?: components["schemas"]["AdvChargeBasis"];
+            /** Format: double */
+            Credits?: number;
+            Included?: boolean;
+            /** @description Staff are never charged. */
+            Staff?: boolean;
+            /**
+             * Format: double
+             * @description The member's Advisor credits now.
+             */
+            Balance?: number;
+            /** Format: int32 */
+            AsksToday?: number;
+            /** Format: int32 */
+            Ceiling?: number;
+            /**
+             * Format: date-time
+             * @description When today's included ask was used; null while it is still free.
+             */
+            IncludedAt?: string | null;
+            /** @description One line for the member: "Included: the first ask of the day", "25 Advisor credits". */
+            Words?: string | null;
+        };
+        /**
+         * @description The staff panel's estimate (Q849-B, Q850-C): input tokens = characters ÷ 4; expected output = the average output of
+         *                 this account's last 10 completed asks (2,500 when there are none); the prompt's model prices from FinCopy's key price list;
+         *                 plus the research cap. Credits = ceil(TotalUsd × Markup ÷ CreditUsd).
+         */
+        DtoAdvEstimate: {
+            PromptKey?: string | null;
+            /** Format: int32 */
+            PromptVer?: number;
+            ExtCall?: boolean;
+            Route?: string | null;
+            Provider?: string | null;
+            Model?: string | null;
+            /** Format: int32 */
+            MaxOutTok?: number;
+            /** Format: int32 */
+            Chars?: number;
+            /** Format: int32 */
+            EstInTok?: number;
+            /** Format: int32 */
+            EstOutTok?: number;
+            /**
+             * Format: int32
+             * @description How many completed asks the output estimate averaged (0: the 2,500 default).
+             */
+            OutSample?: number;
+            /** Format: double */
+            InUsdPerM?: number;
+            /** Format: double */
+            OutUsdPerM?: number;
+            /** Format: double */
+            InUsd?: number;
+            /** Format: double */
+            OutUsd?: number;
+            /**
+             * Format: double
+             * @description The model cost, input and output.
+             */
+            EstUsd?: number;
+            /** Format: double */
+            ResearchUsd?: number;
+            /** Format: double */
+            TotalUsd?: number;
+            /** Format: double */
+            Markup?: number;
+            /** Format: double */
+            CreditUsd?: number;
+            /** Format: double */
+            RawCredits?: number;
+            /** Format: int32 */
+            SizeCredits?: number;
+            /**
+             * Format: int32
+             * @description Bytes the request takes on the wire to FinApi, and FinApi's body limit.
+             */
+            WireBytes?: number;
+            /** Format: int32 */
+            BodyLimit?: number;
+        };
+        /** @description The AIBot page's one Advisor line (TP538 §2.1): mode, newest status, waiting count, last applied time. */
+        DtoAdvLine: {
+            /** @description Advisor is enabled and the account's plan allows it. */
+            On?: boolean;
+            /** @description ASK (Ask-First) or APPLY (Auto-Apply). */
+            Mode?: string | null;
+            Manual?: boolean;
+            Status?: components["schemas"]["AdvAskStatus"];
+            NewestAskId?: string | null;
+            /** Format: date-time */
+            NewestAt?: string | null;
+            /** Format: int32 */
+            Waiting?: number;
+            /** Format: date-time */
+            LastAppliedAt?: string | null;
+        };
+        DtoAdvPairDecision: {
+            SYM?: string | null;
+            Decision?: components["schemas"]["AdvDecision"];
+        };
+        /** @description Step 1's row: one pair AIBot trades on the account. */
+        DtoAdvPairRow: {
+            SYM?: string | null;
+            SYM6?: string | null;
+            /** @description AIBot's mode on the pair: OFF, WATCH, EXITS or FULL. */
+            Mode?: string | null;
+            BuyMethod?: string | null;
+            SellMethod?: string | null;
+            Stance?: string | null;
+            /** Format: date-time */
+            StanceUntil?: string | null;
+            Condition?: string | null;
+            /** @description The reading the pair's stance came from: BUY, SELL or NONE, and its confidence band. */
+            SignalSide?: string | null;
+            ConfidenceBand?: string | null;
+            /** Format: int32 */
+            OpenTrades?: number;
+            /** @description AIBot's last refusal or action on the pair, when it has one. */
+            LastAction?: string | null;
+            /** @description The pair is in the scheduled selection (not in Advisor.ExcludedSymbols). */
+            Scheduled?: boolean;
+            /** @description Advisor can send this pair (AIBot is Watch, Exits only or Full auto on it). */
+            Sendable?: boolean;
+        };
+        /** @description One section of an ask. Key: ask, account, climate, readings, news, pair, may, instructions. */
+        DtoAdvSection: {
+            Key?: string | null;
+            Title?: string | null;
+            /** Format: int32 */
+            Chars?: number;
+            /** @description The pair of a "pair" section; null otherwise. */
+            SYM?: string | null;
+        };
+        /**
+         * @description StgView: what the Advisor page needs about one account before an ask: the settings, the entitlement, the credits and
+         *                 the day's count, the pairs to tick, the running task and the newest answer.
+         */
+        DtoAdvState: {
+            /** Format: int64 */
+            ACNO?: number;
+            Login?: string | null;
+            /** @description The account's plan allows Advisor (Ultra), or the viewer is staff. */
+            Allowed?: boolean;
+            Staff?: boolean;
+            /** @description Why Advisor cannot run on this account; null when it can. */
+            OffReason?: string | null;
+            Settings?: components["schemas"]["DtoAdvStg"];
+            /** Format: double */
+            Balance?: number;
+            /** Format: int32 */
+            AsksToday?: number;
+            /** Format: int32 */
+            Ceiling?: number;
+            IncludedUsed?: boolean;
+            /** Format: date-time */
+            IncludedAt?: string | null;
+            /** Format: date-time */
+            LastAdviceAt?: string | null;
+            /**
+             * Format: date-time
+             * @description When the next scheduled ask is due (UTC); null when Manual or off.
+             */
+            NextScheduledAt?: string | null;
+            UndoAskId?: string | null;
+            ShowCost?: boolean;
+            /**
+             * Format: double
+             * @description Q849-B: the size price's parts, for the page's "about N credits" lines.
+             */
+            CostMarkup?: number;
+            /** Format: double */
+            CreditUsd?: number;
+            Pairs?: components["schemas"]["DtoAdvPairRow"][] | null;
+            Running?: components["schemas"]["DtoFxsAdvAsk"];
+            Newest?: components["schemas"]["DtoFxsAdvAsk"];
+            /** Format: int32 */
+            Waiting?: number;
+        };
+        DtoAdvStateResPonse: {
+            data?: components["schemas"]["DtoAdvState"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
+        /** @description The member's Advisor settings (FxsAcct.Advisor): what StgEdit writes. Counters and times are never taken from it. */
+        DtoAdvStg: {
+            Enabled?: boolean;
+            /** @description When the day's included ask runs, UTC, HH:mm. */
+            AdviceTime?: string | null;
+            /** @description ASK (Ask-First) or APPLY (Auto-Apply). */
+            AdviceMode?: string | null;
+            EveryFourHours?: boolean;
+            PaidReasks?: boolean;
+            Manual?: boolean;
+            /** @description The pairs left out of scheduled asks. */
+            ExcludedSymbols?: string[] | null;
+            /** @description Q851-A: email the member when an answer is ready, applied or failed. */
+            NotifyEmail?: boolean;
+            /** @description Q851-A: tell the member on the FinCopy bot (Telegram). */
+            NotifyBot?: boolean;
         };
         /**
          * @description One record FinCopy wrote. `Entity` is Account, Terminal, Pair, Order or History; the ids say which record to
@@ -2504,6 +2773,21 @@ export interface components {
             BTSP?: number | null;
             /** Format: double */
             STSP?: number | null;
+            /** Format: double */
+            BADDCAP?: number | null;
+            /** Format: double */
+            SADDCAP?: number | null;
+            /**
+             * Format: double
+             * @description TP545: the early trail (start, distance; % of the TP distance). The sync sends them to EA 2.44 or later only.
+             */
+            BETAP?: number | null;
+            /** Format: double */
+            SETAP?: number | null;
+            /** Format: double */
+            BETDP?: number | null;
+            /** Format: double */
+            SETDP?: number | null;
             BHRSL?: boolean | null;
             SHRSL?: boolean | null;
             /** @description TP529: BUY/SELL break-even requests, bound to the named broker tickets. Not editable settings. */
@@ -2544,6 +2828,21 @@ export interface components {
             BDMUL?: number | null;
             /** Format: double */
             SDMUL?: number | null;
+            /**
+             * Format: int32
+             * @description TP545: DYNM's ledger values (one per pair); FinCopy's own, never on the EA's wire.
+             */
+            DYMAX?: number | null;
+            /** Format: double */
+            DYTGT?: number | null;
+            /** Format: double */
+            DYCAP?: number | null;
+            /** Format: double */
+            DYSTEP?: number | null;
+            /** Format: int32 */
+            DYCOOL?: number | null;
+            DYGATE?: components["schemas"]["DynGate"];
+            DYSIDE?: components["schemas"]["DynSide"];
         };
         /**
          * @description One ask in the member's AIBot history. Refunded: its credits came back (a failed run, or a plan the check refused);
@@ -2829,6 +3128,117 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
+        /**
+         * @description TP538: one Advisor ask as the member and public APIs return it. The list never carries Input and ContextJson; the
+         *                 one-ask view carries them only on request. The model and cost fields are null unless the viewer may see the staff panel
+         *                 (Q850-C: staff always, members while FcStg.AdvShowModelCost is on); a null field is left off the wire.
+         */
+        DtoFxsAdvAsk: {
+            /** @description The ask's id. */
+            Id?: string | null;
+            /** Format: int64 */
+            USNO?: number;
+            /** Format: int64 */
+            ACNO?: number;
+            /** Format: int32 */
+            ISNO?: number;
+            Trigger?: string | null;
+            /** Format: date-time */
+            AskedAt?: string;
+            Status?: components["schemas"]["AdvAskStatus"];
+            Status_?: components["schemas"]["AdvAskStatus"];
+            /** Format: date-time */
+            QueuedAt?: string | null;
+            /** Format: date-time */
+            StartedAt?: string | null;
+            /** Format: date-time */
+            AnsweredAt?: string | null;
+            /** Format: date-time */
+            ExpiresAt?: string | null;
+            /** Format: date-time */
+            NotifiedAt?: string | null;
+            Notified?: string[] | null;
+            Error?: string | null;
+            FinApiJobId?: string | null;
+            Note?: string | null;
+            TriggerSym?: string | null;
+            /** Format: date-time */
+            DecidedAt?: string | null;
+            DecidedBy?: string | null;
+            Input?: string | null;
+            ContextJson?: string | null;
+            /** Format: date-time */
+            RevisitAt?: string | null;
+            SentSyms?: string[] | null;
+            PromptKey?: string | null;
+            /** Format: int32 */
+            PromptVer?: number | null;
+            /** Format: int32 */
+            EstChars?: number;
+            /** Format: int32 */
+            EstInTok?: number | null;
+            /** Format: int32 */
+            EstOutTok?: number | null;
+            /** Format: double */
+            EstUsd?: number | null;
+            /** Format: int32 */
+            WireBytes?: number | null;
+            /** Format: double */
+            ResearchUsd?: number | null;
+            Pairs?: components["schemas"]["FxsAdvAskPair"][] | null;
+            Changes?: components["schemas"]["FxsAdvChange"][] | null;
+            Tilt?: components["schemas"]["AdvTilt"];
+            Tilt_?: components["schemas"]["AdvTilt"];
+            Sources?: components["schemas"]["FxsAdvSource"][] | null;
+            /** Format: double */
+            Credits?: number;
+            Included?: boolean;
+            Refunded?: boolean;
+            CreditNote?: string | null;
+            ChargeBasis?: components["schemas"]["AdvChargeBasis"];
+            ChargeBasis_?: components["schemas"]["AdvChargeBasis"];
+            Model?: string | null;
+            /** Format: int32 */
+            InputTokens?: number | null;
+            /** Format: int32 */
+            OutputTokens?: number | null;
+            /** Format: double */
+            CostUsd?: number | null;
+            /** @description The viewer may see the model and cost panel (Q850-C). False: every model and cost field above is null. */
+            ShowCost?: boolean;
+            /** @description This is the account's newest READY answer, not expired: its pairs and account block can be accepted or declined. */
+            CanDecide?: boolean;
+            /** @description QUEUED: the member may still cancel it (refunded). */
+            CanCancel?: boolean;
+            /** @description This is the answer Undo reverts (FxsAcct.Advisor.UndoAskId). */
+            CanUndo?: boolean;
+            /**
+             * Format: int32
+             * @description Seconds from QueuedAt to AnsweredAt, for History's "answered in"; null while it runs.
+             */
+            AnswerSecs?: number | null;
+        };
+        DtoFxsAdvAskResPaged: {
+            data?: components["schemas"]["DtoFxsAdvAsk"][] | null;
+            paging?: components["schemas"]["ResPage"];
+            grps?: {
+                [key: string]: components["schemas"]["ResGrp"][];
+            } | null;
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+        };
+        DtoFxsAdvAskResPonse: {
+            data?: components["schemas"]["DtoFxsAdvAsk"];
+            /** Format: int32 */
+            code?: number;
+            readonly isOk?: boolean;
+            message?: string | null;
+            errors?: string[] | null;
+            chksum?: string | null;
+        };
         DtoFxsBook: {
             /** Format: int32 */
             CNT?: number | null;
@@ -2976,6 +3386,8 @@ export interface components {
             AIBotRole?: string | null;
             /** Format: int32 */
             PlannedHoldMins?: number | null;
+            /** Format: int32 */
+            DynStep?: number | null;
             /** Format: int64 */
             EXP?: number;
             EXPRC?: boolean;
@@ -3105,6 +3517,8 @@ export interface components {
             AIBotRole?: string | null;
             /** Format: int32 */
             PlannedHoldMins?: number | null;
+            /** Format: int32 */
+            DynStep?: number | null;
             /** Format: int64 */
             EXP?: number;
             EXPRC?: boolean;
@@ -3165,6 +3579,7 @@ export interface components {
              * @enum {string|null}
              */
             readonly AIBotMode?: "OFF" | "WATCH" | "EXITS" | "FULL" | null;
+            Dyn?: components["schemas"]["DtoFxsPairDyn"];
             /** Format: double */
             BID?: number | null;
             /** Format: double */
@@ -3352,6 +3767,38 @@ export interface components {
             SyncDt?: string | null;
             /** Format: date-time */
             SyncMkAt?: string | null;
+        };
+        /**
+         * @description TP545 (Q932-A, prototype round 54's Pairs list 2.3.2): a pair's running DYNM ledger in a few read-only facts, on the pair the
+         *     lists serve (DtoFxsPair.Dyn on /v1/fxs/pairs and the member's pair view). Built from FxsAIBotPair.Dyn by FxsDynm.PairSummary;
+         *     null where no ledger is open (none has run, or it closed). It is a read model: nothing writes it back.
+         */
+        DtoFxsPairDyn: {
+            /**
+             * Format: double
+             * @description What the ledger owes: its steps' closed losses not yet won back, 0 or more.
+             */
+            Owed?: number;
+            /**
+             * Format: int32
+             * @description The step the ledger is on: the open step, or the next one while it waits (1 to DYMAX).
+             */
+            Step?: number;
+            /**
+             * Format: int32
+             * @description DYMAX: the most steps a ledger may hold before it is written off.
+             */
+            Max?: number;
+            /** @description The side of the open or last step: BUY or SELL. */
+            Side?: string | null;
+            /** @description A step is open now (its trade is at the broker or queued); false while the ledger waits for its next step. */
+            StepOpen?: boolean;
+            /**
+             * @description Why the next step waits, in the member's words: the cool-off until a time, the pair off Full auto (Q951-A), or the
+             *                 reason the last rules pass wrote (the posture, the Defensive camp, the record, the gate, the room ...). Null while a step is
+             *                 open, or before any pass has said why.
+             */
+            Wait?: string | null;
         };
         DtoFxsPairResPaged: {
             data?: components["schemas"]["DtoFxsPair"][] | null;
@@ -3964,6 +4411,12 @@ export interface components {
             SSLP?: components["schemas"]["DecRng"];
             BTSP?: components["schemas"]["DecRng"];
             STSP?: components["schemas"]["DecRng"];
+            BADDCAP?: components["schemas"]["DecRng"];
+            SADDCAP?: components["schemas"]["DecRng"];
+            BETAP?: components["schemas"]["DecRng"];
+            SETAP?: components["schemas"]["DecRng"];
+            BETDP?: components["schemas"]["DecRng"];
+            SETDP?: components["schemas"]["DecRng"];
             BHRSL?: boolean | null;
             SHRSL?: boolean | null;
             LOGEXP?: components["schemas"]["DecRng"];
@@ -3983,6 +4436,13 @@ export interface components {
             USEDESC?: boolean | null;
             BDMUL?: components["schemas"]["DecRng"];
             SDMUL?: components["schemas"]["DecRng"];
+            DYMAX?: components["schemas"]["DecRng"];
+            DYTGT?: components["schemas"]["DecRng"];
+            DYCAP?: components["schemas"]["DecRng"];
+            DYSTEP?: components["schemas"]["DecRng"];
+            DYCOOL?: components["schemas"]["DecRng"];
+            DYGATE?: components["schemas"]["DynGate"];
+            DYSIDE?: components["schemas"]["DynSide"];
         };
         /** @description Wire twin of the account symbol template. This type deliberately has no BSON attributes. */
         DtoFxsStgSymStg: {
@@ -4023,6 +4483,18 @@ export interface components {
             BTSP?: number | null;
             /** Format: double */
             STSP?: number | null;
+            /** Format: double */
+            BADDCAP?: number | null;
+            /** Format: double */
+            SADDCAP?: number | null;
+            /** Format: double */
+            BETAP?: number | null;
+            /** Format: double */
+            SETAP?: number | null;
+            /** Format: double */
+            BETDP?: number | null;
+            /** Format: double */
+            SETDP?: number | null;
             BHRSL?: boolean | null;
             SHRSL?: boolean | null;
             /** Format: double */
@@ -4058,6 +4530,21 @@ export interface components {
             BDMUL?: number | null;
             /** Format: double */
             SDMUL?: number | null;
+            /**
+             * Format: int32
+             * @description TP545: DYNM's ledger values (one per pair); FinCopy's own, never on the EA's wire.
+             */
+            DYMAX?: number | null;
+            /** Format: double */
+            DYTGT?: number | null;
+            /** Format: double */
+            DYCAP?: number | null;
+            /** Format: double */
+            DYSTEP?: number | null;
+            /** Format: int32 */
+            DYCOOL?: number | null;
+            DYGATE?: components["schemas"]["DynGate"];
+            DYSIDE?: components["schemas"]["DynSide"];
         };
         DtoFxsSymbolCatalog: {
             TerminalId?: string | null;
@@ -4415,41 +4902,128 @@ export interface components {
             errors?: string[] | null;
             chksum?: string | null;
         };
-        /** @description One setting AIAdvisor wants changed, old to new. FC.Com.Doms.FxsAIBotAdvisorChange.Refused holds the reason the code refused it. */
-        FxsAIBotAdvisorChange: {
-            /**
-             * @description A pair's: EXIT.TPP, EXIT.SLP, EXIT.TSP, ENTRY.NewsFilter, AMODE.BUY, AMODE.SELL or a pair setting: NLOT, LGP, GGP,
-             *                 LMAX, GMAX, LMUL, GMUL. The account's (T709, Q399-A): WARM.BuySig, WARM.SellSig, WARM.BuyTrd, WARM.SellTrd, WARM.Conf,
-             *                 WARM.Score, and HOT.BuySig, HOT.SellSig, HOT.BuyTrd, HOT.SellTrd, HOT.Conf (HOT has no score).
-             */
-            Field?: string | null;
-            Old?: string | null;
-            New?: string | null;
-            /** @description SHARPEN or LOOSEN. */
-            Direction?: string | null;
-            Why?: string | null;
-            Refused?: string | null;
+        /**
+         * @description TP545 (Q933-A): why a DYNM ledger closed (FxsAIBotPair.Dyn.EndReason). TP: step 1 reached its TP and nothing was owed;
+         *                 RECOVERED: the steps won back what the ledger owed; STEPS: written off at DYMAX steps; CAP: written off when the next step could
+         *                 not fit DYCAP % of equity at step 1's lot; MAXLOT: written off when the broker's largest lot is below step 1's lot; RESET: the
+         *                 member reset it; MEMBER: the member changed the pair's method away from DYNM (the pair off Full auto only makes it wait). A written-off
+         *                 ledger (every end but TP and RECOVERED) leaves the symbol waiting 4 hours before its next step 1.
+         * @enum {string}
+         */
+        DynEnd: "TP" | "RECOVERED" | "STEPS" | "CAP" | "MAXLOT" | "RESET" | "MEMBER";
+        /**
+         * @description TP545 (DYGATE): the strength gate a DYNM recovery step waits for, on the side it would trade. GUARD: the account's WARM
+         *                 set for that side and the Trend guard; NOW (the default): GUARD, and FinGraph's signal at B / S or stronger with its 41-minute
+         *                 move that way; STRONG: FinGraph's own directional strength (TP545 §3, c2's research), not built yet: a value that chooses it is
+         *                 refused until it is.
+         * @enum {string}
+         */
+        DynGate: "GUARD" | "NOW" | "STRONG";
+        DynGateBotPick: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["DynGate"];
+            Opts?: components["schemas"]["DynGate"][] | null;
         };
-        FxsAIBotAdvisorPair: {
-            SYM?: string | null;
-            SYM6?: string | null;
-            /** @description TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK. */
-            Condition?: string | null;
-            ConditionWhy?: string | null;
-            Stance?: string | null;
-            StanceWhy?: string | null;
+        /**
+         * @description TP545 (Q931-A, DYSIDE): which side a DYNM recovery step may take. READING (the default, Q931-A): whichever side the
+         *                 strength gate passes, the same side again included (BUY judged first); OTHER: only the side opposite the last step (REVM's
+         *                 rule, the replay's control).
+         * @enum {string}
+         */
+        DynSide: "READING" | "OTHER";
+        DynSideBotPick: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["DynSide"];
+            Opts?: components["schemas"]["DynSide"][] | null;
+        };
+        /** @description TP538: one value Advisor set on a pair (FxsAdvChange.Field and its New), and the answer that set it. */
+        FxsAIBotAdvised: {
+            Field?: string | null;
+            Value?: string | null;
+            AskId?: string | null;
             /** Format: date-time */
-            StanceUntil?: string | null;
-            NarrowingApplied?: boolean;
-            /** @description The FinGraph reading in this advice's input, retained when Ask-First is accepted later. */
-            SignalSide?: string | null;
-            ConfidenceBand?: string | null;
-            Changes?: components["schemas"]["FxsAIBotAdvisorChange"][] | null;
+            At?: string;
+        };
+        /**
+         * @description TP545 (Q932-A): one DYNM ledger on a pair: the money its steps have lost and not won back. AIBot writes it when step 1
+         *                 opens, on each step's close, when it waits (once per reason) and when it closes; the rules pass, the pair's view and the hourly
+         *                 record read it. FC.Com.Doms.FxsAIBotDynLedger.Step is the step the ledger is on: the open step, or after a close that left it owing the next
+         *                 one, awaited while FC.Com.Doms.FxsAIBotDynLedger.NextAfter is set (its side is chosen when it opens, Q931-A).
+         */
+        FxsAIBotDynLedger: {
             /**
-             * @description TP523 Q556-A: the pair was on Watch: this part of the advice is shown and never applied (its stance and changes),
-             *                 as an account on Watch gets WATCH advice; Undo last advice leaves it alone too.
+             * Format: int32
+             * @description The step the ledger is on, 1 to DYMAX.
              */
-            Watch?: boolean;
+            Step?: number;
+            /** @description The side of the open or last step: BUY or SELL. */
+            Side?: string | null;
+            /**
+             * Format: double
+             * @description Step 1's lot, sized like FIRR (equity × risk a trade at its SL): a step cut below it writes the ledger off.
+             */
+            BaseLot?: number;
+            /**
+             * Format: double
+             * @description R: step 1's loss at its SL, in the account's currency (a step wins back the ledger + DYTGT × R, and loses at most
+             *                 DYSTEP × R at its SL).
+             */
+            BaseRisk?: number;
+            /**
+             * Format: double
+             * @description What the ledger owes: its steps' closed losses not yet won back (profit, swap and commission), 0 or more.
+             */
+            Owed?: number;
+            /**
+             * Format: double
+             * @description The most the ledger has owed.
+             */
+            Peak?: number;
+            /**
+             * Format: date-time
+             * @description When step 1 opened (or the TP545 conversion seeded the ledger): the ledger's identity on every conditional write.
+             */
+            OpenedAt?: string;
+            /**
+             * Format: date-time
+             * @description When the ledger first owed (step 1's loss).
+             */
+            LedgerAt?: string | null;
+            /**
+             * Format: date-time
+             * @description When the last step closed.
+             */
+            LastClosedAt?: string | null;
+            /**
+             * Format: date-time
+             * @description After a close that left the ledger owing, the earliest time the next step may open (the close + DYCOOL); null while
+             *                 a step is open or queued, and once the ledger closed.
+             */
+            NextAfter?: string | null;
+            /**
+             * Format: int64
+             * @description The current or last step's ticket (0 until the broker filled it).
+             */
+            LastTicket?: number;
+            /**
+             * Format: int32
+             * @description How many steps were cut to fit DYSTEP, DYCAP or the broker's largest lot (each wins back only part of the ledger).
+             */
+            Partial?: number;
+            /**
+             * Format: date-time
+             * @description When the ledger closed; null while it runs.
+             */
+            ClosedAt?: string | null;
+            EndReason?: components["schemas"]["DynEnd"];
+            EndReason_?: components["schemas"]["DynEnd"];
+            /**
+             * @description Q934-A: the reason the next step last waited for (the posture, the account, the pair's record, the gate ...), so
+             *                 AIBOT_DYN_WAIT is written once per reason, not on every pass; cleared when a step opens or closes.
+             */
+            WaitWhy?: string | null;
         };
         /**
          * @description T701 (Q8-A): when Full auto opens a side on a FinGraph reading change. T709 (Q378-A, Q385-A): the signal, trend,
@@ -4459,6 +5033,8 @@ export interface components {
         FxsAIBotEntryRules: {
             /** @description Skip a side that FinNews of the last 24 hours on the pair's currencies leans against. */
             NewsFilter?: boolean;
+            TrendGuard?: components["schemas"]["TrendGuard"];
+            TaGuard?: components["schemas"]["TaGuard"];
         };
         /** @description Value fields copied into AI audit records without depending on the mutable live account document. */
         FxsAIBotOrderLink: {
@@ -4502,8 +5078,84 @@ export interface components {
             PlaybookVersionId?: string | null;
             Limits?: components["schemas"]["FxsAIBotStgLimits"];
             PairDefaults?: components["schemas"]["FxsAIBotStgPair"];
+            Camp?: components["schemas"]["FxsCamp"];
         };
-        /** @description TP529: the account's L3 module, independent of the deterministic AIBot settings. */
+        /** @description TP538 (Q848-A): one pair's answer inside an ask (was FxsAIBotAdvisorPair). Its changes follow its Decision. */
+        FxsAdvAskPair: {
+            SYM?: string | null;
+            SYM6?: string | null;
+            /** @description TRENDING_UP, TRENDING_DOWN, RANGING, VOLATILE or NEWS_RISK. */
+            Condition?: string | null;
+            ConditionWhy?: string | null;
+            /** @description The FinGraph reading in this ask's input, kept when Ask-First is accepted later. */
+            SignalSide?: string | null;
+            ConfidenceBand?: string | null;
+            /** @description TP523 Q556-A: the pair was on Watch: shown, never applied. */
+            Watch?: boolean;
+            /** @description The stance in force on the pair when the answer came (the folded card's "now -> proposed"). */
+            StanceBefore?: string | null;
+            /** @description Which new entries the stance allows: BOTH, BUY_ONLY, SELL_ONLY or STAY_OUT. */
+            Stance?: string | null;
+            StanceWhy?: string | null;
+            /**
+             * Format: date-time
+             * @description When the stance ends: 24 hours at most after the ask.
+             */
+            StanceUntil?: string | null;
+            Decision?: components["schemas"]["AdvDecision"];
+            Decision_?: components["schemas"]["AdvDecision"];
+            /** Format: date-time */
+            DecidedAt?: string | null;
+            /** @description The owner or a Trader (their sign-in), or Advisor itself (AUTO and NARROWED). */
+            DecidedBy?: string | null;
+            /**
+             * @description TP538 Q853-A: the pair's AIBot mode Advisor proposes (WATCH, EXITS or FULL); null: no change. Lowering it applies
+             *                 at once like a narrowing stance; raising it waits for Accept, even under Auto-Apply.
+             */
+            ModeChange?: string | null;
+            /** @description The pair's mode when the ask was answered (what Undo and Decline put back). */
+            ModeBefore?: string | null;
+            ModeWhy?: string | null;
+            Changes?: components["schemas"]["FxsAdvChange"][] | null;
+        };
+        /**
+         * @description One value Advisor wants changed, old to new (was FxsAIBotAdvisorChange). FC.Com.Doms.FxsAdvChange.Refused holds the reason the
+         *                 code refused it.
+         */
+        FxsAdvChange: {
+            /**
+             * @description A pair's: BTPP, STPP, BSLP, SSLP, BTSP, STSP, ENTRY.NEWSFILTER, AMODE.BUY, AMODE.SELL, NLOT, LGP, GGP, LMAX, GMAX,
+             *                 LMUL, GMUL, a pair value (BRISK …) or (Q853-A) BADDCAP / SADDCAP, the per-side add cap. The account's: WARM.* and HOT.*,
+             *                 an account number, or (Q853-A) HEDGE, the account's hedge switch.
+             */
+            Field?: string | null;
+            Old?: string | null;
+            New?: string | null;
+            /** @description SHARPEN or LOOSEN. */
+            Direction?: string | null;
+            Why?: string | null;
+            Refused?: string | null;
+            Decision?: components["schemas"]["AdvDecision"];
+            Decision_?: components["schemas"]["AdvDecision"];
+        };
+        /** @description TP538 Q852-A: one web page the ask's research read. */
+        FxsAdvSource: {
+            Title?: string | null;
+            Site?: string | null;
+            Url?: string | null;
+            /**
+             * Format: date-time
+             * @description When the page was published, when the research knows it.
+             */
+            At?: string | null;
+            /** @description The pair it was read for; null for the whole market. */
+            SYM?: string | null;
+        };
+        /**
+         * @description TP529: the account's L3 module, independent of the deterministic AIBot settings. TP538: it also holds the member's
+         *                 notice switches (Q851-A) and the answer Undo reverts (moved from FullAuto.UndoAdviceId, so AIBot's block keeps no Advisor
+         *                 field).
+         */
         FxsAdvisorSettings: {
             Enabled?: boolean;
             AdviceTime?: string | null;
@@ -4520,6 +5172,24 @@ export interface components {
             IncludedUsed?: boolean;
             /** Format: date-time */
             LastAdviceAt?: string | null;
+            /** @description TP538 Q851-A: email the member when an answer is ready, applied or failed. On by default. */
+            NotifyEmail?: boolean;
+            /** @description TP538 Q851-A: tell the member on the FinCopy bot (Telegram). On by default. */
+            NotifyBot?: boolean;
+            /** @description TP538: the applied answer Undo reverts (an fc_adv_ask id); null when there is none. */
+            UndoAskId?: string | null;
+        };
+        /**
+         * @description TP545 (Q928-C, Q929-A, Q948-A): the account's camp, a value with its state (Fixed or Strategy, never My range). Each moves the values
+         *                 its preset names (FxsCamps.Preset) that are not Fixed; AIBot's posture (MANAGE, DEFEND) may only push it toward Defensive.
+         * @enum {string}
+         */
+        FxsCamp: "DEFENSIVE" | "AGGRESSIVE";
+        FxsCampBotPick: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["FxsCamp"];
+            Opts?: components["schemas"]["FxsCamp"][] | null;
         };
         /**
          * @description Why a leg closed, as the EA reports it (`CRSN`).
@@ -4560,8 +5230,6 @@ export interface components {
              *                 own). It counts on a GRID side; every other method opens only on a flat side.
              */
             OpenPerSide?: number;
-            /** @description The applied advice that Undo last advice reverts. */
-            UndoAdviceId?: string | null;
         };
         /** @enum {string} */
         FxsOrderAction: "NEW" | "AVL" | "AVG" | "CLO" | "CLA" | "CLG" | "STP" | "CSL" | "MOD" | "RBL";
@@ -4712,6 +5380,20 @@ export interface components {
         TMode: "NONE" | "AUTO" | "HYBRID" | "MANUAL";
         /** @enum {string} */
         TRDSRC: "ANY" | "API" | "TRM";
+        /**
+         * @description TP545 (Q939-A): what the Trend guard reads beside FinGraph's medium and long trends (TA-Guard). TV: TradingView's
+         *                 moving-average rating must agree too, where TradingView rates the pair (today's behaviour, and the default until a replay shows
+         *                 otherwise); TRENDS: FinGraph's trends only; FGRATE: FinGraph's own technical ratings must agree too, stored and validated but
+         *                 not available yet (FinGraph serves no ratings), so it reads as FinGraph's trends only until it does.
+         * @enum {string}
+         */
+        TaGuard: "TV" | "TRENDS" | "FGRATE";
+        TaGuardBotPick: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["TaGuard"];
+            Opts?: components["schemas"]["TaGuard"][] | null;
+        };
         /** @enum {string} */
         TermAccountKind: "Customer" | "Demo";
         /** @enum {string} */
@@ -4724,6 +5406,20 @@ export interface components {
             Val?: components["schemas"]["Trend"] | null;
             Min?: components["schemas"]["Trend"] | null;
             Max?: components["schemas"]["Trend"] | null;
+        };
+        /**
+         * @description TP538 (Q873-A): the Trend guard, an AIBot entry rule for every method: a new entry opens only when FinGraph's medium
+         *                 and long trends agree in the side's direction at High or above and TradingView's moving-average rating agrees (FinGraph alone
+         *                 where there is no rating, Q874-A). METHOD: on for FIRR and DYNM, off for WDCA, GDCA, GRID and CONT (the default); ON: on for
+         *                 every method; OFF: off for every method.
+         * @enum {string}
+         */
+        TrendGuard: "METHOD" | "ON" | "OFF";
+        TrendGuardBotPick: {
+            Mode?: components["schemas"]["BotValMode"];
+            Mode_?: components["schemas"]["BotValMode"];
+            Val?: components["schemas"]["TrendGuard"];
+            Opts?: components["schemas"]["TrendGuard"][] | null;
         };
     };
     responses: never;
@@ -5322,6 +6018,670 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DtoBrokerServerSearchIReadOnlyListResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorAskSrch: {
+        parameters: {
+            query?: {
+                kind?: string;
+                syms?: string[];
+            };
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAdvAskPreviewResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorAskList: {
+        parameters: {
+            query?: {
+                PageNo?: number;
+                PageSize?: number;
+                Draw?: number;
+                Sort?: string;
+                Srch?: string;
+                SortBy?: string[][];
+                SrchBy?: string[][];
+                Include?: string[];
+            };
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsAdvAskResPaged"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorAskMake: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAdvAskMake"];
+                "application/json": components["schemas"]["CmdAdvAskMake"];
+                "text/json": components["schemas"]["CmdAdvAskMake"];
+                "application/*+json": components["schemas"]["CmdAdvAskMake"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsAdvAskResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorAskView: {
+        parameters: {
+            query?: {
+                sent?: boolean;
+            };
+            header?: never;
+            path: {
+                acno: number;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsAdvAskResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorAskPtch: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAdvAskPtch"];
+                "application/json": components["schemas"]["CmdAdvAskPtch"];
+                "text/json": components["schemas"]["CmdAdvAskPtch"];
+                "application/*+json": components["schemas"]["CmdAdvAskPtch"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsAdvAskResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorAskRset: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAdvAskRset"];
+                "application/json": components["schemas"]["CmdAdvAskRset"];
+                "text/json": components["schemas"]["CmdAdvAskRset"];
+                "application/*+json": components["schemas"]["CmdAdvAskRset"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoFxsAdvAskResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorStgView: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAdvStateResPonse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Unauthorized */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Conflict */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+            /** @description Too Many Requests */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ObjectResPonse"];
+                };
+            };
+        };
+    };
+    AdvisorStgEdit: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description Stable key for one write. Retrying the same request returns its original result. */
+                "Idempotency-Key": string;
+            };
+            path: {
+                acno: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json-patch+json": components["schemas"]["CmdAdvStgEdit"];
+                "application/json": components["schemas"]["CmdAdvStgEdit"];
+                "text/json": components["schemas"]["CmdAdvStgEdit"];
+                "application/*+json": components["schemas"]["CmdAdvStgEdit"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DtoAdvStateResPonse"];
                 };
             };
             /** @description Bad Request */
@@ -6425,409 +7785,6 @@ export interface operations {
             };
         };
     };
-    AdvisorPreview: {
-        parameters: {
-            query?: {
-                kind?: string;
-            };
-            header?: never;
-            path: {
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAdvisorPreviewResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
-    AdvisorSend: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Stable key for one write. Retrying the same request returns its original result. */
-                "Idempotency-Key": string;
-            };
-            path: {
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json-patch+json": components["schemas"]["CmdAdvisorSend"];
-                "application/json": components["schemas"]["CmdAdvisorSend"];
-                "text/json": components["schemas"]["CmdAdvisorSend"];
-                "application/*+json": components["schemas"]["CmdAdvisorSend"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
-    AdvisorSettings: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Stable key for one write. Retrying the same request returns its original result. */
-                "Idempotency-Key": string;
-            };
-            path: {
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json-patch+json": components["schemas"]["CmdAdvisorSettings"];
-                "application/json": components["schemas"]["CmdAdvisorSettings"];
-                "text/json": components["schemas"]["CmdAdvisorSettings"];
-                "application/*+json": components["schemas"]["CmdAdvisorSettings"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
-    AdvisorHistory: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotAdviceIReadOnlyListResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
-    AdvisorHistoryView: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                acno: number;
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotAdviceResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
     AIBotState: {
         parameters: {
             query?: never;
@@ -7276,257 +8233,6 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DtoAIBotTicketsViewResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
-    AIBotAdvise: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Stable key for one write. Retrying the same request returns its original result. */
-                "Idempotency-Key": string;
-            };
-            path: {
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
-    AIBotAdviceDecide: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Stable key for one write. Retrying the same request returns its original result. */
-                "Idempotency-Key": string;
-            };
-            path: {
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json-patch+json": components["schemas"]["CmdAIBotAdviceDecide"];
-                "application/json": components["schemas"]["CmdAIBotAdviceDecide"];
-                "text/json": components["schemas"]["CmdAIBotAdviceDecide"];
-                "application/*+json": components["schemas"]["CmdAIBotAdviceDecide"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
-                };
-            };
-            /** @description Bad Request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Unauthorized */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Forbidden */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Not Found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Conflict */
-            409: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-            /** @description Too Many Requests */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ObjectResPonse"];
-                };
-            };
-        };
-    };
-    AIBotAdviceUndo: {
-        parameters: {
-            query?: never;
-            header: {
-                /** @description Stable key for one write. Retrying the same request returns its original result. */
-                "Idempotency-Key": string;
-            };
-            path: {
-                acno: number;
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json-patch+json": components["schemas"]["CmdAIBotAdviceUndo"];
-                "application/json": components["schemas"]["CmdAIBotAdviceUndo"];
-                "text/json": components["schemas"]["CmdAIBotAdviceUndo"];
-                "application/*+json": components["schemas"]["CmdAIBotAdviceUndo"];
-            };
-        };
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DtoAIBotFullAutoResPonse"];
                 };
             };
             /** @description Bad Request */

@@ -1,5 +1,63 @@
 # Changelog
 
+## 0.16.0 (2026-11-26)
+
+This is a breaking change for everyone who calls FinCopy's account Advisor. FinCopy moved the Advisor to
+`/v1/fxs/accounts/{acno}/advisor` and retired `/aibot/advisor/*`, `/aibot/advise` and `/aibot/advice/decide|undo`, so the
+0.15.0 methods answer 404 against the live API. The FinCopy snapshot is refreshed from FinCopy's current API document.
+
+### Changed
+
+- The Advisor methods call the new routes, take the new commands and return the ask or the Advisor state:
+
+  | 0.15.0 (.NET; TypeScript and Python alike) | 0.16.0 | Route |
+  | --- | --- | --- |
+  | `PreviewAdvisorAsync(acno, kind)` → `DtoAdvisorPreview` | `PreviewAdvisorAsync(acno, kind, symbols)` → `DtoAdvAskPreview` | `GET advisor/preview` |
+  | `SendAdvisorAsync(acno, CmdAdvisorSend)` → `DtoAIBotFullAuto` | `SendAdvisorAsync(acno, CmdAdvAskMake)` → `DtoFxsAdvAsk` | `POST advisor/asks` |
+  | `AdviseAIBotNowAsync(acno)` (.NET, TypeScript) | `SendAdvisorAsync(acno, new CmdAdvAskMake { ACNO = acno, Kind = "ON_DEMAND" })` | `POST advisor/asks` |
+  | (none) | `GetAdvisorSettingsAsync(acno)` → `DtoAdvState` | `GET advisor/settings` |
+  | `SaveAdvisorSettingsAsync(acno, CmdAdvisorSettings)` → `DtoAIBotFullAuto` | `SaveAdvisorSettingsAsync(acno, CmdAdvStgEdit)` → `DtoAdvState` | `PUT advisor/settings` |
+  | `AdvisorHistoryAsync(acno)` → the latest 100 `DtoAIBotAdvice` | `AdvisorHistoryAsync(acno, page)` → a page of `DtoFxsAdvAsk` | `GET advisor/asks` |
+  | `AdvisorHistoryViewAsync(acno, id)` → `DtoAIBotAdvice` | `AdvisorHistoryViewAsync(acno, id, sent)` → `DtoFxsAdvAsk` | `GET advisor/asks/{id}` |
+  | `DecideAIBotAdviceAsync(acno, CmdAIBotAdviceDecide)` | `DecideAdvisorAsync(acno, id, CmdAdvAskPtch)` → `DtoFxsAdvAsk` | `PATCH advisor/asks/{id}` |
+  | `UndoAIBotAdviceAsync(acno, CmdAIBotAdviceUndo)` | `UndoAdvisorAsync(acno, CmdAdvAskRset)` → `DtoFxsAdvAsk` | `POST advisor/undo` |
+
+  TypeScript uses the same names in lower camel case without `Async` (`adviseAIBotNow`, `decideAIBotAdvice` and
+  `undoAIBotAdvice` become `sendAdvisor`, `decideAdvisor` and `undoAdvisor`); Python uses `preview_advisor`, `send_advisor`,
+  `get_advisor_settings`, `save_advisor_settings`, `advisor_history` (with `advisor_history_pages`), `advisor_history_view`,
+  `decide_advisor` and `undo_advisor` (`decide_aibot_advice` and `undo_aibot_advice` are gone).
+- A sent ask comes back `QUEUED`: read it again with `AdvisorHistoryViewAsync`, or follow the change feed, for its answer.
+  `DecideAdvisorAsync` names the ask in the route, decides pair by pair (`Pairs`) and the account block (`Account`), or cancels
+  a queued ask (`Cancel`). The preview's id is `PreviewId`.
+- The preview no longer sends `kind=ON_DEMAND` when no kind is given (FinCopy's default is the same); `symbols` picks the pairs.
+- TypeScript argument positions: `previewAdvisor(acno, kind?, symbols?, options)`, `advisorHistory(acno, page?, options)`,
+  `advisorHistoryView(acno, id, sent?, options)` and `decideAdvisor(acno, id, command, options)`.
+- The AIBot dashboard (`DtoAIBotFullAuto`) no longer carries the Advisor: `AdvisorAllowed`, `AdvisorStaff`, `AdvisorBalance`,
+  `Advisor`, `AdviceMode`, `AdviceTime`, `AdviceCallsToday`, `AdviceMaxPerDay`, `LastAdviceAt`, `CanUndoAdvice`, `AdvisorOff`
+  and `Advice` are gone; `GetAdvisorSettingsAsync` returns them as `DtoAdvState` (`Allowed`, `Staff`, `Balance`, `Settings`,
+  `AsksToday`, `Ceiling`, `LastAdviceAt`, `UndoAskId`, `OffReason`, `Running`, `Newest`). The dashboard has `AdvisorLine`, a
+  one-line summary. `FxsFullAutoSettings.UndoAdviceId` is gone (`DtoAdvState.UndoAskId`).
+- Removed types: `CmdAdvisorSend`, `CmdAdvisorSettings`, `DtoAdvisorPreview`, `DtoAIBotAdvice`, `CmdAIBotAdviceDecide`,
+  `CmdAIBotAdviceUndo`, `FxsAIBotAdvisorChange` and `FxsAIBotAdvisorPair` (now `FxsAdvChange` and `FxsAdvAskPair`).
+- FinGraph's snapshot takes its current price for `/v1/stats/aggregate`: 1 credit per call (the Python method's docstring says
+  so; nothing else in FinGraph, FinNews or FinSocial changed).
+
+### Added
+
+- The early trail's four values (`BETAP`, `BETDP`, `SETAP`, `SETDP`) and the buy and sell add caps (`BADDCAP`, `SADDCAP`) on the
+  AIBot settings command, the symbol settings, the strategy's symbol ranges and the account's symbol settings.
+- DYNM's values (`DYMAX`, `DYTGT`, `DYCAP`, `DYSTEP`, `DYCOOL`, `DYGATE` with `DynGate`, `DYSIDE` with `DynSide`) on the same
+  types, its ledger (`FxsAIBotDynLedger`, `DynEnd`; `Dyn` and `DynLine` on AIBot pairs, `DynmOwed` and `DynmRefusal` on the
+  dashboard) and the ledger step `DynStep` on orders, settled orders and AIBot outcomes.
+- A pair's running DYNM ledger on the pair lists and the pair view: `DtoFxsPair.Dyn`, a read-only `DtoFxsPairDyn` (`Owed`,
+  `Step`, `Max`, `Side`, `StepOpen`, `Wait`), null where no ledger is open. On AIBot pairs, `DynNext` (`DtoAIBotDynNext`: the
+  side rule and, per side it allows, `DtoAIBotDynNextSide` with the next step's `Lot`, `StepLoss`, `Partial`, `End` and `Why`).
+- The camp (`FxsCamp`: `Camp` on a strategy's AIBot block and in the AIBot values), on / off values with a state
+  (`DtoAIBotValues.Switches`), and the Trend guard and TA-Guard (`TrendGuard`, `TaGuard` on the entry rules and in the values).
+- The Advisor's own types: `DtoAdvState`, `DtoAdvStg`, `DtoAdvAskPreview`, `DtoFxsAdvAsk`, `CmdAdvAskMake`, `CmdAdvAskPtch`,
+  `CmdAdvAskRset`, `CmdAdvStgEdit`, `AdvAskStatus`, `AdvDecision` and their parts; `Advised` on AIBot pairs; `NotifyEmail`,
+  `NotifyBot` and `UndoAskId` on `FxsAdvisorSettings`.
+
 ## 0.15.0 (2026-11-26)
 
 ### Added
